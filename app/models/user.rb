@@ -37,7 +37,7 @@ class User < ApplicationRecord
   end
 
   def preferences_hash
-    preferences.map { |p| [p.key, (p.value || Preference.default(k.key))] }.to_h
+    preferences.map { |p| [p.key, (p.value || Preference.default(p.key))] }.to_h
   end
 
   private

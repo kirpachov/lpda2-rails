@@ -27,8 +27,8 @@ require 'webmock/rspec'
 # require only the support files necessary.
 #
 Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
-Dir[Rails.root.join('spec', 'shared_contexts', '**', '*.context.rb')].sort.each { |f| require f }
-Dir[Rails.root.join('spec', 'shared_examples', '**', '*.examples.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec', 'contexts', '**', '*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec', 'shared_examples', '**', '*.rb')].sort.each { |f| require f }
 Dir[Rails.root.join('spec', 'matchers', '**', '*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.

@@ -17,4 +17,8 @@ class Preference < ApplicationRecord
       DEFAULTS[key]&.[](:default)
     end
   end
+
+  def value_for(user)
+    user.preference_value(key)
+  end
 end

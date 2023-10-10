@@ -1,6 +1,15 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  defaults format: :json do
+    scope module: :v1, path: 'v1' do
+      resources :preferences, only: %i[index] do
+        collection do
+          get   ':key',       action: :show
+          get   ':key/value', action: :value
+          patch ':key',       action: :update
+        end
+      end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+      # resources :settings, only: [:index, :show, :update]
+    end
+  end
 end
