@@ -30,3 +30,5 @@
 appmap.yml
 
 .idea
+.byebug_history
+spec/reports
