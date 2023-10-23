@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :preference do
-    # TODO
+    key { Preference::DEFAULTS.keys.sample }
+    value { nil }
   end
 
   sequence :language do

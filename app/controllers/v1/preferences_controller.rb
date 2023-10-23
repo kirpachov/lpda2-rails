@@ -24,7 +24,6 @@ module V1
       unless updated
         return render json: { message: "#{I18n.t('preferences.update_failed')}:#{preference.errors.full_messages.join('; ')}", details: preference.errors.as_json }, status: 422
       end
-      # current_user.preference(params[:key]).update(value: params[:value])
 
       render json: preference_json(current_user.preference(params[:key]))
     end

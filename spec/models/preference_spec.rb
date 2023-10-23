@@ -7,6 +7,58 @@ RSpec.describe Preference, type: :model do
     it { should belong_to(:user).inverse_of(:preferences).required }
   end
 
+  let(:user) do
+    (u = create(:user)).preferences.destroy_all
+    u
+  end
+
+  context 'should have valid mocks' do
+    10.times do
+      it { expect(build(:preference, user: user)).to be_valid }
+      it { expect { create(:preference, user: user) }.not_to raise_error }
+    end
+  end
+
+  context 'validations' do
+    before { create(:user) }
+
+    it { should validate_presence_of(:key) }
+    it { should_not validate_presence_of(:value) }
+    it { should validate_uniqueness_of(:key).scoped_to(:user_id).case_insensitive  }
+
+    context 'checking if key uniqueness is case insensitive' do
+      let(:key) { Preference::DEFAULTS.keys.sample }
+
+      before do
+        create(:preference, key: key, user: user)
+      end
+
+      subject { build(:preference, key: key.upcase, user: user) }
+
+      it { should_not be_valid }
+      it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
+      it 'should have errors on key' do
+        subject.save
+        expect(subject).not_to be_persisted
+        expect(subject.errors[:key]).not_to be_empty
+      end
+    end
+
+    context 'when key is invalid' do
+      subject { build(:preference, key: :invalid_key, user: user) }
+
+      it { should_not be_valid }
+      it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
+    end
+
+    context 'when key is valid and value is nil' do
+      subject { build(:preference, key: Preference::DEFAULTS.keys.sample, user: user) }
+
+      it { should be_valid }
+      it { expect { subject.save! }.not_to raise_error }
+    end
+  end
+
   context 'class methods' do
     subject { Preference }
 
