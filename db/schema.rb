@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 5) do
+ActiveRecord::Schema[7.0].define(version: 7) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,28 @@ ActiveRecord::Schema[7.0].define(version: 5) do
     t.index ["parent_id"], name: "index_menu_categories_on_parent_id"
     t.index ["secret"], name: "index_menu_categories_on_secret"
     t.index ["secret_desc"], name: "index_menu_categories_on_secret_desc", where: "(secret_desc IS NOT NULL)"
+  end
+
+  create_table "menu_dishes", force: :cascade do |t|
+    t.text "status", null: false
+    t.integer "price", comment: "The price of the dish. Can be null or 0 some cases, for example when the dish is inside a category with a fixed price."
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "menu_dishes_in_categories", force: :cascade do |t|
+    t.bigint "menu_dish_id", null: false
+    t.bigint "menu_category_id", null: false
+    t.bigint "menu_visibility_id", null: false
+    t.integer "index", null: false, comment: "Index of the element in the list. Starts at 0."
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["index", "menu_category_id"], name: "index_menu_dishes_in_categories_on_index_and_menu_category_id", unique: true
+    t.index ["index"], name: "index_menu_dishes_in_categories_on_index"
+    t.index ["menu_category_id"], name: "index_menu_dishes_in_categories_on_menu_category_id"
+    t.index ["menu_dish_id"], name: "index_menu_dishes_in_categories_on_menu_dish_id"
+    t.index ["menu_visibility_id"], name: "index_menu_dishes_in_categories_on_menu_visibility_id"
   end
 
   create_table "menu_visibilities", force: :cascade do |t|

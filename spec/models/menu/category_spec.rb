@@ -47,6 +47,51 @@ RSpec.describe Menu::Category, type: :model do
       it { should allow_value(100).for(:price) }
       it { should_not allow_value(-1).for(:price) }
       it { should_not allow_value(-10).for(:price) }
+
+      context 'index' do
+        before { described_class.destroy_all }
+        it { should allow_value(nil).for(:index) }
+        it { should allow_value(0).for(:index) }
+        it { should allow_value(10).for(:index) }
+        it { should allow_value(100).for(:index) }
+
+        it { should_not allow_value(-1).for(:index) }
+        it { should_not allow_value(-10).for(:index) }
+
+        context 'two element with same index but different parent_id may exist.' do
+          let!(:parent) { create(:menu_category, index: 0) }
+          let!(:child) { create(:menu_category, parent: parent, index: 0) }
+
+          it { expect(parent).to be_valid }
+          it { expect(parent).to be_persisted }
+          it { expect(child).to be_valid }
+          it { expect(child).to be_persisted }
+          it { expect(child.index).to eq parent.index }
+          it { expect(child.parent_id).to eq parent.id }
+          it { expect(Menu::Category.count).to eq 2 }
+          it do
+            expect { child.remove_parent! }.not_to raise_error
+            expect(child.reload.parent_id).to be_nil
+            expect(child.reload.index).to eq 1
+            expect(parent.reload.index).to eq 0
+          end
+        end
+      end
+
+      context 'parent_id cannot be self' do
+        let(:category) { create(:menu_category) }
+        subject { category }
+
+        it { should be_valid }
+        it { should be_persisted }
+        context 'when saving' do
+          before { subject.parent_id = subject.id }
+
+          it { should_not be_valid }
+          it { expect(subject.save).to eq false }
+          it { expect{ subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
+        end
+      end
     end
 
     %i[secret secret_desc].each do |field|
@@ -123,22 +168,127 @@ RSpec.describe Menu::Category, type: :model do
   end
 
   context 'associations' do
+    before { allow_any_instance_of(Menu::Category).to receive(:assign_defaults).and_return(true) }
     it { should belong_to(:menu_visibility).dependent(:destroy) }
-    # it { should belong_to(:parent) }
-    context 'parent' do
+
+    context 'when deleted, should destroy all DishInCategory' do
+      let(:dish) { create(:menu_dish) }
+      let(:category) { create(:menu_category) }
+      let!(:dish_in_category) { create(:menu_dishes_in_category, menu_dish: dish, menu_category: category) }
+
+      subject { category }
+
+      it { should be_valid }
+      it { should be_persisted }
+      it { expect(dish.categories).to include(category) }
+      it { expect(category.dishes).to include(dish) }
+      it { expect(dish.categories.count).to eq 1 }
+      it { expect(category.dishes.count).to eq 1 }
+      it { expect { category.destroy! }.to change { Menu::DishesInCategory.count }.by(-1) }
+      it { expect { category.destroy! }.to change { Menu::Visibility.count }.by(-2) }
+      it { expect { category.destroy! }.to change { Menu::Dish.count }.by(0) }
+    end
+
+    context 'when trying to delete a "parent" category, should raise some error.' do
+      let(:parent) do
+        create(:menu_category, parent: create(:menu_category)).parent
+      end
+
+      subject { parent }
+
+      it { should be_valid }
+      it { should be_persisted }
+      it { should have_children }
+      it "should not allow do destroy a parent." do
+        expect { parent.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+      end
+
+      it 'should be able to destroy element if remove all children first.' do
+        parent.children.map { |c| c.update!(parent: nil) }
+        expect { parent.destroy! }.not_to raise_error
+      end
+    end
+
+    context 'when has parent' do
       subject { build(:menu_category, parent: build(:menu_category)) }
       it { should be_valid }
       it { expect(subject.save!).to be true }
       it { expect { subject.save! }.not_to raise_error }
     end
+
+    context "when hasn't parent" do
+      subject { build(:menu_category, parent: nil) }
+      it { should be_valid }
+      it { expect(subject.save!).to be true }
+      it { expect { subject.save! }.not_to raise_error }
+    end
+
+    context 'adding dishes with "="' do
+      subject { create(:menu_category) }
+      let(:dishes) { create_list(:menu_dish, 2) }
+
+      it { should be_valid }
+      it { should be_persisted }
+      it { expect(subject.dishes.count).to eq 0 }
+      it "dishes should not have any category" do
+        expect(dishes.map(&:categories).flatten.count).to eq 0
+      end
+
+      it "should work" do
+        expect { subject.dishes = dishes }.not_to raise_error
+        expect(subject.reload.dishes.count).to eq 2
+        expect(subject.dishes.map(&:id)).to match_array(dishes.map(&:id))
+        dishes.map(&:reload)
+        expect(dishes.map(&:categories).flatten.map(&:id).uniq).to eq [subject.id]
+      end
+    end
+
+    context 'adding dishes with "<<"' do
+      subject { create(:menu_category).tap { |cat| cat.dishes = create_list(:menu_dish, 2) } }
+      let(:dish) { build(:menu_dish) }
+
+      it { should be_valid }
+      it { should be_persisted }
+      it { expect(subject.dishes.count).to eq 2 }
+
+      it "should work" do
+        expect { subject.dishes << dish }.not_to raise_error
+        expect(subject.reload.dishes.count).to eq 3
+        expect(dish.categories.map(&:id).uniq).to eq [subject.id]
+      end
+    end
   end
 
   context 'instance methods' do
+    subject { build(:menu_category) }
+    it { should respond_to(:menu_visibility) }
+    it { should respond_to(:menu_visibility=) }
+    it { should respond_to(:visibility) }
+    it { should respond_to(:visibility=) }
+    it { should respond_to(:menu_visibility_id) }
+    it { should respond_to(:menu_visibility_id=) }
+    it { should respond_to(:visibility_id) }
+    it { should respond_to(:visibility_id=) }
+    it { should respond_to(:menu_dishes) }
+    it { should respond_to(:menu_dishes=) }
+    it { should respond_to(:dishes) }
+    it { should respond_to(:dishes=) }
+    it { should respond_to(:menu_dishes_in_categories) }
+    it { should respond_to(:menu_dishes_in_categories=) }
+
     context '#visibility should alias to menu_visibility' do
       subject { create(:menu_category) }
       it { should respond_to(:visibility) }
       it { should respond_to(:menu_visibility) }
       it { expect(subject.visibility).to eq subject.menu_visibility }
     end
+  end
+
+  context 'should define methods since valid statuses' do
+    subject { build(:menu_category) }
+    it { should respond_to(:active!) }
+    it { should respond_to(:active?) }
+
+    it { expect(described_class).to respond_to(:active) }
   end
 end
