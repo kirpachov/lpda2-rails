@@ -95,6 +95,24 @@ RSpec.describe Menu::Category, type: :model do
         expect(subject.errors[:secret].count).to be > 0
       end
     end
+
+    context 'should not be able to create two elements with same secret_desc' do
+      let(:original) { create(:menu_category, secret_desc: "secret-#{SecureRandom.hex(20)}") }
+      subject { Menu::Category.new(original.as_json(except: [:id, 'id'])) }
+
+      it { expect(original).to be_valid }
+      it { expect(original).to be_persisted }
+
+      it { expect(subject).not_to be_valid }
+      it { expect(subject).not_to be_persisted }
+      it { expect(subject.validate).to be false }
+      it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
+      it 'should have errors in :secret_desc field' do
+        subject.validate
+        expect(subject.errors[:secret_desc]).to be_a(Array)
+        expect(subject.errors[:secret_desc].count).to be > 0
+      end
+    end
   end
 
   context 'associations' do

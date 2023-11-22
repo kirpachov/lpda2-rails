@@ -2,9 +2,16 @@
 
 module Menu
   class Visibility < ApplicationRecord
+
+    # ##############################
+    # Validations
+    # ##############################
     validates :public_visible, inclusion: { in: [true, false] }
     validates :private_visible, inclusion: { in: [true, false] }
 
+    # ##############################
+    # Instance methods
+    # ##############################
     def private?
       private_visible == true
     end

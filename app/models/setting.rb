@@ -12,6 +12,9 @@ class Setting < ApplicationRecord
   validates_uniqueness_of :key, case_sensitive: false
   validates_inclusion_of :key, in: DEFAULTS.keys.map(&:to_s)
 
+  # ##############################
+  # Class methods
+  # ##############################
   class << self
     def all_hash
       all.map { |s| [s.key, (s.value || default(s.key)).to_s] }.to_h.with_indifferent_access
