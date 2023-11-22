@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 3) do
+ActiveRecord::Schema[7.0].define(version: 5) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "menu_categories", force: :cascade do |t|
+    t.text "status", null: false
+    t.integer "index", null: false
+    t.text "secret", null: false
+    t.text "secret_desc"
+    t.jsonb "other", default: {}, null: false
+    t.bigint "parent_id"
+    t.bigint "menu_visibility_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["index", "parent_id"], name: "index_menu_categories_on_index_and_parent_id", unique: true
+    t.index ["menu_visibility_id"], name: "index_menu_categories_on_menu_visibility_id"
+    t.index ["parent_id"], name: "index_menu_categories_on_parent_id"
+    t.index ["secret"], name: "index_menu_categories_on_secret"
+    t.index ["secret_desc"], name: "index_menu_categories_on_secret_desc", where: "(secret_desc IS NOT NULL)"
+  end
+
+  create_table "menu_visibilities", force: :cascade do |t|
+    t.boolean "public_visible", default: false, null: false
+    t.datetime "public_from", precision: nil
+    t.datetime "public_to", precision: nil
+    t.boolean "private_visible", default: false, null: false
+    t.datetime "private_from", precision: nil
+    t.datetime "private_to", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "preferences", force: :cascade do |t|
     t.text "key", null: false
@@ -49,5 +77,6 @@ ActiveRecord::Schema[7.0].define(version: 3) do
     t.index ["username"], name: "index_users_on_username", unique: true, where: "(username IS NOT NULL)"
   end
 
+  add_foreign_key "menu_categories", "menu_visibilities"
   add_foreign_key "preferences", "users"
 end
