@@ -40,6 +40,13 @@ RSpec.describe Menu::Category, type: :model do
       it { should validate_uniqueness_of(:secret_desc).case_insensitive.allow_nil }
 
       it { should_not allow_value(nil).for(:other) }
+
+      it { should allow_value(nil).for(:price) }
+      it { should allow_value(0).for(:price) }
+      it { should allow_value(10).for(:price) }
+      it { should allow_value(100).for(:price) }
+      it { should_not allow_value(-1).for(:price) }
+      it { should_not allow_value(-10).for(:price) }
     end
 
     %i[secret secret_desc].each do |field|

@@ -9,5 +9,6 @@ FactoryBot.define do
     other { {} }
     parent_id { nil }
     menu_visibility { build(:menu_visibility) }
+    price { nil }
   end
 end

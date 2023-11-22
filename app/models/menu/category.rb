@@ -22,6 +22,7 @@ module Menu
     validates :status, presence: true, inclusion: { in: VALID_STATUSES }
     validates :secret, presence: true, length: { minimum: SECRET_MIN_LENGTH }, uniqueness: { case_sensitive: false }, format: { multiline: true, with: /^[a-zA-Z0-9_\-]+$/ }
     validates :secret_desc, uniqueness: { case_sensitive: false }, allow_nil: true, format: { multiline: true, with: /^[a-zA-Z0-9_\-]+$/ }
+    validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validate :other_cannot_be_nil
     validate :parent_id_cannot_be_self # TODO test this vaidation
 

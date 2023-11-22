@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.0].define(version: 5) do
     t.text "secret", null: false
     t.text "secret_desc"
     t.jsonb "other", default: {}, null: false
+    t.float "price"
     t.bigint "parent_id"
     t.bigint "menu_visibility_id", null: false
     t.datetime "created_at", null: false
