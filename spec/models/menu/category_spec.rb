@@ -4,6 +4,13 @@ require 'rails_helper'
 
 RSpec.describe Menu::Category, type: :model do
 
+  context "can be translated" do
+    subject { create(:menu_category) }
+
+    include_examples MODEL_MOBILITY_SPEC, field: :name
+    include_examples MODEL_MOBILITY_SPEC, field: :description
+  end
+
   def valid_statuses
     Menu::Category::VALID_STATUSES
   end
@@ -89,7 +96,7 @@ RSpec.describe Menu::Category, type: :model do
 
           it { should_not be_valid }
           it { expect(subject.save).to eq false }
-          it { expect{ subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
+          it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         end
       end
     end

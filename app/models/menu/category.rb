@@ -6,6 +6,10 @@ module Menu
     # ##############################
     # Constants, modules
     # ##############################
+    extend Mobility
+    translates :name
+    translates :description
+
     VALID_STATUSES = %w[active].freeze
     SECRET_MIN_LENGTH = 8
 
@@ -56,7 +60,7 @@ module Menu
     end
 
     def assign_valid_index
-      self.index = Category.where(parent_id: parent_id).count
+      self.index = Category.where(parent_id: parent_id).order(index: :desc).first&.index.to_i + 1
     end
 
     def remove_parent!

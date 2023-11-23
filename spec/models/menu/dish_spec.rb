@@ -3,6 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe Menu::Dish, type: :model do
+
+  context "can be translated" do
+    subject { create(:menu_dish) }
+
+    include_examples MODEL_MOBILITY_SPEC, field: :name
+    include_examples MODEL_MOBILITY_SPEC, field: :description
+  end
+
   def valid_statuses
     Menu::Dish::VALID_STATUSES
   end
@@ -71,9 +79,9 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect(category.dishes).to include(dish) }
       it { expect(dish.categories.count).to eq 1 }
       it { expect(category.dishes.count).to eq 1 }
-      it { expect{ dish.destroy! }.to change{ Menu::DishesInCategory.count }.by(-1) }
-      it { expect{ dish.destroy! }.to change{ Menu::Visibility.count }.by(-1) }
-      it { expect{ dish.destroy! }.to change{ Menu::Category.count }.by(0) }
+      it { expect { dish.destroy! }.to change { Menu::DishesInCategory.count }.by(-1) }
+      it { expect { dish.destroy! }.to change { Menu::Visibility.count }.by(-1) }
+      it { expect { dish.destroy! }.to change { Menu::Category.count }.by(0) }
     end
   end
 

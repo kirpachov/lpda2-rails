@@ -154,6 +154,9 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     minitest (5.19.0)
+    mobility (1.2.9)
+      i18n (>= 0.6.10, < 2)
+      request_store (~> 1.0)
     msgpack (1.7.2)
     nenv (0.3.0)
     net-imap (0.3.7)
@@ -228,6 +231,8 @@ GEM
       connection_pool
     reline (0.3.7)
       io-console (~> 0.5)
+    request_store (1.5.1)
+      rack (>= 1.4)
     reverse_markdown (2.1.1)
       nokogiri
     rexml (3.2.6)
@@ -293,6 +298,7 @@ DEPENDENCIES
   guard-rspec (~> 4.7.3)
   guard-test (~> 2.0.8)
   launchy (~> 2.5.2)
+  mobility (~> 1.2.9)
   oj (~> 3.14.3)
   pg (~> 1.1)
   pry

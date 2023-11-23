@@ -41,7 +41,7 @@ module Menu
     end
 
     def assign_valid_index
-      self.index = self.class.where(category: category).count
+      self.index = self.class.where(category: category).order(index: :desc).first&.index.to_i + 1
     end
   end
 end

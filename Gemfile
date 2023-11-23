@@ -12,6 +12,8 @@ gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
 
+gem 'mobility', '~> 1.2.9'
+
 # gem 'exception_notification', '~> 4.5.0'
 # gem 'redis', '~> 4.3.1'
 # gem 'redis-namespace', '~> 1.8.2'

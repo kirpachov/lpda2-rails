@@ -6,6 +6,10 @@ module Menu
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
+    extend Mobility
+    translates :name
+    translates :description
+
     VALID_STATUSES = %w[active].freeze
 
     enum status: VALID_STATUSES.map{ |s| [s, s] }.to_h
