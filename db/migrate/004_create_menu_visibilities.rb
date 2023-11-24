@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateMenuVisibilities < ActiveRecord::Migration[7.0]
   def change
     create_table :menu_visibilities do |t|

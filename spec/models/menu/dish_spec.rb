@@ -50,6 +50,7 @@ RSpec.describe Menu::Dish, type: :model do
   context 'associations' do
     it { should have_many(:menu_dishes_in_categories) }
     it { should have_many(:menu_categories) }
+    it { expect(described_class.new).to respond_to(:categories) }
 
     context 'when trying to assign categories with "="' do
       subject { create(:menu_dish) }
@@ -82,6 +83,72 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect { dish.destroy! }.to change { Menu::DishesInCategory.count }.by(-1) }
       it { expect { dish.destroy! }.to change { Menu::Visibility.count }.by(-1) }
       it { expect { dish.destroy! }.to change { Menu::Category.count }.by(0) }
+    end
+
+    context 'has many ingredients' do
+      it { should have_many(:menu_ingredients_in_dishes) }
+      it { should have_many(:menu_ingredients).through(:menu_ingredients_in_dishes) }
+
+      it { expect(described_class.new).to respond_to(:ingredients) }
+
+      context 'when trying to assign ingredients with "="' do
+        subject { create(:menu_dish) }
+        let(:ingredient) { create(:menu_ingredient) }
+        it { should be_valid }
+        it { should be_persisted }
+        it { expect(subject.ingredients.count).to eq 0 }
+        it { expect(ingredient.dishes.count).to eq 0 }
+
+        it "should assign ingredient" do
+          subject.ingredients = [ingredient]
+          expect(subject.reload.ingredients.count).to eq 1
+          expect(ingredient.reload.dishes.count).to eq 1
+        end
+      end
+    end
+
+    context 'has many allergens' do
+      it { should have_many(:menu_allergens_in_dishes) }
+      it { should have_many(:menu_allergens).through(:menu_allergens_in_dishes) }
+
+      it { expect(described_class.new).to respond_to(:allergens) }
+
+      context 'when trying to assign allergens with "="' do
+        subject { create(:menu_dish) }
+        let(:allergen) { create(:menu_allergen) }
+        it { should be_valid }
+        it { should be_persisted }
+        it { expect(subject.allergens.count).to eq 0 }
+        it { expect(allergen.dishes.count).to eq 0 }
+
+        it "should assign allergen" do
+          subject.allergens = [allergen]
+          expect(subject.reload.allergens.count).to eq 1
+          expect(allergen.reload.dishes.count).to eq 1
+        end
+      end
+    end
+
+    context 'has many tags' do
+      it { should have_many(:menu_tags_in_dishes) }
+      it { should have_many(:menu_tags).through(:menu_tags_in_dishes) }
+
+      it { expect(described_class.new).to respond_to(:tags) }
+
+      context 'when trying to assign tags with "="' do
+        subject { create(:menu_dish) }
+        let(:tag) { create(:menu_tag) }
+        it { should be_valid }
+        it { should be_persisted }
+        it { expect(subject.tags.count).to eq 0 }
+        it { expect(tag.dishes.count).to eq 0 }
+
+        it "should assign tag" do
+          subject.tags = [tag]
+          expect(subject.reload.tags.count).to eq 1
+          expect(tag.reload.dishes.count).to eq 1
+        end
+      end
     end
   end
 

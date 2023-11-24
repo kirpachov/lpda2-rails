@@ -10,9 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_23_220050) do
+ActiveRecord::Schema[7.0].define(version: 15) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "menu_allergens", force: :cascade do |t|
+    t.text "status", null: false
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "menu_allergens_in_dishes", force: :cascade do |t|
+    t.bigint "menu_dish_id", null: false
+    t.bigint "menu_allergen_id", null: false
+    t.integer "index", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_allergen_id"], name: "index_menu_allergens_in_dishes_on_menu_allergen_id"
+    t.index ["menu_dish_id", "index"], name: "index_menu_allergens_in_dishes_on_menu_dish_id_and_index", unique: true
+    t.index ["menu_dish_id", "menu_allergen_id"], name: "index_menu_allergens_in_dishes_on_dish_and_allergen", unique: true
+    t.index ["menu_dish_id"], name: "index_menu_allergens_in_dishes_on_menu_dish_id"
+  end
 
   create_table "menu_categories", force: :cascade do |t|
     t.text "status", null: false
@@ -52,6 +71,45 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_23_220050) do
     t.index ["menu_category_id"], name: "index_menu_dishes_in_categories_on_menu_category_id"
     t.index ["menu_dish_id"], name: "index_menu_dishes_in_categories_on_menu_dish_id"
     t.index ["menu_visibility_id"], name: "index_menu_dishes_in_categories_on_menu_visibility_id"
+  end
+
+  create_table "menu_ingredients", force: :cascade do |t|
+    t.text "status", null: false
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "menu_ingredients_in_dishes", force: :cascade do |t|
+    t.bigint "menu_dish_id", null: false
+    t.bigint "menu_ingredient_id", null: false
+    t.integer "index", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_dish_id", "index"], name: "index_menu_ingredients_in_dishes_on_menu_dish_id_and_index", unique: true
+    t.index ["menu_dish_id", "menu_ingredient_id"], name: "index_menu_ingredients_in_dishes_on_dish_and_ingredient", unique: true
+    t.index ["menu_dish_id"], name: "index_menu_ingredients_in_dishes_on_menu_dish_id"
+    t.index ["menu_ingredient_id"], name: "index_menu_ingredients_in_dishes_on_menu_ingredient_id"
+  end
+
+  create_table "menu_tags", force: :cascade do |t|
+    t.text "color", null: false
+    t.text "status", null: false
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "menu_tags_in_dishes", force: :cascade do |t|
+    t.bigint "menu_dish_id", null: false
+    t.bigint "menu_tag_id", null: false
+    t.integer "index", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_dish_id", "index"], name: "index_menu_tags_in_dishes_on_menu_dish_id_and_index", unique: true
+    t.index ["menu_dish_id", "menu_tag_id"], name: "index_menu_tags_in_dishes_on_dish_and_tag", unique: true
+    t.index ["menu_dish_id"], name: "index_menu_tags_in_dishes_on_menu_dish_id"
+    t.index ["menu_tag_id"], name: "index_menu_tags_in_dishes_on_menu_tag_id"
   end
 
   create_table "menu_visibilities", force: :cascade do |t|
@@ -125,6 +183,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_23_220050) do
     t.index ["username"], name: "index_users_on_username", unique: true, where: "(username IS NOT NULL)"
   end
 
+  add_foreign_key "menu_allergens_in_dishes", "menu_allergens"
+  add_foreign_key "menu_allergens_in_dishes", "menu_dishes"
   add_foreign_key "menu_categories", "menu_visibilities"
+  add_foreign_key "menu_ingredients_in_dishes", "menu_dishes"
+  add_foreign_key "menu_ingredients_in_dishes", "menu_ingredients"
+  add_foreign_key "menu_tags_in_dishes", "menu_dishes"
+  add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
 end
