@@ -10,9 +10,61 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 15) do
+ActiveRecord::Schema[7.0].define(version: 18) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "image_to_records", force: :cascade do |t|
+    t.bigint "image_id", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["image_id"], name: "index_image_to_records_on_image_id"
+    t.index ["record_type", "record_id", "image_id"], name: "index_image_to_records_on_record_and_image", unique: true
+    t.index ["record_type", "record_id"], name: "index_image_to_records_on_record"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.text "filename", null: false
+    t.text "status", null: false
+    t.text "tag", comment: "Internal tag for image. A tag may be 'blur', 'thumbnail', ... May be nil when is original image."
+    t.bigint "original_id"
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["filename"], name: "index_images_on_filename"
+    t.index ["original_id"], name: "index_images_on_original_id"
+    t.index ["tag", "original_id"], name: "index_images_on_tag_and_original_id", unique: true, where: "(original_id IS NOT NULL)"
+  end
 
   create_table "menu_allergens", force: :cascade do |t|
     t.text "status", null: false
@@ -183,6 +235,10 @@ ActiveRecord::Schema[7.0].define(version: 15) do
     t.index ["username"], name: "index_users_on_username", unique: true, where: "(username IS NOT NULL)"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "image_to_records", "images"
+  add_foreign_key "images", "images", column: "original_id"
   add_foreign_key "menu_allergens_in_dishes", "menu_allergens"
   add_foreign_key "menu_allergens_in_dishes", "menu_dishes"
   add_foreign_key "menu_categories", "menu_visibilities"

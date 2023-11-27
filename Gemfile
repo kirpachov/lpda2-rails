@@ -14,6 +14,12 @@ gem "puma", "~> 5.0"
 
 gem 'mobility', '~> 1.2.9'
 
+gem "image_processing", "~> 1.12.2"
+
+# May need to run:
+# sudo apt install libglib2.0-0 libglib2.0-dev libpoppler-glib8 libvips libvips-dev
+gem "ruby-vips", '~> 2.2.0'
+
 # gem 'exception_notification', '~> 4.5.0'
 # gem 'redis', '~> 4.3.1'
 # gem 'redis-namespace', '~> 1.8.2'
