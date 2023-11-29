@@ -39,6 +39,7 @@ class Image < ApplicationRecord
   # Scopes
   # ################################
   scope :original, -> { where(original_id: nil) }
+  scope :not_original, -> { where.not(original_id: nil) }
   scope :visible, -> { where(status: 'active') }
   scope :with_attached_image, -> { joins(:attached_image_attachment).where.not(attached_image_attachment: { id: nil }) }
 
@@ -66,6 +67,12 @@ class Image < ApplicationRecord
 
   def assign_defaults
     self.status ||= 'active'
+  end
+
+  def url
+    return nil unless attached_image.attached?
+
+    Rails.application.routes.url_helpers.rails_blob_url(attached_image, host: Config.base_url)
   end
 
   def status=(value)

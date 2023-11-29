@@ -138,6 +138,22 @@ RSpec.describe Image, type: :model do
         it { expect(subject.blur_image).to be nil }
       end
     end
+
+    context '#url' do
+      let(:image) { create(:image, :with_attached_image) }
+      subject { image }
+      it { should be_valid }
+      it { should be_persisted }
+      it { should be_is_original }
+      it { expect(subject).to respond_to(:url) }
+
+      context 'after run' do
+        subject { image.url }
+
+        it { should be_a(String) }
+        it { should include(Config.base_url) }
+      end
+    end
   end
 
   context 'class methods' do
@@ -153,6 +169,23 @@ RSpec.describe Image, type: :model do
       it { expect(described_class.count).to eq 3 }
       it { subject.each { |item| expect(item).to be_is_original } }
       it { expect(subject.pluck(:original_id).uniq).to eq [nil] }
+    end
+
+    context 'scope .not_original should return all items where original_id is not null' do
+      it { expect(described_class).to respond_to(:not_original) }
+      context 'when some items exist' do
+        before do
+          create(:image, :with_attached_image)
+          create(:image, :with_attached_image, :with_original)
+        end
+
+        subject { described_class.not_original }
+        it { expect(subject.to_sql).to include('WHERE "images"."original_id" IS NOT NULL') }
+        it { expect(subject.count).to eq(1) }
+        it { expect(described_class.count).to eq 3 }
+        it { subject.each { |item| expect(item).not_to be_is_original } }
+        it { expect(subject.pluck(:original_id).uniq).not_to eq [nil] }
+      end
     end
 
     context 'scope .visible should exclude deleted items' do

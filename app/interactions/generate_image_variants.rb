@@ -18,7 +18,8 @@ class GenerateImageVariants < ActiveInteraction::Base
   end
 
   def blur
-    ImageProcessing::Vips.source(image.file).saver(quality: 1).resize_to_limit(10, 10).call
+    # .saver(quality: 1)
+    ImageProcessing::Vips.source(image.file).resize_to_limit(50, 50).call
   end
 
   private

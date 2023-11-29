@@ -13,3 +13,4 @@ end
 
 image = Image.create!(filename: 'cat.jpeg')
 image.attached_image.attach(io:  File.open(Rails.root.join('spec', 'fixtures', 'files', 'cat.jpeg')), filename: 'cat.jpeg')
+GenerateImageVariants.run!(image: image)
