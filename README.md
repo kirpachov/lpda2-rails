@@ -1,14 +1,6 @@
 # La Porta d'Acqua v2 - Rails
 
-This is the backend of laportadacqua.com.
+[![Ruby on Rails CI](https://github.com/kirpachov/lpda2-rails/actions/workflows/rubyonrails.yml/badge.svg?branch=develop)](https://github.com/kirpachov/lpda2-rails/actions/workflows/rubyonrails.yml)
 
-It's written in Ruby On Rails.
+Backend in Ruby On Rails per la seconda versione del sito laportadacqua.com.
 
-I'm working with ruby 3.0.0.
-
-I'm also using:
-- Postgresql
-- Sidekiq + Redis
-- RSpec
-- ActiveInteractions
-- Many other libraries...
