@@ -15,6 +15,18 @@ module Lpda2
 
     config.time_zone = 'UTC'
 
+    config.generators do |generate|
+      generate.test_framework :rspec,
+                              fixtures: true,
+                              view_specs: false,
+                              helper_specs: true,
+                              routing_specs: true,
+                              controller_specs: true,
+                              request_specs: false
+
+      generate.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
+
     # config.eager_load_paths << Rails.root.join('lib')
     # config.middleware.use ActionDispatch::Cookies
     # config.session_store :cookie_store, key: '_interslice_session'
