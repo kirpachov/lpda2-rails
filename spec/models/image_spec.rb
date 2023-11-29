@@ -135,7 +135,7 @@ RSpec.describe Image, type: :model do
         subject { create(:image, :with_attached_image) }
         it { expect(subject.children).to be_empty }
         it { expect { subject.blur_image }.to change { subject.children.count }.by(0) }
-        it { expect(subject.blur_image).not_to be nil }
+        it { expect(subject.blur_image).to be nil }
       end
     end
   end
