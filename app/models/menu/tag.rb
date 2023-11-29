@@ -7,6 +7,7 @@ module Menu
     # Constants, settings, modules, et...
     # ##############################
     VALID_STATUSES = %w[active deleted].freeze
+    include HasImageAttached
 
     extend Mobility
     translates :name

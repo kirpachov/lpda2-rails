@@ -6,6 +6,7 @@ module Menu
     # ##############################
     # Constants, modules
     # ##############################
+    include HasImageAttached
     extend Mobility
     translates :name
     translates :description
@@ -13,7 +14,7 @@ module Menu
     VALID_STATUSES = %w[active].freeze
     SECRET_MIN_LENGTH = 8
 
-    enum status: VALID_STATUSES.map{ |s| [s, s] }.to_h
+    enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
 
     # ##############################
     # Associations
@@ -23,7 +24,7 @@ module Menu
     alias_attribute :visibility, :menu_visibility
 
     belongs_to :parent, class_name: "Menu::Category", optional: true
-    has_many :children, class_name: "Menu::Category", foreign_key: :parent_id#, dependent: :destroy
+    has_many :children, class_name: "Menu::Category", foreign_key: :parent_id #, dependent: :destroy
 
     has_many :menu_dishes_in_categories, class_name: 'Menu::DishesInCategory', foreign_key: :menu_category_id
 

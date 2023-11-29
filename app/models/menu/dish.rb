@@ -6,6 +6,7 @@ module Menu
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
+    include HasImageAttached
     extend Mobility
     translates :name
     translates :description

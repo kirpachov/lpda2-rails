@@ -11,6 +11,12 @@ RSpec.describe Menu::Dish, type: :model do
     include_examples MODEL_MOBILITY_SPEC, field: :description
   end
 
+  context 'has image' do
+    subject { create(:menu_dish) }
+
+    include_examples HAS_IMAGE_HELPER
+  end
+
   def valid_statuses
     Menu::Dish::VALID_STATUSES
   end

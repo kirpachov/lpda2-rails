@@ -7,6 +7,19 @@ RSpec.describe Menu::Tag, type: :model do
     %w[active deleted]
   end
 
+  context 'can be translated' do
+    subject { create(:menu_tag) }
+
+    include_examples MODEL_MOBILITY_SPEC, field: :name
+    include_examples MODEL_MOBILITY_SPEC, field: :description
+  end
+
+  context 'has image' do
+    subject { create(:menu_tag) }
+
+    include_examples HAS_IMAGE_HELPER
+  end
+
   context 'has valid factory' do
     subject { build(:menu_tag) }
     it { should be_valid }
@@ -18,13 +31,6 @@ RSpec.describe Menu::Tag, type: :model do
       it { should be_valid }
       it { should be_persisted }
     end
-  end
-
-  context 'can be translated' do
-    subject { create(:menu_tag) }
-
-    include_examples MODEL_MOBILITY_SPEC, field: :name
-    include_examples MODEL_MOBILITY_SPEC, field: :description
   end
 
   context 'validations' do
