@@ -7,8 +7,8 @@ RSpec.describe Menu::Category, type: :model do
   context "can be translated" do
     subject { create(:menu_category) }
 
-    include_examples MODEL_MOBILITY_SPEC, field: :name
-    include_examples MODEL_MOBILITY_SPEC, field: :description
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :name
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :description
   end
 
   context 'has image' do

@@ -8,6 +8,7 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.text      :username,        null: true, index: { unique: true, where: 'username IS NOT NULL' }
       t.text      :email,           null: false, index: { unique: true }
       t.text      :password_digest, null: false
+      t.text      :status,          null: false
       t.timestamp :root_at
       t.integer   :failed_attempts, default: 0, null: false
       t.text      :enc_otp_key

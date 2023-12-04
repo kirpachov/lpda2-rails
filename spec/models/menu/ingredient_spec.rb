@@ -10,8 +10,8 @@ RSpec.describe Menu::Ingredient, type: :model do
   context 'can be translated' do
     subject { create(:menu_ingredient) }
 
-    include_examples MODEL_MOBILITY_SPEC, field: :name
-    include_examples MODEL_MOBILITY_SPEC, field: :description
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :name
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :description
   end
 
   context 'has image' do

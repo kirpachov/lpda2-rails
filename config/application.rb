@@ -27,7 +27,7 @@ module Lpda2
       generate.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
-    # config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('lib')
     # config.middleware.use ActionDispatch::Cookies
     # config.session_store :cookie_store, key: '_interslice_session'
     # config.middleware.use config.session_store, config.session_options

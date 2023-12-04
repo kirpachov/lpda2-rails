@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 18) do
+ActiveRecord::Schema[7.0].define(version: 19) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -211,6 +211,16 @@ ActiveRecord::Schema[7.0].define(version: 18) do
     t.index ["user_id"], name: "index_preferences_on_user_id"
   end
 
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.text "secret", null: false
+    t.datetime "expires_at", precision: nil, null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["secret"], name: "index_refresh_tokens_on_secret"
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
+
   create_table "settings", force: :cascade do |t|
     t.text "key", null: false
     t.text "value"
@@ -225,6 +235,7 @@ ActiveRecord::Schema[7.0].define(version: 18) do
     t.text "username"
     t.text "email", null: false
     t.text "password_digest", null: false
+    t.text "status", null: false
     t.datetime "root_at", precision: nil
     t.integer "failed_attempts", default: 0, null: false
     t.text "enc_otp_key"
@@ -247,4 +258,5 @@ ActiveRecord::Schema[7.0].define(version: 18) do
   add_foreign_key "menu_tags_in_dishes", "menu_dishes"
   add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
+  add_foreign_key "refresh_tokens", "users"
 end

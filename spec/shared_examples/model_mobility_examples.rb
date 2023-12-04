@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-MODEL_MOBILITY_SPEC = 'MODEL_MOBILITY_SPEC'
+MODEL_MOBILITY_EXAMPLES = 'MODEL_MOBILITY_EXAMPLES'
 
-RSpec.shared_examples MODEL_MOBILITY_SPEC do |args = {}|
+RSpec.shared_examples MODEL_MOBILITY_EXAMPLES do |args = {}|
   it { should respond_to(:text_translations) }
   it { should respond_to(args[:field]) }
   it { should respond_to("#{args[:field]}_backend") }

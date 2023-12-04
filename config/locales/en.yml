@@ -1,33 +1,253 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   "true": "foo"
-#
-# To learn more, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
-
 en:
-  hello: "Hello world"
+  record_not_found: "Unable to find \"%{model}\" with 'id'=%{id}"
+
+  activerecord:
+    models:
+      panel/invite_token:
+        one: "Invite Token"
+        other: "Invite Token"
+      map_model:
+        one: "Map Model"
+        other: "Map Models"
+
+    attributes:
+      map_model:
+        name: "Name"
+
+    errors:
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
+        restrict_dependent_destroy:
+          has_one: "The record cannot be deleted because there is a dependent %{record}"
+          has_many: "The record cannot be deleted because there are %{record} dependents"
+  date:
+    abbr_day_names:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    abbr_month_names:
+    -
+    - jan
+    - feb
+    - mar
+    - apr
+    - may
+    - jun
+    - jul
+    - aug
+    - sep
+    - oct
+    - nov
+    - dec
+    day_names:
+    - sunday
+    - monday
+    - tuesday
+    - wednesday
+    - thursday
+    - friday
+    - saturday
+    formats:
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    -
+    - january
+    - february
+    - march
+    - april
+    - may
+    - june
+    - july
+    - august
+    - september
+    - october
+    - november
+    - december
+    order:
+    - :day
+    - :month
+    - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "about an hour"
+        other: "about %{count} hours"
+      about_x_months:
+        one: "about a month"
+        other: "about %{count} months"
+      about_x_years:
+        one: "about a year"
+        other: "about %{count} years"
+      almost_x_years:
+        one: "almost 1 year"
+        other: "almost %{count} years"
+      half_a_minute: "half a minute"
+      less_than_x_seconds:
+        one: "less than a second"
+        other: "less than %{count} seconds"
+      less_than_x_minutes:
+        one: "less than a minute"
+        other: "less than %{count} minutes"
+      over_x_years:
+        one: "over a year"
+        other: "over %{count} years"
+      x_seconds:
+        one: "1 second"
+        other: "%{count} seconds"
+      x_minutes:
+        one: "1 minute"
+        other: "%{count} minutes"
+      x_days:
+        one: "1 day"
+        other: "%{count} days"
+      x_months:
+        one: "1 month"
+        other: "%{count} months"
+      x_years:
+        one: "1 year"
+        other: "%{count} years"
+    prompts:
+      second: Seconds
+      minute: Minute
+      hour: Hour
+      day: Day
+      month: Month
+      year: Year
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      request_401: "Unauthorized. Please login."
+      invalid_email_or_password: "Email or password invalid"
+      account_tmp_locked: "Your account is temporarily locked. Please try again later."
+      incorrect_param_type: "Parameter '%{param_name}' should be of type '%{expected}', but it is of type '%{got}'"
+      accepted: "must be accepted"
+      blank: "can't be blank"
+      confirmation: "doesn't match %{attribute}"
+      empty: "can't be empty"
+      equal_to: "must be equal to %{count}"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
+      invalid: "is invalid"
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      not_a_number: "is not a number"
+      not_an_integer: "must be an integer"
+      odd: "must be odd"
+      other_than: "must be other than %{count}"
+      present: "must be present"
+      required: "is required"
+      taken: "has already been taken"
+      too_long:
+        one: "is too long (maximum is 1 character)"
+        other: "is too long (maximum is %{count} characters)"
+      too_short:
+        one: "is too short (minimum is 1 character)"
+        other: "is too short (minimum is %{count} characters)"
+      wrong_length:
+        one: "is the wrong length (should be 1 character)"
+        other: "is the wrong length (should be %{count} characters)"
+      account_deleted: "Your account has been deleted."
+      too_failed_attempts: "Your account has been temporarily locked due to too many failed login attempts. Please try again later."
+    template:
+      body: 'Please review the following fields:'
+      header:
+        one: 'Could not save this %{model}: 1 error'
+        other: 'Could not save this %{model}: %{count} errors.'
+  helpers:
+    select:
+      prompt: "Select..."
+    submit:
+      create: "Create %{model}"
+      submit: "Submit %{model}"
+      update: "Update %{model}"
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "€"
+    format:
+      delimiter: "."
+      precision: 2
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: "Billion"
+          million: "Million"
+          quadrillion: "Quadrillion"
+          thousand: "Thousand"
+          trillion: "Trillion"
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: "Byte"
+            other: "Bytes"
+          gb: "GB"
+          kb: "KB"
+          mb: "MB"
+          tb: "TB"
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: " and "
+      two_words_connector: " and "
+      words_connector: ", "
+  time:
+    am: am
+    formats:
+      default: "%a, %b %d, %Y, %I:%M:%S %p %z"
+      long: "%B %d, %Y %I:%M %p"
+      short: "%b %d %I:%M %p"
+    pm: pm
+  welcome: "Welcome"
+  mail:
+    welcome_email:
+      subject: "Welcome to %{app_name}"
+    welcome_to_app_fullname: "Welcome to %{app_name}, %{fullname}"
+    welcome_to_app_body: "An account has been created for you on %{site_url}!"
+    goodbye: "Best regards"
+    team_name: "%{app_name} Team"
+    if_button_does_not_work_copy_and_paste_above: "If the button doesn't work, copy and paste the link below into a browser"
+    verification_code: "Verification Code"
+    verification_code_requested_for_this_email: "A verification code has been requested for this email address."
+    your_verification_code_is: "Your verification code is:"
+  set_password: "Set Password"
+  login: "Log In"
+  if_password_unknown_reset: "If you don't know your account password, you can set it within the platform!"
+  to_login_copy_this_link_in_browser: "You can log in by copying the link below into a browser"
+  users:
+    one: "User"
+    many: "Users"
+  user:
+    one: "User"
+    many: "Users"

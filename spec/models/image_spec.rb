@@ -16,8 +16,8 @@ RSpec.describe Image, type: :model do
   context 'can be translated' do
     subject { create(:image) }
 
-    include_examples MODEL_MOBILITY_SPEC, field: :title
-    include_examples MODEL_MOBILITY_SPEC, field: :description
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :title
+    include_examples MODEL_MOBILITY_EXAMPLES, field: :description
   end
 
   context 'associations' do

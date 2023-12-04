@@ -2,7 +2,7 @@
 
 CONTROLLER_UTILS_CONTEXT = 'CONTROLLER_UTILS_CONTEXT'
 
-RSpec.shared_context CONTROLLER_UTILS_CONTEXT do
+RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
   def parsed_response_body
     json = response.body.to_s.valid_json? ? JSON.parse(response.body) : {}
     json.is_a?(Hash) ? json.with_indifferent_access : json

@@ -1,5 +1,9 @@
 default: &default
   base_url: "localhost:3050"
+
+  # In seconds.
+  temporary_block_duration: 600
+
   # name: AppName
   # admin_name: AdminName
   # admin_email: admin@email.net

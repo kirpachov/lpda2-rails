@@ -57,6 +57,8 @@ GEM
     activerecord (7.0.6)
       activemodel (= 7.0.6)
       activesupport (= 7.0.6)
+    activerecord-import (1.5.1)
+      activerecord (>= 4.2)
     activestorage (7.0.6)
       actionpack (= 7.0.6)
       activejob (= 7.0.6)
@@ -139,6 +141,7 @@ GEM
     io-console (0.6.0)
     irb (1.7.4)
       reline (>= 0.3.6)
+    jwt (2.7.1)
     launchy (2.5.2)
       addressable (~> 2.8)
     listen (3.8.0)
@@ -272,6 +275,7 @@ GEM
       redis (>= 4.2.0)
     test-unit (3.6.1)
       power_assert
+    text-table (1.2.4)
     thor (1.2.2)
     timeout (0.4.0)
     tzinfo (2.0.6)
@@ -291,6 +295,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_interaction (~> 5.2.0)
+  activerecord-import (~> 1.5.1)
   appmap (~> 0.99.4)
   bcrypt (~> 3.1.19)
   bootsnap
@@ -304,6 +309,7 @@ DEPENDENCIES
   guard-rspec (~> 4.7.3)
   guard-test (~> 2.0.8)
   image_processing (~> 1.12.2)
+  jwt (~> 2.7.1)
   launchy (~> 2.5.2)
   mobility (~> 1.2.9)
   oj (~> 3.14.3)
@@ -317,12 +323,13 @@ DEPENDENCIES
   ruby-vips (~> 2.2.0)
   shoulda-matchers (~> 5.2.0)
   sidekiq (~> 6.2.1)
+  text-table (~> 1.2.4)
   tzinfo-data
   webmock (~> 3.18.1)
   will_paginate (~> 3.3.0)
 
 RUBY VERSION
-   ruby 3.0.0p0
+   ruby 3.1.3p185
 
 BUNDLED WITH
    2.4.18

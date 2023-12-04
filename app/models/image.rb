@@ -57,6 +57,10 @@ class Image < ApplicationRecord
     end
   end
 
+  def full_json
+    as_json.merge(url:)
+  end
+
   def generate_image_variants!(options = {})
     GenerateImageVariants.run!(options.merge(image: self))
   end

@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.0.0"
+ruby "3.1.3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.6"
@@ -13,6 +13,9 @@ gem "pg", "~> 1.1"
 gem "puma", "~> 5.0"
 
 gem 'mobility', '~> 1.2.9'
+
+gem 'activerecord-import', '~> 1.5.1'
+gem 'jwt', '~> 2.7.1'
 
 gem "image_processing", "~> 1.12.2"
 
@@ -39,7 +42,7 @@ gem 'will_paginate', '~> 3.3.0'
 gem 'sidekiq', '~> 6.2.1'
 gem 'active_interaction', '~> 5.2.0'
 
-# gem 'text-table', '~> 1.2.4'
+gem 'text-table', '~> 1.2.4'
 
 gem 'oj', '~> 3.14.3'
 

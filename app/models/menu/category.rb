@@ -50,11 +50,16 @@ module Menu
     before_destroy :check_if_has_children
 
     # ##############################
+    # Scopes
+    # ##############################
+    scope :visible, -> { where(status: %w[active]) }
+
+    # ##############################
     # Instance methods
     # ##############################
     def assign_defaults
       self.status = 'active' if status.blank?
-      assign_valid_index if index.nil?
+      assign_valid_index if index.to_i.zero?
       self.secret = GenToken.for!(self.class, :secret) if secret.blank?
       self.other = {} if other.nil?
       self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil?

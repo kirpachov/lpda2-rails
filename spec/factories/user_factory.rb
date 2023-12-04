@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :user do
     email { generate(:user_email) }
+    status { 'active' }
   end
 
   sequence :user_email do |n|
