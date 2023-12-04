@@ -1,6 +1,10 @@
 Mobility.configure do
   # PLUGINS
   plugins do
+
+    # https://github.com/shioyama/mobility-ransack
+    ransack
+
     # Backend
     #
     # Sets the default backend to use in models. This can be overridden in models

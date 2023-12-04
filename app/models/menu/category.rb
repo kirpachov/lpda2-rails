@@ -55,6 +55,18 @@ module Menu
     scope :visible, -> { where(status: %w[active]) }
 
     # ##############################
+    # Class methods
+    # ##############################
+    class << self
+      def filter_by_query(query)
+        return all unless query.present?
+
+        where(id: ransack(name_cont: query).result.select(:id)
+        ).or(where(id: ransack(description_cont: query).result.select(:id)))
+      end
+    end
+
+    # ##############################
     # Instance methods
     # ##############################
     def assign_defaults

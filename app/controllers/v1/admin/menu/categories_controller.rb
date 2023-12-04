@@ -51,16 +51,10 @@ module V1
           name: item.name,
           description: item.description,
           visibility: item.visibility.as_json,
-          images: item.images.map(&:full_json)
+          images: item.images.map(&:full_json),
+          # parent: item.parent ? full_json(item.parent) : nil
+          parent: item.parent&.as_json
         )
-        # item.as_json.merge(
-        #   image_url: item.image_url,
-        #   provider: item.provider.as_json,
-        #   stats: item.stats.as_json,
-        #   values: item.values,
-        #   value_type: item.value_type,
-        #   image: item.image&.as_json
-        # )
       end
     end
   end

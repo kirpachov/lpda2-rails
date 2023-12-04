@@ -35,6 +35,12 @@ class ApplicationController < ActionController::API
       next_page: resources.next_page,
       total_pages: resources.total_pages,
       total_count: resources.total_entries
-    }
+    }.merge(
+      params: params.except(:controller, :action, :format, :page, :per_page, :offset).permit!.to_h.transform_values do |value|
+        next value.to_i if value.is_a?(String) && value.match?(/^\d+$/) && value.to_i.to_s == value
+
+        value
+      end
+    )
   end
 end

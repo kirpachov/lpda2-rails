@@ -141,6 +141,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
     context '(authenticated)' do
       before { authenticate_request }
+
       context 'returned items should be ordered by :index by default' do
         before { create_menu_categories(2) }
         it { expect(Menu::Category.count).to eq 2 }
@@ -208,6 +209,139 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
                     ) }
 
         it { expect(subject[:images].count).to eq 2 }
+      end
+
+      context 'when filtering by parent_id' do
+        before do
+          @parent = create(:menu_category)
+          create_list(:menu_category, 2, parent: @parent)
+          create_list(:menu_category, 2)
+        end
+
+        context 'checking test data' do
+          it { expect(Menu::Category.count).to eq 2 + 2 + 1 }
+          it { expect(Menu::Category.where(parent_id: nil).count).to eq 2 + 1 }
+          it { expect(Menu::Category.where.not(parent_id: nil).count).to eq 2 }
+        end
+
+        context '<id>: after request' do
+          before { req(parent_id: @parent.id) }
+
+          context 'response' do
+            subject { parsed_response_body[:items] }
+            it { expect(subject.count).to eq 2 }
+            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 2 }
+            it { expect(Menu::Category.where(id: subject.map { |j| j[:id] }.uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id)) }
+          end
+
+          context 'metadata' do
+            subject { parsed_response_body[:metadata] }
+            it { expect(subject[:total_count]).to eq 2 }
+            it { expect(subject[:current_page]).to eq 1 }
+            it { expect(subject[:per_page]).to eq 10 }
+            it { expect(subject[:params]).to be_a(Hash) }
+            it { expect(subject[:params]).to include('parent_id' => @parent.id) }
+          end
+        end
+
+        context 'nil: after request' do
+          before { req(parent_id: nil) }
+
+          context 'response' do
+            subject { parsed_response_body[:items] }
+            it { expect(subject.count).to eq 3 }
+            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 3 }
+            it { expect(Menu::Category.where(id: subject.map { |j| j[:id] }.uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id)) }
+          end
+
+          context 'metadata' do
+            subject { parsed_response_body[:metadata] }
+            it { expect(subject[:total_count]).to eq 3 }
+            it { expect(subject[:current_page]).to eq 1 }
+            it { expect(subject[:per_page]).to eq 10 }
+            it { expect(subject[:params]).to be_a(Hash) }
+            it { expect(subject[:params]).to include('parent_id' => '') }
+          end
+        end
+      end
+
+      context 'when filtering by query' do
+        before do
+          # visibility = create(:menu_visibility)
+          items = 5.times.map do |i|
+            create(:menu_category, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
+          end
+
+          # Menu::Category.import! items, validate: false
+        end
+
+        context 'checking test data' do
+          it { expect(Menu::Category.count).to eq 5 }
+          it { expect(Menu::Category.all).to all(be_valid) }
+          it { expect(Menu::Category.all.map(&:name)).to all(be_present) }
+          it { expect(Menu::Category.all.map(&:name)).to all(be_a String) }
+          it { expect(Menu::Category.all.map(&:description)).to all(be_present) }
+          it { expect(Menu::Category.all.map(&:description)).to all(be_a String) }
+        end
+
+        context "when querying with {query: ''} should return all items" do
+          subject do
+            req(query: '')
+            parsed_response_body[:items]
+          end
+
+          it { expect(subject.count).to eq 5 }
+          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+        end
+
+        context "when querying with {query: nil} should return all items" do
+          subject do
+            req(query: nil)
+            parsed_response_body[:items]
+          end
+
+          it { expect(subject.count).to eq 5 }
+          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+        end
+
+        context "when querying with {query: 'Category #1'} should return just the first item" do
+          subject do
+            req(query: 'Category #1')
+            parsed_response_body[:items]
+          end
+
+          it "banana" do
+            expect(true).to eq true
+          end
+
+          it { expect(subject.count).to eq 1 }
+          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.first[:name]).to eq 'Category #1!!!' }
+        end
+
+        context "when querying with {query: 'Description for #1'} should return just the first item" do
+          subject do
+            req(query: 'Description for #1')
+            parsed_response_body[:items]
+          end
+
+          it { expect(subject.count).to eq 1 }
+          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.first[:name]).to eq 'Category #1!!!' }
+          it { expect(subject.first[:description]).to eq 'Description for #1!!!' }
+        end
+
+        context "when querying with {query: 'Description for #5'} should return just the first item" do
+          subject do
+            req(query: 'Description for #5')
+            parsed_response_body[:items]
+          end
+
+          it { expect(subject.count).to eq 1 }
+          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.first[:name]).to eq 'Category #5!!!' }
+          it { expect(subject.first[:description]).to eq 'Description for #5!!!' }
+        end
       end
     end
   end
@@ -285,6 +419,68 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
                     ) }
 
         it { expect(subject[:images].count).to eq 2 }
+      end
+
+      context 'when category has parent' do
+        let(:parent) { create(:menu_category) }
+        let(:category) { create(:menu_category, parent: parent) }
+
+        subject do
+          req(id: category.id)
+          parsed_response_body[:item]
+        end
+
+        it { expect(category).to be_valid }
+        it { expect(category.parent).to be_a(Menu::Category) }
+        it { expect(response).to have_http_status(:ok) }
+
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: Integer,
+                      name: NilClass,
+                      description: NilClass,
+                      secret_desc: NilClass,
+                      parent: Hash
+                    ) }
+      end
+
+      context 'when category has name' do
+        before do
+          category.update!(name: 'test')
+          category.reload
+          req(id: category.id)
+        end
+
+        it { expect(category.name).to eq 'test' }
+
+        subject { parsed_response_body[:item] }
+
+        it { expect(category).to be_valid }
+        it { expect(response).to have_http_status(:ok) }
+
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(name: 'test') }
+      end
+
+      context 'when category has description (in another language)' do
+        before do
+          I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
+          category.update!(description: "test-#{I18n.locale}")
+          category.reload
+          req(id: category.id)
+        end
+
+        after { I18n.locale = I18n.default_locale }
+
+        it { expect(category.description).to eq "test-#{I18n.locale}" }
+
+        subject { parsed_response_body[:item] }
+
+        it { expect(category).to be_valid }
+        it { expect(response).to have_http_status(:ok) }
+
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(description: "test-#{I18n.locale}") }
       end
     end
   end

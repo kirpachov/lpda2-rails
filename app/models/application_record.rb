@@ -7,5 +7,11 @@ class ApplicationRecord < ActiveRecord::Base
     def log_table_info(args = {})
       puts TableInfo.run!(args.merge(model: self))
     end
+
+    def ransackable_attributes(auth_object = nil)
+      return [] unless respond_to?(:mobility_attributes)
+
+      mobility_attributes
+    end
   end
 end

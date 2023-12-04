@@ -17,7 +17,7 @@ RSpec.shared_examples ADMIN_MENU_CATEGORY do
                 updated_at: String
               ) }
 
-  it { expect(subject.keys).to include(*%w[id name other description menu_visibility_id price secret secret_desc status index parent_id visibility images created_at updated_at]) }
+  it { expect(subject.keys).to include(*%w[id name other description menu_visibility_id price secret secret_desc status index parent_id parent visibility images created_at updated_at]) }
 
   context 'visibility' do
     it { expect(subject[:visibility]).to be_a(Hash) }

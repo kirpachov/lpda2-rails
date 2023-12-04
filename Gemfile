@@ -46,6 +46,9 @@ gem 'text-table', '~> 1.2.4'
 
 gem 'oj', '~> 3.14.3'
 
+# https://activerecord-hackery.github.io/ransack/
+gem 'mobility-ransack', '~> 1.2.2'
+
 # gem "image_processing", "~> 1.12.2"
 # gem "ruby-vips"
 
