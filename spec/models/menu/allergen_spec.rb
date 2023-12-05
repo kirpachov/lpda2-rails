@@ -7,6 +7,14 @@ RSpec.describe Menu::Allergen, type: :model do
     %w[active deleted]
   end
 
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
+
+  context 'should track changes with ModelChange' do
+    let(:record) { create(:menu_allergen) }
+
+    include_examples TEST_MODEL_CHANGE_INCLUSION
+  end
+
   context 'can be translated' do
     subject { create(:menu_allergen) }
 

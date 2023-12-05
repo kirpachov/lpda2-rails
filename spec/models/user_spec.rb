@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   def valid_statuses
     %w[active deleted]

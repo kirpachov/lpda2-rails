@@ -3,6 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe Menu::Visibility, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
+
+  context 'should track changes with ModelChange' do
+    let(:record) { create(:menu_visibility, public_from: 1.week.from_now) }
+
+    include_examples TEST_MODEL_CHANGE_INCLUSION
+  end
+
   context 'should have valid factories' do
     context 'basic' do
       subject { build(:menu_visibility) }

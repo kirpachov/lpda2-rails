@@ -7,6 +7,7 @@ module Menu
     # Constants, settings, modules, et...
     # ##############################
     include HasImageAttached
+    include TrackModelChanges
     extend Mobility
     translates :name
     translates :description

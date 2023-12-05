@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+  include ActionController::Cookies
+
   before_action :authenticate_user
 
   attr_reader :current_user
@@ -38,6 +40,8 @@ class ApplicationController < ActionController::API
     }.merge(
       params: params.except(:controller, :action, :format, :page, :per_page, :offset).permit!.to_h.transform_values do |value|
         next value.to_i if value.is_a?(String) && value.match?(/^\d+$/) && value.to_i.to_s == value
+        next true if value.is_a?(String) && value == 'true'
+        next false if value.is_a?(String) && value == 'false'
 
         value
       end

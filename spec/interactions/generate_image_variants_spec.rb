@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe GenerateImageVariants, type: :interaction do
   let(:number_of_variants) { 1 }
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   context 'inputs' do
     it { should have_input(:image).of_type(Image).mandatory }

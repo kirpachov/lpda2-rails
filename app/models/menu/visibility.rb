@@ -2,6 +2,10 @@
 
 module Menu
   class Visibility < ApplicationRecord
+    # ##############################
+    # Constants, settings, modules, et...
+    # ##############################
+    include TrackModelChanges
 
     # ##############################
     # Validations

@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Image, type: :model do
   include_context FILES_HELPER
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   def valid_statuses
     %w[active deleted]

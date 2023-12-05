@@ -24,13 +24,12 @@ gem "image_processing", "~> 1.12.2"
 gem "ruby-vips", '~> 2.2.0'
 
 # gem 'exception_notification', '~> 4.5.0'
-# gem 'redis', '~> 4.3.1'
-# gem 'redis-namespace', '~> 1.8.2'
+gem 'redis', '~> 5.0.6'
+gem 'redis-namespace', '~> 1.11.0'
 gem 'bcrypt', '~> 3.1.19'
 gem 'rack-cors', '~> 1.1.1'
 # gem 'rubyzip', '~> 2.3.2'
 gem 'will_paginate', '~> 3.3.0'
-# gem 'activerecord-import', '~> 1.3.0'
 # gem 'down', '~> 5.4.1'
 # gem 'google_drive', '~> 3.0.7'
 # gem 'mustache', '~> 1.1.1'
@@ -39,12 +38,15 @@ gem 'will_paginate', '~> 3.3.0'
 # gem 'rotp', '~> 6.2.2'
 # gem 'jwt', '~> 2.2.3'
 # gem 'mail', '~> 2.7.1'
-gem 'sidekiq', '~> 6.2.1'
+gem 'sidekiq', '~> 6.5.5'
+gem 'sidekiq-cron', '~> 1.11.0'
+gem 'sidekiq-status', '~> 3.0.3'
+
 gem 'active_interaction', '~> 5.2.0'
 
 gem 'text-table', '~> 1.2.4'
 
-gem 'oj', '~> 3.14.3'
+# gem 'oj', '~> 3.14.3'
 
 # https://activerecord-hackery.github.io/ransack/
 gem 'mobility-ransack', '~> 1.2.2'

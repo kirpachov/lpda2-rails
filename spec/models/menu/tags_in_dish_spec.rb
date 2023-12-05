@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Menu::TagsInDish, type: :model do
+include_context TESTS_OPTIMIZATIONS_CONTEXT
+
   context 'has valid factory' do
     subject { build(:menu_tags_in_dish) }
     it { should be_valid }

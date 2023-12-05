@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe V1::Admin::SettingsController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
   include_context CONTROLLER_AUTHENTICATION_CONTEXT
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
   before { authenticate_request }
 
   def setting_keys

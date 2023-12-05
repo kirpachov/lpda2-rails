@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Preference, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
+
   context 'associations' do
     it { should belong_to(:user).inverse_of(:preferences).required }
   end

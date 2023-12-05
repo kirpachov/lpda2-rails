@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
   include_context CONTROLLER_AUTHENTICATION_CONTEXT
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   let(:instance) { described_class.new }
 
@@ -310,10 +311,6 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:items]
           end
 
-          it "banana" do
-            expect(true).to eq true
-          end
-
           it { expect(subject.count).to eq 1 }
           it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq 'Category #1!!!' }
@@ -341,6 +338,83 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq 'Category #5!!!' }
           it { expect(subject.first[:description]).to eq 'Description for #5!!!' }
+        end
+      end
+
+      context 'when filtering by {fixed_price: true}' do
+        before do
+          # visibility = create(:menu_visibility)
+          items = 5.times.map do |i|
+            create(:menu_category, price: (i + 1) * 10)
+          end
+
+          create_list(:menu_category, 5, price: nil)
+
+          # Menu::Category.import! items, validate: false
+        end
+
+        context 'checking test data' do
+          subject { Menu::Category.all }
+          it do
+            expect(subject.map(&:price).uniq).to match_array([nil, 10, 20, 30, 40, 50])
+            expect(subject.map(&:price?)).to match_array([false] * 5 + [true] * 5)
+            expect(subject.count).to eq 10
+          end
+        end
+
+        context 'when querying with {fixed_price: true}' do
+          before { req(fixed_price: true) }
+          context 'items' do
+            subject { parsed_response_body[:items] }
+            it { expect(subject.count).to eq 5 }
+            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+            it { expect(subject.map { |j| j[:price] }.uniq).to all(be_positive) }
+            it { expect(subject.map { |j| j[:price] }.uniq).to all(be_a(Numeric)) }
+          end
+
+          context 'metadata' do
+            subject { parsed_response_body[:metadata] }
+            it { should be_a(Hash) }
+            it { should include(params: { fixed_price: true }) }
+          end
+        end
+      end
+
+      context 'when filtering for {fixed_price: false}' do
+        before do
+          # visibility = create(:menu_visibility)
+          items = 5.times.map do |i|
+            create(:menu_category, price: (i + 1) * 10)
+          end
+
+          create_list(:menu_category, 5, price: nil)
+
+          # Menu::Category.import! items, validate: false
+        end
+
+        context 'checking test data' do
+          subject { Menu::Category.all }
+          it do
+            expect(subject.map(&:price).uniq).to match_array([nil, 10, 20, 30, 40, 50])
+            expect(subject.map(&:price?)).to match_array([false] * 5 + [true] * 5)
+            expect(subject.count).to eq 10
+          end
+        end
+
+        context 'when querying with {fixed_price: false}' do
+          before { req(fixed_price: false) }
+          context 'items' do
+            subject { parsed_response_body[:items] }
+            it { expect(subject.count).to eq 5 }
+            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+            it { expect(subject.map { |j| j[:price] }.uniq).to eq [nil] }
+          end
+
+          context 'metadata' do
+            subject { parsed_response_body[:metadata] }
+            it { should be_a(Hash) }
+            it { should include(params: { fixed_price: false }) }
+          end
         end
       end
     end
@@ -481,6 +555,53 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it_behaves_like ADMIN_MENU_CATEGORY
         it { should include(description: "test-#{I18n.locale}") }
+      end
+    end
+  end
+
+  context '#create' do
+    it { expect(instance).to respond_to(:create) }
+    it { expect(described_class).to route(:post, '/v1/admin/menu/categories').to(action: :create, format: :json) }
+
+    def req(params = {})
+      post :create, params: params
+    end
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+
+      it { expect { req }.to change(Menu::Category, :count).by(1) }
+
+      context 'basic' do
+        subject do
+          req
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        # it { expect(subject).to be_a(Hash) }
+        # it { expect(subject).to include(id: Integer) }
+        # it { expect(subject[:id]).to be_positive }
+        # it { expect(subject).to include(visibility: Hash) }
+        # it { expect(subject[:visibility]).to include(id: Integer) }
+        # it { expect(subject[:visibility][:id]).to be_positive }
+        # it { expect(subject).to include(images: Array) }
+        # it { expect(subject[:images]).to be_empty }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: NilClass,
+                      description: NilClass,
+                      secret_desc: NilClass,
+                    ) }
+
+        it { expect(subject[:images].count).to eq 0 }
       end
     end
   end

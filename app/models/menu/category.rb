@@ -6,6 +6,7 @@ module Menu
     # ##############################
     # Constants, modules
     # ##############################
+    include TrackModelChanges
     include HasImageAttached
     extend Mobility
     translates :name
@@ -53,6 +54,10 @@ module Menu
     # Scopes
     # ##############################
     scope :visible, -> { where(status: %w[active]) }
+    scope :with_fixed_price, -> { where.not(price: nil) }
+    scope :with_price, -> { with_fixed_price }
+    scope :without_fixed_price, -> { where(price: nil) }
+    scope :without_price, -> { without_fixed_price }
 
     # ##############################
     # Class methods
@@ -75,6 +80,10 @@ module Menu
       self.secret = GenToken.for!(self.class, :secret) if secret.blank?
       self.other = {} if other.nil?
       self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil?
+    end
+
+    def price?
+      price.present?
     end
 
     def assign_valid_index

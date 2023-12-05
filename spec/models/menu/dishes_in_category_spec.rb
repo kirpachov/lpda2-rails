@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Menu::DishesInCategory, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
+
   context 'should have valid factories' do
     subject { build(:menu_dishes_in_category) }
     it { should be_valid }

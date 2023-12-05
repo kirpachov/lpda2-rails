@@ -28,9 +28,17 @@ module Lpda2
     end
 
     config.eager_load_paths << Rails.root.join('lib')
-    # config.middleware.use ActionDispatch::Cookies
+
     # config.session_store :cookie_store, key: '_interslice_session'
+    # config.middleware.use ActionDispatch::Cookies
     # config.middleware.use config.session_store, config.session_options
+    # This also configures session_options for use below
+    config.middleware.use ActionDispatch::Cookies
+
+    config.session_store :cookie_store, key: '_interslice_session'
+    # Required for all session management (regardless of session_store)
+    config.middleware.use config.session_store, config.session_options
+
     # config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
     config.active_record.default_timezone = :utc
     config.i18n.default_locale = :en

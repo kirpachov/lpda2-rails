@@ -8,6 +8,7 @@ module Menu
     # ##############################
     VALID_STATUSES = %w[active deleted].freeze
     include HasImageAttached
+    include TrackModelChanges
 
     extend Mobility
     translates :name

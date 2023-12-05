@@ -3,8 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Menu::Tag, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
+
   def valid_statuses
     %w[active deleted]
+  end
+
+  context 'should track changes with ModelChange' do
+    let(:record) { create(:menu_tag) }
+
+    include_examples TEST_MODEL_CHANGE_INCLUSION
   end
 
   context 'can be translated' do

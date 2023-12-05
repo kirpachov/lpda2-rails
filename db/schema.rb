@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 19) do
+ActiveRecord::Schema[7.0].define(version: 20) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -64,6 +64,22 @@ ActiveRecord::Schema[7.0].define(version: 19) do
     t.index ["filename"], name: "index_images_on_filename"
     t.index ["original_id"], name: "index_images_on_original_id"
     t.index ["tag", "original_id"], name: "index_images_on_tag_and_original_id", unique: true, where: "(original_id IS NOT NULL)"
+  end
+
+  create_table "log_model_changes", force: :cascade do |t|
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false, comment: "Record that was changed."
+    t.bigint "user_id", comment: "User who made the change."
+    t.string "change_type", null: false, comment: "Type of change. One of: create, update, destroy."
+    t.jsonb "record_changes", null: false, comment: "Changes made to the record. Format: { field_name: [old_value, new_value] }"
+    t.string "changed_fields", comment: "List of fields that were changed. Format: [field_name1, field_name2, ...]", array: true
+    t.integer "version", null: false, comment: "Version of the record. Incremented on each change."
+    t.jsonb "other", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["change_type"], name: "index_log_model_changes_on_change_type"
+    t.index ["record_type", "record_id"], name: "index_log_model_changes_on_record"
+    t.index ["user_id"], name: "index_log_model_changes_on_user_id"
   end
 
   create_table "menu_allergens", force: :cascade do |t|
@@ -250,6 +266,7 @@ ActiveRecord::Schema[7.0].define(version: 19) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "image_to_records", "images"
   add_foreign_key "images", "images", column: "original_id"
+  add_foreign_key "log_model_changes", "users"
   add_foreign_key "menu_allergens_in_dishes", "menu_allergens"
   add_foreign_key "menu_allergens_in_dishes", "menu_dishes"
   add_foreign_key "menu_categories", "menu_visibilities"

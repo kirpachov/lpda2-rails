@@ -16,6 +16,11 @@ module Menu
         categories = categories.where(id: Category.filter_by_query(params[:query]).select(:id))
       end
 
+      if params[:fixed_price].present?
+        value = params[:fixed_price].to_s.downcase == 'true'
+        categories = value ? categories.with_fixed_price : categories.without_fixed_price
+      end
+
       categories = categories.order(:index)
 
       categories

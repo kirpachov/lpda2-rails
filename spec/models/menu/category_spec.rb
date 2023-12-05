@@ -3,12 +3,19 @@
 require 'rails_helper'
 
 RSpec.describe Menu::Category, type: :model do
+  include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   context "can be translated" do
     subject { create(:menu_category) }
 
     include_examples MODEL_MOBILITY_EXAMPLES, field: :name
     include_examples MODEL_MOBILITY_EXAMPLES, field: :description
+  end
+
+  context 'should track changes with ModelChange' do
+    let(:record) { create(:menu_category) }
+
+    include_examples TEST_MODEL_CHANGE_INCLUSION
   end
 
   context 'has image' do
@@ -303,5 +310,22 @@ RSpec.describe Menu::Category, type: :model do
     it { should respond_to(:active?) }
 
     it { expect(described_class).to respond_to(:active) }
+  end
+
+  context 'scopes' do
+    context '.with_fixed_price and .without_fixed_price' do
+      let!(:with_price) { create_list(:menu_category, 2, price: 5.2) }
+      let!(:without_price) { create_list(:menu_category, 2, price: nil) }
+
+      it { expect(Menu::Category.count).to eq 4 }
+      it { expect(Menu::Category.with_fixed_price.count).to eq 2 }
+      it { expect(Menu::Category.without_fixed_price.count).to eq 2 }
+      it { expect(Menu::Category.without_fixed_price.map(&:price)).to all(eq nil) }
+      it { expect(Menu::Category.with_fixed_price.map(&:price)).to all(be_a(Numeric)) }
+      it { expect(Menu::Category.with_fixed_price.map(&:price)).to all(be_positive) }
+
+      it { expect(Menu::Category.without_price.map(&:price)).to all(eq nil) }
+      it { expect(Menu::Category.with_price.map(&:price)).to all(be_positive) }
+    end
   end
 end
