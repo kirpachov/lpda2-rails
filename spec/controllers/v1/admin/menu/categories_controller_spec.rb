@@ -1239,10 +1239,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
 
-        context 'response[:details][:name]' do
+        context 'response[:details][:description]' do
           subject do
             req params
-            parsed_response_body[:details][:name]
+            parsed_response_body[:details][:description]
           end
 
           it { should be_a(Array) }
