@@ -24,7 +24,7 @@ module V1
       end
 
       def create
-        @item = Menu::Category.new(parent_id: params[:parent_id].present? ? params[:parent_id].to_i : nil)
+        @item = Menu::Category.new(update_params)
         @item.assign_translation('name', params[:name]) if params[:name].present?
         @item.assign_translation('description', params[:description]) if params[:description].present?
 
@@ -37,12 +37,9 @@ module V1
         @item.assign_translation('name', params[:name]) if params.key?(:name)
         @item.assign_translation('description', params[:description]) if params.key?(:description)
 
-        if @item.errors.empty? && @item.valid? && @item.save
-          @item.update(parent_id: params[:parent_id]) if params.key?(:parent_id)
-          @item.update(secret_desc: params[:secret_desc]) if params.key?(:secret_desc)
+        @item.assign_attributes(update_params)
 
-          return show
-        end
+        return show if @item.errors.empty? && @item.valid? && @item.save
 
         render_unprocessable_entity(@item)
       end
@@ -52,6 +49,10 @@ module V1
       end
 
       private
+
+      def update_params
+        params.permit(:parent_id, :secret_desc)
+      end
 
       def find_category
         @item = Menu::Category.visible.where(id: params[:id]).first

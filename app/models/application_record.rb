@@ -16,8 +16,6 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def assign_translation(attribute, value, args = {})
-    # validate
-    # AssignTranslation.run(args.merge(record: self, attribute:, value:))
     errors.merge!(AssignTranslation.run(args.merge(record: self, attribute:, value:)))
     self
   end
