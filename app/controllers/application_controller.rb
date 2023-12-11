@@ -13,7 +13,11 @@ class ApplicationController < ActionController::API
   end
 
   def render_unauthorized
-    render_error status: 401, message: 'Unauthorized'
+    render_error status: 401, message: 'Unauthorized' # TODO TRANSLATE THIS
+  end
+
+  def render_unprocessable_entity(record)
+    render_error status: 422, message: record.errors.full_messages.join(', '), details: record.errors.full_json
   end
 
   def render_error(status: nil, message: nil, details: {})

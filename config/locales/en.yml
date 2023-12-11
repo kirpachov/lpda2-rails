@@ -157,6 +157,7 @@ en:
         other: "is the wrong length (should be %{count} characters)"
       account_deleted: "Your account has been deleted."
       too_failed_attempts: "Your account has been temporarily locked due to too many failed login attempts. Please try again later."
+      invalid_locale: 'Language "%{lang}" is not supported.'
     template:
       body: 'Please review the following fields:'
       header:

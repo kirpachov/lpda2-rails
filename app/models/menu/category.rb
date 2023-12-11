@@ -12,7 +12,7 @@ module Menu
     translates :name
     translates :description
 
-    VALID_STATUSES = %w[active].freeze
+    VALID_STATUSES = %w[active deleted].freeze
     SECRET_MIN_LENGTH = 8
 
     enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
@@ -58,6 +58,8 @@ module Menu
     scope :with_price, -> { with_fixed_price }
     scope :without_fixed_price, -> { where(price: nil) }
     scope :without_price, -> { without_fixed_price }
+    scope :with_parent, -> { where.not(parent_id: nil) }
+    scope :without_parent, -> { where(parent_id: nil) }
 
     # ##############################
     # Class methods

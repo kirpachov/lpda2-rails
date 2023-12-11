@@ -585,14 +585,6 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
-        # it { expect(subject).to be_a(Hash) }
-        # it { expect(subject).to include(id: Integer) }
-        # it { expect(subject[:id]).to be_positive }
-        # it { expect(subject).to include(visibility: Hash) }
-        # it { expect(subject[:visibility]).to include(id: Integer) }
-        # it { expect(subject[:visibility][:id]).to be_positive }
-        # it { expect(subject).to include(images: Array) }
-        # it { expect(subject[:images]).to be_empty }
         it_behaves_like ADMIN_MENU_CATEGORY
         it { should include(
                       parent_id: NilClass,
@@ -602,6 +594,784 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
                     ) }
 
         it { expect(subject[:images].count).to eq 0 }
+      end
+
+      context 'passing {parent_id: <id>}' do
+        let!(:parent) { create(:menu_category) }
+        subject do
+          req(parent_id: parent.id)
+          response
+        end
+
+        it "request should create a category child" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 2
+          expect(Menu::Category.with_parent.last.parent).to eq parent
+          expect(Menu::Category.with_parent.count).to eq 1
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(parent_id: parent.id)
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: Integer,
+                        name: NilClass,
+                        description: NilClass,
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {} (empty hash)' do
+        subject do
+          req
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 1
+          expect(Menu::Category.with_parent.count).to eq 0
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: NilClass,
+                        description: NilClass,
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {name: <String>}' do
+        subject do
+          req(name: 'test')
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 1
+          expect(Menu::Category.with_parent.count).to eq 0
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(name: 'test')
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: 'test',
+                        description: NilClass,
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {description: <String>}' do
+        subject do
+          req(description: 'test')
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 1
+          expect(Menu::Category.with_parent.count).to eq 0
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(description: 'test')
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: NilClass,
+                        description: 'test',
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {name: <String>, description: <String>, parent_id: <id>}' do
+        let!(:parent) { create(:menu_category) }
+        subject do
+          req(name: 'test', description: 'test', parent_id: parent.id)
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 2
+          expect(Menu::Category.with_parent.count).to eq 1
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(name: 'test', description: 'test', parent_id: parent.id)
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: Integer,
+                        name: 'test',
+                        description: 'test',
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {name: {it: <String>, en: <String>}}' do
+        subject do
+          req(name: { it: 'test-it', en: 'test-en' })
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 1
+          expect(Menu::Category.with_parent.count).to eq 0
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(name: { it: 'test-it', en: 'test-en' })
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: "test-#{I18n.locale}",
+                        description: NilClass,
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {description: {it: <String>, en: <String>}}' do
+        subject do
+          req(description: { it: 'test-it', en: 'test-en' })
+          response
+        end
+
+        it "request should create a category" do
+          expect { subject }.to change(Menu::Category, :count).by(1)
+          expect(Menu::Category.count).to eq 1
+          expect(Menu::Category.with_parent.count).to eq 0
+          expect(Menu::Category.without_parent.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(description: { it: 'test-it', en: 'test-en' })
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: NilClass,
+                        description: "test-#{I18n.locale}",
+                        secret_desc: NilClass,
+                      ) }
+
+          it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      context 'passing {name: {it: <String>, invalid_locale: <String>}}' do
+        subject do
+          req(name: { it: 'test-it', invalid_locale: 'test-invalid' })
+          response
+        end
+
+        it do
+          expect { subject }.not_to change(Menu::Category, :count)
+          expect(Menu::Category.count).to eq 0
+        end
+
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(name: { it: 'test-it', invalid_locale: 'test-invalid' })
+            parsed_response_body[:item]
+          end
+
+          it { should be_nil }
+        end
+
+        context 'response[:message]' do
+          subject do
+            req(name: { it: 'test-it', invalid_locale: 'test-invalid' })
+            parsed_response_body[:message]
+          end
+
+          it { should be_a(String) }
+          it { should include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
+        end
+
+        context 'response[:details]' do
+          subject do
+            req(name: { it: 'test-it', invalid_locale: 'test-invalid' })
+            parsed_response_body[:details]
+          end
+
+          it { should be_a(Hash) }
+          it { should include(:name) }
+          it { should include(name: Array) }
+        end
+
+        context 'response[:details][:name]' do
+          subject do
+            req(name: { it: 'test-it', invalid_locale: 'test-invalid' })
+            parsed_response_body[:details][:name]
+          end
+
+          it { should be_a(Array) }
+          it { should_not be_empty }
+          it { should all(be_a(Hash)) }
+          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+        end
+      end
+    end
+  end
+
+  context '#update' do
+    it { expect(instance).to respond_to(:update) }
+    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22').to(action: :update, format: :json, id: 22) }
+
+    def req(params = {})
+      patch :update, params: params
+    end
+
+    context 'when user is not authenticated' do
+      before { req(id: 22) }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+
+      context 'basic' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id)
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: NilClass,
+                      description: NilClass,
+                      secret_desc: NilClass,
+                      images: []
+                    ) }
+      end
+
+      context 'if cannot find category by id' do
+        before { req(id: 'invalid') }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'with {name: "Hello"}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, name: 'Hello')
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: 'Hello',
+                      description: NilClass,
+                      secret_desc: NilClass,
+                      images: []
+                    ) }
+      end
+
+      context 'with {description: "Hello"}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, description: 'Hello')
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: NilClass,
+                      description: 'Hello',
+                      secret_desc: NilClass,
+                      images: []
+                    ) }
+      end
+
+      context 'with {secret_desc: "Hello"}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, secret_desc: 'Hello')
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: NilClass,
+                      description: NilClass,
+                      secret_desc: 'Hello',
+                      images: []
+                    ) }
+      end
+
+      context 'with {name: "Hello", description: "Hello", secret_desc: "Hello"}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, name: 'HelloName', description: 'HelloDesc', secret_desc: 'HelloSecret')
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: 'HelloName',
+                      description: 'HelloDesc',
+                      secret_desc: 'HelloSecret',
+                      images: []
+                    ) }
+      end
+
+      context 'with {name: {it: "Hello", en: "Hello"}}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, name: { it: 'Ciao', en: 'Hello' })
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: 'Hello',
+                      description: NilClass,
+                      secret_desc: NilClass,
+                      images: []
+                    ) }
+
+        context 'after request' do
+          before { req(id: category.id, name: { it: 'Ciao', en: 'Hello' }) }
+          subject { category.reload }
+          it { expect(subject.name).to eq 'Hello' }
+          it { expect(subject.name_it).to eq 'Ciao' }
+          it { expect(subject.name_en).to eq 'Hello' }
+        end
+      end
+
+      context 'with {description: {it: "Hello", en: "Hello"}}' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, description: { it: 'Ciao', en: 'Hello' })
+          parsed_response_body[:item]
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it_behaves_like ADMIN_MENU_CATEGORY
+        it { should include(
+                      parent_id: NilClass,
+                      name: NilClass,
+                      description: 'Hello',
+                      secret_desc: NilClass,
+                      images: []
+                    ) }
+
+        context 'after request' do
+          before { req(id: category.id, description: { it: 'Ciao', en: 'Hello' }) }
+          subject { category.reload }
+          it { expect(subject.description).to eq 'Hello' }
+          it { expect(subject.description_it).to eq 'Ciao' }
+          it { expect(subject.description_en).to eq 'Hello' }
+        end
+      end
+
+      context 'with {parent_id: <id>}' do
+        let!(:category) { create(:menu_category) }
+        let!(:parent) { create(:menu_category) }
+
+        subject do
+          req(id: category.id, parent_id: parent.id)
+          response
+        end
+
+        it { expect { subject }.not_to change(Menu::Category, :count) }
+        it { expect { subject }.to change { category.reload.parent }.from(nil).to(parent) }
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(id: category.id, parent_id: parent.id)
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: Integer,
+                        name: NilClass,
+                        description: NilClass,
+                        secret_desc: NilClass,
+                        images: []
+                      ) }
+        end
+
+        context 'after request' do
+          before { req(id: category.id, parent_id: parent.id) }
+          subject { category.reload }
+          it { expect(subject.parent).to eq parent }
+        end
+      end
+
+      context 'with {parent_id: nil}' do
+        let!(:parent) { create(:menu_category) }
+        let!(:category) { create(:menu_category, parent: parent) }
+
+        subject do
+          req(id: category.id, parent_id: nil)
+          response
+        end
+
+        it { expect { subject }.not_to change(Menu::Category, :count) }
+        it { expect { subject }.to change { category.reload.parent }.from(parent).to(nil) }
+        it { should have_http_status(:ok) }
+        it { should be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req(id: category.id, parent_id: nil)
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_CATEGORY
+
+          it { should include(
+                        parent_id: NilClass,
+                        name: NilClass,
+                        description: NilClass,
+                        secret_desc: NilClass,
+                        images: []
+                      ) }
+        end
+
+        context 'after request' do
+          before { req(id: category.id, parent_id: nil) }
+          subject { category.reload }
+          it { expect(subject.parent).to eq nil }
+        end
+      end
+
+      context 'passing {name: {it: <String>, invalid_locale: <String>}}' do
+        let!(:category) { create(:menu_category) }
+        let(:params) { { id: category.id, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
+
+        subject do
+          req params
+          response
+        end
+
+        it do
+          expect { subject }.not_to change(Menu::Category, :count)
+          expect(Menu::Category.count).to eq 1
+        end
+
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+
+        context 'response[:item]' do
+          subject do
+            req params
+            parsed_response_body[:item]
+          end
+
+          it { should be_nil }
+        end
+
+        context 'response[:message]' do
+          subject do
+            req params
+            parsed_response_body[:message]
+          end
+
+          it { should be_a(String) }
+          it { should include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
+        end
+
+        context 'response[:details]' do
+          subject do
+            req params
+            parsed_response_body[:details]
+          end
+
+          it { should be_a(Hash) }
+          it { should include(:name) }
+          it { should include(name: Array) }
+        end
+
+        context 'response[:details][:name]' do
+          subject do
+            req params
+            parsed_response_body[:details][:name]
+          end
+
+          it { should be_a(Array) }
+          it { should_not be_empty }
+          it { should all(be_a(Hash)) }
+          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+        end
+      end
+
+      context 'passing {secret_desc: "ciaobanana", description: {it: <String>, invalid_locale: <String>}}' do
+        let!(:parent) { create(:menu_category) }
+        let!(:category) { create(:menu_category, parent:) }
+        let(:params) { { id: category.id, secret_desc: "ciaobanana", description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
+
+        it 'should not update parent' do
+          expect { req params }.not_to change { category.reload.secret_desc }
+        end
+
+        it "checking mock data" do
+          expect(category.secret_desc).to eq nil
+          expect(category.description).to eq nil
+        end
+
+        subject do
+          req params
+          response
+        end
+
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+
+        context 'response[:details][:name]' do
+          subject do
+            req params
+            parsed_response_body[:details][:name]
+          end
+
+          it { should be_a(Array) }
+          it { should_not be_empty }
+          it { should all(be_a(Hash)) }
+          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+        end
+      end
+
+      context 'passing {parent_id: nil, name: {it: <String>, invalid_locale: <String>}}' do
+        let!(:parent) { create(:menu_category) }
+        let!(:category) { create(:menu_category, parent:) }
+        let(:params) { { id: category.id, parent_id: nil, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
+
+        it 'should not update parent' do
+          expect { req params }.not_to change { category.reload.parent }
+        end
+
+        context 'response[:item]' do
+          subject do
+            req params
+            parsed_response_body[:item]
+          end
+
+          it { should be_nil }
+        end
+
+        context 'response[:message]' do
+          subject do
+            req params
+            parsed_response_body[:message]
+          end
+
+          it { should be_a(String) }
+          it { should include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
+        end
+
+        context 'response[:details]' do
+          subject do
+            req params
+            parsed_response_body[:details]
+          end
+
+          it { should be_a(Hash) }
+          it { should include(:name) }
+          it { should include(name: Array) }
+        end
+
+        context 'response[:details][:name]' do
+          subject do
+            req params
+            parsed_response_body[:details][:name]
+          end
+
+          it { should be_a(Array) }
+          it { should_not be_empty }
+          it { should all(be_a(Hash)) }
+          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+        end
+      end
+
+      context 'passing {name: nil} to a category with name' do
+        let!(:category) do
+          mc = create(:menu_category)
+          Mobility.with_locale(:it) { mc.update!(name: 'test-it') }
+          Mobility.with_locale(:en) { mc.update!(name: 'test-en') }
+          mc.reload
+          mc
+        end
+
+        subject do
+          req(id: category.id, name: nil)
+          parsed_response_body[:item]
+        end
+
+        context 'checking mock data' do
+          it { expect(category.name).to eq 'test-en' }
+          it { expect(category.name_en).to eq 'test-en' }
+          it { expect(category.name_it).to eq 'test-it' }
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(response).to be_successful }
+        it { expect(subject[:name]).to eq nil }
+
+        context 'after request' do
+          before { req(id: category.id, name: nil) }
+          subject { category.reload }
+          it { expect(subject.name).to eq nil }
+          it { expect(subject.name_en).to eq nil }
+          it { expect(subject.name_it).to eq 'test-it' }
+        end
+      end
+    end
+  end
+
+  context '#destroy' do
+    it { expect(instance).to respond_to(:destroy) }
+    it { expect(described_class).to route(:DELETE, '/v1/admin/menu/categories/22').to(action: :destroy, format: :json, id: 22) }
+
+    def req(params = {})
+      delete :destroy, params: params
+    end
+
+    context 'when user is not authenticated' do
+      before { req(id: 22) }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+
+      context 'basic' do
+        let!(:category) { create(:menu_category) }
+
+        subject do
+          req(id: category.id)
+          response
+        end
+
+        it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
+        it { should have_http_status(:no_content) }
+        it { should be_successful }
+      end
+
+      context 'if cannot find category by id' do
+        before { req(id: 22) }
+        subject { response }
+        it_behaves_like NOT_FOUND
       end
     end
   end

@@ -23,19 +23,39 @@ module V1
         }
       end
 
+      def create
+        @item = Menu::Category.new(parent_id: params[:parent_id].present? ? params[:parent_id].to_i : nil)
+        @item.assign_translation('name', params[:name]) if params[:name].present?
+        @item.assign_translation('description', params[:description]) if params[:description].present?
+
+        return show if @item.errors.empty? && @item.valid? && @item.save
+
+        render_unprocessable_entity(@item)
+      end
+
       def update
-        raise 'Not implemeted.'
+        @item.assign_translation('name', params[:name]) if params.key?(:name)
+        @item.assign_translation('description', params[:description]) if params.key?(:description)
+
+        if @item.errors.empty? && @item.valid? && @item.save
+          @item.update(parent_id: params[:parent_id]) if params.key?(:parent_id)
+          @item.update(secret_desc: params[:secret_desc]) if params.key?(:secret_desc)
+
+          return show
+        end
+
+        render_unprocessable_entity(@item)
       end
 
       def destroy
-        raise 'not implemented.'
+        @item.deleted!
       end
 
       private
 
       def find_category
         @item = Menu::Category.visible.where(id: params[:id]).first
-        return render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Category, id: params[:id].inspect)) if @item.nil?
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Category, id: params[:id].inspect)) if @item.nil?
       end
 
       def full_json(item_or_items)

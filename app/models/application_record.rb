@@ -14,4 +14,11 @@ class ApplicationRecord < ActiveRecord::Base
       mobility_attributes
     end
   end
+
+  def assign_translation(attribute, value, args = {})
+    # validate
+    # AssignTranslation.run(args.merge(record: self, attribute:, value:))
+    errors.merge!(AssignTranslation.run(args.merge(record: self, attribute:, value:)))
+    self
+  end
 end
