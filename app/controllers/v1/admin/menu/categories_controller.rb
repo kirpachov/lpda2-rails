@@ -24,7 +24,7 @@ module V1
       end
 
       def create
-        @item = Menu::Category.new(update_params)
+        @item = Menu::Category.new(create_params)
         @item.assign_translation('name', params[:name]) if params[:name].present?
         @item.assign_translation('description', params[:description]) if params[:description].present?
 
@@ -49,6 +49,10 @@ module V1
       end
 
       private
+
+      def create_params
+        params.permit(:parent_id)
+      end
 
       def update_params
         params.permit(:parent_id, :secret_desc)
