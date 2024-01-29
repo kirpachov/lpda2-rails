@@ -1336,6 +1336,28 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(subject.name_it).to eq 'test-it' }
         end
       end
+
+      context 'when setting name to nil with {name: nil}' do
+        let!(:category) { create(:menu_category, name: 'Category name') }
+
+        subject do
+          req(id: category.id, name: nil)
+          parsed_response_body[:item]
+        end
+
+        it { should include(name: nil) }
+      end
+
+      context 'when setting name to nil with {name: {<locale>: nil}}' do
+        let!(:category) { create(:menu_category, name: 'Category name') }
+
+        subject do
+          req(id: category.id, name: { en: nil })
+          parsed_response_body[:item]
+        end
+
+        it { should include(name: nil) }
+      end
     end
   end
 

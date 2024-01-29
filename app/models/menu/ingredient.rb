@@ -40,6 +40,29 @@ module Menu
     scope :visible, -> { not_deleted }
 
     # ##############################
+    # CLass methods
+    # ##############################
+    class << self
+      def filter_by_query(query)
+        return all unless query.present?
+
+        where_name(query).or(where_description(query))
+      end
+
+      def where_name(query)
+        return all unless query.present?
+
+        where(id: ransack(name_cont: query).result.select(:id))
+      end
+
+      def where_description(query)
+        return all unless query.present?
+
+        where(id: ransack(description_cont: query).result.select(:id))
+      end
+    end
+
+    # ##############################
     # Instance methods
     # ##############################
     def assign_defaults
