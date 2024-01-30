@@ -6,7 +6,7 @@ module Menu
     interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
     def execute
-      categories = Category.all
+      categories = Category.visible
 
       if params.has_key?(:parent_id)
         categories = categories.where(parent_id: params[:parent_id].present? ? params[:parent_id] : nil)

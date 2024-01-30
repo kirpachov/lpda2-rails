@@ -18,7 +18,7 @@ module Menu
     private
 
     def items
-      Ingredient.all
+      Ingredient.visible
     end
 
     def filter_by_name(items)

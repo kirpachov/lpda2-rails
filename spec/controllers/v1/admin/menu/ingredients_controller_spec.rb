@@ -109,6 +109,60 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
           it { expect(subject.size).to eq 1 }
         end
       end
+
+      context 'when not filtering by status' do
+        before do
+          Menu::Ingredient.delete_all
+          create(:menu_ingredient, status: :active)
+          create(:menu_ingredient, status: :deleted)
+        end
+
+        subject do
+          req
+          parsed_response_body[:items]
+        end
+
+        it { expect(Menu::Ingredient.count).to eq 2 }
+        it { expect(Menu::Ingredient.visible.count).to eq 1 }
+        it { expect(subject.size).to eq 1 }
+        it { expect(subject).to all(include(status: 'active')) }
+        it { expect(response).to be_successful }
+      end
+
+      context 'when filtering by status {status: :active}' do
+        before do
+          Menu::Ingredient.delete_all
+          create(:menu_ingredient, status: :active)
+          create(:menu_ingredient, status: :deleted)
+        end
+
+        subject do
+          req(status: :active)
+          parsed_response_body[:items]
+        end
+
+        it { expect(Menu::Ingredient.count).to eq 2 }
+        it { expect(Menu::Ingredient.visible.count).to eq 1 }
+        it { expect(subject.size).to eq 1 }
+        it { expect(subject.first[:status]).to eq 'active' }
+      end
+
+      context 'when filtering by status {status: :deleted}' do
+        before do
+          Menu::Ingredient.delete_all
+          create(:menu_ingredient, status: :active)
+          create(:menu_ingredient, status: :deleted)
+        end
+
+        subject do
+          req(status: :deleted)
+          parsed_response_body[:items]
+        end
+
+        it { expect(Menu::Ingredient.count).to eq 2 }
+        it { expect(Menu::Ingredient.visible.count).to eq 1 }
+        it { is_expected.to be_empty }
+      end
     end
   end
 
@@ -340,8 +394,46 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
       it "should not delete item from database but update its status" do
         menu_ingredient
 
-        expect { req(menu_ingredient.id) }.not_to change(Menu::Ingredient, :count)
+        expect { req(menu_ingredient.id) }.not_to change { Menu::Ingredient.count }
         expect(Menu::Ingredient.find(menu_ingredient.id).status).to eq('deleted')
+      end
+
+      it do
+        menu_ingredient
+
+        expect { req(menu_ingredient.id) }.to change { Menu::Ingredient.visible.count }.by(-1)
+      end
+
+      context 'when cannot delete record' do
+        before do
+          menu_ingredient
+          allow_any_instance_of(Menu::Ingredient).to receive(:deleted!).and_return(false)
+        end
+
+        subject do
+          req(menu_ingredient.id)
+          response
+        end
+
+        it { expect { subject }.not_to change { Menu::Ingredient.visible.count } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+      end
+
+      context 'when record deletion raises error' do
+        before do
+          menu_ingredient
+          allow_any_instance_of(Menu::Ingredient).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid)
+        end
+
+        subject do
+          req(menu_ingredient.id)
+          response
+        end
+
+        it { expect { subject }.not_to change { Menu::Ingredient.visible.count } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
       end
 
       context 'when item exists' do

@@ -417,6 +417,23 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
         end
       end
+
+      context 'should return only non-deleted items' do
+        before do
+          create(:menu_category, status: :active)
+          create(:menu_category, status: :deleted)
+        end
+
+        subject do
+          req
+          parsed_response_body[:items]
+        end
+
+        it { expect(Menu::Category.count).to eq 2 }
+        it { expect(Menu::Category.visible.count).to eq 1 }
+        it { expect(subject).to all(include(status: 'active')) }
+        it { expect(subject.size).to eq 1 }
+      end
     end
   end
 
@@ -1388,6 +1405,34 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
         it { should have_http_status(:no_content) }
         it { should be_successful }
+      end
+
+      context 'when cannot delete record' do
+        let!(:category) { create(:menu_category) }
+        before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_return(false) }
+
+        subject do
+          req(id: category.id)
+          response
+        end
+
+        it { expect { subject }.not_to change { Menu::Category.visible.count } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+      end
+
+      context 'when record deletion raises error' do
+        let!(:category) { create(:menu_category) }
+        before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid) }
+
+        subject do
+          req(id: category.id)
+          response
+        end
+
+        it { expect { subject }.not_to change { Menu::Category.visible.count } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
       end
 
       context 'if cannot find category by id' do

@@ -43,7 +43,11 @@ module V1
       end
 
       def destroy
-        @item.deleted!
+        return if @item.deleted!
+
+        render_unprocessable_entity(@item)
+      rescue ActiveRecord::RecordInvalid
+        render_unprocessable_entity(@item)
       end
 
       private
