@@ -30,6 +30,7 @@ Rails.application.routes.draw do
         scope module: :menu, path: 'menu' do
           resources :categories, only: %i[index show create update destroy]
           resources :ingredients, only: %i[index show create update destroy]
+          resources :dishes, only: %i[index show create update destroy]
         end
       end
     end

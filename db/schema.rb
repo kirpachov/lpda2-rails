@@ -121,7 +121,7 @@ ActiveRecord::Schema[7.0].define(version: 20) do
 
   create_table "menu_dishes", force: :cascade do |t|
     t.text "status", null: false
-    t.integer "price", comment: "The price of the dish. Can be null or 0 some cases, for example when the dish is inside a category with a fixed price."
+    t.float "price", comment: "The price of the dish. Can be null or 0 some cases, for example when the dish is inside a category with a fixed price."
     t.jsonb "other", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -12,7 +12,7 @@ module Menu
     translates :name
     translates :description
 
-    VALID_STATUSES = %w[active].freeze
+    VALID_STATUSES = %w[active deleted].freeze
 
     enum status: VALID_STATUSES.map{ |s| [s, s] }.to_h
 
@@ -43,6 +43,34 @@ module Menu
     # Hooks
     # ##############################
     before_validation :assign_defaults, on: :create
+
+    # ##############################
+    # Scopes
+    # ##############################
+    scope :visible, -> { not_deleted }
+
+    # ##############################
+    # CLass methods
+    # ##############################
+    class << self
+      def filter_by_query(query)
+        return all unless query.present?
+
+        where_name(query).or(where_description(query))
+      end
+
+      def where_name(query)
+        return all unless query.present?
+
+        where(id: ransack(name_cont: query).result.select(:id))
+      end
+
+      def where_description(query)
+        return all unless query.present?
+
+        where(id: ransack(description_cont: query).result.select(:id))
+      end
+    end
 
     # ##############################
     # Instance methods
