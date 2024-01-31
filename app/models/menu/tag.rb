@@ -7,7 +7,7 @@ module Menu
     # Constants, settings, modules, et...
     # ##############################
     VALID_STATUSES = %w[active deleted].freeze
-    include HasImageAttached
+    include HasImagesAttached
     include TrackModelChanges
 
     extend Mobility
