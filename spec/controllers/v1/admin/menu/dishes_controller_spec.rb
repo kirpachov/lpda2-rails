@@ -167,7 +167,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       context 'when filtering by price {price: "15.5"}' do
         before do
           Menu::Dish.delete_all
-          create(:menu_dish, price: 10) # making test fail to check if arrives email from github ci
+          create(:menu_dish, price: 15)
           create(:menu_dish, price: 15)
           create(:menu_dish, price: 16)
         end
