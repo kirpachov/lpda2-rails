@@ -24,6 +24,10 @@ class Setting < ApplicationRecord
       DEFAULTS[key]&.[](:default)
     end
 
+    def [](key)
+      all_hash.key?(key) ? all_hash[key] : default(key)
+    end
+
     def create_missing
       DEFAULTS.each do |key, data|
         where(key: key).first_or_create!(data.as_json(except: :default))

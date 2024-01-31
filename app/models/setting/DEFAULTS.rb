@@ -6,5 +6,9 @@ class Setting
       # value: :en,
       default: I18n.default_locale,
     },
+
+    available_locales: {
+      default: I18n.available_locales
+    }
   }.with_indifferent_access.freeze
 end
