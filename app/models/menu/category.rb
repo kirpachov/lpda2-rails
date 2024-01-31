@@ -43,6 +43,7 @@ module Menu
     validate :other_cannot_be_nil
     validate :parent_id_cannot_be_self
     validate :visibility_must_be_nil_unless_root
+    validate :visibility_must_be_present_if_root
 
     # ##############################
     # Hooks
@@ -50,6 +51,7 @@ module Menu
     before_validation :assign_defaults, on: :create
     before_validation :assign_valid_index, on: :update
     before_destroy :check_if_has_children
+    before_validation :assign_default_visibility_if_necessary
 
     # ##############################
     # Scopes
@@ -82,8 +84,10 @@ module Menu
       assign_valid_index if index.to_i.zero?
       self.secret = GenToken.for!(self.class, :secret) if secret.blank?
       self.other = {} if other.nil?
+    end
 
-      self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil? && parent.nil? && parent_id.nil?
+    def assign_default_visibility_if_necessary
+      assign_default_visibility if visibility.nil? && visibility_id.nil? && parent.nil? && parent_id.nil?
     end
 
     def public_visible?
@@ -102,11 +106,6 @@ module Menu
       visibility&.private_visible!
     end
 
-    # Can set public_visible or private_visible to true?
-    def can_publish?
-
-    end
-
     def price?
       price.present?
     end
@@ -116,7 +115,11 @@ module Menu
     end
 
     def remove_parent!
-      update!(parent_id: nil)
+      update!(parent: nil)
+    end
+
+    def can_publish?
+      CanPublishCategory.run(category: self).result
     end
 
     def has_children?
@@ -131,11 +134,22 @@ module Menu
 
     private
 
+    def assign_default_visibility
+      self.visibility ||= Menu::Visibility.new
+    end
+
     def visibility_must_be_nil_unless_root
       return if parent.nil? && parent_id.nil?
       return if visibility.nil? && visibility_id.nil?
 
       errors.add(:visibility, "must be nil unless root category")
+    end
+
+    def visibility_must_be_present_if_root
+      return if visibility_id.present? || visibility.present?
+      return if parent.present? || parent_id.present?
+
+      errors.add(:visibility, "must be present if root category")
     end
 
     def other_cannot_be_nil

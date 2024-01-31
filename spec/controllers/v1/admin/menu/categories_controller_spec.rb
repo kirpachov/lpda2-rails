@@ -1151,6 +1151,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { should have_http_status(:ok) }
         it { should be_successful }
 
+        it "should not have a message" do
+          subject
+          expect(parsed_response_body['message']).to be_nil
+        end
+
         context 'response[:item]' do
           subject do
             req(id: category.id, parent_id: nil)

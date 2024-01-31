@@ -9,7 +9,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
   before { authenticate_request }
 
   def setting_keys
-    %w[default_language]
+    %w[default_language available_locales]
   end
 
   before do
