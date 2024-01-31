@@ -130,7 +130,6 @@ ActiveRecord::Schema[7.0].define(version: 20) do
   create_table "menu_dishes_in_categories", force: :cascade do |t|
     t.bigint "menu_dish_id", null: false
     t.bigint "menu_category_id", null: false
-    t.bigint "menu_visibility_id", null: false
     t.integer "index", null: false, comment: "Index of the element in the list. Starts at 0."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -138,7 +137,6 @@ ActiveRecord::Schema[7.0].define(version: 20) do
     t.index ["index"], name: "index_menu_dishes_in_categories_on_index"
     t.index ["menu_category_id"], name: "index_menu_dishes_in_categories_on_menu_category_id"
     t.index ["menu_dish_id"], name: "index_menu_dishes_in_categories_on_menu_dish_id"
-    t.index ["menu_visibility_id"], name: "index_menu_dishes_in_categories_on_menu_visibility_id"
   end
 
   create_table "menu_ingredients", force: :cascade do |t|

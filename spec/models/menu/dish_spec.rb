@@ -94,7 +94,7 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect(dish.categories.count).to eq 1 }
       it { expect(category.dishes.count).to eq 1 }
       it { expect { dish.destroy! }.to change { Menu::DishesInCategory.count }.by(-1) }
-      it { expect { dish.destroy! }.to change { Menu::Visibility.count }.by(-1) }
+      it { expect { dish.destroy! }.to change { Menu::Visibility.count }.by(0) }
       it { expect { dish.destroy! }.to change { Menu::Category.count }.by(0) }
     end
 

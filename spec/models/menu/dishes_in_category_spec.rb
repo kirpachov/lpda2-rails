@@ -25,23 +25,6 @@ RSpec.describe Menu::DishesInCategory, type: :model do
     it { should belong_to(:menu_category).required }
     it { should respond_to(:category) }
     it { should respond_to(:category=) }
-
-    it { should belong_to(:menu_visibility).required }
-    it { should respond_to(:visibility) }
-    it { should respond_to(:visibility=) }
-  end
-
-  context 'should create menu visibility before validation' do
-    subject { build(:menu_dishes_in_category, menu_visibility: nil) }
-
-    it { should be_valid }
-    it { expect(subject.save!).to be true }
-    it { expect { subject.save! }.not_to raise_error }
-    it "should have menu visibility after save" do
-      subject.save!
-
-      expect(subject.reload.visibility).to be_a(Menu::Visibility)
-    end
   end
 
   context 'when element is being deleted' do

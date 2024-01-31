@@ -8,18 +8,15 @@ module Menu
     # ##############################
     belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
     belongs_to :menu_category, class_name: "Menu::Category", optional: false
-    belongs_to :menu_visibility, class_name: "Menu::Visibility", optional: false, dependent: :destroy
 
     # ##############################
     # Aliases
     # ##############################
     alias_attribute :dish, :menu_dish
     alias_attribute :category, :menu_category
-    alias_attribute :visibility, :menu_visibility
 
     alias_attribute :dish_id, :menu_dish_id
     alias_attribute :category_id, :menu_category_id
-    alias_attribute :visibility_id, :menu_visibility_id
 
     # ##############################
     # Validations
@@ -36,7 +33,6 @@ module Menu
     # Instance methods
     # ##############################
     def assign_defaults
-      self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil?
       assign_valid_index if index.to_i <= 0
     end
 
