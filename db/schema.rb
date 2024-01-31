@@ -109,14 +109,14 @@ ActiveRecord::Schema[7.0].define(version: 20) do
     t.jsonb "other", default: {}, null: false
     t.float "price"
     t.bigint "parent_id"
-    t.bigint "menu_visibility_id", null: false
+    t.bigint "menu_visibility_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["index", "parent_id"], name: "index_menu_categories_on_index_and_parent_id", unique: true
     t.index ["menu_visibility_id"], name: "index_menu_categories_on_menu_visibility_id"
     t.index ["parent_id"], name: "index_menu_categories_on_parent_id"
     t.index ["secret"], name: "index_menu_categories_on_secret"
-    t.index ["secret_desc"], name: "index_menu_categories_on_secret_desc", where: "(secret_desc IS NOT NULL)"
+    t.index ["secret_desc"], name: "index_menu_categories_on_secret_desc", unique: true, where: "(secret_desc IS NOT NULL)"
   end
 
   create_table "menu_dishes", force: :cascade do |t|

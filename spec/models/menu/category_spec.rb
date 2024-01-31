@@ -80,7 +80,7 @@ RSpec.describe Menu::Category, type: :model do
 
         context 'two element with same index but different parent_id may exist.' do
           let!(:parent) { create(:menu_category, index: 0) }
-          let!(:child) { create(:menu_category, parent: parent, index: 0) }
+          let!(:child) { create(:menu_category, parent: parent, index: 0, visibility: nil) }
 
           it { expect(parent).to be_valid }
           it { expect(parent).to be_persisted }
@@ -189,7 +189,7 @@ RSpec.describe Menu::Category, type: :model do
 
   context 'associations' do
     before { allow_any_instance_of(Menu::Category).to receive(:assign_defaults).and_return(true) }
-    it { should belong_to(:menu_visibility).dependent(:destroy) }
+    it { should belong_to(:menu_visibility).optional.dependent(:destroy) }
 
     context 'when deleted, should destroy all DishInCategory' do
       let(:dish) { create(:menu_dish) }
@@ -211,7 +211,7 @@ RSpec.describe Menu::Category, type: :model do
 
     context 'when trying to delete a "parent" category, should raise some error.' do
       let(:parent) do
-        create(:menu_category, parent: create(:menu_category)).parent
+        create(:menu_category, visibility: nil, parent: create(:menu_category)).parent
       end
 
       subject { parent }
@@ -230,7 +230,7 @@ RSpec.describe Menu::Category, type: :model do
     end
 
     context 'when has parent' do
-      subject { build(:menu_category, parent: build(:menu_category)) }
+      subject { build(:menu_category, visibility: nil, parent: build(:menu_category)) }
       it { should be_valid }
       it { expect(subject.save!).to be true }
       it { expect { subject.save! }.not_to raise_error }
@@ -260,6 +260,30 @@ RSpec.describe Menu::Category, type: :model do
         expect(subject.dishes.map(&:id)).to match_array(dishes.map(&:id))
         dishes.map(&:reload)
         expect(dishes.map(&:categories).flatten.map(&:id).uniq).to eq [subject.id]
+      end
+    end
+
+    context 'when adding visibility to a non-root category should raise error' do
+      let(:parent) { create(:menu_category) }
+      subject { create(:menu_category, parent: parent, menu_visibility: nil) }
+      let(:visibility) { create(:menu_visibility) }
+
+      it { expect(subject).to be_valid }
+      it { expect(subject).to be_persisted }
+      it { expect(subject.parent).to eq parent }
+      it { expect(subject.menu_visibility).to be_nil }
+      it { expect(subject.visibility).to be_nil }
+      it { expect(parent.visibility).not_to be_nil }
+      it { expect(parent.visibility).to be_a(::Menu::Visibility) }
+
+      it "should raise error" do
+        expect { subject.update!(menu_visibility: visibility) }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+
+      it "should not be valid" do
+        subject.menu_visibility = visibility
+        expect(subject).to be_invalid
+        expect(subject.errors[:visibility]).to be_present
       end
     end
 

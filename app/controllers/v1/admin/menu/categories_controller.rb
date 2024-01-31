@@ -59,7 +59,9 @@ module V1
       end
 
       def update_params
-        params.permit(:parent_id, :secret_desc)
+        update_params = params.permit(:parent_id, :secret_desc)
+        update_params.merge!(visibility_id: nil) if update_params.key?(:parent_id)
+        update_params
       end
 
       def find_category

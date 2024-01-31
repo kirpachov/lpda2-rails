@@ -215,7 +215,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context 'when filtering by parent_id' do
         before do
           @parent = create(:menu_category)
-          create_list(:menu_category, 2, parent: @parent)
+          create_list(:menu_category, 2, visibility: nil, parent: @parent)
           create_list(:menu_category, 2)
         end
 
@@ -514,7 +514,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'when category has parent' do
         let(:parent) { create(:menu_category) }
-        let(:category) { create(:menu_category, parent: parent) }
+        let(:category) { create(:menu_category, parent: parent, visibility: nil) }
 
         subject do
           req(id: category.id)
@@ -525,7 +525,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(category.parent).to be_a(Menu::Category) }
         it { expect(response).to have_http_status(:ok) }
 
-        it_behaves_like ADMIN_MENU_CATEGORY
+        it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
         it { should include(
                       parent_id: Integer,
                       name: NilClass,
@@ -637,7 +637,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_CATEGORY
+          it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
           it { should include(
                         parent_id: Integer,
@@ -778,7 +778,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_CATEGORY
+          it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
           it { should include(
                         parent_id: Integer,
@@ -1099,8 +1099,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       end
 
       context 'with {parent_id: <id>}' do
-        let!(:category) { create(:menu_category) }
         let!(:parent) { create(:menu_category) }
+        let!(:category) { create(:menu_category) }
 
         subject do
           req(id: category.id, parent_id: parent.id)
@@ -1109,6 +1109,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it { expect { subject }.not_to change(Menu::Category, :count) }
         it { expect { subject }.to change { category.reload.parent }.from(nil).to(parent) }
+        it { expect { subject }.to change { category.reload.visibility_id }.from(category.visibility_id).to(nil) }
         it { should have_http_status(:ok) }
         it { should be_successful }
 
@@ -1118,7 +1119,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_CATEGORY
+          it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
           it { should include(
                         parent_id: Integer,
@@ -1138,7 +1139,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'with {parent_id: nil}' do
         let!(:parent) { create(:menu_category) }
-        let!(:category) { create(:menu_category, parent: parent) }
+        let!(:category) { create(:menu_category, visibility: nil, parent: parent) }
 
         subject do
           req(id: category.id, parent_id: nil)
@@ -1156,7 +1157,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_CATEGORY
+          it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
           it { should include(
                         parent_id: NilClass,
@@ -1236,7 +1237,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'passing {secret_desc: "ciaobanana", description: {it: <String>, invalid_locale: <String>}}' do
         let!(:parent) { create(:menu_category) }
-        let!(:category) { create(:menu_category, parent:) }
+        let!(:category) { create(:menu_category, parent:, visibility: nil) }
         let(:params) { { id: category.id, secret_desc: "ciaobanana", description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it 'should not update parent' do
@@ -1271,7 +1272,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'passing {parent_id: nil, name: {it: <String>, invalid_locale: <String>}}' do
         let!(:parent) { create(:menu_category) }
-        let!(:category) { create(:menu_category, parent:) }
+        let!(:category) { create(:menu_category, parent:, visibility: nil) }
         let(:params) { { id: category.id, parent_id: nil, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it 'should not update parent' do
@@ -1439,6 +1440,69 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         before { req(id: 22) }
         subject { response }
         it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  pending '#visibility' do
+    it { expect(instance).to respond_to(:visibility) }
+    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/visibility').to(action: :visibility, format: :json, id: 22) }
+
+    def req(id, params = {})
+      patch :visibility, params: params.merge(id:)
+    end
+
+    context 'when user is not authenticated' do
+      before { req(id: 22) }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+      let(:visibility) { create(:menu_visibility, public_visible: false, private_visible: false, public_from: nil, public_to: nil, private_from: nil, private_to: nil) }
+      let(:category) { create(:menu_category, visibility:) }
+
+      context 'checking mock data' do
+        it { expect(category.visibility).to be_present }
+        it { expect(category.visibility.id).to eq visibility.id }
+        it { expect(category).not_to be_public_visible }
+        it { expect(category).not_to be_private_visible }
+        it { expect(category.visibility.public_visible).to eq false }
+        it { expect(category.visibility.private_visible).to eq false }
+        it { expect(category.dishes.count).to eq 0 }
+      end
+
+      context 'when category hasnt any dish, should not be able to update public_visible to true' do
+        subject do
+          req(category.id, public_visible: true)
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_visible } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+      end
+
+      context 'when category hasnt any dish, should not be able to update private_visible to true' do
+        subject do
+          req(category.id, private_visible: true)
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_visible } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
+      end
+
+      context 'when category hasnt any dish, should not be able to update private_visible or public_visible to true' do
+        subject do
+          req(category.id, private_visible: true, public_visible: true)
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_visible } }
+        it { should have_http_status(:unprocessable_entity) }
+        it { should_not be_successful }
       end
     end
   end

@@ -7,7 +7,7 @@ module Menu
     # Constants, modules
     # ##############################
     include TrackModelChanges
-    include HasImageAttached
+    include HasImagesAttached
     extend Mobility
     translates :name
     translates :description
@@ -20,7 +20,7 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_visibility, dependent: :destroy, class_name: "Menu::Visibility"
+    belongs_to :menu_visibility, dependent: :destroy, class_name: "Menu::Visibility", optional: true
     alias_attribute :visibility_id, :menu_visibility_id
     alias_attribute :visibility, :menu_visibility
 
@@ -42,6 +42,7 @@ module Menu
     validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true, uniqueness: { scope: :parent_id }
     validate :other_cannot_be_nil
     validate :parent_id_cannot_be_self
+    validate :visibility_must_be_nil_unless_root
 
     # ##############################
     # Hooks
@@ -81,7 +82,29 @@ module Menu
       assign_valid_index if index.to_i.zero?
       self.secret = GenToken.for!(self.class, :secret) if secret.blank?
       self.other = {} if other.nil?
-      self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil?
+
+      self.visibility = Menu::Visibility.new if visibility.nil? && visibility_id.nil? && parent.nil? && parent_id.nil?
+    end
+
+    def public_visible?
+      visibility&.public_visible?
+    end
+
+    def public_visible!
+      visibility&.public_visible!
+    end
+
+    def private_visible?
+      visibility&.private_visible?
+    end
+
+    def private_visible!
+      visibility&.private_visible!
+    end
+
+    # Can set public_visible or private_visible to true?
+    def can_publish?
+
     end
 
     def price?
@@ -107,6 +130,13 @@ module Menu
     end
 
     private
+
+    def visibility_must_be_nil_unless_root
+      return if parent.nil? && parent_id.nil?
+      return if visibility.nil? && visibility_id.nil?
+
+      errors.add(:visibility, "must be nil unless root category")
+    end
 
     def other_cannot_be_nil
       return unless other.nil?
