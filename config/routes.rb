@@ -28,7 +28,12 @@ Rails.application.routes.draw do
         end
 
         scope module: :menu, path: 'menu' do
-          resources :categories, only: %i[index show create update destroy]
+          resources :categories, only: %i[index show create update destroy] do
+            member do
+              patch 'visibility'
+            end
+          end
+
           resources :ingredients, only: %i[index show create update destroy]
           resources :dishes, only: %i[index show create update destroy]
         end

@@ -1449,7 +1449,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     end
   end
 
-  pending '#visibility' do
+  context '#visibility' do
     it { expect(instance).to respond_to(:visibility) }
     it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/visibility').to(action: :visibility, format: :json, id: 22) }
 
@@ -1483,31 +1483,143 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_visible } }
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it 'should not update public_visible to true' do
+          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
       end
 
-      context 'when category hasnt any dish, should not be able to update private_visible to true' do
+      context 'when category hasnt any dish but providing {force: true}' do
+        subject do
+          req(category.id, public_visible: true, force: true)
+          response
+        end
+
+        it 'should be able to update public_visible to true' do
+          expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
+          should have_http_status(:ok)
+          should be_successful
+        end
+      end
+
+      context 'when category hasnt any dish but providing {force: "true"}' do
+        subject do
+          req(category.id, public_visible: true, force: "true")
+          response
+        end
+
+        it 'should be able to update public_visible to true' do
+          expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
+          should have_http_status(:ok)
+          should be_successful
+        end
+      end
+
+      context 'when category hasnt any dish but providing {force: "false"}' do
+        subject do
+          req(category.id, public_visible: true, force: "false")
+          response
+        end
+
+        it 'should not update public_visible to true' do
+          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+      end
+
+      context 'when category hasnt any dish but providing {force: false}' do
+        subject do
+          req(category.id, public_visible: true, force: false)
+          response
+        end
+
+        it 'should not update public_visible to true' do
+          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+      end
+
+      context 'when category hasnt any dish' do
         subject do
           req(category.id, private_visible: true)
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_visible } }
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it 'should update private_visible to true' do
+          expect { subject }.to change { category.reload.visibility.private_visible }.from(false).to(true)
+          should have_http_status(:ok)
+          should be_successful
+        end
       end
 
-      context 'when category hasnt any dish, should not be able to update private_visible or public_visible to true' do
+      context 'when category hasnt any dish' do
         subject do
           req(category.id, private_visible: true, public_visible: true)
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_visible } }
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it 'should not be able to update private_visible or public_visible to true' do
+          expect { subject }.not_to change { category.reload.visibility.private_visible }
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+      end
+
+      %w[2023-10-13 13-10-2023 13.10.2023 13/10/2023].each do |date|
+        context "when providing {public_from: #{date}}" do
+          subject do
+            req(category.id, public_from: date)
+            response
+          end
+
+          it 'should update public_from correctly' do
+            expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse("2023-10-13"))
+            should have_http_status(:ok)
+            should be_successful
+          end
+        end
+
+        context "when providing {public_to: #{date}}" do
+          subject do
+            req(category.id, public_to: date)
+            response
+          end
+
+          it 'should update public_to correctly' do
+            expect { subject }.to change { category.reload.visibility.public_to }.from(nil).to(DateTime.parse("2023-10-13"))
+            should have_http_status(:ok)
+            should be_successful
+          end
+        end
+
+        context "when providing {private_from: #{date}}" do
+          subject do
+            req(category.id, private_from: date)
+            response
+          end
+
+          it 'should update private_from correctly' do
+            expect { subject }.to change { category.reload.visibility.private_from }.from(nil).to(DateTime.parse("2023-10-13"))
+            should have_http_status(:ok)
+            should be_successful
+          end
+        end
+
+        context "when providing {private_to: #{date}}" do
+          subject do
+            req(category.id, private_to: date)
+            response
+          end
+
+          it 'should update private_to correctly' do
+            expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse("2023-10-13"))
+            should have_http_status(:ok)
+            should be_successful
+          end
+        end
       end
     end
   end

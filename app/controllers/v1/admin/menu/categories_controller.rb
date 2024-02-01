@@ -3,7 +3,7 @@
 module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
-      before_action :find_category, only: %i[show update destroy]
+      before_action :find_category, only: %i[show update destroy visibility]
 
       def index
         call = ::Menu::SearchCategories.run(params:, current_user:)
@@ -52,7 +52,31 @@ module V1
         render_unprocessable_entity(@item)
       end
 
+      def visibility
+        # TODO: when is not root, should update parent's visibility?
+        @item.visibility.assign_attributes(visibility_params)
+
+        # Checking if can publish.
+        # If not publishing, don't care if can publish.
+        # If publishing, check if can publish.
+        if (force? || !@item.visibility.public_visible? || ::Menu::CanPublishCategory.run(category: @item).result) &&
+           @item.visibility.valid? && @item.visibility.save
+
+          return show
+        end
+
+        render_unprocessable_entity(@item)
+      end
+
       private
+
+      def force?
+        [true, 1, 'true', '1', :true].include? params[:force]
+      end
+
+      def visibility_params
+        params.permit(:public_visible, :public_from, :public_to, :private_visible, :private_from, :private_to)
+      end
 
       def create_params
         params.permit(:parent_id)
