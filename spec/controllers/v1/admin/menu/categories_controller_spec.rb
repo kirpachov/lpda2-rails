@@ -1477,6 +1477,23 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(category.dishes.count).to eq 0 }
       end
 
+      context 'when category was already public should not stop from updating any other field: should check if can publish only if publishing right now.' do
+        before { category.visibility.update!(public_visible: true) }
+
+        subject do
+          req(category.id, public_from: '2023-10-10')
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_visible } }
+        it { expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2023-10-10')) }
+
+        it 'should update public_from and return 200' do
+          should have_http_status(:ok)
+          should be_successful
+        end
+      end
+
       context 'when category hasnt any dish, should not be able to update public_visible to true' do
         subject do
           req(category.id, public_visible: true)

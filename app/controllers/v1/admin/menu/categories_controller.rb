@@ -4,6 +4,7 @@ module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
       before_action :find_category, only: %i[show update destroy visibility]
+      before_action :check_if_can_publish, only: %i[visibility]
 
       def index
         call = ::Menu::SearchCategories.run(params:, current_user:)
@@ -59,8 +60,7 @@ module V1
         # Checking if can publish.
         # If not publishing, don't care if can publish.
         # If publishing, check if can publish.
-        if (force? || !@item.visibility.public_visible? || @item.can_publish?) &&
-           @item.visibility.valid? && @item.visibility.save
+        if @item.visibility.valid? && @item.visibility.save
 
           return show
         end
@@ -69,6 +69,18 @@ module V1
       end
 
       private
+
+      def check_if_can_publish
+        return if force?
+
+        publishing_now = [true, 1, 'true', '1', :true].include?(params[:public_visible])
+        return unless publishing_now
+
+        call = Menu::CanPublishCategory.run(category: @item)
+        return if call.result
+
+        render_error(status: :unprocessable_entity, message: "Cannot publish this category: #{call.reasons.full_messages.join(', ')}", details: call.reasons.full_json)
+      end
 
       def force?
         [true, 1, 'true', '1', :true].include? params[:force]
