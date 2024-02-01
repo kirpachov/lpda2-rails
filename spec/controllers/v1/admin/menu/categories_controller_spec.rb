@@ -1585,6 +1585,111 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
       end
 
+      context "when providing public_from after public_to {public_from: '2022-10-8', private_to: '2021-1-1'}" do
+        subject do
+          req(category.id, public_from: '2022-10-8', private_to: '2021-1-1')
+          response
+        end
+
+        it { expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2022-10-8')) }
+
+        it { expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse('2021-1-1')) }
+
+        it 'should be able to update public_from or private_to and return 200' do
+          should have_http_status(:ok)
+          should be_successful
+        end
+
+        context 'after req' do
+          before { subject }
+          it { expect(parsed_response_body).not_to include(message: String, details: Hash) }
+        end
+      end
+
+      context "when providing public_from == public_to {public_from: '2022-10-8', public_to: '2022-10-8'}" do
+        subject do
+          req(category.id, public_from: '2022-10-8', public_to: '2022-10-8')
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_from } }
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_to } }
+
+        it 'should not be able to update public_from or public_to and return 422' do
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+
+        context 'after req' do
+          before { subject }
+          it { expect(parsed_response_body).to include(message: String, details: Hash) }
+        end
+      end
+
+      context "when providing public_from == public_to {private_from: '2022-10-8', private_to: '2022-10-8'}" do
+        subject do
+          req(category.id, private_from: '2022-10-8', private_to: '2022-10-8')
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_from } }
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_to } }
+
+        it 'should not be able to update private_from or private_to and return 422' do
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+
+        context 'after req' do
+          before { subject }
+          it { expect(parsed_response_body).to include(message: String, details: Hash) }
+        end
+      end
+
+      context "when providing public_from after public_to {public_from: '2022-10-8', public_to: '2021-1-1'}" do
+        subject do
+          req(category.id, public_from: '2022-10-8', public_to: '2021-1-1')
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_from } }
+
+        it { expect { subject }.not_to change { category.reload.visibility.public_to } }
+
+        it 'should not be able to update public_from or public_to and return 422' do
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+
+        context 'after req' do
+          before { subject }
+          it { expect(parsed_response_body).to include(message: String, details: Hash) }
+        end
+      end
+
+      context "when providing private_from after private_to {private_from: '2022-10-8', private_to: '2021-1-1'}" do
+        subject do
+          req(category.id, private_from: '2022-10-8', private_to: '2021-1-1')
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_from } }
+
+        it { expect { subject }.not_to change { category.reload.visibility.private_to } }
+
+        it 'should not be able to update private_from or public_to and return 422' do
+          should have_http_status(:unprocessable_entity)
+          should_not be_successful
+        end
+
+        context 'after req' do
+          before { subject }
+          it { expect(parsed_response_body).to include(message: String, details: Hash) }
+        end
+      end
+
       %w[2023-10-13 13-10-2023 13.10.2023 13/10/2023].each do |date|
         context "when providing {public_from: #{date}}" do
           subject do

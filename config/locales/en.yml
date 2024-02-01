@@ -20,6 +20,10 @@ en:
         restrict_dependent_destroy:
           has_one: "The record cannot be deleted because there is a dependent %{record}"
           has_many: "The record cannot be deleted because there are %{record} dependents"
+        private_from_should_be_before_private_to: "Start of the private visibility %{private_from} must be before the ending %{private_to}"
+        private_to_should_be_after_private_from: "The end of the private visibility %{private_to} should be AFTER the beginning %{private_from}"
+        public_from_should_be_before_public_to: "Start of the public visibility %{public_from} must be before the ending %{public_to}"
+        public_to_should_be_after_public_from: "The end of the public visibility %{public_to} should be AFTER the beginning %{public_from}"
   date:
     abbr_day_names:
     - sun
