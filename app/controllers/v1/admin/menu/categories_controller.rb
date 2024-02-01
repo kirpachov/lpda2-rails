@@ -59,7 +59,7 @@ module V1
         # Checking if can publish.
         # If not publishing, don't care if can publish.
         # If publishing, check if can publish.
-        if (force? || !@item.visibility.public_visible? || ::Menu::CanPublishCategory.run(category: @item).result) &&
+        if (force? || !@item.visibility.public_visible? || @item.can_publish?) &&
            @item.visibility.valid? && @item.visibility.save
 
           return show
