@@ -16,7 +16,7 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 # guard :rspec, cmd: 'rspec -f html -o /tmp/spec_results.html', launchy: '/tmp/spec_results.html' do
-guard :rspec, cmd: 'bundle exec rspec --no-profile', notification: false do
+guard :rspec, cmd: 'bundle exec rspec --no-profile', notification: true do
   watch('spec/spec_helper.rb')                        { "spec" }
   watch('config/routes.rb')                           { "spec/routing" }
   watch('app/controllers/application_controller.rb')  { "spec/controllers" }

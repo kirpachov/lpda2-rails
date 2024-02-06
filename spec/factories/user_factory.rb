@@ -6,6 +6,10 @@ FactoryBot.define do
     status { 'active' }
   end
 
+  trait :admin do
+    roles { %w[admin] }
+  end
+
   sequence :user_email do |n|
     Faker::Internet.email.gsub('@', "#{n}@")
   end
