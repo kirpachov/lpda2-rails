@@ -64,7 +64,7 @@ module V1
         item.as_json.merge(
           name: item.name,
           description: item.description,
-          images: item.images.map { |image| image.as_json.merge(url: image.url) }
+          image: item.image&.full_json
         )
       end
 

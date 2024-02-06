@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-HAS_IMAGE_HELPER = 'HAS_IMAGE_HELPER'
+# Note: below is defined HAS_IMAGE_HELPER
 
-RSpec.shared_examples HAS_IMAGE_HELPER do
+HAS_IMAGES_HELPER = 'HAS_IMAGES_HELPER'
+
+RSpec.shared_examples HAS_IMAGES_HELPER do
   it { expect(described_class).to be_a(Class) }
 
   it { expect(subject).to be_a(ApplicationRecord) }
@@ -51,6 +53,69 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
   context 'when element is deleted, association to image should be deleted but the image itself no.' do
     let(:image) { create(:image, :with_attached_image) }
     before { subject.images << image }
+
+    it { expect { subject.destroy }.not_to change(Image, :count) }
+    it { expect { subject.destroy }.to change(ImageToRecord, :count).by(-1) }
+  end
+end
+
+HAS_IMAGE_HELPER = 'HAS_IMAGE_HELPER'
+
+RSpec.shared_examples HAS_IMAGE_HELPER do
+  it { expect(described_class).to be_a(Class) }
+
+  it { expect(subject).to be_a(ApplicationRecord) }
+  it { should have_one(:image_to_record) }
+  it { should have_one(:image).through(:image_to_record) }
+  it { should be_valid }
+  it { should be_persisted }
+  it { expect(subject.image).to be_nil }
+  it { expect(subject.image_to_record).to be_nil }
+
+  context 'can add image with "= <ImageInstance>"' do
+    let(:image) { create(:image, :with_attached_image) }
+
+    it "should change subject image" do
+      expect { subject.image = image }.to change { subject.reload.image }.from(nil).to(image)
+    end
+
+    it "should change image to record" do
+      expect { subject.image = image }.to change { subject.reload.image_to_record }.from(nil).to(be_a(ImageToRecord))
+    end
+
+    it "should create image to record" do
+      expect { subject.image = image }.to change { ImageToRecord.count }.by(1)
+    end
+
+    context 'after has been added' do
+      before { subject.image = image }
+
+      it { expect(subject.image).to eq(image) }
+      # it { expect(image.image_to_record).to include(subject.image_to_record.find_by(image: image)) }
+      it { expect(image.image_to_records.find_by(image: image).record).to eq(subject) }
+      it { expect(image.image_to_records.find_by(image: image).record_id).to eq(subject.id) }
+
+      it 'can add the same image twice' do
+        expect { subject.image = image }.not_to raise_error
+      end
+    end
+  end
+
+  context 'when trying to attach a image that does not have any attached_image' do
+    let(:image) { create(:image) }
+
+    it "should fail." do
+      expect { subject.image = image }.not_to raise_error
+    end
+
+    it "should not update image." do
+      expect { subject.image = image }.not_to change { subject.reload.image }
+    end
+  end
+
+  context 'when element is deleted, association to image should be deleted but the image itself no.' do
+    let(:image) { create(:image, :with_attached_image) }
+    before { subject.image = image }
 
     it { expect { subject.destroy }.not_to change(Image, :count) }
     it { expect { subject.destroy }.to change(ImageToRecord, :count).by(-1) }

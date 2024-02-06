@@ -50,18 +50,17 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
           it { is_expected.to include(id: Integer) }
           it { is_expected.to include(name: String) }
           it { is_expected.to include(description: String) }
-          it { is_expected.to include(images: Array) }
         end
       end
 
-      context 'when ingredients have images' do
+      context 'when ingredients have image' do
         before do
-          create(:menu_ingredient).images = [create(:image, :with_attached_image)]
+          create(:menu_ingredient).image = create(:image, :with_attached_image)
           req
         end
 
-        context 'checking images structure' do
-          subject { parsed_response_body[:items].sample[:images].sample }
+        context 'checking image structure' do
+          subject { parsed_response_body[:items].sample[:image] }
           it { should include(id: Integer) }
           it { should include(url: String) }
           it { should include(filename: String) }
@@ -200,7 +199,6 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { is_expected.to include(id: menu_ingredient.id) }
         it { is_expected.to include(name: menu_ingredient.name) }
         it { is_expected.to include(description: menu_ingredient.description) }
-        it { is_expected.to include(images: Array) }
       end
     end
   end

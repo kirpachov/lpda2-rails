@@ -9,7 +9,7 @@ module Menu
     VALID_STATUSES = %w[active deleted].freeze
 
     include TrackModelChanges
-    include HasImagesAttached
+    include HasImageAttached
     extend Mobility
     translates :name
     translates :description
@@ -68,6 +68,18 @@ module Menu
     def assign_defaults
       self.other = {} if other.nil?
       self.status = 'active' if status.blank?
+    end
+
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy!(options = {})
+      CopyIngredient.run!(options.merge(old: self))
+    end
+
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy(options = {})
+      CopyIngredient.run(options.merge(old: self))
     end
 
     def status=(value)

@@ -21,7 +21,7 @@ RSpec.describe Menu::Category, type: :model do
   context 'has image' do
     subject { create(:menu_category) }
 
-    include_examples HAS_IMAGE_HELPER
+    include_examples HAS_IMAGES_HELPER
   end
 
   def valid_statuses

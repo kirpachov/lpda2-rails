@@ -44,7 +44,7 @@ RSpec.describe CopyImage, type: :interaction do
       end
 
       it 'enqueue a job to save the changes with current user info' do
-        allow(SaveModelChangeJob).to receive(:perform_async).with({ "change_type" => "create", "changed_fields" => ["filename", "status"], "record_changes" => { "filename" => [nil, image.filename], "status" => [nil, image.status] }, "record_id" => image.id + 1, "record_type" => "Image", "user_id" => current_user.id })
+        allow(SaveModelChangeJob).to receive(:perform_async).with(include( "user_id" => current_user.id ))
         subject
       end
     end

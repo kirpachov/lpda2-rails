@@ -68,7 +68,7 @@ module V1::Admin::Menu
       item.as_json.merge(
         name: item.name,
         description: item.description,
-        images: item.images.map(&:full_json),
+        image: item.image&.full_json
       )
     end
   end

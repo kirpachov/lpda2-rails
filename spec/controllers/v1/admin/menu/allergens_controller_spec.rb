@@ -9,7 +9,6 @@ RSpec.shared_context ADMIN_MENU_ALLERGEN_ITEM do |options = {}|
                      id: Integer,
                      created_at: String,
                      updated_at: String,
-                     images: Array,
                    )
   end
 
@@ -41,15 +40,14 @@ RSpec.shared_context ADMIN_MENU_ALLERGEN_ITEM do |options = {}|
     end
   end
 
-  if options[:has_images] == true
-    it 'should have images' do
-      expect(subject[:images]&.length).to be_positive
+  if options[:has_image] == true
+    it 'should have image' do
+      expect(subject[:image]).to be_a(Hash)
+      # TODO may validate image content
     end
-  elsif options[:has_images] == false
-    it 'should NOT have images' do
-      is_expected.to include(
-                       images: []
-                     )
+  elsif options[:has_image] == false
+    it 'should NOT have image' do
+      is_expected.to include(image: nil)
     end
   end
 end
@@ -196,11 +194,11 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
       before { authenticate_request(user: user) }
 
       context 'returned items should contain all relevant information' do
-        let!(:images) { create_list(:image, 2, :with_attached_image) }
+        let!(:image) { create(:image, :with_attached_image) }
 
         let!(:allergen) do
           create(:menu_allergen, name: nil, description: nil).tap do |cat|
-            cat.images << images
+            cat.image = image
           end
         end
 
@@ -212,13 +210,10 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           it { expect(Menu::Allergen.count).to eq 1 }
           it { expect(subject).to be_a(Hash) }
           it { expect(Menu::Allergen.find(subject[:id])).to be_a(Menu::Allergen) }
-          it { expect(allergen.images).not_to be_empty }
-          it { expect(allergen.images.count).to be_positive }
+          it { expect(allergen.image).not_to be_nil }
         end
 
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_images: true
-
-        it { expect(subject[:images].count).to eq 2 }
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: true
       end
 
       context 'when filtering by query' do
@@ -343,9 +338,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(response).to be_successful }
         it { expect(response).to have_http_status(:ok) }
 
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_images: false
-
-        it { expect(subject[:images].count).to eq 0 }
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: false
       end
 
       context 'when passing a invalid id' do
@@ -360,9 +353,9 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context 'when allergen has images' do
+      context 'when allergen has image' do
         let(:allergen) { create(:menu_allergen, name: nil, description: nil) }
-        before { allergen.images << create_list(:image, 2, :with_attached_image) }
+        before { allergen.image = create(:image, :with_attached_image) }
 
         subject do
           req(id: allergen.id)
@@ -372,9 +365,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(allergen).to be_valid }
         it { expect(response).to have_http_status(:ok) }
 
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_images: true
-
-        it { expect(subject[:images].count).to eq 2 }
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: true
       end
 
       context 'when allergen has name' do
@@ -392,7 +383,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(allergen).to be_valid }
         it { expect(response).to have_http_status(:ok) }
 
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_images: false
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
         it { should include(name: 'test') }
       end
 
@@ -449,9 +440,8 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false
 
-        it { expect(subject[:images].count).to eq 0 }
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: false
       end
 
       context 'passing {} (empty hash)' do
@@ -474,9 +464,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false
-
-          it { expect(subject[:images].count).to eq 0 }
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: false
         end
       end
 
@@ -500,7 +488,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_images: false
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
 
           it { should include(name: 'test') }
         end
@@ -526,7 +514,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_images: false
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_image: false
 
           it { should include(description: 'test') }
         end
@@ -553,7 +541,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_images: false
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
 
           it { should include(name: "test-#{I18n.locale}") }
 
@@ -589,7 +577,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_images: false
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_image: false
 
           it { should include(description: "test-#{I18n.locale}") }
 
@@ -696,7 +684,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
 
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_images: false
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
       end
 
       context 'if cannot find allergen by id' do
@@ -744,7 +732,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_images: false
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
         it { should include(name: 'Hello') }
 
         context 'after request' do
@@ -770,7 +758,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
-        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_images: false
+        it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: true, has_image: false
 
         it { should include(description: 'Hello') }
 
