@@ -4,6 +4,8 @@ class Image < ApplicationRecord
   # ################################
   # Constants, settings, modules, et...
   # ################################
+  include TrackModelChanges
+
   VALID_STATUSES = %w[active deleted].freeze
   VALID_TAGS = %w[blur].freeze
 
@@ -44,6 +46,21 @@ class Image < ApplicationRecord
   scope :with_attached_image, -> { joins(:attached_image_attachment).where.not(attached_image_attachment: { id: nil }) }
 
   # ################################
+  # Class methods
+  # ################################
+  class << self
+    def create_from_url(data)
+      data = data.with_indifferent_access
+      raise 'url is blank' if data['url'].blank?
+
+      data['filename'] = File.basename(data['url']) if data['filename'].blank? && File.basename(data['url']).present?
+
+      record = create!(data.except('url', :url))
+      record.attached_image.attach(io: Down.open(data['url']), filename: record.filename)
+    end
+  end
+
+  # ################################
   # Instance methods
   # ################################
   VALID_TAGS.each do |tag|
@@ -55,6 +72,18 @@ class Image < ApplicationRecord
       # GenerateImageVariants.run!(image: self)
       @image_variants[tag] ||= children.visible.where(tag: tag).first
     end
+  end
+
+  # @param [Hash] options
+  # @option options [User] :current_user
+  def copy!(options = {})
+    CopyImage.run!(options.merge(old: self))
+  end
+
+  # @param [Hash] options
+  # @option options [User] :current_user
+  def copy(options = {})
+    CopyImage.run(options.merge(old: self))
   end
 
   def full_json
