@@ -14,7 +14,7 @@ module Menu
 
     VALID_STATUSES = %w[active deleted].freeze
 
-    enum status: VALID_STATUSES.map{ |s| [s, s] }.to_h
+    enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
 
     # ##############################
     # Associations
@@ -79,6 +79,18 @@ module Menu
       super
     rescue ArgumentError
       @attributes.write_cast_value("status", value)
+    end
+
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy!(options = {})
+      CopyDish.run!(options.merge(old: self))
+    end
+
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy(options = {})
+      CopyDish.run(options.merge(old: self))
     end
 
     def assign_defaults

@@ -49,7 +49,8 @@ module Menu
     # Hooks
     # ##############################
     before_validation :assign_defaults, on: :create
-    before_validation :assign_valid_index, on: :update
+    after_initialize :assign_valid_index, if: -> { new_record? }
+    # before_validation :assign_valid_index, on: :update
     before_destroy :check_if_has_children
     before_validation :assign_default_visibility_if_necessary
 
@@ -86,6 +87,18 @@ module Menu
       self.other = {} if other.nil?
     end
 
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy!(options = {})
+      CopyCategory.run!(options.merge(old: self))
+    end
+
+    # @param [Hash] options
+    # @option options [User] :current_user
+    def copy(options = {})
+      CopyCategory.run(options.merge(old: self))
+    end
+
     def assign_default_visibility_if_necessary
       assign_default_visibility if visibility.nil? && visibility_id.nil? && parent.nil? && parent_id.nil?
     end
@@ -111,7 +124,7 @@ module Menu
     end
 
     def assign_valid_index
-      self.index = Category.where(parent_id: parent_id).order(index: :desc).first&.index.to_i + 1
+      self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
     end
 
     def remove_parent!
