@@ -34,9 +34,29 @@ Rails.application.routes.draw do
             end
           end
 
-          resources :ingredients, only: %i[index show create update destroy]
-          resources :dishes, only: %i[index show create update destroy]
-          resources :allergens, only: %i[index show create update destroy]
+          resources :ingredients, only: %i[index show create update destroy] do
+            member do
+              post 'copy'
+            end
+          end
+
+          resources :tags, only: %i[index show create update destroy] do
+            member do
+              post 'copy'
+            end
+          end
+
+          resources :allergens, only: %i[index show create update destroy] do
+            member do
+              post 'copy'
+            end
+          end
+
+          resources :dishes, only: %i[index show create update destroy] do
+            member do
+              post 'copy'
+            end
+          end
         end
       end
     end
