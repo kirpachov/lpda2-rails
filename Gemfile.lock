@@ -194,6 +194,7 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     numerizer (0.1.1)
+    oj (3.14.3)
     pg (1.5.3)
     power_assert (2.0.3)
     pry (0.14.2)
@@ -340,6 +341,7 @@ DEPENDENCIES
   launchy (~> 2.5.2)
   mobility (~> 1.2.9)
   mobility-ransack (~> 1.2.2)
+  oj (~> 3.14.3)
   pg (~> 1.1)
   pry
   puma (~> 5.0)

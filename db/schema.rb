@@ -46,9 +46,11 @@ ActiveRecord::Schema[7.0].define(version: 20) do
     t.bigint "image_id", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
+    t.integer "position", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["image_id"], name: "index_image_to_records_on_image_id"
+    t.index ["position", "record_type", "record_id"], name: "index_image_to_records_on_position_and_record_and_image", unique: true
     t.index ["record_type", "record_id", "image_id"], name: "index_image_to_records_on_record_and_image", unique: true
     t.index ["record_type", "record_id"], name: "index_image_to_records_on_record"
   end

@@ -57,6 +57,7 @@ class Image < ApplicationRecord
 
       record = create!(data.except('url', :url))
       record.attached_image.attach(io: Down.open(data['url']), filename: record.filename)
+      record
     end
   end
 

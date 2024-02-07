@@ -57,6 +57,54 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
     it { expect { subject.destroy }.not_to change(Image, :count) }
     it { expect { subject.destroy }.to change(ImageToRecord, :count).by(-1) }
   end
+
+  context 'elements are ordered by :position field in ImageToRecord' do
+    let(:images) { create_list(:image, 3, :with_attached_image) }
+    before { subject.images << images }
+    let(:image_to_records) { subject.image_to_records.order(:position) }
+
+    it { expect(subject.images.map(&:id)).to eq(images.map(&:id)) }
+    it { expect(subject.image_to_records).to eq(image_to_records) }
+    it { subject.images.each_with_index { |_, index| expect(subject.images[index].id).to eq images[index]&.id } }
+
+    context 'moving the last one as the first one' do
+      before { subject.move_image(2, 0) }
+
+      it { expect(subject.reload.images.map(&:id)).to eq([images.third.id, images.first.id, images.second.id]) }
+    end
+
+    context 'moving image should update the updated_at field of the image_to_records' do
+      let(:images) { create_list(:image, 3, :with_attached_image) }
+      before { subject.images = images }
+
+      it 'banana' do
+        subject
+        expect { subject.move_image(2, 0) }.to change { ImageToRecord.order(:id).pluck(:updated_at) }
+      end
+    end
+
+    context 'moving the first one as the last one' do
+      before { subject.move_image(0, 2) }
+
+      it { expect(subject.reload.images.map(&:id)).to eq([images.second.id, images.third.id, images.first.id]) }
+    end
+
+    context 'moving the first one as the middle one' do
+      before do
+        subject.move_image(0, 1)
+      end
+
+      it { expect(subject.reload.images.map(&:id)).to eq([images.second.id, images.first.id, images.third.id]) }
+    end
+
+    context 'moving the last one as the middle one' do
+      before do
+        subject.move_image(2, 1)
+      end
+
+      it { expect(subject.reload.images.map(&:id)).to eq([images.first.id, images.third.id, images.second.id]) }
+    end
+  end
 end
 
 HAS_IMAGE_HELPER = 'HAS_IMAGE_HELPER'

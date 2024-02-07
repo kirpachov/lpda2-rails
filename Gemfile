@@ -46,7 +46,7 @@ gem 'active_interaction', '~> 5.2.0'
 
 gem 'text-table', '~> 1.2.4'
 
-# gem 'oj', '~> 3.14.3'
+gem 'oj', '~> 3.14.3'
 
 # https://activerecord-hackery.github.io/ransack/
 gem 'mobility-ransack', '~> 1.2.2'
