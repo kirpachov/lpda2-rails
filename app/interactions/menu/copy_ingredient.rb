@@ -16,21 +16,44 @@ module Menu
 
         @new = Ingredient.new
 
-        I18n.available_locales.each do |locale|
-          Mobility.with_locale(locale) do
-            @new.name = old.name
-            @new.description = old.description
-          end
+        Ingredient.transaction do
+          raise ActiveRecord::Rollback unless do_copy_ingredient &&
+            do_copy_image
         end
-
-        @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
-
-        @new.validate && @new.save!
-
-        @new.image = copy_image == 'full' ? old.image.copy!(current_user:) : old.image if copy_image.in?(%w[full link]) && old.image && old.image.attached_image.attached?
 
         @new
       end
+    end
+
+    def do_copy_ingredient
+      I18n.available_locales.each do |locale|
+        Mobility.with_locale(locale) do
+          @new.name = old.name
+          @new.description = old.description
+        end
+      end
+
+      @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
+
+      return true if @new.valid? && @new.save
+
+      errors.merge!(@new.errors)
+      false
+    end
+
+    def do_copy_image
+      return true unless copy_image.in?(%w[full link]) && old.image.present? && old.image.attached_image.attached?
+
+      if copy_image == 'full'
+        @new.image = old.image.copy!(current_user:)
+      elsif copy_image == 'link'
+        @new.image = old.image
+      end
+
+      true
+    rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
+      errors.add(:base, "Could not copy image: #{e.message}")
+      false
     end
   end
 end

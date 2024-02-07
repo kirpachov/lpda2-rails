@@ -26,7 +26,7 @@ RSpec.describe Menu::CopyTag, type: :interaction do
       end
 
       it 'enqueue a job to save the changes with current user info' do
-        allow(SaveModelChangeJob).to receive(:perform_async).with(include( "user_id" => current_user.id ))
+        allow(SaveModelChangeJob).to receive(:perform_async).with(include("user_id" => current_user.id))
         subject
       end
     end
@@ -166,6 +166,30 @@ RSpec.describe Menu::CopyTag, type: :interaction do
       it { expect { subject }.not_to change { Image.count } }
       it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
       it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+    end
+
+    context 'if image creation fails' do
+      let!(:image) { create(:image, :with_attached_image) }
+      let(:params) { { old:, current_user:, copy_image: "full" } }
+
+      before do
+        tag.image = image
+        allow_any_instance_of(Image).to receive(:valid?).and_return(false)
+        errors = ActiveModel::Errors.new(Image)
+        errors.add(:image, :invalid)
+        allow_any_instance_of(Image).to receive(:errors).and_return(errors)
+      end
+
+      it 'does not create any record and returns errors' do
+        expect { subject }.not_to change { Image.count }
+        expect(subject.errors).not_to be_empty
+      end
+
+      it { expect { subject }.not_to change { Menu::Tag.count } }
+      it { expect { subject }.not_to change { Menu::TagsInDish.count } }
+      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
+      it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
+      it { expect { subject }.not_to change { ImageToRecord.count } }
     end
   end
 end

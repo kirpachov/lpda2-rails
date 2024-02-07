@@ -158,5 +158,28 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
       it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
       it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
     end
+
+    context 'if image creation fails' do
+      let!(:image) { create(:image, :with_attached_image) }
+      let(:params) { { old:, current_user:, copy_image: "full" } }
+
+      before do
+        allergen.image = image
+        allow_any_instance_of(Image).to receive(:valid?).and_return(false)
+        errors = ActiveModel::Errors.new(Image)
+        errors.add(:image, :invalid)
+        allow_any_instance_of(Image).to receive(:errors).and_return(errors)
+      end
+
+      it 'does not create any record and returns errors' do
+        expect { subject }.not_to change { Image.count }
+        expect(subject.errors).not_to be_empty
+      end
+
+      it { expect { subject }.not_to change { Menu::Allergen.count } }
+      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
+      it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
+      it { expect { subject }.not_to change { ImageToRecord.count } }
+    end
   end
 end

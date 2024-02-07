@@ -48,11 +48,11 @@ module Menu
     # ##############################
     # Hooks
     # ##############################
-    before_validation :assign_defaults, on: :create
     after_initialize :assign_valid_index, if: -> { new_record? }
-    # before_validation :assign_valid_index, on: :update
-    before_destroy :check_if_has_children
+    before_validation :assign_defaults, on: :create
+    before_validation :assign_valid_index, on: :update
     before_validation :assign_default_visibility_if_necessary
+    before_destroy :check_if_has_children
 
     # ##############################
     # Scopes
