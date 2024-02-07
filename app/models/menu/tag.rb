@@ -6,6 +6,7 @@ module Menu
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
+    DEFAULT_COLOR = '#000000'.freeze
     VALID_STATUSES = %w[active deleted].freeze
     include HasImageAttached
     include TrackModelChanges
@@ -34,7 +35,7 @@ module Menu
     # ##############################
     # Callbacks
     # ##############################
-    before_validation :assign_defaults, on: :create
+    after_initialize :assign_defaults, if: :new_record?
 
     # ##############################
     # Scopes
@@ -42,11 +43,35 @@ module Menu
     scope :visible, -> { not_deleted }
 
     # ##############################
+    # Class methods
+    # ##############################
+    class << self
+      def filter_by_query(query)
+        return all unless query.present?
+
+        where_name(query).or(where_description(query))
+      end
+
+      def where_name(query)
+        return all unless query.present?
+
+        where(id: ransack(name_cont: query).result.select(:id))
+      end
+
+      def where_description(query)
+        return all unless query.present?
+
+        where(id: ransack(description_cont: query).result.select(:id))
+      end
+    end
+
+    # ##############################
     # Instance methods
     # ##############################
     def assign_defaults
       self.other = {} if other.nil?
       self.status = 'active' if status.blank?
+      self.color = DEFAULT_COLOR if color.blank?
     end
 
     # @param [Hash] options

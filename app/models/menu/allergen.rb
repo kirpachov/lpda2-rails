@@ -40,7 +40,7 @@ module Menu
     scope :visible, -> { not_deleted }
 
     # ##############################
-    # CLass methods
+    # Class methods
     # ##############################
     class << self
       def filter_by_query(query)

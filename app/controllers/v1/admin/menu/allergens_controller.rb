@@ -2,7 +2,7 @@
 
 module V1::Admin::Menu
   class AllergensController < ApplicationController
-    before_action :find_item, only: %i[show update destroy]
+    before_action :find_item, only: %i[show update destroy copy]
 
     def index
       call = ::Menu::SearchAllergens.run(params:, current_user:)
@@ -48,6 +48,21 @@ module V1::Admin::Menu
     rescue ActiveRecord::RecordInvalid
       render_unprocessable_entity(@item)
     end
+
+    def copy
+        call = ::Menu::CopyAllergen.run(
+          old: @item,
+          current_user:,
+          copy_image: params[:copy_image],
+        )
+
+        if call.valid?
+          @item = call.result
+          return show
+        end
+
+        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+      end
 
     private
 

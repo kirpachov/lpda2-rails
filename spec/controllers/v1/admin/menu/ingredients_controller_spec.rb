@@ -443,4 +443,96 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
       end
     end
   end
+
+  context '#copy' do
+    it { expect(instance).to respond_to(:copy) }
+    it { should route(:post, '/v1/admin/menu/ingredients/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/ingredients', id: 22) }
+    let!(:ingredient) { create(:menu_ingredient) }
+
+    def req(id, params = {})
+      post :copy, params: params.merge(id:)
+    end
+
+    subject { req(ingredient.id) }
+
+    context 'when user is not authenticated' do
+      before { req(ingredient.id, name: Faker::Lorem.sentence) }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+
+      it { expect { subject }.to change { Menu::Ingredient.count }.by(1) }
+
+      context 'when item does not exist' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if ingredient has image' do
+        let!(:image) { create(:image, :with_attached_image) }
+        before { ingredient.image = image }
+
+        it { expect(ingredient.image&.id).to eq(image.id) }
+        it { expect(ingredient.image&.id).to be_present }
+
+        context 'and providing {copy_image: "full"}' do
+          subject { req(ingredient.id, { copy_image: "full" }) }
+
+          it { should be_successful }
+          it { should have_http_status(:ok) }
+
+          it { expect { subject }.to change { Image.count }.by(1) }
+          it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+
+          context '[after req]' do
+            before { subject }
+            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+
+            it { expect(parsed_response_body).to include(item: Hash) }
+            it { expect(result.image).to be_present }
+            it { expect(result.image&.id).not_to eq(image.id) }
+          end
+        end
+
+        context 'and providing {copy_image: "link"}' do
+          subject { req(ingredient.id, { copy_image: "link" }) }
+
+          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+
+          context '[after req]' do
+            before { subject }
+            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+
+            it { expect(result.image).to be_present }
+            it { expect(result.image.id).to eq image.id }
+            it { expect(result.image.id).to eq ingredient.image.id }
+          end
+        end
+
+        context 'and providing {copy_image: "none"}' do
+          subject { req(ingredient.id, { copy_image: "none" }) }
+
+          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.not_to change { ImageToRecord.count } }
+
+          context '[after req]' do
+            before { subject }
+            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+
+            it { expect(result.image).to be_nil }
+            it { expect(ingredient.image).to be_present }
+          end
+        end
+      end
+    end
+  end
 end

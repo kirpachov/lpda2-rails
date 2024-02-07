@@ -3,7 +3,7 @@
 module V1
   module Admin::Menu
     class DishesController < ApplicationController
-      before_action :find_item, only: %i[show update destroy]
+      before_action :find_item, only: %i[show update destroy copy]
 
       def index
         call = ::Menu::SearchDishes.run(params:, current_user:)
@@ -49,6 +49,24 @@ module V1
         render_unprocessable_entity(@item)
       rescue ActiveRecord::RecordInvalid
         render_unprocessable_entity(@item)
+      end
+
+      def copy
+        call = ::Menu::CopyDish.run(
+          old: @item,
+          current_user:,
+          copy_images: params[:copy_images],
+          copy_allergens: params[:copy_allergens],
+          copy_ingredients: params[:copy_ingredients],
+          copy_tags: params[:copy_tags]
+        )
+
+        if call.valid?
+          @item = call.result
+          return show
+        end
+
+        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
       end
 
       private
