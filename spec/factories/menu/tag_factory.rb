@@ -7,5 +7,13 @@ FactoryBot.define do
     other { {} }
     status { "active" }
     color { Faker::Color.hex_color }
+
+    trait :with_image do
+      image { create(:image) }
+    end
+
+    trait :with_image_with_attachment do
+      image { create(:image, :with_attached_image) }
+    end
   end
 end

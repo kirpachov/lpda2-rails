@@ -6,5 +6,13 @@ FactoryBot.define do
     description { Faker::Lorem::paragraph }
     other { {} }
     status { "active" }
+
+    trait :with_image do
+      image { create(:image) }
+    end
+
+    trait :with_image_with_attachment do
+      image { create(:image, :with_attached_image) }
+    end
   end
 end
