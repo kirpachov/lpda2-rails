@@ -31,6 +31,9 @@ Rails.application.routes.draw do
           resources :categories, only: %i[index show create update destroy] do
             member do
               patch 'visibility'
+
+              post 'dishes/:dish_id', action: :add_dish
+              delete 'dishes/:dish_id', action: :remove_dish
             end
           end
 
@@ -55,6 +58,18 @@ Rails.application.routes.draw do
           resources :dishes, only: %i[index show create update destroy] do
             member do
               post 'copy'
+
+              post 'ingredients/:ingredient_id', action: :add_ingredient
+              delete 'ingredients/:ingredient_id', action: :remove_ingredient
+
+              post 'tags/:tag_id', action: :add_tag
+              delete 'tags/:tag_id', action: :remove_tag
+
+              post 'allergens/:allergen_id', action: :add_allergen
+              delete 'allergens/:allergen_id', action: :remove_allergen
+
+              post 'images/:image_id', action: :add_image
+              delete 'images/:image_id', action: :remove_image
             end
           end
         end

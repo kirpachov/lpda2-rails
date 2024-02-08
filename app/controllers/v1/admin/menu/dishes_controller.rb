@@ -3,7 +3,11 @@
 module V1
   module Admin::Menu
     class DishesController < ApplicationController
-      before_action :find_item, only: %i[show update destroy copy]
+      before_action :find_item, only: %i[
+      show update destroy copy
+      add_ingredient remove_ingredient add_tag remove_tag add_allergen remove_allergen
+      add_image remove_image
+]
 
       def index
         call = ::Menu::SearchDishes.run(params:, current_user:)
@@ -67,6 +71,70 @@ module V1
         end
 
         render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+      end
+
+      def add_ingredient
+        @item.ingredients << Menu::Ingredient.visible.find(params[:ingredient_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Ingredient, id: params[:ingredient_id].inspect))
+      end
+
+      def add_tag
+        @item.tags << Menu::Tag.visible.find(params[:tag_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound => e
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Tag, id: params[:tag_id].inspect))
+      end
+
+      def add_allergen
+        @item.allergens << Menu::Allergen.visible.find(params[:allergen_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound => e
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Allergen, id: params[:allergen_id].inspect))
+      end
+
+      def add_image
+        @item.images << Image.visible.find(params[:image_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
+      end
+
+      def remove_ingredient
+        @item.ingredients.delete(Menu::Ingredient.find(params[:ingredient_id]))
+        show
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Ingredient, id: params[:ingredient_id].inspect))
+      end
+
+      def remove_tag
+        @item.tags.delete(Menu::Tag.find(params[:tag_id]))
+        show
+      rescue ActiveRecord::RecordNotFound => e
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Tag, id: params[:tag_id].inspect))
+      end
+
+      def remove_allergen
+        @item.allergens.delete(Menu::Allergen.find(params[:allergen_id]))
+        show
+      rescue ActiveRecord::RecordNotFound => e
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Allergen, id: params[:allergen_id].inspect))
+      end
+
+      def remove_image
+        @item.images.delete(Image.find(params[:image_id]))
+        show
+      rescue ActiveRecord::RecordNotFound => e
+        render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
       end
 
       private

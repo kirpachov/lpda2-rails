@@ -3,7 +3,7 @@
 module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
-      before_action :find_category, only: %i[show update destroy visibility]
+      before_action :find_category, only: %i[show update destroy visibility add_dish remove_dish]
       before_action :check_if_can_publish, only: %i[visibility]
 
       def index
@@ -66,6 +66,22 @@ module V1
         end
 
         render_unprocessable_entity(@item)
+      end
+
+      def add_dish
+        @item.dishes << Menu::Dish.visible.find(params[:dish_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+      end
+
+      def remove_dish
+        @item.dishes.delete(Menu::Dish.find(params[:dish_id]))
+        show
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
       end
 
       private

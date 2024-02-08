@@ -11,6 +11,7 @@ class CreateMenuDishesInCategories < ActiveRecord::Migration[7.0]
 
       # Two different elements in the same category cannot have the same index.
       t.index %i[index menu_category_id], unique: true
+      t.index %i[menu_dish_id menu_category_id], unique: true, name: 'index_menu_dish_id_menu_category_id'
     end
   end
 end

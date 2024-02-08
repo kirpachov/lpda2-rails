@@ -1745,4 +1745,115 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       end
     end
   end
+
+  context '#add_dish' do
+    it { expect(instance).to respond_to(:add_dish) }
+    it { should route(:post, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :add_dish, controller: 'v1/admin/menu/categories', id: 22, dish_id: 55) }
+    let!(:category) { create(:menu_category) }
+    let!(:dish) { create(:menu_dish) }
+
+    def req(category_id = category.id, dish_id = dish.id, params = {})
+      post :add_dish, params: params.merge(id: category_id, dish_id:)
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
+      it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+      it { expect { subject }.not_to change { Menu::Dish.count } }
+      it { expect { subject }.not_to change { Menu::Category.count } }
+
+      context 'when adding twice same dish' do
+        before { req }
+
+        it { expect { req }.not_to change { category.reload.dishes.count } }
+        it { expect { req }.not_to change { Menu::DishesInCategory.count } }
+
+        context '[after second request]' do
+          before { req }
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+        end
+      end
+
+      context 'when adding dish to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing dish to dish' do
+        before { req(category.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted dish to category' do
+        before do
+          dish.deleted!
+          req
+        end
+
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#remove_dish' do
+    it { expect(instance).to respond_to(:remove_dish) }
+    it { should route(:delete, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :remove_dish, controller: 'v1/admin/menu/categories', id: 22, dish_id: 55) }
+    let!(:category) { create(:menu_category) }
+    let!(:dish) { create(:menu_dish) }
+    before { category.dishes << dish }
+
+    def req(category_id = category.id, dish_id = dish.id, params = {})
+      post :remove_dish, params: params.merge(id: category_id, dish_id:)
+    end
+
+    subject { req }
+
+    it { expect(category.dishes.count).to be_positive }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+      it { req; expect(parsed_response_body[:message]).to be_blank }
+      it { expect { subject }.to change { category.reload.dishes.count }.by(-1) }
+      it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
+
+      context 'if removing non-existing dish' do
+        before { req(category.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if removing dish from non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
 end

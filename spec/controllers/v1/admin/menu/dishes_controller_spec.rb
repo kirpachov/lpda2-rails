@@ -948,17 +948,444 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     end
   end
 
-  # POST /admin/menu/dishes/:id/ingredients/<id> => add_ingredient
-  # DELETE /admin/menu/dishes/:id/ingredients/<id> => remove_ingredient from dish
-  pending '#add_ingredient'
-  pending '#remove_ingredient'
+  context '#add_ingredient' do
+    it { expect(instance).to respond_to(:add_ingredient) }
+    it { should route(:post, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :add_ingredient, controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:ingredient) { create(:menu_ingredient) }
 
-  pending '#add_tag'
-  pending '#remove_tag'
+    def req(dish_id = dish.id, ingredient_id = ingredient.id, params = {})
+      post :add_ingredient, params: params.merge(id: dish_id, ingredient_id:)
+    end
 
-  pending '#add_image'
-  pending '#remove_image'
+    subject { req }
 
-  pending '#add_allergen'
-  pending '#remove_allergen'
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { dish.reload.ingredients.count }.by(1) }
+      it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(1) }
+      it { expect { subject }.not_to change { Menu::Dish.count } }
+      it { expect { subject }.not_to change { Menu::Ingredient.count } }
+
+      context 'when adding twice same ingredient' do
+        before { req }
+
+        it { expect { req }.not_to change { dish.reload.ingredients.count } }
+        it { expect { req }.not_to change { Menu::IngredientsInDish.count } }
+
+        context '[after second request]' do
+          before { req }
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+        end
+      end
+
+      context 'when adding ingredient to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing ingredient to dish' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted ingredient to dish' do
+        before do
+          ingredient.deleted!
+          req
+        end
+
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#remove_ingredient' do
+    it { expect(instance).to respond_to(:remove_ingredient) }
+    it { should route(:delete, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :remove_ingredient, controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:ingredient) { create(:menu_ingredient) }
+    before { dish.ingredients << ingredient }
+
+    def req(dish_id = dish.id, ingredient_id = ingredient.id, params = {})
+      post :remove_ingredient, params: params.merge(id: dish_id, ingredient_id:)
+    end
+
+    subject { req }
+
+    it { expect(dish.ingredients.count).to be_positive }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+      it { expect { subject }.to change { dish.reload.ingredients.count }.by(-1) }
+      it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(-1) }
+
+      context 'if removing non-existing ingredient' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if removing ingredient from non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#add_tag' do
+    it { expect(instance).to respond_to(:add_tag) }
+    it { should route(:post, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :add_tag, controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:tag) { create(:menu_tag) }
+
+    def req(dish_id = dish.id, tag_id = tag.id, params = {})
+      post :add_tag, params: params.merge(id: dish_id, tag_id:)
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { dish.reload.tags.count }.by(1) }
+      it { expect { subject }.to change { Menu::TagsInDish.count }.by(1) }
+      it { expect { subject }.not_to change { Menu::Dish.count } }
+      it { expect { subject }.not_to change { Menu::Tag.count } }
+
+      context 'when adding twice same tag' do
+        before { req }
+
+        it { expect { req }.not_to change { dish.reload.tags.count } }
+        it { expect { req }.not_to change { Menu::TagsInDish.count } }
+
+        context '[after second request]' do
+          before { req }
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+        end
+      end
+
+      context 'when adding tag to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing tag to dish' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted tag to dish' do
+        before do
+          tag.deleted!
+          req
+        end
+
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#remove_tag' do
+    it { expect(instance).to respond_to(:remove_tag) }
+    it { should route(:delete, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :remove_tag, controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:tag) { create(:menu_tag) }
+    before { dish.tags << tag }
+
+    def req(dish_id = dish.id, tag_id = tag.id, params = {})
+      post :remove_tag, params: params.merge(id: dish_id, tag_id:)
+    end
+
+    subject { req }
+
+    it { expect(dish.tags.count).to be_positive }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+      it { expect { subject }.to change { dish.reload.tags.count }.by(-1) }
+      it { expect { subject }.to change { Menu::TagsInDish.count }.by(-1) }
+
+      context 'if removing non-existing tag' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if removing tag from non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#add_allergen' do
+    it { expect(instance).to respond_to(:add_allergen) }
+    it { should route(:post, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :add_allergen, controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:allergen) { create(:menu_allergen) }
+
+    def req(dish_id = dish.id, allergen_id = allergen.id, params = {})
+      post :add_allergen, params: params.merge(id: dish_id, allergen_id:)
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { dish.reload.allergens.count }.by(1) }
+      it { expect { subject }.to change { Menu::AllergensInDish.count }.by(1) }
+      it { expect { subject }.not_to change { Menu::Dish.count } }
+      it { expect { subject }.not_to change { Menu::Allergen.count } }
+
+      context 'when adding twice same allergen' do
+        before { req }
+
+        it { expect { req }.not_to change { dish.reload.allergens.count } }
+        it { expect { req }.not_to change { Menu::AllergensInDish.count } }
+
+        context '[after second request]' do
+          before { req }
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+        end
+      end
+
+      context 'when adding allergen to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing allergen to dish' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted allergen to dish' do
+        before do
+          allergen.deleted!
+          req
+        end
+
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#remove_allergen' do
+    it { expect(instance).to respond_to(:remove_allergen) }
+    it { should route(:delete, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :remove_allergen, controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:allergen) { create(:menu_allergen) }
+    before { dish.allergens << allergen }
+
+    def req(dish_id = dish.id, allergen_id = allergen.id, params = {})
+      post :remove_allergen, params: params.merge(id: dish_id, allergen_id:)
+    end
+
+    subject { req }
+
+    it { expect(dish.allergens.count).to be_positive }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+      it { expect { subject }.to change { dish.reload.allergens.count }.by(-1) }
+      it { expect { subject }.to change { Menu::AllergensInDish.count }.by(-1) }
+
+      context 'if removing non-existing allergen' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if removing allergen from non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#add_image' do
+    it { expect(instance).to respond_to(:add_image) }
+    it { should route(:post, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :add_image, controller: 'v1/admin/menu/dishes', id: 22, image_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:image) { create(:image, :with_attached_image) }
+
+    def req(dish_id = dish.id, image_id = image.id, params = {})
+      post :add_image, params: params.merge(id: dish_id, image_id:)
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { dish.reload.images.count }.by(1) }
+      it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+      it { expect { subject }.not_to change { Menu::Dish.count } }
+      it { expect { subject }.not_to change { Image.count } }
+
+      context 'when adding twice same image' do
+        before { req }
+
+        it { expect { req }.not_to change { dish.reload.images.count } }
+        it { expect { req }.not_to change { ImageToRecord.count } }
+
+        context '[after second request]' do
+          before { req }
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+        end
+      end
+
+      context 'when adding image to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing image to dish' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted image to dish' do
+        before do
+          image.deleted!
+          req
+        end
+
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#remove_image' do
+    it { expect(instance).to respond_to(:remove_image) }
+    it { should route(:delete, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :remove_image, controller: 'v1/admin/menu/dishes', id: 22, image_id: 55) }
+    let!(:dish) { create(:menu_dish) }
+    let!(:image) { create(:image, :with_attached_image) }
+    before { dish.images << image }
+
+    def req(dish_id = dish.id, image_id = image.id, params = {})
+      post :remove_image, params: params.merge(id: dish_id, image_id:)
+    end
+
+    subject { req }
+
+    it { expect(dish.images.count).to be_positive }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { is_expected.to have_http_status(:ok) }
+      it { expect { subject }.to change { dish.reload.images.count }.by(-1) }
+      it { expect { subject }.to change { ImageToRecord.count }.by(-1) }
+      it { expect { subject }.not_to change { Image.count } }
+
+      context 'if removing non-existing image' do
+        before { req(dish.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'if removing image from non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
 end

@@ -22,6 +22,7 @@ module Menu
     # Validations
     # ##############################
     validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true, uniqueness: { scope: :category_id }
+    validates :menu_dish_id, uniqueness: { scope: :menu_category_id }
 
     # ##############################
     # Callbacks

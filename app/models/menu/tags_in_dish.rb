@@ -18,6 +18,7 @@ module Menu
     # Validations
     # ##############################
     validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false, uniqueness: { scope: :dish_id }
+    validates :menu_tag_id, uniqueness: { scope: :menu_dish_id }
 
     # ##############################
     # Callbacks
