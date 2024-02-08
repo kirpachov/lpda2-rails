@@ -1011,6 +1011,40 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         subject { response }
         it_behaves_like NOT_FOUND
       end
+
+      context 'when providing {copy: true}, should attach a copy of the ingredient' do
+        subject do
+          req(dish.id, ingredient.id, copy: true)
+          response
+        end
+
+        it { expect { subject }.to change { dish.reload.ingredients.count }.by(1) }
+        it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(1) }
+        it { expect { subject }.to change { Menu::Ingredient.count }.by(1) }
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+
+        context '[after request]' do
+          before { subject }
+
+          it { expect(parsed_response_body).not_to include(message: String) }
+          it { expect(parsed_response_body).to include(item: Hash) }
+          it { expect(dish.reload.ingredients.count).to eq 1 }
+          it { expect(dish.reload.ingredients.first.id).not_to eq ingredient.id }
+        end
+
+        context 'when addition fails, should return 422 and not create any new record' do
+          before do
+            allow_any_instance_of(Menu::IngredientsInDish).to receive(:valid?).and_return(false)
+            req(dish.id, ingredient.id, copy: true)
+          end
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+          it { expect { subject }.not_to change { dish.reload.ingredients.count } }
+          it { expect { subject }.not_to change { Menu::IngredientsInDish.count } }
+          it { expect { subject }.not_to change { Menu::Ingredient.count } }
+        end
+      end
     end
   end
 
@@ -1120,6 +1154,40 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
         subject { response }
         it_behaves_like NOT_FOUND
+      end
+
+      context 'when providing {copy: true}, should attach a copy of the tag' do
+        subject do
+          req(dish.id, tag.id, copy: true)
+          response
+        end
+
+        it { expect { subject }.to change { dish.reload.tags.count }.by(1) }
+        it { expect { subject }.to change { Menu::TagsInDish.count }.by(1) }
+        it { expect { subject }.to change { Menu::Tag.count }.by(1) }
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+
+        context '[after request]' do
+          before { subject }
+
+          it { expect(parsed_response_body).not_to include(message: String) }
+          it { expect(parsed_response_body).to include(item: Hash) }
+          it { expect(dish.reload.tags.count).to eq 1 }
+          it { expect(dish.reload.tags.first.id).not_to eq tag.id }
+        end
+
+        context 'when addition fails, should return 422 and not create any new record' do
+          before do
+            allow_any_instance_of(Menu::TagsInDish).to receive(:valid?).and_return(false)
+            req(dish.id, tag.id, copy: true)
+          end
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+          it { expect { subject }.not_to change { dish.reload.tags.count } }
+          it { expect { subject }.not_to change { Menu::TagsInDish.count } }
+          it { expect { subject }.not_to change { Menu::Tag.count } }
+        end
       end
     end
   end
@@ -1231,6 +1299,40 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         subject { response }
         it_behaves_like NOT_FOUND
       end
+
+      context 'when providing {copy: true}, should attach a copy of the allergen' do
+        subject do
+          req(dish.id, allergen.id, copy: true)
+          response
+        end
+
+        it { expect { subject }.to change { dish.reload.allergens.count }.by(1) }
+        it { expect { subject }.to change { Menu::AllergensInDish.count }.by(1) }
+        it { expect { subject }.to change { Menu::Allergen.count }.by(1) }
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+
+        context '[after request]' do
+          before { subject }
+
+          it { expect(parsed_response_body).not_to include(message: String) }
+          it { expect(parsed_response_body).to include(item: Hash) }
+          it { expect(dish.reload.allergens.count).to eq 1 }
+          it { expect(dish.reload.allergens.first.id).not_to eq allergen.id }
+        end
+
+        context 'when addition fails, should return 422 and not create any new record' do
+          before do
+            allow_any_instance_of(Menu::AllergensInDish).to receive(:valid?).and_return(false)
+            req(dish.id, allergen.id, copy: true)
+          end
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+          it { expect { subject }.not_to change { dish.reload.allergens.count } }
+          it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
+          it { expect { subject }.not_to change { Menu::Allergen.count } }
+        end
+      end
     end
   end
 
@@ -1340,6 +1442,40 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
         subject { response }
         it_behaves_like NOT_FOUND
+      end
+
+      context 'when providing {copy: true}, should attach a copy of the image' do
+        subject do
+          req(dish.id, image.id, copy: true)
+          response
+        end
+
+        it { expect { subject }.to change { dish.reload.images.count }.by(1) }
+        it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+
+        context '[after request]' do
+          before { subject }
+
+          it { expect(parsed_response_body).not_to include(message: String) }
+          it { expect(parsed_response_body).to include(item: Hash) }
+          it { expect(dish.reload.images.count).to eq 1 }
+          it { expect(dish.reload.images.first.id).not_to eq image.id }
+        end
+
+        context 'when addition fails, should return 422 and not create any new record' do
+          before do
+            allow_any_instance_of(ImageToRecord).to receive(:valid?).and_return(false)
+            req(dish.id, image.id, copy: true)
+          end
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+          it { expect { subject }.not_to change { dish.reload.images.count } }
+          it { expect { subject }.not_to change { ImageToRecord.count } }
+          it { expect { subject }.not_to change { Image.count } }
+        end
       end
     end
   end

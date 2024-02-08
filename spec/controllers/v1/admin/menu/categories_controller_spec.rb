@@ -1809,6 +1809,40 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         subject { response }
         it_behaves_like NOT_FOUND
       end
+
+      context 'when providing {copy: true}, should attach a copy of the dish' do
+        subject do
+          req(category.id, dish.id, copy: true)
+          response
+        end
+
+        it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
+        it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+        it { expect { subject }.to change { Menu::Dish.count }.by(1) }
+        it { expect { subject }.not_to change { Menu::Category.count } }
+
+        context '[after request]' do
+          before { subject }
+
+          it { expect(parsed_response_body).not_to include(message: String) }
+          it { expect(parsed_response_body).to include(item: Hash) }
+          it { expect(category.reload.dishes.count).to eq 1 }
+          it { expect(category.reload.dishes.first.id).not_to eq dish.id }
+        end
+
+        context 'when addition fails, should return 422 and not create any new record' do
+          before do
+            allow_any_instance_of(Menu::DishesInCategory).to receive(:valid?).and_return(false)
+            req(category.id, dish.id, copy: true)
+          end
+
+          it { should have_http_status(:unprocessable_entity) }
+          it { expect(parsed_response_body).to include(message: String) }
+          it { expect { subject }.not_to change { category.reload.dishes.count } }
+          it { expect { subject }.not_to change { Menu::DishesInCategory.count } }
+          it { expect { subject }.not_to change { Menu::Dish.count } }
+        end
+      end
     end
   end
 

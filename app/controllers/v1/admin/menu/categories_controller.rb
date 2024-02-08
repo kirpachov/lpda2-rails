@@ -69,7 +69,12 @@ module V1
       end
 
       def add_dish
-        @item.dishes << Menu::Dish.visible.find(params[:dish_id])
+        Menu::Category.transaction do
+          dish = Menu::Dish.visible.find(params[:dish_id])
+          dish = dish.copy!(current_user:) if params[:copy].to_s == 'true'
+          @item.dishes << dish
+        end
+
         show
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)

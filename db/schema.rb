@@ -138,6 +138,7 @@ ActiveRecord::Schema[7.0].define(version: 20) do
     t.index ["index", "menu_category_id"], name: "index_menu_dishes_in_categories_on_index_and_menu_category_id", unique: true
     t.index ["index"], name: "index_menu_dishes_in_categories_on_index"
     t.index ["menu_category_id"], name: "index_menu_dishes_in_categories_on_menu_category_id"
+    t.index ["menu_dish_id", "menu_category_id"], name: "index_menu_dish_id_menu_category_id", unique: true
     t.index ["menu_dish_id"], name: "index_menu_dishes_in_categories_on_menu_dish_id"
   end
 

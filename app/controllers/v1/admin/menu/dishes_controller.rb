@@ -74,39 +74,17 @@ module V1
       end
 
       def add_ingredient
-        @item.ingredients << Menu::Ingredient.visible.find(params[:ingredient_id])
+        Menu::Dish.transaction do
+          ingredient = Menu::Ingredient.visible.find(params[:ingredient_id])
+          ingredient = ingredient.copy!(current_user:) if params[:copy].to_s == 'true'
+          @item.ingredients << ingredient
+        end
+
         show
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Ingredient, id: params[:ingredient_id].inspect))
-      end
-
-      def add_tag
-        @item.tags << Menu::Tag.visible.find(params[:tag_id])
-        show
-      rescue ActiveRecord::RecordInvalid => e
-        render_error(status: 422, message: e.message)
-      rescue ActiveRecord::RecordNotFound => e
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Tag, id: params[:tag_id].inspect))
-      end
-
-      def add_allergen
-        @item.allergens << Menu::Allergen.visible.find(params[:allergen_id])
-        show
-      rescue ActiveRecord::RecordInvalid => e
-        render_error(status: 422, message: e.message)
-      rescue ActiveRecord::RecordNotFound => e
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Allergen, id: params[:allergen_id].inspect))
-      end
-
-      def add_image
-        @item.images << Image.visible.find(params[:image_id])
-        show
-      rescue ActiveRecord::RecordInvalid => e
-        render_error(status: 422, message: e.message)
-      rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
       end
 
       def remove_ingredient
@@ -116,6 +94,20 @@ module V1
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Ingredient, id: params[:ingredient_id].inspect))
       end
 
+      def add_tag
+        Menu::Dish.transaction do
+          tag = Menu::Tag.visible.find(params[:tag_id])
+          tag = tag.copy!(current_user:) if params[:copy].to_s == 'true'
+          @item.tags << tag
+        end
+
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Tag, id: params[:tag_id].inspect))
+      end
+
       def remove_tag
         @item.tags.delete(Menu::Tag.find(params[:tag_id]))
         show
@@ -123,41 +115,69 @@ module V1
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Tag, id: params[:tag_id].inspect))
       end
 
-      def remove_allergen
-        @item.allergens.delete(Menu::Allergen.find(params[:allergen_id]))
+      def add_allergen
+        Menu::Dish.transaction do
+          allergen = Menu::Allergen.visible.find(params[:allergen_id])
+          allergen = allergen.copy!(current_user:) if params[:copy].to_s == 'true'
+          @item.allergens << allergen
+        end
+
         show
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Allergen, id: params[:allergen_id].inspect))
-      end
 
-      def remove_image
-        @item.images.delete(Image.find(params[:image_id]))
-        show
-      rescue ActiveRecord::RecordNotFound => e
-        render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
-      end
+        def remove_allergen
+          @item.allergens.delete(Menu::Allergen.find(params[:allergen_id]))
+          show
+        rescue ActiveRecord::RecordNotFound => e
+          render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Allergen, id: params[:allergen_id].inspect))
+        end
 
-      private
+        def add_image
+          Menu::Dish.transaction do
+            image = Image.visible.find(params[:image_id])
+            image = image.copy!(current_user:) if params[:copy].to_s == 'true'
+            @item.images << image
+          end
 
-      def full_json(item_or_items)
-        return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+          show
+        rescue ActiveRecord::RecordInvalid => e
+          render_error(status: 422, message: e.message)
+        rescue ActiveRecord::RecordNotFound
+          render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
+        end
 
-        return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Dish)
+        def remove_image
+          @item.images.delete(Image.find(params[:image_id]))
+          show
+        rescue ActiveRecord::RecordNotFound => e
+          render_error(status: 404, message: I18n.t('record_not_found', model: Image, id: params[:image_id].inspect))
+        end
 
-        raise ArgumentError, "Invalid params. Menu::Dish or ActiveRecord::Relation expected, but #{item_or_items.class} given"
-      end
+        private
 
-      def single_item_full_json(item)
-        item.as_json.merge(
-          name: item.name,
-          description: item.description,
-          images: item.images.map { |image| image.as_json.merge(url: image.url) }
-        )
-      end
+        def full_json(item_or_items)
+          return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
 
-      def find_item
-        @item = Menu::Dish.visible.where(id: params[:id]).first
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:id].inspect)) if @item.nil?
+          return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Dish)
+
+          raise ArgumentError, "Invalid params. Menu::Dish or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+        end
+
+        def single_item_full_json(item)
+          item.as_json.merge(
+            name: item.name,
+            description: item.description,
+            images: item.images.map { |image| image.as_json.merge(url: image.url) }
+          )
+        end
+
+        def find_item
+          @item = Menu::Dish.visible.where(id: params[:id]).first
+          render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:id].inspect)) if @item.nil?
+        end
       end
     end
   end
