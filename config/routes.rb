@@ -10,6 +10,14 @@ Rails.application.routes.draw do
 
   defaults format: :json do
     scope module: :v1, path: 'v1' do
+
+      resources :images, only: %w[] do
+        member do
+          get 'download', action: :download
+          get 'download/:variant', action: :download_variant
+        end
+      end
+
       scope module: :admin, path: 'admin' do
         resources :preferences, only: %i[index] do
           collection do

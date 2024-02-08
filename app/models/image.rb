@@ -5,6 +5,7 @@ class Image < ApplicationRecord
   # Constants, settings, modules, et...
   # ################################
   include TrackModelChanges
+  # include ImageBlur
 
   VALID_STATUSES = %w[active deleted].freeze
   VALID_TAGS = %w[blur].freeze
@@ -87,12 +88,30 @@ class Image < ApplicationRecord
     CopyImage.run(options.merge(old: self))
   end
 
+  def find_variant(tag)
+    children.visible.find_by(tag:)
+  end
+
+  def find_variant!(tag)
+    generate_image_variants! if find_variant(tag).nil? && VALID_TAGS.include?(tag.to_s)
+
+    children.visible.find_by!(tag:)
+  end
+
   def full_json
     as_json.merge(url:)
   end
 
   def generate_image_variants!(options = {})
     GenerateImageVariants.run!(options.merge(image: self))
+  end
+
+  def download
+    attached_image&.download
+  end
+
+  def content_type
+    attached_image&.content_type
   end
 
   def has_original?
