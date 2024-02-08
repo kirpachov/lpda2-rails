@@ -34,3 +34,5 @@ appmap.yml
 spec/reports
 
 config/app.yml
+
+coverage/*

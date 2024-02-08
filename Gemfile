@@ -86,3 +86,8 @@ group :development do
   # gem "spring"
 end
 
+group :test do
+  gem 'simplecov', '~> 0.22.0', require: false
+end
+
+
