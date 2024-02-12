@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       end
 
       scope module: :admin, path: 'admin' do
+        resources :reservation_turns
+
         resources :preferences, only: %i[index] do
           collection do
             get ':key', action: :show

@@ -11,6 +11,12 @@ if Rails.env.production?
   exit
 end
 
-image = Image.create!(filename: 'cat.jpeg')
-image.attached_image.attach(io:  File.open(Rails.root.join('spec', 'fixtures', 'files', 'cat.jpeg')), filename: 'cat.jpeg')
-GenerateImageVariants.run!(image: image)
+# image = Image.create!(filename: 'cat.jpeg')
+# image.attached_image.attach(io:  File.open(Rails.root.join('spec', 'fixtures', 'files', 'cat.jpeg')), filename: 'cat.jpeg')
+# GenerateImageVariants.run!(image: image)
+
+ReservationTurn.delete_all
+
+ReservationTurn.create!(name: 'Pranzo', weekday: 0, starts_at: '13:00', ends_at: '15:00')
+ReservationTurn.create!(name: 'Cena 1', weekday: 0, starts_at: '19:00', ends_at: '20:59')
+ReservationTurn.create!(name: 'Cena 2', weekday: 0, starts_at: '21:00', ends_at: '22:00')

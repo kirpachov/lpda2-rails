@@ -6,6 +6,8 @@ Backend in Ruby On Rails per la seconda versione del sito laportadacqua.com.
 
 ## Domande
 
+- Prenotazione: è necessario chiedere il nome di ciascun cliente, oppure è sufficiente dare un nome e indicare in quanti si è?
+
 - La "visibilità" sarà possibile deciderla a livello di menù: un menù sarà visibile nella pagina pubblica o
   raggiungibile dal link segreto solo se impostato come tale. Tutte le sotto-categorie ed i piatti erediteranno quella
   visibilità.
