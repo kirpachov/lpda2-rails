@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 21) do
+ActiveRecord::Schema[7.0].define(version: 22) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -247,6 +247,21 @@ ActiveRecord::Schema[7.0].define(version: 21) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["weekday"], name: "index_reservation_turns_on_weekday"
+  end
+
+  create_table "reservations", force: :cascade do |t|
+    t.text "fullname", null: false
+    t.datetime "datetime", precision: nil, null: false
+    t.text "status", null: false
+    t.text "secret", null: false
+    t.integer "people", null: false
+    t.text "table"
+    t.text "notes"
+    t.text "email"
+    t.text "phone"
+    t.jsonb "other", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "settings", force: :cascade do |t|
