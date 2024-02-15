@@ -10,8 +10,8 @@ FactoryBot.define do
   end
 
   sequence :starts_and_ends_at_sq do |n|
-    starts_at = Time.zone.now.change(hour: 0, min: 0) + n.minutes
-    ends_at = Time.zone.now.change(hour: 0, min: 0) + (n + 1).minutes
+    starts_at = Time.zone.now.change(hour: 0, min: 0) + (n * 2 + 1).minutes
+    ends_at = Time.zone.now.change(hour: 0, min: 0) + (n * 2 + 2).minutes
     [starts_at, ends_at]
   end
 
