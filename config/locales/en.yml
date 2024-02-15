@@ -256,3 +256,4 @@ en:
   user:
     one: "User"
     many: "Users"
+  invalid_status: "Invalid status"

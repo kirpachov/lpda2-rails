@@ -11,6 +11,9 @@ class Reservation < ApplicationRecord
     # Default status
     active: 'active',
 
+    # People arrived at the restaurant
+    arrived: 'arrived',
+
     # Reservations deleted admin-side
     deleted: 'deleted',
 

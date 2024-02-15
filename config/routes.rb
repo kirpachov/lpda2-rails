@@ -20,7 +20,12 @@ Rails.application.routes.draw do
 
       scope module: :admin, path: 'admin' do
         resources :reservation_turns
-        resources :reservations
+        resources :reservations do
+          member do
+            patch 'status/:status', action: :update_status
+          end
+        end
+
 
         resources :preferences, only: %i[index] do
           collection do

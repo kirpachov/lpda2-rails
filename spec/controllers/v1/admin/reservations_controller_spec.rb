@@ -382,7 +382,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     it { expect(instance).to respond_to(:create) }
     it { expect(described_class).to route(:post, '/v1/admin/reservations').to(action: :create, format: :json) }
 
-    let(:params) { { reservation: attributes_for(:reservation) } }
+    let(:params) { attributes_for(:reservation) }
 
     def req(data = params)
       post :create, params: data
@@ -396,45 +396,70 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     context '(authenticated)' do
       before { authenticate_request }
 
-      it { expect { req(starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2) }.to change(ReservationTurn, :count).by(1) }
-
-      context 'providing { starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2 }' do
-        let(:params) { { starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2 } }
-        before { req }
-
-        subject { response }
-        it { should have_http_status(:ok) }
-        it 'should contain all informations' do
+      context 'basic' do
+        it { expect { req }.to change(Reservation, :count).by(1) }
+        it 'should return reservation info' do
+          req
           expect(parsed_response_body).to include(item: Hash)
-          expect(parsed_response_body[:item]).to include(:id, :starts_at, :ends_at, :created_at, :updated_at)
-          expect(parsed_response_body[:item]).to include(params.transform_keys(&:to_sym))
-        end
 
-        context 'when trying to create a reservation turn with the same name and weekday' do
-          before { req }
-
-          it { should have_http_status(:unprocessable_entity) }
-          it { expect(parsed_response_body).to include(details: Hash, message: String) }
+          expect(parsed_response_body[:item]).to include(
+                                                   fullname: String,
+                                                   datetime: String,
+                                                   status: String,
+                                                   secret: String,
+                                                   people: Integer,
+                                                   table: String,
+                                                   notes: String,
+                                                   email: String,
+                                                   phone: String,
+                                                   other: Hash,
+                                                   created_at: String,
+                                                   updated_at: String,
+                                                   id: Integer
+                                                 )
+          expect(response).to have_http_status(:ok)
         end
       end
 
-      context 'providing { starts_at: "18:00", ends_at: "19:00", name: "Cena 1", weekday: 5 }' do
-        let(:params) { { starts_at: "18:00", ends_at: "19:00", name: "Cena 1", weekday: 5 } }
-        before { req }
+      # MINIMUM REQUIRED INFO: fullname, datetime, people.
+      ['Anne Marie', 'Luigi'].each do |fullname|
+        ['2024-10-12 19:00', '2024-12-25 21:00'].each do |datetime|
+          [1, 2, 3].each do |people|
+            context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, people: #{people}}" do
+              let(:params) { { fullname:, datetime:, people: } }
 
-        subject { response }
-        it { should have_http_status(:ok) }
-        it 'should contain all informations' do
-          expect(parsed_response_body).to include(item: Hash)
-          expect(parsed_response_body[:item]).to include(:id, :starts_at, :ends_at, :created_at, :updated_at)
-          expect(parsed_response_body[:item]).to include(params.transform_keys(&:to_sym))
-        end
+              it { expect { req }.to change(Reservation, :count).by(1) }
+              it 'should return provided info' do
+                req
+                expect(parsed_response_body).to include(item: Hash)
+                expect(parsed_response_body[:item]).to include(fullname: fullname, people: people)
+                expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').first)
+                expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').last)
+                expect(response).to have_http_status(:ok)
+              end
+            end
 
-        context 'when trying to create a reservation turn with the same name and weekday' do
-          before { req }
+            [201, '204 fuori'].each do |table|
+              ['bambini', 'bella vita'].each do |notes|
+                ['sa@ba', 'gi@gi'].each do |email|
+                  ['123 333 333', '456 666 666'].each do |phone|
+                    context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, people: #{people}, table: #{table.inspect}, notes: #{notes.inspect}, email: #{email.inspect}, phone: #{phone.inspect}}" do
+                      let(:params) { { fullname:, datetime:, people:, table:, notes:, email:, phone: } }
 
-          it { should have_http_status(:unprocessable_entity) }
-          it { expect(parsed_response_body).to include(details: Hash, message: String) }
+                      it 'should return provided info' do
+                        expect { req }.to change(Reservation, :count).by(1)
+                        expect(parsed_response_body).to include(item: Hash)
+                        expect(parsed_response_body[:item]).to include(fullname:, people:, email:, table: table.to_s, notes:)
+                        expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').first)
+                        expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').last)
+                        expect(response).to have_http_status(:ok)
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
         end
       end
     end
@@ -444,7 +469,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     it { expect(instance).to respond_to(:update) }
     it { expect(described_class).to route(:patch, '/v1/admin/reservations/2').to(action: :update, id: "2", format: :json) }
 
-    let(:reservation) { create(:reservation, starts_at: '10:00', ends_at: '13:00') }
+    let(:reservation) { create(:reservation) }
 
     let(:params) { {} }
 
@@ -462,32 +487,84 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
       it do
         reservation
-        expect { req(reservation.id, starts_at: "10:00") }.not_to change(ReservationTurn, :count)
+        expect { req(reservation.id) }.not_to change(Reservation, :count)
       end
 
-      context 'providing { starts_at: "11:00" }' do
-        let(:params) { { starts_at: "11:00" } }
-        before { req }
-
+      context 'when trying to update a non-existing reservation' do
+        before { req(999_999) }
         subject { response }
-        it { should have_http_status(:ok) }
-        it 'should contain all informations' do
-          expect(parsed_response_body).to include(item: Hash)
-          expect(parsed_response_body[:item]).to include(:id, :starts_at, :ends_at, :created_at, :updated_at)
-          expect(parsed_response_body[:item]).to include(params.transform_keys(&:to_sym))
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when updating people' do
+        let(:params) { { people: 10 } }
+
+        it do
+          expect { req }.to change { reservation.reload.people }.from(reservation.people).to(10)
         end
       end
 
-      context 'providing { weekday: 5 }' do
-        let(:params) { { weekday: 5 } }
-        before { req }
+      context 'when updating fullname' do
+        let(:fullname) { 'Anne Marie' + SecureRandom.hex }
+        let(:params) { { fullname: } }
 
-        subject { response }
-        it { should have_http_status(:ok) }
-        it 'should contain all informations' do
-          expect(parsed_response_body).to include(item: Hash)
-          expect(parsed_response_body[:item]).to include(:id, :starts_at, :ends_at, :created_at, :updated_at)
-          expect(parsed_response_body[:item]).to include(params.transform_keys(&:to_sym))
+        it do
+          expect { req }.to change { reservation.reload.fullname }.from(reservation.fullname).to(fullname)
+        end
+      end
+
+      context 'when updating datetime' do
+        let(:datetime) { reservation.datetime + 1.day }
+        let(:params) { { datetime: } }
+
+        it do
+          expect { req }.to change { reservation.reload.datetime }.from(reservation.datetime).to(datetime)
+        end
+      end
+
+      context 'when updating table' do
+        let(:table) { '204' }
+        let(:params) { { table: } }
+
+        it do
+          expect { req }.to change { reservation.reload.table }.from(reservation.table).to(table)
+        end
+      end
+
+      context 'when updating notes' do
+        let(:notes) { 'Please be kind' + SecureRandom.hex }
+        let(:params) { { notes: } }
+
+        it do
+          expect { req }.to change { reservation.reload.notes }.from(reservation.notes).to(notes)
+        end
+      end
+
+      context 'when updating email' do
+        let(:email) { 'giuly@presley' + SecureRandom.hex }
+        let(:params) { { email: } }
+
+        it do
+          expect { req }.to change { reservation.reload.email }.from(reservation.email).to(email)
+        end
+      end
+
+      context 'when updating phone' do
+        let(:phone) { '123 333 333' }
+        let(:params) { { phone: } }
+
+        it do
+          expect { req }.to change { reservation.reload.phone }.from(reservation.phone).to(phone)
+        end
+      end
+
+      context 'when updating status: does nothing' do
+        let(:params) { { status: :cancelled } }
+
+        it do
+          reservation.active!
+
+          expect { req }.not_to change { reservation.reload.status }.from(reservation.status)
         end
       end
     end
@@ -513,13 +590,94 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
       it do
         reservation
-        expect { req(reservation.id) }.to change(ReservationTurn, :count).by(-1)
+        expect { req(reservation.id) }.not_to change(Reservation, :count)
       end
 
-      context 'when trying to delete a non-existing reservation turn' do
+      it do
+        reservation
+        expect { req(reservation.id) }.to change { Reservation.visible.count }.by(-1)
+      end
+
+      it do
+        expect { req(reservation.id) }.to change { reservation.reload.status }.from(reservation.status).to('deleted')
+      end
+
+      context 'when trying to delete a non-existing reservation' do
         before { req(999_999) }
         subject { response }
         it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#update_status' do
+    it { expect(instance).to respond_to(:update) }
+    it { expect(described_class).to route(:patch, '/v1/admin/reservations/2/status/arrived').to(status: 'arrived', action: :update_status, id: "2", format: :json) }
+
+    let(:reservation) { create(:reservation) }
+
+    let(:status) { 'arrived' }
+
+    def req(id = reservation.id, status2set = status)
+      patch :update_status, params: { id:, status: status2set }
+    end
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context 'when user is authenticated' do
+      before { authenticate_request }
+
+      context 'when trying to update a non-existing reservation' do
+        before { req(999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when updating status to arrived' do
+        let(:status) { 'arrived' }
+
+        it do
+          expect { req }.to change { reservation.reload.status }.from(reservation.status).to(status)
+          expect(parsed_response_body).to include(item: Hash)
+          expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when updating status to noshow' do
+        let(:status) { 'noshow' }
+
+        it do
+          expect { req }.to change { reservation.reload.status }.from(reservation.status).to(status)
+          expect(parsed_response_body).to include(item: Hash)
+          expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'when updating status to cancelled' do
+        let(:status) { 'cancelled' }
+
+        it do
+          expect { req }.not_to change { reservation.reload.status }
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(response).to have_http_status(:bad_request)
+          expect(parsed_response_body[:message].to_s.downcase).to include('status')
+        end
+      end
+
+      context 'when updating status to deleted' do
+        let(:status) { 'deleted' }
+
+        it do
+          expect { req }.not_to change { reservation.reload.status }
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(response).to have_http_status(:bad_request)
+          expect(parsed_response_body[:message].to_s.downcase).to include('status')
+        end
       end
     end
   end

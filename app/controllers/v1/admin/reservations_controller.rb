@@ -2,7 +2,7 @@
 
 module V1::Admin
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show update destroy]
+    before_action :find_item, only: %i[show update destroy update_status]
 
     def index
       call = ::SearchReservations.run(params:, current_user:)
@@ -23,7 +23,7 @@ module V1::Admin
     def update
       return show if @item.update(update_params)
 
-      render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
+      render_unprocessable_entity(@item)
     end
 
     def create
@@ -31,7 +31,7 @@ module V1::Admin
 
       return show if @item.valid? && @item.save
 
-      render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
+      render_unprocessable_entity(@item)
     end
 
     def destroy
@@ -39,6 +39,15 @@ module V1::Admin
 
       render_unprocessable_entity(@item)
     rescue ActiveRecord::RecordInvalid
+      render_unprocessable_entity(@item)
+    end
+
+    def update_status
+      status = params[:status].to_s.gsub(/\s+/, '').downcase
+      return render_error(status: 400, message: I18n.t('invalid_status')) unless %w[arrived noshow active].include?(status)
+
+      return show if @item.update(status:)
+
       render_unprocessable_entity(@item)
     end
 

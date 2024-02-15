@@ -258,3 +258,4 @@ it:
   user:
     one: "Utente"
     many: "Utenti"
+  invalid_status: "Stato non valido"
