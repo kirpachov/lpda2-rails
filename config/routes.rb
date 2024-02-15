@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
       scope module: :admin, path: 'admin' do
         resources :reservation_turns
+        resources :reservation_tags
         resources :reservations do
           member do
             patch 'status/:status', action: :update_status

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 22) do
+ActiveRecord::Schema[7.0].define(version: 24) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -236,6 +236,15 @@ ActiveRecord::Schema[7.0].define(version: 22) do
     t.datetime "updated_at", null: false
     t.index ["secret"], name: "index_refresh_tokens_on_secret"
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
+
+  create_table "reservation_tags", force: :cascade do |t|
+    t.text "title", null: false
+    t.text "bg_color", null: false
+    t.text "color", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_reservation_tags_on_title", unique: true
   end
 
   create_table "reservation_turns", force: :cascade do |t|
