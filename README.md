@@ -4,21 +4,30 @@
 
 Backend in Ruby On Rails per la seconda versione del sito laportadacqua.com.
 
-## Domande
+## Domande:
+- È obbligatoria la conferma via mail o messaggio per la creazione della prenotazione? Si potrebbe fare un sistema che non crea la prenotazione finché non si clicca sul link di conferma inviato via mail e messaggio.
 
-- Prenotazione: è necessario chiedere il nome di ciascun cliente, oppure è sufficiente dare un nome e indicare in quanti si è?
-- Prenotazione: è obbligatorio il recapito telefonico? E l'email? Vale sia per il lato amministrativo che per il lato pubblico?
-- Prenotazione: no-show automatico a fine serata se una prenotazione non è stata messa in stato "arrivato" ?
-- Prenotazione: è obbligatorio confermare la prenotazione via mail o via messaggino? Se sì, la fonte di conferma deve essere dinamica o statica?
+## Prenotazioni
+Lato pubblico tutti i campi saranno obbligatori:
+- Email
+- Cellulare
+- Nome e cognome
+- Data e ora prenotazione (che dev'essere compatibile con un turno di prenotazioni e non ci devono essere ferie nel mezzo)
 
-- La "visibilità" sarà possibile deciderla a livello di menù: un menù sarà visibile nella pagina pubblica o
-  raggiungibile dal link segreto solo se impostato come tale. Tutte le sotto-categorie ed i piatti erediteranno quella
-  visibilità.
+Lato amministrativo è possibile creare prenotazioni a qualsiasi ora, ma si ottengono comunque dei warning per le cose sopra citate.
 
-- Pubblicazione: sarà possibile per motivi pratici avere piatti e categorie "invalidi", per esempio senza nome o
-  immagine. Sarà però necessario risolvere alcuni problemi prima di poter pubblicare il menù. Questo serve a creare un
-  meccanismo per cui l'utente non può pubblicare un menù con errori. Le condizioni necessarie per la pubblicazione sono:
-  - Deve esserci un prezzo: al livello di categoria (es. menu a prezzo fisso), o tutti i piatti devono avere il prezzo (il prezzo può essere impostato a 0 per casi estremi, ma deve essere impostato per procedere con la pubblicazione).
-  - Ogni piatto e la categoria devono avere almeno un immagine valida.
-  - Si può pubblicare solo la categoria/menu principale, non le sotto-categorie. La visibilità viene gestita al livello di categoria principale.
-  - Ogni piatto deve avere almeno un ingrediente (?)
+Non è necessario chiedere le generalità di tutti i clienti ma di uno solo e la quantità di clienti.
+
+Niente no-show automatico.
+
+## Visibilità menu (categorie)
+È necessario che in una categoria o che in tutti i suoi piatti ci sia un prezzo non nullo (prezzo 0 va bene!).
+
+Si può pubblicare una categoria:
+- tutti i piatti e tutte le categorie devono avere almeno un immagine
+- i piatti possono anche non avere ingredienti ma bisogna avvertire l'utente
+- Tutti i piatti e le categorie devono avere un nome.
+- Se ci sono descrizioni nulle bisogna avvertire l'utente.
+
+Deve essere possibile poter mostrare e nascondere le categorie in determinate fasce orarie:
+per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nasconde.
