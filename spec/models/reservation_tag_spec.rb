@@ -62,4 +62,27 @@ RSpec.describe ReservationTag, type: :model do
       end
     end
   end
+
+  context 'may have reservations' do
+    let!(:tag) { create(:reservation_tag) }
+    let!(:reservations) { create_list(:reservation, 3) }
+    subject { tag }
+
+    it { expect { tag.reservations << reservations.sample }.not_to raise_error }
+    it { expect { tag.reservations << reservations.sample }.not_to change { ReservationTag.count } }
+    it { expect { tag.reservations << reservations.sample }.to change { TagInReservation.count }.by(1) }
+    it { expect { tag.reservations << reservations.sample }.to change { tag.reload.reservations.count }.from(0).to(1) }
+
+    context 'when tag has 3 reservations' do
+      before { tag.reservations = reservations }
+
+      it { expect { tag.destroy! }.not_to change { Reservation.count } }
+      it { expect { tag.destroy! }.to change { ReservationTag.count }.by(-1) }
+      it { expect { tag.destroy! }.to change { TagInReservation.count }.by(-3) }
+
+      it { expect { tag.reservations.sample.destroy! }.to change { TagInReservation.count }.by(-1) }
+      it { expect { tag.reservations.sample.destroy! }.not_to change { ReservationTag.count } }
+      it { expect { tag.reservations.sample.destroy! }.to change { Reservation.count }.by(-1) }
+    end
+  end
 end

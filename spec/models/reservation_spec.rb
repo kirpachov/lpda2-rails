@@ -104,4 +104,29 @@ RSpec.describe Reservation, type: :model do
       end
     end
   end
+
+  context 'associations' do
+    context 'can add reservation tags' do
+      it do
+        expect { create(:reservation).reservation_tags << create(:reservation_tag) }.not_to raise_error
+      end
+
+      context 'when initially has 3 tags' do
+        let!(:reservation) { create(:reservation) }
+        let!(:tags) { create_list(:reservation_tag, 3) }
+        before { reservation.tags = tags }
+        subject { reservation.reload }
+
+        it { expect { subject.reservation_tags = [create(:reservation_tag)] }.to change { subject.reload.tags.count }.from(3).to(1) }
+
+        it { expect { subject.destroy! }.to change { Reservation.count }.by(-1) }
+        it { expect { subject.destroy! }.to change { TagInReservation.count }.by(-3) }
+        it { expect { subject.destroy! }.not_to change { ReservationTag.count } }
+
+        it { expect { subject.tags = [] }.not_to change { Reservation.count } }
+        it { expect { subject.tags = [] }.not_to change { ReservationTag.count } }
+        it { expect { subject.tags = [] }.to change { TagInReservation.count }.by(-3) }
+      end
+    end
+  end
 end

@@ -2,7 +2,8 @@
 
 module V1::Admin
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show update destroy update_status]
+    before_action :find_item, only: %i[show update destroy update_status add_tag remove_tag]
+    before_action :find_tag, only: %i[add_tag remove_tag]
 
     def index
       call = ::SearchReservations.run(params:, current_user:)
@@ -51,6 +52,18 @@ module V1::Admin
       render_unprocessable_entity(@item)
     end
 
+    def add_tag
+      @item.tags << @tag
+      show
+    rescue ActiveRecord::RecordInvalid => e
+      render_error(status: 422, message: e)
+    end
+
+    def remove_tag
+      @item.tags.delete(@tag)
+      show
+    end
+
     private
 
     def create_params
@@ -70,12 +83,17 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json
+      item.as_json.merge(tags: item.tags.map(&:as_json))
     end
 
     def find_item
       @item = Reservation.visible.where(id: params[:id]).first
       render_error(status: 404, message: I18n.t('record_not_found', model: Reservation, id: params[:id].inspect)) if @item.nil?
+    end
+
+    def find_tag
+      @tag = ReservationTag.visible.where(id: params[:tag_id]).first
+      render_error(status: 404, message: I18n.t('record_not_found', model: ReservationTag, id: params[:tag_id].inspect)) if @tag.nil?
     end
   end
 end

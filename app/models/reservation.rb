@@ -25,6 +25,14 @@ class Reservation < ApplicationRecord
   }
 
   # ################################
+  # Associations
+  # ################################
+  has_many :tags_in_reservations, class_name: 'TagInReservation', inverse_of: :reservation, dependent: :destroy
+  has_many :reservation_tags, through: :tags_in_reservations, class_name: 'ReservationTag'
+
+  alias_attribute :tags, :reservation_tags
+
+  # ################################
   # Validations
   # ################################
   validates :fullname, presence: true

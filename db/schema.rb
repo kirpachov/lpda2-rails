@@ -282,6 +282,16 @@ ActiveRecord::Schema[7.0].define(version: 24) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
+  create_table "tag_in_reservations", force: :cascade do |t|
+    t.bigint "reservation_id", null: false
+    t.bigint "reservation_tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_id", "reservation_tag_id"], name: "reservation_id_on_tags", unique: true
+    t.index ["reservation_id"], name: "index_tag_in_reservations_on_reservation_id"
+    t.index ["reservation_tag_id"], name: "index_tag_in_reservations_on_reservation_tag_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.text "fullname"
     t.text "username"
@@ -312,4 +322,6 @@ ActiveRecord::Schema[7.0].define(version: 24) do
   add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
   add_foreign_key "refresh_tokens", "users"
+  add_foreign_key "tag_in_reservations", "reservation_tags"
+  add_foreign_key "tag_in_reservations", "reservations"
 end
