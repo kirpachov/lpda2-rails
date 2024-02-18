@@ -9,6 +9,10 @@ class Setting
 
     available_locales: {
       default: I18n.available_locales
+    },
+
+    max_people_per_reservation: {
+      default: 10
     }
   }.with_indifferent_access.freeze
 end

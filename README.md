@@ -31,3 +31,6 @@ Si può pubblicare una categoria:
 
 Deve essere possibile poter mostrare e nascondere le categorie in determinate fasce orarie:
 per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nasconde.
+
+## Feature
+- Possibilità di aggiungere ad un determinato piatto un pairing o consiglio con un vino o un cocktail

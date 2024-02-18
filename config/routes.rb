@@ -18,6 +18,13 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :reservations, only: %i[create] do
+        collection do
+          get ':secret', action: :show
+          patch 'cancel', action: :cancel
+        end
+      end
+
       scope module: :admin, path: 'admin' do
         resources :reservation_turns
         resources :reservation_tags
