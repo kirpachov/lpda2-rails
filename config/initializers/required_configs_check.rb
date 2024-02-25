@@ -18,8 +18,8 @@ if Rails.application.credentials.secret_key_base.nil?
   ERROR
 end
 
-%w[base_url temporary_block_duration].filter { |required_config| Config.public_send(required_config).blank? }.join(', ').tap do |required_configs|
-  return unless required_configs.present?
+%w[base_url frontend_base_url cancel_reservation_path temporary_block_duration].filter { |required_config| Config.public_send(required_config).blank? }.join(', ').tap do |required_configs|
+  next unless required_configs.present?
   raise  <<-ERROR
 
 
@@ -29,3 +29,14 @@ end
 
   ERROR
 end
+#
+# [
+#   [:frontend_urls, :cancel_reservation]
+# ].map{|keys| [keys, Config.hash.dig(*keys)] }.each do |keys, value|
+#   next if value.present?
+#   raise  <<-ERROR
+#
+#     REQUIRED CONFIG MISSING: #{keys.join('.')}
+#
+#   ERROR
+# end

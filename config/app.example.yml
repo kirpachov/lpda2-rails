@@ -9,8 +9,11 @@ default: &default
   # admin_email: admin@email.net
   # user_block_ttl: 600
   # base_url: "http://localhost:3050"
-  # frontend_base_url: "http://localhost:4250/#/"
+  frontend_base_url: "http://localhost:4250/#/"
   # mail_attachment_max_size: 25 MB
+
+  # 'cr' stands for 'cancel reservation'
+  cancel_reservation_path: "/cr/{{secret}}"
 
   # ---------------------------------------------------------
   # SMTP CONFIGURATIONS

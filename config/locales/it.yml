@@ -248,6 +248,7 @@ it:
     verification_code: "Codice di verifica"
     verification_code_requested_for_this_email: "È stato richiesto l'invio di un codice di verifica a questo indirizzo email."
     your_verification_code_is: "Il tuo codice di verifica è:"
+    need_to_reach: "Hai bisogno di contattarci?"
   set_password: "Imposta password"
   login: "Accedi"
   if_password_unknown_reset: "Se non conosci la password del tuo account, puoi impostarla all'interno della piattaforma!"
@@ -259,3 +260,13 @@ it:
     one: "Utente"
     many: "Utenti"
   invalid_status: "Stato non valido"
+  reservation_mailer:
+    signature: "~ Lo Staff de La Porta D'Acqua"
+    confirmation:
+      subject: "La tua prenotazione presso La Porta D'acqua %{fullname}"
+    btn_not_working_copy_url: "Se il bottone non dovesse funzionare, copia e incolla questo link in una nuova finestra:"
+    greetings: "Salve %{fullname}"
+    reservation_registered: "Ti informiamo che la tua prenotazione, per il giorno %{date} alle ore %{hour} e per %{people} persone, è stata registrata correttamente."
+    special_request: "Di seguito sono state riportate le tue richieste particolari."
+    delete_reservation: "Cancella pranotazione"
+    changed_mind: "Cambiato idea?"

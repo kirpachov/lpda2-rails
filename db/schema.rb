@@ -276,6 +276,7 @@ ActiveRecord::Schema[7.0].define(version: 24) do
   create_table "settings", force: :cascade do |t|
     t.text "key", null: false
     t.text "value"
+    t.text "parser", comment: "How to parse the value. When nil, do nothing."
     t.boolean "require_root", default: true, null: false, comment: "Require user to be root to change this setting"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

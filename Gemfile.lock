@@ -178,6 +178,7 @@ GEM
       mobility (>= 1.0.1, < 2.0)
       ransack (>= 1.8.0, < 5.0)
     msgpack (1.7.2)
+    mustache (1.1.1)
     nenv (0.3.0)
     net-imap (0.3.7)
       date
@@ -348,6 +349,7 @@ DEPENDENCIES
   launchy (~> 2.5.2)
   mobility (~> 1.2.9)
   mobility-ransack (~> 1.2.2)
+  mustache (~> 1.1.1)
   oj (~> 3.14.3)
   pg (~> 1.1)
   pry

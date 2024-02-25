@@ -1,0 +1,18 @@
+
+---
+
+<%= I18n.t('mail.need_to_reach') %>
+
+Our website: <%= @contacts.dig!(:homepage_url) %>
+
+Email: <%= @contacts.dig!(:mail) %>
+
+Whatsapp: <%= @contacts.dig!(:whatsapp_url) %>
+
+Call us on <%= @contacts.dig!(:whatsapp_number) %>
+
+Facebook: <%= @contacts.dig!(:facebook_url) %>
+
+Instagram: <%= @contacts.dig!(:instagram_url) %>
+
+Tripadvisor: <%= @contacts.dig!(:tripadvisor_url) %>

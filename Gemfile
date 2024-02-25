@@ -32,7 +32,7 @@ gem 'rack-cors', '~> 1.1.1'
 gem 'will_paginate', '~> 3.3.0'
 gem 'down', '~> 5.4.1'
 # gem 'google_drive', '~> 3.0.7'
-# gem 'mustache', '~> 1.1.1'
+gem 'mustache', '~> 1.1.1'
 # gem 'pundit', '~> 2.3.1'
 
 # gem 'rotp', '~> 6.2.2'

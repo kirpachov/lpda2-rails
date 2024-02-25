@@ -28,6 +28,7 @@ module Lpda2
     end
 
     config.eager_load_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('test', 'mailers', 'previews')
 
     # config.session_store :cookie_store, key: '_interslice_session'
     # config.middleware.use ActionDispatch::Cookies
@@ -44,29 +45,29 @@ module Lpda2
     config.i18n.default_locale = :en
     config.i18n.available_locales = %i[it en]
 
-    # smtp = Rails.configuration.app[:smtp]
-    # imap = Rails.configuration.app[:imap]
-    # Mail.defaults do
-    #   if imap
-    #     retriever_method :imap, :address        => imap[:address],
-    #                             :port           => imap[:port],
-    #                             :user_name      => imap[:user_name],
-    #                             :password       => imap[:password],
-    #                             :enable_ssl     => imap[:enable_ssl]
-    #   end
+    smtp = Rails.configuration.app[:smtp]
+    imap = Rails.configuration.app[:imap]
+    Mail.defaults do
+      if imap
+        retriever_method :imap, :address        => imap[:address],
+                                :port           => imap[:port],
+                                :user_name      => imap[:user_name],
+                                :password       => imap[:password],
+                                :enable_ssl     => imap[:enable_ssl]
+      end
 
-    #   if smtp
-    #     delivery_method :smtp, :address         => smtp[:address],
-    #                             :port           => smtp[:port],
-    #                             :authentication => smtp[:authentication],
-    #                             :password       => smtp[:password],
-    #                             :user_name      => smtp[:user_name]
-    #   end
-    # end
-    # if smtp
-    #   config.action_mailer.delivery_method = :smtp
-    #   config.action_mailer.smtp_settings = smtp
-    # end
+      if smtp
+        delivery_method :smtp, :address         => smtp[:address],
+                                :port           => smtp[:port],
+                                :authentication => smtp[:authentication],
+                                :password       => smtp[:password],
+                                :user_name      => smtp[:user_name]
+      end
+    end
+    if smtp
+      config.action_mailer.delivery_method = :smtp
+      config.action_mailer.smtp_settings = smtp
+    end
 
     Rails.application.routes.default_url_options[:host] = Rails.configuration.app[:base_url]
 

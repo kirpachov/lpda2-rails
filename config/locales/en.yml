@@ -246,6 +246,7 @@ en:
     verification_code: "Verification Code"
     verification_code_requested_for_this_email: "A verification code has been requested for this email address."
     your_verification_code_is: "Your verification code is:"
+    need_to_reach: "Need to reach us?"
   set_password: "Set Password"
   login: "Log In"
   if_password_unknown_reset: "If you don't know your account password, you can set it within the platform!"
@@ -257,3 +258,13 @@ en:
     one: "User"
     many: "Users"
   invalid_status: "Invalid status"
+  reservation_mailer:
+    signature: "~ La Porta D'Acqua's Staff"
+    confirmation:
+      subject: "Your reservation at La Porta D'acqua %{fullname}"
+    btn_not_working_copy_url: "If the button doesn't work, copy and paste the following URL in your browser:"
+    greetings: "Hello %{fullname}"
+    reservation_registered: "We inform you that your reservation on the day %{date} at %{hour}, for %{people} people has been registered correctly."
+    special_request: "Your special requests are listed below."
+    delete_reservation: "Delete reservation"
+    changed_mind: "Changed your mind?"

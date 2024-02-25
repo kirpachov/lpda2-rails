@@ -10,8 +10,12 @@ class Setting
 
       case record.key.to_sym
       when :default_language then validate_default_language
+      when :available_locales then validate_available_locales
+      when :max_people_per_reservation then validate_max_people_per_reservation
+      when :email_images then validate_email_images
+      when :email_contacts then validate_email_contacts
       else
-        record.errors.add(:key, "Unknown key: #{record.key}")
+        record.errors.add(:key, "Don't know how to validate key: #{record.key.to_s.inspect}")
       end
     end
 
@@ -33,6 +37,36 @@ class Setting
       return if I18n.available_locales.include?(record.value.to_sym)
 
       record.errors.add(:value, "#{record.value.to_s.inspect} is not a valid language")
+    end
+
+    def validate_available_locales
+      return unless record.value.is_a?(Array)
+      return if (invalid_locales = record.value.reject { |v| I18n.available_locales.include?(v.to_sym) }).empty?
+      # return if record.value.all? { |v| I18n.available_locales.include?(v.to_sym) }
+
+      record.errors.add(:value, "contains invalid languages: #{invalid_locales.join(', ')}")
+    end
+
+    def validate_max_people_per_reservation
+      return if record.value.to_i.positive?
+
+      record.errors.add(:value, "should be a positive integer")
+    end
+
+    def validate_email_images
+      return record.errors.add(:value, "should be a Hash, got #{record.value.class}") unless record.value.is_a?(Hash)
+
+      record.value.each do |_key, val|
+        record.errors.add(:value, "should be a url, got #{val.class}") unless val.is_a?(String) && val.match?(URI::DEFAULT_PARSER.make_regexp)
+      end
+    end
+
+    def validate_email_contacts
+      return record.errors.add(:value, "should be a Hash, got #{record.value.class}") unless record.value.is_a?(Hash)
+
+      record.value.each do |_key, val|
+        record.errors.add(:value, "should be a string, got #{val.class}") unless val.is_a?(String)
+      end
     end
   end
 end

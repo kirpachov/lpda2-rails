@@ -1,0 +1,10 @@
+<%= I18n.t('reservation_mailer.greetings', fullname: @reservation.fullname) %>
+
+<%= I18n.t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: @reservation.datetime.strftime('%k:%M'), people: @reservation.people) %>
+
+
+<%= I18n.t('reservation_mailer.changed_mind') %>
+
+<%= I18n.t('reservation_mailer.delete_reservation') %>:
+
+<%= @cancel_url %>

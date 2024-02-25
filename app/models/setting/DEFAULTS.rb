@@ -13,6 +13,37 @@ class Setting
 
     max_people_per_reservation: {
       default: 10
+    },
+
+    email_images: {
+      default: {
+        position: 'https://laportadacqua.com/public/img/marker.png',
+        mail: 'https://laportadacqua.com/public/img/email.png',
+        phone: 'https://laportadacqua.com/public/img/phone.png',
+        whatsapp: 'https://laportadacqua.com/public/img/whatsapp.png',
+        facebook: 'https://laportadacqua.com/public/img/facebook.png',
+        instagram: 'https://laportadacqua.com/public/img/instagram.png',
+        tripadvisor: 'https://laportadacqua.com/public/img/tripadvisor.png',
+        logo_notext: 'https://laportadacqua.com/public/img/logo-notext.png',
+        logo: 'https://laportadacqua.com/public/img/logo.png',
+      },
+      parser: :json
+    },
+
+    email_contacts: {
+      default: {
+        address: 'Riva del Vin San Polo 1097 San Polo, 30125 Venice Italy',
+        mail: 'info@laportadacqua.com',
+        phone: '+39 041 241 2124',
+        whatsapp_number: '+39 041 241 2124',
+        whatsapp_url: 'https://wa.me/+390412412124',
+        facebook_url: 'https://www.facebook.com/Laportadacqua',
+        instagram_url: 'https://www.instagram.com/laportadacqua',
+        tripadvisor_url: 'https://www.tripadvisor.it/Restaurant_Review-g187870-d1735599-Reviews-La_Porta_D_Acqua-Venice_Veneto.html',
+        homepage_url: 'https://laportadacqua.com',
+        google_url: 'https://g.page/laportadacqua?share',
+      },
+      parser: :json
     }
   }.with_indifferent_access.freeze
 end
