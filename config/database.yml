@@ -9,7 +9,7 @@ development:
 
 test:
   <<: *default
-  database: lpda2_test
+  database: lpda2_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 production:
   <<: *default

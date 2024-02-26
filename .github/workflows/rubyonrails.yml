@@ -45,3 +45,37 @@ jobs:
       # Add or replace test runners here
       - name: Run tests
         run: bundle exec rspec
+  parallel-test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - "6379:6379"
+      postgres:
+        image: postgres:11-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # Add or replace dependency steps here
+      - name: Install useful packages
+        run: sudo apt update && sudo apt install libglib2.0-0 libglib2.0-dev libpoppler-glib8 libvips libvips-dev
+      - name: Install Ruby and gems
+        uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
+        with:
+          bundler-cache: true
+      # Add or replace database setup steps here
+      - name: Set up databases
+        run: bundle exec rake parallel:setup
+      # Add or replace test runners here
+      - name: Run tests
+        run: bundle exec rake parallel:spec
