@@ -53,6 +53,8 @@ class Setting < ApplicationRecord
   end
 
   def parse_json(value)
+    return {} if value.nil?
+
     JSON.parse(value)
   rescue JSON::ParserError => e
     msg = "Error parsing Setting[#{key}] as JSON: #{e.message}"

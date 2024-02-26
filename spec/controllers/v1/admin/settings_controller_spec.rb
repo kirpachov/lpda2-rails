@@ -9,7 +9,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
   before { authenticate_request }
 
   def setting_keys
-    %w[default_language available_locales]
+    %w[default_language available_locales max_people_per_reservation email_images email_contacts]
   end
 
   before do
@@ -95,8 +95,8 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
     end
 
     context 'checking mock data' do
-      it 'setting value in database should be nil' do
-        expect(Setting.find_by(key: key).value).to eq nil
+      it do
+        expect(Setting.find_by(key: key).value).not_to eq nil
       end
     end
 
