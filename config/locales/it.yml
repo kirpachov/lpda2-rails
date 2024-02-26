@@ -1,5 +1,6 @@
 it:
   record_not_found: "Impossibile trovare \"%{model}\" con 'id'=%{id}"
+  record_not_found_by: "Impossibile trovare \"%{model}\" con '%{attribute}'=\"%{value}\""
 
   activerecord:
     models:

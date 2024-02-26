@@ -3,8 +3,9 @@
 module V1
   class ImagesController < ApplicationController
     before_action :find_item, only: %i[download download_variant]
+    before_action :find_item_by_key, only: %i[download_by_key]
     before_action :find_variant, only: %i[download_variant]
-    skip_before_action :authenticate_user, only: %i[download download_variant]
+    skip_before_action :authenticate_user, only: %i[download download_variant download_by_key]
 
     def download
       serve_image @image
@@ -12,6 +13,10 @@ module V1
 
     def download_variant
       serve_image @variant
+    end
+
+    def download_by_key
+      serve_image @image
     end
 
     private
@@ -28,6 +33,13 @@ module V1
       @image = Image.visible.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render_error(status: 404, message: "#{I18n.t('record_not_found', model: Image, id: params[:id].inspect)}")
+    end
+
+    def find_item_by_key
+      @image = Image.visible.where(key: params[:key]).first
+      return if @image.is_a?(Image)
+
+      render_error(status: 404, message: "#{I18n.t('record_not_found_by', model: Image, attribute: :key, value: params[:key].inspect)}")
     end
 
     def find_variant

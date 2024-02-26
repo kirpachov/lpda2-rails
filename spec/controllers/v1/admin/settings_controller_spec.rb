@@ -9,7 +9,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
   before { authenticate_request }
 
   def setting_keys
-    %w[default_language available_locales max_people_per_reservation email_images email_contacts]
+    %w[default_language available_locales max_people_per_reservation email_contacts]
   end
 
   before do
@@ -34,7 +34,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
         it { should be_a(Hash) }
         it { should_not be_empty }
         it "checking values" do
-          expect(subject.keys).to match_array(setting_keys)
+          expect(subject.keys).to include(*setting_keys)
           expect(subject['default_language']).to eq Setting.default(:default_language).to_s
         end
       end

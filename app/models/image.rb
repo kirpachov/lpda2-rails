@@ -155,4 +155,10 @@ class Image < ApplicationRecord
       file.rewind
     end
   end
+
+  def download_by_key_url
+    return nil if key.blank?
+
+    @download_by_key_url ||= Rails.application.routes.url_helpers.download_by_key_images_url(key:)
+  end
 end

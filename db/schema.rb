@@ -61,9 +61,11 @@ ActiveRecord::Schema[7.0].define(version: 24) do
     t.text "tag", comment: "Internal tag for image. A tag may be 'blur', 'thumbnail', ... May be nil when is original image."
     t.bigint "original_id"
     t.jsonb "other", default: {}, null: false
+    t.text "key", comment: "Key for finding the Image for a certain purpose."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["filename"], name: "index_images_on_filename"
+    t.index ["key"], name: "index_images_on_key", unique: true, where: "(key IS NOT NULL)"
     t.index ["original_id"], name: "index_images_on_original_id"
     t.index ["tag", "original_id"], name: "index_images_on_tag_and_original_id", unique: true, where: "(original_id IS NOT NULL)"
   end

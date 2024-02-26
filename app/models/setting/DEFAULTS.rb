@@ -15,25 +15,10 @@ class Setting
       default: 10
     },
 
-    email_images: {
-      default: {
-        position: 'https://laportadacqua.com/public/img/marker.png',
-        mail: 'https://laportadacqua.com/public/img/email.png',
-        phone: 'https://laportadacqua.com/public/img/phone.png',
-        whatsapp: 'https://laportadacqua.com/public/img/whatsapp.png',
-        facebook: 'https://laportadacqua.com/public/img/facebook.png',
-        instagram: 'https://laportadacqua.com/public/img/instagram.png',
-        tripadvisor: 'https://laportadacqua.com/public/img/tripadvisor.png',
-        logo_notext: 'https://laportadacqua.com/public/img/logo-notext.png',
-        logo: 'https://laportadacqua.com/public/img/logo.png',
-      },
-      parser: :json
-    },
-
     email_contacts: {
       default: {
         address: 'Riva del Vin San Polo 1097 San Polo, 30125 Venice Italy',
-        mail: 'info@laportadacqua.com',
+        email: 'info@laportadacqua.com',
         phone: '+39 041 241 2124',
         whatsapp_number: '+39 041 241 2124',
         whatsapp_url: 'https://wa.me/+390412412124',

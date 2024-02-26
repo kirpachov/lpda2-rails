@@ -9,8 +9,12 @@ class CreateImages < ActiveRecord::Migration[7.0]
       t.references :original, null: true, foreign_key: { to_table: :images }
       t.jsonb :other,       null: false, default: {}
 
+      # Initially the files will be loaded inside the application from seeds, but users will be able to update them.
+      t.text :key,          null: true, comment: %(Key for finding the Image for a certain purpose.)
+
       t.timestamps
       t.index %i[tag original_id], unique: true, where: 'original_id IS NOT NULL'
+      t.index :key, unique: true, where: 'key IS NOT NULL'
     end
   end
 end

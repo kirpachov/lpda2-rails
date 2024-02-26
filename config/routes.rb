@@ -16,6 +16,10 @@ Rails.application.routes.draw do
           get 'download', action: :download
           get 'download/:variant', action: :download_variant
         end
+
+        collection do
+          get 'key/:key', action: :download_by_key, as: :download_by_key
+        end
       end
 
       resources :reservations, only: %i[create] do

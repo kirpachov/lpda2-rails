@@ -9,7 +9,13 @@ class ApplicationMailer < ActionMailer::Base
   before_action do
     headers 'X-ApplicationSender' => 'lpda2'
 
-    @images = Setting[:email_images]
+    @images = Image.where("key ILIKE 'email_images_%'").all.map do |image|
+      [
+        image.key.split('email_images_').last,
+        image.download_by_key_url
+      ]
+    end.to_h.with_indifferent_access
+
     @contacts = Setting[:email_contacts]
   end
 

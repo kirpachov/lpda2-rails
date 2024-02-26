@@ -85,4 +85,33 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
     end
   end
+
+  context '#download_by_key' do
+    it { expect(instance).to respond_to(:download_by_key) }
+    it { should route(:get, '/v1/images/key/wassabratan').to(format: :json, action: :download_by_key, controller: 'v1/images', key: 'wassabratan') }
+
+    let(:image) { create(:image, :with_attached_image, :with_key) }
+
+    let(:params) { { key: image.key } }
+    def req(_params = params)
+      get :download_by_key, params: _params
+    end
+
+    it 'should return 200' do
+      req
+      expect(response).to have_http_status(200)
+      expect(response.body).to eq(image.attached_image.download)
+    end
+
+    it 'should return 404 if cannot find image' do
+      req(key: 'impossible_key')
+      expect(response).to have_http_status(404)
+    end
+
+    it 'should return 500 if has no :attached_image' do
+      image.attached_image.purge
+      req
+      expect(response).to have_http_status(500)
+    end
+  end
 end
