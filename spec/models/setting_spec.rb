@@ -94,15 +94,14 @@ RSpec.describe Setting, type: :model do
       it { should respond_to(:all_hash) }
       it { expect(all_hash).to be_a(Hash) }
       it { expect(all_hash).to be_a(HashWithIndifferentAccess) }
-      it { expect(all_hash.keys).to match_array(%w[default_language]) }
-      it { expect(all_hash[:default_language]).to eq I18n.default_locale.to_s }
+      it { expect(all_hash[:default_language].to_s).to eq I18n.default_locale.to_s }
 
       context 'when no settings exist' do
         before { Setting.destroy_all }
 
         it { expect(all_hash).to be_a(Hash) }
         it { expect(all_hash).to be_a(HashWithIndifferentAccess) }
-        it { expect(all_hash).to be_empty }
+        it { expect(all_hash).not_to be_empty }
       end
 
       context 'with specific values' do
@@ -115,7 +114,6 @@ RSpec.describe Setting, type: :model do
 
         it { expect(all_hash).to be_a(Hash) }
         it { expect(all_hash).to be_a(HashWithIndifferentAccess) }
-        it { expect(all_hash.keys).to match_array(%w[default_language]) }
         it { expect(all_hash[:default_language]).to eq locale_but_not_the_default_one.to_s }
       end
     end

@@ -12,6 +12,9 @@ default: &default
   frontend_base_url: "http://localhost:4250/#/"
   # mail_attachment_max_size: 25 MB
 
+  emails:
+    default_from: no-reply@example.com
+
   # 'cr' stands for 'cancel reservation'
   cancel_reservation_path: "/cr/{{secret}}"
 
