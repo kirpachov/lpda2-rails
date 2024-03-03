@@ -114,4 +114,43 @@ RSpec.describe V1::ImagesController, type: :controller do
       expect(response).to have_http_status(500)
     end
   end
+
+  context 'GET #download_by_pixel_secret' do
+    it { expect(instance).to respond_to(:download_by_pixel_secret) }
+    it { should route(:get, '/v1/images/p/wassabratan').to(format: :json, action: :download_by_pixel_secret, controller: 'v1/images', secret: 'wassabratan') }
+
+    let(:image) { create(:image, :with_attached_image) }
+    let(:record) { create(:reservation) }
+    let(:pixel) { create(:log_image_pixel, image:, record:) }
+    let(:params) { { secret: pixel.secret } }
+
+    def req(_params = params)
+      get :download_by_pixel_secret, params: _params
+    end
+
+    it 'should return 404 if cannot find image' do
+      req(secret: 'impossible_secret')
+      expect(response).to have_http_status(404)
+    end
+
+    it 'should return 500 if has no :attached_image' do
+      image.attached_image.purge
+      req
+      expect(response).to have_http_status(500)
+    end
+
+    it 'should return 200 usually' do
+      req
+      expect(response).to have_http_status(200)
+      expect(response.body).to eq(image.attached_image.download)
+    end
+
+    it do
+      expect { req }.to change { pixel.events.count }.by(1)
+    end
+
+    it do
+      expect { req }.to change { Log::ImagePixelEvent.count }.by(1)
+    end
+  end
 end

@@ -16,6 +16,12 @@ class ApplicationMailer < ActionMailer::Base
       ]
     end.to_h.with_indifferent_access
 
+    if params[:pixel].is_a?(Hash)
+      params[:pixel].each do |key, url|
+        @images[key] = url
+      end
+    end
+
     @contacts = Setting[:email_contacts]
   end
 

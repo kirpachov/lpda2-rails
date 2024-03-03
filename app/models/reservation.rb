@@ -66,4 +66,29 @@ class Reservation < ApplicationRecord
   rescue ArgumentError
     @attributes.write_cast_value("status", value)
   end
+
+  def create_email_pixel(image)
+    Log::ImagePixel.create!(
+      record: self,
+      image: image,
+      event_type: 'email_open',
+    )
+  end
+
+  def confirmation_email
+    image = Image.where("key LIKE 'email_images_%'").first
+
+    ReservationMailer.with(
+      reservation: self,
+      pixel: image ? { image.key.gsub('email_images_', '') => create_email_pixel(image).url } : nil
+    ).confirmation
+  end
+
+  def deliver_confirmation_email
+    confirmation_email.deliver_now
+  end
+
+  def deliver_confirmation_email_later
+    confirmation_email.deliver_later
+  end
 end

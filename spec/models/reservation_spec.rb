@@ -129,4 +129,33 @@ RSpec.describe Reservation, type: :model do
       end
     end
   end
+
+  context 'instance methods' do
+    context '#confirmation_email' do
+      context 'basic' do
+        before { CreateMissingImages.run! }
+        let!(:reservation) { create(:reservation) }
+        subject { reservation.confirmation_email }
+
+        it { expect { subject }.not_to raise_error }
+        it { expect { subject }.not_to change { ActionMailer::Base.deliveries.count } }
+        it { expect { subject }.to change { Log::ImagePixel.count }.by(1) }
+        it { expect(subject.body.encoded).to include(Log::ImagePixel.last.url) }
+      end
+
+      context 'if image does not exist' do
+        before { Image.delete_all }
+        let!(:reservation) { create(:reservation) }
+        subject { reservation.confirmation_email }
+
+        context 'checking mock data' do
+          it { expect(Image.count).to eq 0 }
+        end
+
+        it { expect { subject }.not_to raise_error }
+        it { expect { subject }.not_to change { ActionMailer::Base.deliveries.count } }
+        it { expect { subject }.not_to change { Log::ImagePixel.count } }
+      end
+    end
+  end
 end

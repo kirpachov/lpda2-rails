@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
         collection do
           get 'key/:key', action: :download_by_key, as: :download_by_key
+          get 'p/:secret', action: :download_by_pixel_secret, as: :download_by_pixel_secret
         end
       end
 
