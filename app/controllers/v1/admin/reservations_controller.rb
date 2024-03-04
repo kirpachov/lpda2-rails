@@ -65,6 +65,8 @@ module V1::Admin
     end
 
     def deliver_confirmation_email
+      return render_error(status: 400, message: I18n.t('reservation_mailer.confirmation.no_email')) if @item.email.blank?
+
       @item.deliver_confirmation_email
       show
     end

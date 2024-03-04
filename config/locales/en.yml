@@ -263,6 +263,7 @@ en:
     signature: "~ La Porta D'Acqua's Staff"
     confirmation:
       subject: "Your reservation at La Porta D'acqua %{fullname}"
+      no_email: "This reservation has no email."
     btn_not_working_copy_url: "If the button doesn't work, copy and paste the following URL in your browser:"
     greetings: "Hello %{fullname}"
     reservation_registered: "We inform you that your reservation on the day %{date} at %{hour}, for %{people} people has been registered correctly."

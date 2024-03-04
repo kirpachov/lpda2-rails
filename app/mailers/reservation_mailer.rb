@@ -14,9 +14,8 @@ class ReservationMailer < ApplicationMailer
       Mustache.render(Config.hash[:cancel_reservation_path], { secret: @reservation.secret })
     ).to_s
 
-    # email_address_with_name(@user.email, @user.name)
     mail(
-      to: @reservation.email,
+      to: @reservation.fullname.blank? ? @reservation.email : email_address_with_name(@reservation.email, @reservation.fullname),
       subject: (@title = I18n.t('reservation_mailer.confirmation.subject', fullname: @reservation.fullname))
     )
   end

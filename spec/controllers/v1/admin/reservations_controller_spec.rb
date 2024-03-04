@@ -894,6 +894,32 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
         end
+
+        context 'when reservation has name' do
+          let(:reservation) { create(:reservation, fullname: 'Anne Marie') }
+          let(:to) { ActionMailer::Base.deliveries.last.header[:to].unparsed_value }
+
+          it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+          it 'should be successful' do
+            req
+            expect(to).to include(reservation.email)
+            expect(to).to include(reservation.fullname)
+            expect(parsed_response_body).not_to include(message: String)
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context 'when reservation has no email' do
+          let(:reservation) { create(:reservation, email: nil) }
+          let(:to) { ActionMailer::Base.deliveries.last.header[:to].unparsed_value }
+
+          it { expect { req }.not_to change { ActionMailer::Base.deliveries.count } }
+          it 'should be successful' do
+            req
+            expect(parsed_response_body).to include(message: String, details: Hash)
+            expect(response).to have_http_status(:bad_request)
+          end
+        end
       end
     end
   end

@@ -265,6 +265,7 @@ it:
     signature: "~ Lo Staff de La Porta D'Acqua"
     confirmation:
       subject: "La tua prenotazione presso La Porta D'acqua %{fullname}"
+      no_email: "Questa prenotazione non ha alcuna mail associata."
     btn_not_working_copy_url: "Se il bottone non dovesse funzionare, copia e incolla questo link in una nuova finestra:"
     greetings: "Salve %{fullname}"
     reservation_registered: "Ti informiamo che la tua prenotazione, per il giorno %{date} alle ore %{hour} e per %{people} persone, è stata registrata correttamente."
