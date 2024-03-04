@@ -1,3 +1,4 @@
+puts "Creating missing images..."
 CreateMissingImages.run!
 
 if Rails.env.production?
@@ -7,6 +8,7 @@ end
 
 ReservationTurn.delete_all
 
+puts "Creating reservation turns..."
 (0..6).each do |weekday|
   ReservationTurn.create!(name: 'Pranzo', weekday:, starts_at: '13:00', ends_at: '15:00')
   ReservationTurn.create!(name: 'Cena 1', weekday:, starts_at: '19:00', ends_at: '20:59')

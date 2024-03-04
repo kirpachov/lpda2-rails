@@ -29,6 +29,8 @@ class Reservation < ApplicationRecord
   # ################################
   has_many :tags_in_reservations, class_name: 'TagInReservation', inverse_of: :reservation, dependent: :destroy
   has_many :reservation_tags, through: :tags_in_reservations, class_name: 'ReservationTag'
+  has_many :delivered_emails, class_name: 'Log::DeliveredEmail', as: :record
+  # , dependent: :nullify
 
   alias_attribute :tags, :reservation_tags
 
@@ -67,10 +69,11 @@ class Reservation < ApplicationRecord
     @attributes.write_cast_value("status", value)
   end
 
-  def create_email_pixel(image)
+  def create_email_pixel(image:, delivered_email:)
     Log::ImagePixel.create!(
       record: self,
-      image: image,
+      image:,
+      delivered_email:,
       event_type: 'email_open',
     )
   end
@@ -78,9 +81,12 @@ class Reservation < ApplicationRecord
   def confirmation_email
     image = Image.where("key LIKE 'email_images_%'").first
 
+    delivered_email = Log::DeliveredEmail.create!(record: self)
+
     ReservationMailer.with(
       reservation: self,
-      pixel: image ? { image.key.gsub('email_images_', '') => create_email_pixel(image).url } : nil
+      pixel: image ? { image.key.gsub('email_images_', '') => create_email_pixel(image:, delivered_email:).url } : nil,
+      delivered_email:
     ).confirmation
   end
 

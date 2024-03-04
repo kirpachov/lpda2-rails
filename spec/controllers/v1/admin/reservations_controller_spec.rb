@@ -896,16 +896,35 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
 
         context 'when reservation has name' do
+          before do
+            allow_any_instance_of(Hash).to receive(:dig!).and_call_original
+            CreateMissingImages.run!
+          end
+
           let(:reservation) { create(:reservation, fullname: 'Anne Marie') }
           let(:to) { ActionMailer::Base.deliveries.last.header[:to].unparsed_value }
 
           it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+          it { expect { req }.to change { Log::DeliveredEmail.count }.by(1) }
+          it { expect { req }.to change { Log::ImagePixel.count }.by(1) }
           it 'should be successful' do
             req
             expect(to).to include(reservation.email)
             expect(to).to include(reservation.fullname)
             expect(parsed_response_body).not_to include(message: String)
             expect(response).to have_http_status(:ok)
+          end
+
+          it 'last delivered email should have the correct reservation' do
+            Log::DeliveredEmail.delete_all
+            Log::ImagePixel.delete_all
+            req
+            expect(Log::DeliveredEmail.last.subject).to include(reservation.fullname)
+            expect(Log::DeliveredEmail.last.text).to include(reservation.fullname)
+            expect(Log::DeliveredEmail.last.html).to include(reservation.fullname)
+            expect(Log::DeliveredEmail.last.raw).to include(reservation.fullname)
+            expect(Log::DeliveredEmail.last.html).to include(Log::ImagePixel.last.url)
+            expect(Log::DeliveredEmail.last.record).to eq reservation
           end
         end
 

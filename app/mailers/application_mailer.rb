@@ -25,7 +25,15 @@ class ApplicationMailer < ActionMailer::Base
     @contacts = Setting[:email_contacts]
   end
 
-  def contact(key, raise_missing: true)
-    byebug
+  after_action do
+    delivered_email = params[:delivered_email] || Log::DeliveredEmail.create!
+
+    delivered_email.update!(
+      text: mail.text_part&.body&.decoded,
+      html: mail.html_part&.body&.decoded,
+      subject: mail.subject,
+      headers: mail.header.fields.map { |field| [field.name, field.value] }.to_h,
+      raw: mail.to_s
+    )
   end
 end

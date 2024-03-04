@@ -121,7 +121,7 @@ RSpec.describe V1::ImagesController, type: :controller do
 
     let(:image) { create(:image, :with_attached_image) }
     let(:record) { create(:reservation) }
-    let(:pixel) { create(:log_image_pixel, image:, record:) }
+    let(:pixel) { create(:log_image_pixel, :with_delivered_email, image:, record:) }
     let(:params) { { secret: pixel.secret } }
 
     def req(_params = params)

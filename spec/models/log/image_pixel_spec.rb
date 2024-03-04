@@ -19,7 +19,7 @@ RSpec.describe Log::ImagePixel, type: :model do
   end
 
   context 'associations' do
-    let!(:pixel) { create(:log_image_pixel, :with_record, :with_image) }
+    let!(:pixel) { create(:log_image_pixel, :with_record, :with_image, :with_delivered_email) }
 
     it { is_expected.to belong_to(:image).class_name('Image').optional(false) }
     it { is_expected.to belong_to(:record).optional(false) }

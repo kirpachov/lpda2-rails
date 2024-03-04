@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 26) do
+ActiveRecord::Schema[7.0].define(version: 27) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -70,6 +70,19 @@ ActiveRecord::Schema[7.0].define(version: 26) do
     t.index ["tag", "original_id"], name: "index_images_on_tag_and_original_id", unique: true, where: "(original_id IS NOT NULL)"
   end
 
+  create_table "log_delivered_emails", force: :cascade do |t|
+    t.string "record_type"
+    t.bigint "record_id", comment: "Record this email is associated. Optional."
+    t.text "text"
+    t.text "html"
+    t.text "subject"
+    t.jsonb "headers"
+    t.text "raw"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id"], name: "index_log_delivered_emails_on_record"
+  end
+
   create_table "log_image_pixel_events", force: :cascade do |t|
     t.bigint "image_pixel_id", null: false
     t.jsonb "event_data", default: {}
@@ -81,12 +94,14 @@ ActiveRecord::Schema[7.0].define(version: 26) do
 
   create_table "log_image_pixels", force: :cascade do |t|
     t.bigint "image_id", null: false
+    t.bigint "delivered_email_id", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false, comment: "Record this pixel is associated. Mandatory."
     t.text "event_type", null: false, comment: "What does this event mean. E.g. \"email_open\""
     t.text "secret", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["delivered_email_id"], name: "index_log_image_pixels_on_delivered_email_id"
     t.index ["image_id"], name: "index_log_image_pixels_on_image_id"
     t.index ["record_type", "record_id"], name: "index_log_image_pixels_on_record"
     t.index ["secret"], name: "index_log_image_pixels_on_secret", unique: true
@@ -339,6 +354,7 @@ ActiveRecord::Schema[7.0].define(version: 26) do
   add_foreign_key "images", "images", column: "original_id"
   add_foreign_key "log_image_pixel_events", "log_image_pixels", column: "image_pixel_id"
   add_foreign_key "log_image_pixels", "images"
+  add_foreign_key "log_image_pixels", "log_delivered_emails", column: "delivered_email_id"
   add_foreign_key "log_model_changes", "users"
   add_foreign_key "menu_allergens_in_dishes", "menu_allergens"
   add_foreign_key "menu_allergens_in_dishes", "menu_dishes"

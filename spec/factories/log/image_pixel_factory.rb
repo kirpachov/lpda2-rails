@@ -11,5 +11,9 @@ FactoryBot.define do
     trait :with_record do
       record { create(:user) }
     end
+
+    trait :with_delivered_email do
+      delivered_email { create(:log_delivered_email) }
+    end
   end
 end
