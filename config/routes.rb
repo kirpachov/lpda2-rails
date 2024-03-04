@@ -38,6 +38,7 @@ Rails.application.routes.draw do
             patch 'status/:status', action: :update_status
             post 'add_tag/:tag_id', action: :add_tag
             delete 'remove_tag/:tag_id', action: :remove_tag
+            post 'deliver_confirmation_email'
           end
         end
 

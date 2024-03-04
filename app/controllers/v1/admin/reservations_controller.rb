@@ -2,7 +2,7 @@
 
 module V1::Admin
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show update destroy update_status add_tag remove_tag]
+    before_action :find_item, only: %i[show deliver_confirmation_email update destroy update_status add_tag remove_tag]
     before_action :find_tag, only: %i[add_tag remove_tag]
 
     def index
@@ -61,6 +61,11 @@ module V1::Admin
 
     def remove_tag
       @item.tags.delete(@tag)
+      show
+    end
+
+    def deliver_confirmation_email
+      @item.deliver_confirmation_email
       show
     end
 

@@ -765,7 +765,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-    context 'DELETE #remove_tag' do
+  context 'DELETE #remove_tag' do
     it { expect(described_class).to route(:delete, '/v1/admin/reservations/2/remove_tag/3').to(tag_id: '3', action: :remove_tag, id: "2", format: :json) }
     it { expect(instance).to respond_to(:remove_tag) }
 
@@ -853,6 +853,45 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect { req }.to change { reservation.reload.tags.count }.from(3).to(2)
           expect(response).to have_http_status(:ok)
           expect { req }.not_to change { reservation.reload.tags.count }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+  end
+
+  context 'POST #deliver_confirmation_email' do
+    it { expect(described_class).to route(:post, '/v1/admin/reservations/2/deliver_confirmation_email').to(action: :deliver_confirmation_email, id: "2", format: :json) }
+    it { expect(described_class).to route(:post, '/v1/admin/reservations/55/deliver_confirmation_email').to(action: :deliver_confirmation_email, id: "55", format: :json) }
+    it { expect(instance).to respond_to(:deliver_confirmation_email) }
+
+    let(:reservation) { create(:reservation) }
+    let(:params) { { id: reservation.id } }
+
+    def req(_params = params)
+      post :deliver_confirmation_email, params: _params
+    end
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context 'when user is authenticated' do
+      before { authenticate_request }
+
+      context 'when trying to deliver a non-existing reservation' do
+        before { req(id: 999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when reservation is valid' do
+        before { allow_any_instance_of(Hash).to receive(:dig!).and_return('something') }
+
+        it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+        it 'should be successful' do
+          req
+          expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
         end
       end
