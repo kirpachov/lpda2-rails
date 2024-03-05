@@ -906,6 +906,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
           it { expect { req }.to change { Log::DeliveredEmail.count }.by(1) }
+          it { expect { req }.to change { Log::DeliveredEmail.where(record: reservation).count }.by(1) }
           it { expect { req }.to change { Log::ImagePixel.count }.by(1) }
           it 'should be successful' do
             req
