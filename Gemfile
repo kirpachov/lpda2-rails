@@ -69,6 +69,7 @@ group :development, :test do
   gem 'faker', '~> 3.0.0', require: false
   gem 'pry', require: false
   gem 'rspec-rails', '~> 6.0.1'
+  gem 'rubocop', '~> 1.60.2', require: false
   gem 'shoulda-matchers', '~> 5.2.0', require: false
   gem 'rails-controller-testing', '~> 1.0.5'
 
