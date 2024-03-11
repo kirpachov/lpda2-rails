@@ -60,6 +60,17 @@ class Image < ApplicationRecord
       record.attached_image.attach(io: Down.open(data['url']), filename: record.filename)
       record
     end
+
+    # Create by controller params
+    # Image.create_from_param(params[:image])
+    def create_from_param!(data)
+      raise "ActionDispatch::Http::UploadedFile expected, got #{data.class}" unless data.is_a?(ActionDispatch::Http::UploadedFile)
+
+      record = create!(filename: data.original_filename)
+      record.attached_image.attach(io: data, filename: data.original_filename)
+      # record.attached_image.attach(data)
+      record
+    end
   end
 
   # ################################

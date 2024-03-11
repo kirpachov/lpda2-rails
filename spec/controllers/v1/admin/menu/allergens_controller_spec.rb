@@ -385,6 +385,9 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
         it { should include(name: 'test') }
+        it { should include(translations: Hash) }
+        it { expect(subject[:translations]).to include(name: Hash) }
+        it { expect(subject.dig(:translations, :name)).to include(en: 'test') }
       end
 
       context 'when allergen has description (in another language)' do
@@ -466,6 +469,72 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
           it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: false, has_description: false, has_image: false
         end
+      end
+
+      context 'should include translations' do
+        before { req(name: 'test') }
+        subject { parsed_response_body[:item] }
+
+        it do
+          is_expected.to include(translations: Hash)
+          expect(subject[:translations]).to include(name: Hash)
+          expect(subject.dig(:translations, :name)).to include(en: 'test')
+        end
+      end
+
+      context 'if providing name as JSON-encoded string in two languages' do
+        subject do
+          req(name: { it: "italian", en: "english" }.to_json)
+          response
+        end
+
+        it "request should create a allergen" do
+          expect { subject }.to change(Menu::Allergen, :count).by(1)
+          expect(Menu::Allergen.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+
+        context 'response[:item]' do
+          subject do
+            req(name: { it: "italian", en: "english" }.to_json)
+            parsed_response_body[:item]
+          end
+
+          it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
+
+          it { should include(name: "english") }
+        end
+      end
+
+      context 'if providing image: "", should ignore.' do
+        subject do
+          req(image: "")
+          response
+        end
+
+        it "request should create a allergen" do
+          expect { subject }.to change(Menu::Allergen, :count).by(1)
+          expect(Menu::Allergen.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+      end
+
+      context 'when uploading an image {image: File}' do
+        subject do
+          req(image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          response
+        end
+
+        it "request should create a allergen" do
+          expect { subject }.to change(Menu::Allergen, :count).by(1)
+          expect(Menu::Allergen.count).to eq 1
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+
+        it { should have_http_status(:ok) }
       end
 
       context 'passing {name: <String>}' do
@@ -706,6 +775,52 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false
         it { should include(name: 'Hello') }
+      end
+
+      context 'can remove image with {image: nil}' do
+        let!(:allergen) { create(:menu_allergen, :with_image_with_attachment) }
+
+        subject do
+          req(id: allergen.id, image: nil)
+          parsed_response_body[:item]
+        end
+
+        it { expect { subject }.to change { allergen.reload.image }.to(nil) }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it 'should return 200' do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'can remove image with {image: "null"}' do
+        let!(:allergen) { create(:menu_allergen, :with_image_with_attachment) }
+
+        subject do
+          req(id: allergen.id, image: "null")
+          parsed_response_body[:item]
+        end
+
+        it { expect { subject }.to change { allergen.reload.image }.to(nil) }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it 'should return 200' do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'can update image with {image: File}' do
+        let!(:allergen) { create(:menu_allergen, :with_image_with_attachment) }
+
+        subject do
+          req(id: allergen.id, image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          response
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it { expect { subject }.to change { allergen.reload.image }.to(an_instance_of(Image)) }
       end
 
       context 'with {description: "Hello"}' do
@@ -960,7 +1075,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Allergen.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -974,7 +1089,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Allergen.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -1048,7 +1163,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         context 'and providing {copy_image: "link"}' do
           subject { req(allergen.id, { copy_image: "link" }) }
 
-          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
 
           context '[after req]' do
@@ -1064,8 +1179,8 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         context 'and providing {copy_image: "none"}' do
           subject { req(allergen.id, { copy_image: "none" }) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
 
           context '[after req]' do
             before { subject }

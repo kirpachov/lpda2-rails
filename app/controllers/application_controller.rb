@@ -8,6 +8,7 @@ class ApplicationController < ActionController::API
   attr_reader :current_user
 
   def authenticate_user
+    # @current_user = User.first
     @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
     render_unauthorized unless @current_user
   end
@@ -22,6 +23,22 @@ class ApplicationController < ActionController::API
 
   def render_error(status: nil, message: nil, details: {})
     render json: { message:, details: }, status:
+  end
+
+  # Will try to assign the provided image to the record. Returns true if success.
+  def assign_image_from_param(record, param)
+    if param.blank? || param == 'null'
+      record.image_to_record.destroy! if record.image_to_record
+      return true
+    end
+
+    if param.is_a?(ActionDispatch::Http::UploadedFile)
+      record.image = Image.create_from_param!(param)
+      return true
+    end
+
+    render_error(status: 400, message: 'Invalid image param')
+    false
   end
 
   def pagination_params

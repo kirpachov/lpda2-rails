@@ -7,7 +7,7 @@ module V1
       before_action :check_if_can_publish, only: %i[visibility]
 
       def index
-        call = ::Menu::SearchCategories.run(params:, current_user:)
+        call = ::Menu::SearchCategories.run(params:)
         return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
 
         items = call.result.paginate(pagination_params)

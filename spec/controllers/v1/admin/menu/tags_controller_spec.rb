@@ -478,6 +478,40 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         end
       end
 
+      context 'should include translations' do
+        before { req(name: 'test') }
+        subject { parsed_response_body[:item] }
+
+        it do
+          is_expected.to include(translations: Hash)
+          expect(subject[:translations]).to include(name: Hash)
+          expect(subject.dig(:translations, :name)).to include(en: 'test')
+        end
+      end
+
+      context 'if providing name as JSON-encoded string in two languages' do
+        subject do
+          req(name: { it: "italian", en: "english" }.to_json)
+          response
+        end
+
+        it "request should create a allergen" do
+          expect { subject }.to change(Menu::Tag, :count).by(1)
+          expect(Menu::Tag.count).to eq 1
+        end
+
+        it { should have_http_status(:ok) }
+
+        context 'response[:item]' do
+          subject do
+            req(name: { it: "italian", en: "english" }.to_json)
+            parsed_response_body[:item]
+          end
+
+          it { should include(name: "english") }
+        end
+      end
+
       context 'passing {name: <String>}' do
         subject do
           req(name: 'test')
@@ -501,6 +535,23 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false, has_image: false
 
           it { should include(name: 'test') }
+        end
+      end
+
+      context 'passing {image: File}' do
+        subject do
+          req(image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          response
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it do
+          subject
+          expect(parsed_response_body[:item]).to include(image: Hash)
+        end
+        it do
+          subject
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -716,6 +767,52 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false
         it { should include(name: 'Hello') }
+      end
+
+      context 'can remove image with {image: "null"}' do
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
+
+        subject do
+          req(id: tag.id, image: "null")
+          parsed_response_body[:item]
+        end
+
+        it { expect { subject }.to change { tag.reload.image }.to(nil) }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it 'should return 200' do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'can remove image with {image: nil}' do
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
+
+        subject do
+          req(id: tag.id, image: nil)
+          parsed_response_body[:item]
+        end
+
+        it { expect { subject }.to change { tag.reload.image }.to(nil) }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it 'should return 200' do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'can update image with {image: File}' do
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
+
+        subject do
+          req(id: tag.id, image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          response
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it { expect { subject }.to change { tag.reload.image }.to(an_instance_of(Image)) }
       end
 
       context 'with {description: "Hello"}' do

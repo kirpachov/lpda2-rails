@@ -10,7 +10,7 @@ module V1
 ]
 
       def index
-        call = ::Menu::SearchDishes.run(params:, current_user:)
+        call = ::Menu::SearchDishes.run(params:)
         return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
 
         items = call.result.paginate(pagination_params)

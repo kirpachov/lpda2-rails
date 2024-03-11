@@ -16,6 +16,8 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   def assign_translation(attribute, value, args = {})
+    value = JSON.parse(value) if value.is_a?(String) && value.valid_json?
+
     errors.merge!(AssignTranslation.run(args.merge(record: self, attribute:, value:)))
     self
   end

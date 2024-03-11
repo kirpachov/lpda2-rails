@@ -2,7 +2,6 @@
 
 module Menu
   class SearchTags < ActiveInteraction::Base
-    record :current_user, class: User
     interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
     def execute

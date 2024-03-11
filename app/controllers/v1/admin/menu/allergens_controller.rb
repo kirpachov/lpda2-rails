@@ -5,7 +5,7 @@ module V1::Admin::Menu
     before_action :find_item, only: %i[show update destroy copy]
 
     def index
-      call = ::Menu::SearchAllergens.run(params:, current_user:)
+      call = ::Menu::SearchAllergens.run(params:)
       return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
 
       items = call.result.paginate(pagination_params)
@@ -27,6 +27,8 @@ module V1::Admin::Menu
       @item.assign_translation('name', params[:name]) if params[:name].present?
       @item.assign_translation('description', params[:description]) if params[:description].present?
 
+      @item.image = Image.create_from_param!(params[:image]) if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
+
       return show if @item.errors.empty? && @item.valid? && @item.save
 
       render_unprocessable_entity(@item)
@@ -35,6 +37,8 @@ module V1::Admin::Menu
     def update
       @item.assign_translation('name', params[:name]) if params.key?(:name)
       @item.assign_translation('description', params[:description]) if params.key?(:description)
+
+      return if params.key?(:image) && !assign_image_from_param(@item, params[:image])
 
       return show if @item.errors.empty? && @item.valid? && @item.save
 
@@ -50,19 +54,19 @@ module V1::Admin::Menu
     end
 
     def copy
-        call = ::Menu::CopyAllergen.run(
-          old: @item,
-          current_user:,
-          copy_image: params[:copy_image],
-        )
+      call = ::Menu::CopyAllergen.run(
+        old: @item,
+        current_user:,
+        copy_image: params[:copy_image],
+      )
 
-        if call.valid?
-          @item = call.result
-          return show
-        end
-
-        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+      if call.valid?
+        @item = call.result
+        return show
       end
+
+      render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+    end
 
     private
 
@@ -83,7 +87,8 @@ module V1::Admin::Menu
       item.as_json.merge(
         name: item.name,
         description: item.description,
-        image: item.image&.full_json
+        image: item.image&.full_json,
+        translations: item.translations_json
       )
     end
   end

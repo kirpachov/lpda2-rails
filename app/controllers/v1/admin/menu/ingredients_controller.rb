@@ -6,7 +6,7 @@ module V1
       before_action :find_item, only: %i[show update destroy copy]
 
       def index
-        call = ::Menu::SearchIngredients.run(params:, current_user:)
+        call = ::Menu::SearchIngredients.run(params:)
         return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
 
         items = call.result.paginate(pagination_params)
@@ -27,6 +27,8 @@ module V1
         @item.assign_translation('name', params[:name]) if params.key?(:name)
         @item.assign_translation('description', params[:description]) if params.key?(:description)
 
+        return if params.key?(:image) && !assign_image_from_param(@item, params[:image])
+
         return show if @item.valid? && @item.save
 
         render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
@@ -36,6 +38,8 @@ module V1
         @item = ::Menu::Ingredient.new
         @item.assign_translation('name', params[:name]) if params.key?(:name)
         @item.assign_translation('description', params[:description]) if params.key?(:description)
+
+        @item.image = Image.create_from_param!(params[:image]) if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
 
         return show if @item.valid? && @item.save
 
@@ -79,7 +83,8 @@ module V1
         item.as_json.merge(
           name: item.name,
           description: item.description,
-          image: item.image&.full_json
+          image: item.image&.full_json,
+          translations: item.translations_json
         )
       end
 

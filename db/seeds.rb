@@ -2,7 +2,7 @@ puts "Creating missing images..."
 CreateMissingImages.run!
 
 if Rails.env.production?
-  puts "You're in production mode. Exiting..."
+  puts "You're in production. Exiting..."
   exit
 end
 
@@ -33,4 +33,7 @@ Reservation.delete_all
   puts "Creating reservation: #{reservation_data}"
   Reservation.create! reservation_data
 end
+
+User.create!(email: "sasha@opinioni.net")
+
 
