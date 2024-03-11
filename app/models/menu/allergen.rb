@@ -70,16 +70,6 @@ module Menu
       self.status = 'active' if status.blank?
     end
 
-    def translations_json
-      res = {}
-      text_translations.map do |text_translation|
-        res[text_translation.key] ||= {}
-        res[text_translation.key][text_translation.locale] = text_translation.value
-      end
-
-      res
-    end
-
     # @param [Hash] options
     # @option options [User] :current_user
     def copy!(options = {})

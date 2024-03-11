@@ -15,6 +15,16 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def translations_json
+    res = {}
+    text_translations.map do |text_translation|
+      res[text_translation.key] ||= {}
+      res[text_translation.key][text_translation.locale] = text_translation.value
+    end
+
+    res
+  end
+
   def assign_translation(attribute, value, args = {})
     value = JSON.parse(value) if value.is_a?(String) && value.valid_json?
 
