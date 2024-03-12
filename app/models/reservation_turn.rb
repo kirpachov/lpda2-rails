@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+# Reservation turns. A turn is a time slot where reservations can be created.
+# Reservation turns are periodic. You just indicate the weekday and the time slot.
 class ReservationTurn < ApplicationRecord
   # ################################
   # Constants, settings, modules, et...
   # ################################
-  WEEKDAYS = %w[monday tuesday wednesday thursday friday saturday sunday].freeze
+  WEEKDAYS = %w[sunday monday tuesday wednesday thursday friday saturday].freeze
 
   # ################################
   # Validations
@@ -22,6 +24,9 @@ class ReservationTurn < ApplicationRecord
   # ################################
   # Instance methods
   # ################################
+  def valid_times(options = {})
+    ReservationTurnValidTimes.run!(options.merge(turn: self))
+  end
 
   private
 

@@ -71,6 +71,19 @@ module V1::Admin
       show
     end
 
+    # TODO: test this action.
+    def valid_times
+      return render_error(status: 400, message: "Param 'date' is required") if params[:date].blank?
+
+      items = ReservationTurn.all.where(weekday: Date.parse(params[:date].to_s).wday).map do |turn|
+        turn.as_json.merge(valid_times: turn.valid_times)
+      end
+
+      render json: items.flatten
+    rescue Date::Error => e
+      render_error(status: 400, message: e)
+    end
+
     private
 
     def create_params

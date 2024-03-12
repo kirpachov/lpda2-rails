@@ -34,6 +34,10 @@ Rails.application.routes.draw do
         resources :reservation_turns
         resources :reservation_tags
         resources :reservations do
+          collection do
+            get 'valid_times'
+          end
+
           member do
             patch 'status/:status', action: :update_status
             post 'add_tag/:tag_id', action: :add_tag
