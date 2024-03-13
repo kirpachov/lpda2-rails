@@ -107,6 +107,26 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context 'filtering by invalid date' do
+        it 'should ignore param' do
+          req(date: 'null')
+          expect(parsed_response_body).to include(items: Array, metadata: Hash)
+          expect(response).to have_http_status(:ok)
+
+          req(date: '')
+          expect(parsed_response_body).to include(items: Array, metadata: Hash)
+          expect(response).to have_http_status(:ok)
+
+          req(date: 'banana')
+          expect(parsed_response_body).to include(items: Array, metadata: Hash)
+          expect(response).to have_http_status(:ok)
+
+          req(date: nil)
+          expect(parsed_response_body).to include(items: Array, metadata: Hash)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
       context 'when not filtering by status, should return all except deleted' do
         before do
           create(:reservation, status: :active)

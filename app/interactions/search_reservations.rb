@@ -24,6 +24,8 @@ class SearchReservations < ActiveInteraction::Base
     return items if date_from.nil? && date_to.nil?
 
     items.where(datetime: date_from..date_to)
+  rescue Date::Error
+    items
   end
 
   # Will parse inputs and return an array of two dates: "from" and "to".
