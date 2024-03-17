@@ -546,6 +546,26 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         subject { response }
         it_behaves_like NOT_FOUND
       end
+
+      context 'checking pixel events' do
+        before do
+          CreateMissingImages.run!
+          reservation.deliver_confirmation_email
+          reservation.image_pixels.first.events.create!(event_time: Time.now)
+          req(reservation.id)
+        end
+
+        it do
+          expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels)).to be_a(Array)
+          expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels).length).to eq 1
+          json = parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels).first
+          expect(json).to be_a(Hash)
+          expect(json).to include(events: Array)
+          expect(json[:events]).to all(be_a(Hash))
+          expect(json[:events]).to all(include(id: Integer, event_time: String))
+          expect(json[:events].length).to eq 1
+        end
+      end
     end
   end
 
@@ -1109,6 +1129,24 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
             req
             expect(parsed_response_body).to include(message: String, details: Hash)
             expect(response).to have_http_status(:bad_request)
+          end
+        end
+
+        context 'after request' do
+          before { req }
+
+          it 'should return delivery details' do
+            expect(parsed_response_body).to include(item: Hash)
+            expect(parsed_response_body[:item]).to include(id: Integer, created_at: String)
+            expect(response).to have_http_status(:ok)
+          end
+
+          it do
+            expect(parsed_response_body.dig(:item, :delivered_emails)).to be_a(Array)
+            expect(parsed_response_body.dig(:item, :delivered_emails).length).to eq 1
+            expect(parsed_response_body.dig(:item, :delivered_emails).first).to include(id: Integer, created_at: String, image_pixels: Array)
+            expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels)).to be_a(Array)
+            expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels).length).to eq 0
           end
         end
       end

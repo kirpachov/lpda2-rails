@@ -103,7 +103,17 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json.merge(tags: item.tags.map(&:as_json))
+      item.as_json(
+        include: [
+          {
+            delivered_emails: {
+              only: %i[id created_at updated_at],
+              include: [{ image_pixels: { include: %i[events] } }]
+            }
+          },
+          :tags
+        ]
+      )
     end
 
     def find_item

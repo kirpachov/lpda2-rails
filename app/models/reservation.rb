@@ -30,6 +30,8 @@ class Reservation < ApplicationRecord
   has_many :tags_in_reservations, class_name: 'TagInReservation', inverse_of: :reservation, dependent: :destroy
   has_many :reservation_tags, through: :tags_in_reservations, class_name: 'ReservationTag'
   has_many :delivered_emails, class_name: 'Log::DeliveredEmail', as: :record
+  has_many :image_pixels, class_name: 'Log::ImagePixel', as: :record, dependent: :destroy
+  has_many :pixel_events, class_name: 'Log::ImagePixelEvent', through: :image_pixels, source: :events
   # , dependent: :nullify
 
   alias_attribute :tags, :reservation_tags
