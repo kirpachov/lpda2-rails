@@ -399,9 +399,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
         it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 14:00' }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 20:00' }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 14:00') }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00') }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 20:00') }
       end
 
       context 'when ordering with {order_by: { attribute: "some_invalid_col" }}' do
@@ -436,9 +436,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
         it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 20:00') }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00') }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 14:00') }
       end
 
       context 'when ordering with {order_by_attribute: "datetime", order_by_order: "DESC"}' do
@@ -451,9 +451,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
         it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 20:00') }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00') }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 14:00') }
       end
 
       %w[dir order sort direction].each do |direction_alias|
@@ -469,9 +469,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
             it "should allow any combination between aliases." do
               expect(parsed_response_body).to include(items: Array, metadata: Hash)
               expect(parsed_response_body[:items].length).to eq 3
-              expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00'
-              expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00'
-              expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00'
+              expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 20:00')
+              expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00')
+              expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 14:00')
             end
           end
         end
@@ -487,9 +487,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
         it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 20:00') }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00') }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 14:00') }
       end
 
       context 'when ordering with {order_by: "datetime ASC"}' do
@@ -502,9 +502,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
         it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 14:00' }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 20:00' }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 14:00') }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601('2024-10-12 19:00') }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601('2024-10-12 20:00') }
       end
     end
   end

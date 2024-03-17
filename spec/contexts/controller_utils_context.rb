@@ -59,4 +59,10 @@ RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
 
     array.each_cons(2).all? { |a, b| a < b }
   end
+
+  # @param date [String] => date in format "YYYY-MM-DD HH:MM"
+  # @return [String] => date in format "YYYY-MM-DDTHH:MM:00.000Z
+  def to_iso8601(date)
+    "#{date.split(" ").first}T#{date.split(" ").last}:00.000Z"
+  end
 end

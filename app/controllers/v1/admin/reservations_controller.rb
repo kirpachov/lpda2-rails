@@ -103,7 +103,7 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json.merge(tags: item.tags.map(&:as_json), datetime: item.datetime.strftime('%Y-%m-%d %H:%M'))
+      item.as_json.merge(tags: item.tags.map(&:as_json))
     end
 
     def find_item
