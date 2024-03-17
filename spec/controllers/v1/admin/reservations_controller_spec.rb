@@ -355,6 +355,157 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           it { expect(parsed_response_body[:items].count).to eq 0 }
         end
       end
+
+      context "when ordering with {order_by: 'id'}" do
+        before do
+          create_list(:reservation, 2)
+          req(order_by: 'id')
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 2 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to be < parsed_response_body.dig(:items, 1, :id) }
+      end
+
+      context "when ordering with {order_by: { field: 'id' }}" do
+        before do
+          create_list(:reservation, 2)
+          req(order_by: { field: 'id' })
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 2 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to be < parsed_response_body.dig(:items, 1, :id) }
+      end
+
+      context "when ordering with {order_by: { attribute: 'id', direction: 'DESC' }}" do
+        before do
+          create_list(:reservation, 2)
+          req(order_by: { attribute: 'id', direction: 'DESC' })
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 2 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to be > parsed_response_body.dig(:items, 1, :id) }
+      end
+
+      context 'when ordering with {order_by: { attribute: "datetime" }}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 19:00')
+          create(:reservation, datetime: '2024-10-12 20:00')
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: { attribute: 'datetime' })
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 3 }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 14:00' }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 20:00' }
+      end
+
+      context 'when ordering with {order_by: { attribute: "some_invalid_col" }}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: { attribute: 'some_invalid_col' })
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 1 }
+        it { expect(response).to have_http_status(:ok) }
+      end
+
+      context 'when ordering with {order_by: "some_invalid_col" }' do
+        before do
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: 'some_invalid_col')
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 1 }
+        it { expect(response).to have_http_status(:ok) }
+      end
+
+      context 'when ordering with {order_by: { attribute: "datetime", order: "DESC" }}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 19:00')
+          create(:reservation, datetime: '2024-10-12 20:00')
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: { attribute: 'datetime', order: 'DESC' })
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 3 }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+      end
+
+      context 'when ordering with {order_by_attribute: "datetime", order_by_order: "DESC"}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 19:00')
+          create(:reservation, datetime: '2024-10-12 20:00')
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by_attribute: 'datetime', order_by_order: 'DESC')
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 3 }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+      end
+
+      %w[dir order sort direction].each do |direction_alias|
+        %w[attribute column field by].each do |attribute_alias|
+          context "when ordering with {order_by: { #{attribute_alias.inspect}: 'datetime', #{direction_alias.inspect}: 'DESC' }}" do
+            before do
+              create(:reservation, datetime: '2024-10-12 19:00')
+              create(:reservation, datetime: '2024-10-12 20:00')
+              create(:reservation, datetime: '2024-10-12 14:00')
+              req(order_by: { attribute_alias => 'datetime', direction_alias => 'DESC' })
+            end
+
+            it "should allow any combination between aliases." do
+              expect(parsed_response_body).to include(items: Array, metadata: Hash)
+              expect(parsed_response_body[:items].length).to eq 3
+              expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00'
+              expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00'
+              expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00'
+            end
+          end
+        end
+      end
+
+      context 'when ordering with {order_by: "datetime DESC"}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 19:00')
+          create(:reservation, datetime: '2024-10-12 20:00')
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: "datetime DESC")
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 3 }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 20:00' }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 14:00' }
+      end
+
+      context 'when ordering with {order_by: "datetime ASC"}' do
+        before do
+          create(:reservation, datetime: '2024-10-12 19:00')
+          create(:reservation, datetime: '2024-10-12 20:00')
+          create(:reservation, datetime: '2024-10-12 14:00')
+          req(order_by: "datetime ASC")
+        end
+
+        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+        it { expect(parsed_response_body[:items].length).to eq 3 }
+        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq '2024-10-12 14:00' }
+        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq '2024-10-12 19:00' }
+        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq '2024-10-12 20:00' }
+      end
     end
   end
 

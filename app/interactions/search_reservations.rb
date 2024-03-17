@@ -9,7 +9,7 @@ class SearchReservations < ActiveInteraction::Base
       filter_by_status(
         filter_by_secret(
           filter_by_date(
-            items
+            order(items)
           )
         )
       )
@@ -17,6 +17,41 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def order(items)
+    order_by = params[:order_by] || params[:order]
+    order_by = order_by.permit!.to_h if order_by.is_a?(ActionController::Parameters)
+
+    if order_by.blank?
+      %w[attribute column field by].each do |key|
+        next unless params.key?("order_by_#{key}")
+
+        order_by ||= {}
+        order_by[:attribute] = params["order_by_#{key}"]
+      end
+
+      %w[direction dir order sort].each do |key|
+        next unless params.key?("order_by_#{key}")
+
+        order_by ||= {}
+        order_by[:direction] = params["order_by_#{key}"]
+      end
+    end
+
+    return items.order(order_by) if order_by.is_a?(String) && order_by.present? && items.column_names.include?(order_by.split(" ").first)
+
+    # ALIASING
+    if order_by.is_a?(Hash)
+      attribute = order_by[:attribute] || order_by[:column] || order_by[:field] || order_by[:by]
+      direction = order_by[:direction] || order_by[:dir] || order_by[:order] || order_by[:sort]
+
+      if attribute.present? && items.column_names.include?(attribute)
+        return items.order(attribute => direction.to_s.downcase == 'desc' ? :desc : :asc)
+      end
+    end
+
+    items.order(datetime: :asc)
+  end
 
   def filter_by_date(items)
     date_from, date_to = datetime_range
