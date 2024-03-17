@@ -40,9 +40,33 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
           subject { parsed_response_body }
           it { should be_a(Hash) }
           it { should include(items: Array) }
-          it { should_not include(:metadata) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
+          it { expect(parsed_response_body).to include(metadata: Hash) }
+          it { expect(parsed_response_body.dig(:metadata, :offset)).to eq 0 }
         end
+      end
+
+      context "when filtering by {date: 'YYY-MM-dd'}" do
+        before do
+          create(:reservation_turn, weekday: 0, starts_at: '10:00', ends_at: '13:00')
+          create(:reservation_turn, weekday: 1, starts_at: '18:00', ends_at: '19:00')
+          req(date: (Time.now.end_of_week + 1.day).strftime('%Y-%m-%d'))
+        end
+
+        subject { parsed_response_body }
+        it { expect(subject.dig(:metadata, :total_count)).to eq 1 }
+      end
+
+      context "when filtering by query" do
+        before do
+          create(:reservation_turn, weekday: 0, name: "First", starts_at: '10:00', ends_at: '13:00')
+          create(:reservation_turn, weekday: 1, name: "Last", starts_at: '18:00', ends_at: '19:00')
+          req(query: 'First')
+        end
+
+        subject { parsed_response_body }
+        it { expect(subject.dig(:metadata, :total_count)).to eq 1 }
+        it { expect(subject[:items]).to all(include(name: "First")) }
       end
     end
   end

@@ -52,6 +52,7 @@ class ApplicationController < ActionController::API
 
   def json_metadata(resources)
     {
+      offset: resources.current_page - 1,
       current_page: resources.current_page,
       per_page: resources.per_page,
       prev_page: resources.previous_page,

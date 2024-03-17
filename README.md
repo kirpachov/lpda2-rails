@@ -34,3 +34,6 @@ per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nascond
 
 ## Feature
 - Possibilità di aggiungere ad un determinato piatto un pairing o consiglio con un vino o un cocktail
+
+## Note sviluppo
+Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.

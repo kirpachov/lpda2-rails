@@ -5,9 +5,15 @@ module V1::Admin
     before_action :find_item, only: %i[show update destroy]
 
     def index
-      items = ReservationTurn.all
+      call = ::SearchReservationTurns.run(params:)
+      return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
 
-      render json: { items: full_json(items) }
+      items = call.result.paginate(pagination_params)
+
+      render json: {
+        items: full_json(items),
+        metadata: json_metadata(items)
+      }
     end
 
     def show
@@ -31,9 +37,9 @@ module V1::Admin
     def destroy
       return if @item.destroy!
 
-    #   render_unprocessable_entity(@item)
-    # rescue ActiveRecord::RecordInvalid
-    #   render_unprocessable_entity(@item)
+      #   render_unprocessable_entity(@item)
+      # rescue ActiveRecord::RecordInvalid
+      #   render_unprocessable_entity(@item)
     end
 
     private
