@@ -3,7 +3,10 @@
 module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
-      before_action :find_category, only: %i[show update destroy visibility add_dish remove_dish add_category]
+      before_action :find_category, only: %i[
+        show update destroy visibility add_dish remove_dish add_category dashboard_data
+      ]
+
       before_action :check_if_can_publish, only: %i[visibility]
 
       def index
@@ -21,6 +24,19 @@ module V1
       def show
         render json: {
           item: full_json(@item)
+        }
+      end
+
+      def dashboard_data
+        breadcrumb = [@item]
+        parent = @item.parent
+        while parent
+          breadcrumb << parent
+          parent = parent.parent
+        end
+        breadcrumb.reverse!
+        render json: {
+          breadcrumbs: breadcrumb.map { |item| item.as_json(only: %i[id]).merge(name: item.name) }
         }
       end
 

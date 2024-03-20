@@ -592,6 +592,69 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     end
   end
 
+  context '#dashboard_data' do
+    let(:category) { create(:menu_category) }
+
+    let(:params) { { id: menu_category.id } }
+
+    def req(req_params = params)
+      get :dashboard_data, params: req_params
+    end
+
+    it { expect(instance).to respond_to(:dashboard_data) }
+    it { expect(described_class).to route(:get, '/v1/admin/menu/categories/2/dashboard_data').to(action: :dashboard_data, format: :json, id: 2) }
+    it { expect(described_class).to route(:get, '/v1/admin/menu/categories/100/dashboard_data').to(action: :dashboard_data, format: :json, id: 100) }
+
+    context 'if user is unauthorized' do
+      before { req(id: category.id) }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+
+      context 'when passing a invalid id' do
+        before { req(id: 'invalid') }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when passing a invalid id' do
+        before { req(id: 999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context "when has parents, should return breadcrumbs" do
+        before do
+          @grandparent = create(:menu_category)
+          create_list(:menu_category, 2, visibility: nil, parent: @grandparent)
+
+          @parent = create(:menu_category, visibility: nil, parent: @grandparent)
+          create_list(:menu_category, 2, visibility: nil, parent: @parent)
+
+          @child = create(:menu_category, visibility: nil, parent: @parent)
+          create_list(:menu_category, 2, visibility: nil, parent: @child)
+          req(id: @child.id)
+        end
+
+        subject { parsed_response_body }
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(subject).not_to include(message: String) }
+        it do
+          expect(subject).to include(breadcrumbs: Array)
+          expect(subject[:breadcrumbs]).not_to be_empty
+          expect(subject[:breadcrumbs].count).to eq 3
+          expect(subject[:breadcrumbs].first).to be_a(Hash)
+          expect(subject[:breadcrumbs].last).to include(id: @child.id)
+          expect(subject[:breadcrumbs].second).to include(id: @parent.id)
+          expect(subject[:breadcrumbs].first).to include(id: @grandparent.id)
+        end
+      end
+    end
+  end
+
   context '#create' do
     it { expect(instance).to respond_to(:create) }
     it { expect(described_class).to route(:post, '/v1/admin/menu/categories').to(action: :create, format: :json) }

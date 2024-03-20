@@ -71,6 +71,7 @@ Rails.application.routes.draw do
               post 'dishes/:dish_id', action: :add_dish
               delete 'dishes/:dish_id', action: :remove_dish
               post 'add_category/:category_child_id', action: :add_category
+              get 'dashboard_data'
             end
           end
 
