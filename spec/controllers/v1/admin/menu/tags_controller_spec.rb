@@ -403,7 +403,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
           tag.update!(description: "test-#{I18n.locale}")
           tag.reload
-          req(id: tag.id)
+          req(id: tag.id, lang: I18n.locale)
         end
 
         after do

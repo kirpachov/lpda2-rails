@@ -56,7 +56,7 @@ class ApplicationController < ActionController::API
   end
 
   def detect_current_locale
-    locale = params[:locale] || request.headers['Accept-Language']
+    locale = params[:locale] || params[:lang] || request.headers['Accept-Language']
     return unless I18n.available_locales.include?(locale&.to_sym)
 
     locale

@@ -574,7 +574,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
           category.update!(description: "test-#{I18n.locale}")
           category.reload
-          req(id: category.id)
+          req(id: category.id, locale: I18n.locale)
         end
 
         after { I18n.locale = I18n.default_locale }

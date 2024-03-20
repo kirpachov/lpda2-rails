@@ -396,7 +396,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
           allergen.update!(description: "test-#{I18n.locale}")
           allergen.reload
-          req(id: allergen.id)
+          req(id: allergen.id, lang: I18n.locale)
         end
 
         after do
