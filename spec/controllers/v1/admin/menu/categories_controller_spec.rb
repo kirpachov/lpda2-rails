@@ -179,6 +179,22 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
       end
 
+      context 'can exclude items by id with ?except=<id>' do
+        before do
+          create_menu_categories(2)
+          @excluded = Menu::Category.first
+          req(except: @excluded.id)
+        end
+
+        it { expect(Menu::Category.count).to eq 2 }
+        it { expect(Menu::Category.all.pluck(:status)).to all(eq 'active') }
+
+        subject { parsed_response_body[:items] }
+        it { expect(subject.count).to eq 1 }
+        it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+        it { expect(subject.first[:id]).to eq Menu::Category.last.id }
+      end
+
       context 'returned items should contain all relevant information' do
         let!(:images) { create_list(:image, 2, :with_attached_image) }
 
@@ -1885,6 +1901,56 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'if removing dish from non-existing dish' do
         before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context '#add_category' do
+    it { expect(instance).to respond_to(:add_category) }
+    it { should route(:post, '/v1/admin/menu/categories/22/add_category/55').to(format: :json, action: :add_category, controller: 'v1/admin/menu/categories', id: 22, category_child_id: 55) }
+    let!(:category) { create(:menu_category) }
+    let!(:category_child) { create(:menu_category) }
+
+    def req(category_id = category.id, category_child_id = category_child.id, params = {})
+      post :add_category, params: params.merge(id: category_id, category_child_id:)
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { category.reload.children.count }.by(1) }
+      it { expect { subject }.to change { Menu::Category.count }.by(1) }
+
+      context 'when adding dish to non-existing dish' do
+        before { req(999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding non-existing dish to dish' do
+        before { req(category.id, 999_999_999) }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when adding deleted dish to category' do
+        before do
+          category_child.deleted!
+          req
+        end
+
         subject { response }
         it_behaves_like NOT_FOUND
       end

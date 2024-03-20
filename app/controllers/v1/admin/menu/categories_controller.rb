@@ -3,7 +3,7 @@
 module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
-      before_action :find_category, only: %i[show update destroy visibility add_dish remove_dish]
+      before_action :find_category, only: %i[show update destroy visibility add_dish remove_dish add_category]
       before_action :check_if_can_publish, only: %i[visibility]
 
       def index
@@ -87,6 +87,20 @@ module V1
         show
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+      end
+
+      def add_category
+        Menu::Category.transaction do
+          category = Menu::Category.visible.find(params[:category_child_id])
+          category = category.copy!(current_user:)
+          category.update!(visibility: nil, parent: @item)
+        end
+
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Category, id: params[:category_child_id].inspect))
       end
 
       private

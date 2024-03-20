@@ -7,6 +7,10 @@ module Menu
     def execute
       categories = Category.visible
 
+      if params[:except].present? && params[:except].is_a?(String)
+        categories = categories.where.not(id: params[:except].split(',').map(&:to_i))
+      end
+
       if params.has_key?(:parent_id)
         categories = categories.where(parent_id: params[:parent_id].present? ? params[:parent_id] : nil)
       end

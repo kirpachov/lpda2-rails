@@ -165,6 +165,7 @@ it:
         other: è della lunghezza sbagliata (deve essere di %{count} caratteri)
       too_failed_attempts: "Il tuo account è stato temporaneamente bloccato causa troppi tentativi fallidi di accesso. Riprova più tardi."
       invalid_locale: 'La lingua "%{lang}" non è supportata.'
+      endpoint_not_found: "Route non trovata."
     template:
       body: 'Ricontrolla i seguenti campi:'
       header:

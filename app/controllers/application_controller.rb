@@ -4,6 +4,7 @@ class ApplicationController < ActionController::API
   include ActionController::Cookies
 
   before_action :authenticate_user
+  before_action :set_locale
 
   attr_reader :current_user
 
@@ -48,6 +49,17 @@ class ApplicationController < ActionController::API
       page: page || 1,
       per_page: params[:per_page] || 10
     }
+  end
+
+  def set_locale
+    I18n.locale = detect_current_locale || I18n.default_locale
+  end
+
+  def detect_current_locale
+    locale = params[:locale] || request.headers['Accept-Language']
+    return unless I18n.available_locales.include?(locale&.to_sym)
+
+    locale
   end
 
   def json_metadata(resources)
