@@ -171,7 +171,8 @@ module V1
           visibility: item.visibility.as_json,
           images: item.images.map(&:full_json),
           # parent: item.parent ? full_json(item.parent) : nil
-          parent: item.parent&.as_json
+          parent: item.parent&.as_json,
+          translations: item.translations_json
         )
       end
     end

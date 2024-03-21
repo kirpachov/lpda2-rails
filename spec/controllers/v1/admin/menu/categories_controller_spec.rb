@@ -494,6 +494,23 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(subject[:images].count).to eq 0 }
       end
 
+      context 'should include translations' do
+        before do
+          Mobility.with_locale(:en) { category.update(name: "test-en") }
+          Mobility.with_locale(:it) { category.update(name: "test-it") }
+
+          req(id: category.id)
+        end
+        subject { parsed_response_body[:item] }
+
+        it do
+          is_expected.to include(translations: Hash)
+          expect(subject[:translations]).to include(name: Hash)
+          expect(subject.dig(:translations, :name)).to include(en: 'test-en')
+          expect(subject.dig(:translations, :name)).to include(it: 'test-it')
+        end
+      end
+
       context 'when passing a invalid id' do
         before { req(id: 'invalid') }
         subject { response }
