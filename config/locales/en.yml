@@ -271,3 +271,4 @@ en:
     special_request: "Your special requests are listed below."
     delete_reservation: "Delete reservation"
     changed_mind: "Changed your mind?"
+  invalid_param: "Param %{name} is invalid."

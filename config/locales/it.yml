@@ -273,3 +273,4 @@ it:
     special_request: "Di seguito sono state riportate le tue richieste particolari."
     delete_reservation: "Cancella pranotazione"
     changed_mind: "Cambiato idea?"
+  invalid_param: "Parametro %{name} non è valido."

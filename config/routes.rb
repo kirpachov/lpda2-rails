@@ -11,13 +11,15 @@ Rails.application.routes.draw do
   defaults format: :json do
     scope module: :v1, path: 'v1' do
 
-      resources :images, only: %w[] do
+      resources :images, only: %w[index show create] do
         member do
           get 'download', action: :download
           get 'download/:variant', action: :download_variant
+          patch 'remove_from_record'
         end
 
         collection do
+          patch 'record', action: :update_record
           get 'key/:key', action: :download_by_key, as: :download_by_key
           get 'p/:secret', action: :download_by_pixel_secret, as: :download_by_pixel_secret
         end
