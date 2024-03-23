@@ -227,6 +227,8 @@ ActiveRecord::Schema[7.0].define(version: 27) do
     t.boolean "private_visible", default: false, null: false
     t.datetime "private_from", precision: nil
     t.datetime "private_to", precision: nil
+    t.time "daily_from", comment: "From this time and until daily_to, the category will be visible in the public page.\n        Useful in case you'd want to show \"Lunch\" menu only from 12:00 to 15:00.\n        If daily_to is nil, it will be visible until the end of the day.\n        If daily_from is nil, it will be visible from the beginning of the day."
+    t.time "daily_to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

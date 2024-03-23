@@ -51,7 +51,7 @@ class ImageToRecord < ApplicationRecord
   # Instance methods
   # ##############################
   def assign_next_position
-    self.position = self.class.where(record:).count
+    self.position = self.class.where(record:).order(position: :desc).first&.position.to_i + 1
   end
 
   private

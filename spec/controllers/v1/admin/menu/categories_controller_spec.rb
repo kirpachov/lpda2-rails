@@ -1573,6 +1573,53 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(category.dishes.count).to eq 0 }
       end
 
+      context "should allow to update daily_from and daily_to values" do
+        before { category.visibility.update!(daily_from: nil, daily_to: nil) }
+
+        subject do
+          req(category.id, daily_from: "12:00", daily_to: "15:00")
+          response
+        end
+
+        it { expect { subject }.to change { category.reload.visibility.daily_from } }
+        it { expect { subject }.to change { category.reload.visibility.daily_to } }
+
+        context "response should contain new daily_from and daily_to values" do
+          before { subject }
+          it { expect(parsed_response_body.dig(:item, :visibility)).to include("daily_to" => String) }
+          it { expect(parsed_response_body.dig(:item, :visibility)).to include("daily_from" => String) }
+          it { expect(parsed_response_body.dig(:item, :visibility, :daily_from)).to include "12:00" }
+          it { expect(parsed_response_body.dig(:item, :visibility, :daily_to)).to include "15:00" }
+        end
+
+        #   TODO test
+        #   it { expect { subject }.to change { category.reload.visibility.daily_to }.to(????) }
+      end
+
+      context "should allow to update just daily_from without setting daily_to" do
+        before { category.visibility.update!(daily_from: nil, daily_to: nil) }
+
+        subject do
+          req(category.id, daily_from: "12:00")
+          response
+        end
+
+        it { expect { subject }.to change { category.reload.visibility.daily_from } }
+        it { expect { subject }.not_to change { category.reload.visibility.daily_to } }
+      end
+
+      context "should allow to update just daily_to without setting daily_from" do
+        before { category.visibility.update!(daily_from: nil, daily_to: nil) }
+
+        subject do
+          req(category.id, daily_to: "21:00")
+          response
+        end
+
+        it { expect { subject }.not_to change { category.reload.visibility.daily_from } }
+        it { expect { subject }.to change { category.reload.visibility.daily_to } }
+      end
+
       context 'when category was already public should not stop from updating any other field: should check if can publish only if publishing right now.' do
         before { category.visibility.update!(public_visible: true) }
 

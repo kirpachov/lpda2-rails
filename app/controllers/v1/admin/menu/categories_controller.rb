@@ -122,6 +122,8 @@ module V1
       private
 
       def check_if_can_publish
+        # return;
+
         return if force?
 
         publishing_now = [true, 1, 'true', '1', :true].include?(params[:public_visible])
@@ -138,7 +140,7 @@ module V1
       end
 
       def visibility_params
-        params.permit(:public_visible, :public_from, :public_to, :private_visible, :private_from, :private_to)
+        params.permit(:public_visible, :public_from, :public_to, :private_visible, :private_from, :private_to, :daily_from, :daily_to)
       end
 
       def create_params
