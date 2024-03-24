@@ -122,8 +122,6 @@ module V1
       private
 
       def check_if_can_publish
-        # return;
-
         return if force?
 
         publishing_now = [true, 1, 'true', '1', :true].include?(params[:public_visible])
@@ -132,7 +130,11 @@ module V1
         call = Menu::CanPublishCategory.run(category: @item)
         return if call.result
 
-        render_error(status: :unprocessable_entity, message: "Cannot publish this category: #{call.reasons.full_messages.join(', ')}", details: call.reasons.full_json)
+        render_error(
+          status: :unprocessable_entity,
+          message: "Cannot publish this category: #{call.reasons.full_messages.join(', ')}",
+          details: call.reasons.full_json.merge(error_code: :cannot_publish)
+        )
       end
 
       def force?

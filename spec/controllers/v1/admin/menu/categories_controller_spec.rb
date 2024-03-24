@@ -1648,6 +1648,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           should have_http_status(:unprocessable_entity)
           should_not be_successful
         end
+
+        it do
+          subject
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(parsed_response_body[:details]).to include(error_code: 'cannot_publish')
+        end
       end
 
       context 'when category hasnt any dish but providing {force: true}' do

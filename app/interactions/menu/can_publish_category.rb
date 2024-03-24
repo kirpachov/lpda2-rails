@@ -65,6 +65,7 @@ module Menu
     end
 
     def missing_price?
+      return false if category.dishes.count.zero?
       return false if category.price.present? && category.price.to_i > 0
       return false if category.dishes.visible.where(price: nil).empty? && category.dishes.visible.map(&:price).all? { |price| price.to_i >= 0 } && category.dishes.count.positive?
 
