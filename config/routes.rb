@@ -68,6 +68,7 @@ Rails.application.routes.draw do
         scope module: :menu, path: 'menu' do
           resources :categories, only: %i[index show create update destroy] do
             member do
+              post 'copy'
               patch 'visibility'
 
               post 'dishes/:dish_id', action: :add_dish

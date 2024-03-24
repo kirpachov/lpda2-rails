@@ -2,14 +2,20 @@
 
 module Menu
   class CopyCategory < ActiveInteraction::Base
+    DEFAULT_COPY_IMAGES = "full"
+    DEFAULT_COPY_DISHES = "full"
+    DEFAULT_COPY_CHILDREN = "full"
+
     record :old, class: Category
     record :current_user, class: User
 
-    string :copy_images, default: 'full'
-    string :copy_dishes, default: 'full'
+    string :copy_images, default: DEFAULT_COPY_IMAGES
+    string :copy_dishes, default: DEFAULT_COPY_DISHES
+    string :copy_children, default: DEFAULT_COPY_CHILDREN
 
-    validates :copy_images, inclusion: { in: %w[full link none] }
-    validates :copy_dishes, inclusion: { in: %w[full link none] }
+    validates :copy_images, inclusion: { in: %w[full link none] }, allow_blank: true
+    validates :copy_dishes, inclusion: { in: %w[full link none] }, allow_blank: true
+    validates :copy_children, inclusion: { in: %w[full none] }, allow_blank: true
 
     DONT_COPY_ATTRIBUTES = %w[id created_at updated_at secret index secret_desc menu_visibility_id].freeze
 
@@ -23,7 +29,8 @@ module Menu
         Category.transaction do
           raise ActiveRecord::Rollback unless do_copy_category &&
             do_copy_images &&
-            do_copy_dishes
+            do_copy_dishes &&
+            do_copy_children
         end
 
         @new
@@ -41,6 +48,7 @@ module Menu
       end
 
       @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
+      @new.other = (old.other || {}).merge(copied_from: old.id)
 
       return true if @new.valid? && @new.save
 
@@ -49,7 +57,7 @@ module Menu
     end
 
     def do_copy_images
-      return true unless copy_images.in?(%w[full link]) && old.images.any?
+      return true if old.images.empty? || copy_images.to_s == 'none'
 
       old.images.filter { |img| img.attached_image.attached? }.each do |old_image|
         if copy_images == 'full'
@@ -67,7 +75,7 @@ module Menu
     end
 
     def do_copy_dishes
-      return true unless copy_dishes.in?(%w[full link]) && old.dishes.any?
+      return true if old.dishes.empty? || copy_dishes.to_s == 'none'
 
       old.dishes.each do |old_dish|
         if copy_dishes == 'full'
@@ -81,6 +89,18 @@ module Menu
     rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
       errors.add(:base, "Cannot copy dish: #{e.message}", details: e)
       false
+    end
+
+    def do_copy_children
+      return true if old.children.empty? || copy_children.to_s == 'none'
+
+      old.children.each do |old_child|
+        @new.children << old_child.copy!(current_user:)
+      end
+
+      true
+    rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
+      errors.add(:base, "Cannot copy child category: #{e.message}", details: e)
     end
   end
 end

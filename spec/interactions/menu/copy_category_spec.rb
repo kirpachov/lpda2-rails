@@ -122,9 +122,8 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
         expect(subject.result.status).to eq old.status
       end
 
-      it 'does copy other' do
-        expect(subject.result.other).to eq old.other
-        expect(subject.result.other).to eq('foo' => 'bar')
+      it 'does copy other but adding information of original category.' do
+        expect(subject.result.other).to eq old.other.merge('copied_from' => old.id)
       end
 
       it 'does copy price' do
@@ -140,6 +139,45 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
         expect(subject.result).to be_a(Menu::Category)
         expect(subject.result).to be_valid
         expect(subject.result).to be_persisted
+      end
+
+      context 'does copy all children' do
+        before do
+          create_list(:menu_category, 3, visibility: nil, parent: old)
+        end
+
+        context "checking mock data" do
+          it { expect(old.children.count).to be_positive }
+        end
+
+        it { expect { subject }.to change { Menu::Category.count }.by(old.children.count + 1) }
+
+        it 'copies children' do
+          expect(subject.result.children.count).to eq old.children.count
+
+          I18n.available_locales.each do |locale|
+            Mobility.with_locale(locale) do
+              expect(subject.result.children.map(&:name)).to match_array(old.children.map(&:name))
+            end
+          end
+        end
+      end
+
+      context "when providing {copy_children: 'none'}, should not copy children." do
+        let(:params) { { old:, current_user:, copy_children: 'none' } }
+
+        before do
+          create_list(:menu_category, 3, visibility: nil, parent: old)
+        end
+
+        context "checking mock data" do
+          it { expect(old.children.count).to be_positive }
+        end
+
+        it do
+          expect { subject }.to change { Menu::Category.count }.by(1)
+          expect(subject.result.children.count).to eq 0
+        end
       end
 
       it 'enqueue a job to save the changes with current user info' do

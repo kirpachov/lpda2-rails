@@ -48,9 +48,9 @@ module Menu
     # ##############################
     # Hooks
     # ##############################
-    after_initialize :assign_valid_index, if: -> { new_record? }
+    # after_initialize :assign_valid_index, if: -> { new_record? }
     before_validation :assign_defaults, on: :create
-    before_validation :assign_valid_index, on: :update
+    before_validation :assign_valid_index
     before_validation :assign_default_visibility_if_necessary
     before_destroy :check_if_has_children
 
@@ -82,7 +82,7 @@ module Menu
     # ##############################
     def assign_defaults
       self.status = 'active' if status.blank?
-      assign_valid_index if index.to_i.zero?
+      # assign_valid_index if index.to_i.zero?
       self.secret = GenToken.for!(self.class, :secret) if secret.blank?
       self.other = {} if other.nil?
     end

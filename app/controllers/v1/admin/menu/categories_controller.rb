@@ -4,7 +4,7 @@ module V1
   module Admin::Menu
     class CategoriesController < ApplicationController
       before_action :find_category, only: %i[
-        show update destroy visibility add_dish remove_dish add_category dashboard_data
+        show update destroy visibility add_dish remove_dish add_category dashboard_data copy
       ]
 
       before_action :check_if_can_publish, only: %i[visibility]
@@ -96,6 +96,23 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+      end
+
+      def copy
+        call = ::Menu::CopyCategory.run(
+          old: @item,
+          current_user:,
+          copy_images: params[:copy_images],
+          copy_dishes: params[:copy_dishes],
+          copy_children: params[:copy_children]
+        )
+
+        if call.valid?
+          @item = call.result
+          return show
+        end
+
+        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
       end
 
       def remove_dish

@@ -311,7 +311,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
         end
 
-        context "when querying with {query: nil} should return all items" do
+        context 'when querying with {query: nil} should return all items' do
           subject do
             req(query: nil)
             parsed_response_body[:items]
@@ -496,8 +496,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'should include translations' do
         before do
-          Mobility.with_locale(:en) { category.update(name: "test-en") }
-          Mobility.with_locale(:it) { category.update(name: "test-it") }
+          Mobility.with_locale(:en) { category.update(name: 'test-en') }
+          Mobility.with_locale(:it) { category.update(name: 'test-it') }
 
           req(id: category.id)
         end
@@ -642,7 +642,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context "when has parents, should return breadcrumbs" do
+      context 'when has parents, should return breadcrumbs' do
         before do
           @grandparent = create(:menu_category)
           create_list(:menu_category, 2, visibility: nil, parent: @grandparent)
@@ -716,7 +716,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category child" do
+        it 'request should create a category child' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 2
           expect(Menu::Category.with_parent.last.parent).to eq parent
@@ -752,7 +752,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 1
           expect(Menu::Category.with_parent.count).to eq 0
@@ -787,7 +787,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 1
           expect(Menu::Category.with_parent.count).to eq 0
@@ -822,7 +822,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 1
           expect(Menu::Category.with_parent.count).to eq 0
@@ -858,7 +858,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 2
           expect(Menu::Category.with_parent.count).to eq 1
@@ -893,7 +893,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 1
           expect(Menu::Category.with_parent.count).to eq 0
@@ -928,7 +928,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it "request should create a category" do
+        it 'request should create a category' do
           expect { subject }.to change(Menu::Category, :count).by(1)
           expect(Menu::Category.count).to eq 1
           expect(Menu::Category.with_parent.count).to eq 0
@@ -1247,7 +1247,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { should have_http_status(:ok) }
         it { should be_successful }
 
-        it "should not have a message" do
+        it 'should not have a message' do
           subject
           expect(parsed_response_body['message']).to be_nil
         end
@@ -1339,13 +1339,13 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context 'passing {secret_desc: "ciaobanana", description: {it: <String>, invalid_locale: <String>}}' do
         let!(:parent) { create(:menu_category) }
         let!(:category) { create(:menu_category, parent:, visibility: nil) }
-        let(:params) { { id: category.id, secret_desc: "ciaobanana", description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
+        let(:params) { { id: category.id, secret_desc: 'ciaobanana', description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it 'should not update parent' do
           expect { req params }.not_to change { category.reload.secret_desc }
         end
 
-        it "checking mock data" do
+        it 'checking mock data' do
           expect(category.secret_desc).to eq nil
           expect(category.description).to eq nil
         end
@@ -1573,34 +1573,34 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(category.dishes.count).to eq 0 }
       end
 
-      context "should allow to update daily_from and daily_to values" do
+      context 'should allow to update daily_from and daily_to values' do
         before { category.visibility.update!(daily_from: nil, daily_to: nil) }
 
         subject do
-          req(category.id, daily_from: "12:00", daily_to: "15:00")
+          req(category.id, daily_from: '12:00', daily_to: '15:00')
           response
         end
 
         it { expect { subject }.to change { category.reload.visibility.daily_from } }
         it { expect { subject }.to change { category.reload.visibility.daily_to } }
 
-        context "response should contain new daily_from and daily_to values" do
+        context 'response should contain new daily_from and daily_to values' do
           before { subject }
-          it { expect(parsed_response_body.dig(:item, :visibility)).to include("daily_to" => String) }
-          it { expect(parsed_response_body.dig(:item, :visibility)).to include("daily_from" => String) }
-          it { expect(parsed_response_body.dig(:item, :visibility, :daily_from)).to include "12:00" }
-          it { expect(parsed_response_body.dig(:item, :visibility, :daily_to)).to include "15:00" }
+          it { expect(parsed_response_body.dig(:item, :visibility)).to include('daily_to' => String) }
+          it { expect(parsed_response_body.dig(:item, :visibility)).to include('daily_from' => String) }
+          it { expect(parsed_response_body.dig(:item, :visibility, :daily_from)).to include '12:00' }
+          it { expect(parsed_response_body.dig(:item, :visibility, :daily_to)).to include '15:00' }
         end
 
         #   TODO test
         #   it { expect { subject }.to change { category.reload.visibility.daily_to }.to(????) }
       end
 
-      context "should allow to update just daily_from without setting daily_to" do
+      context 'should allow to update just daily_from without setting daily_to' do
         before { category.visibility.update!(daily_from: nil, daily_to: nil) }
 
         subject do
-          req(category.id, daily_from: "12:00")
+          req(category.id, daily_from: '12:00')
           response
         end
 
@@ -1608,11 +1608,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect { subject }.not_to change { category.reload.visibility.daily_to } }
       end
 
-      context "should allow to update just daily_to without setting daily_from" do
+      context 'should allow to update just daily_to without setting daily_from' do
         before { category.visibility.update!(daily_from: nil, daily_to: nil) }
 
         subject do
-          req(category.id, daily_to: "21:00")
+          req(category.id, daily_to: '21:00')
           response
         end
 
@@ -1671,7 +1671,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'when category hasnt any dish but providing {force: "true"}' do
         subject do
-          req(category.id, public_visible: true, force: "true")
+          req(category.id, public_visible: true, force: 'true')
           response
         end
 
@@ -1684,7 +1684,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'when category hasnt any dish but providing {force: "false"}' do
         subject do
-          req(category.id, public_visible: true, force: "false")
+          req(category.id, public_visible: true, force: 'false')
           response
         end
 
@@ -1847,7 +1847,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update public_from correctly' do
-            expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse("2023-10-13"))
+            expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1860,7 +1860,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update public_to correctly' do
-            expect { subject }.to change { category.reload.visibility.public_to }.from(nil).to(DateTime.parse("2023-10-13"))
+            expect { subject }.to change { category.reload.visibility.public_to }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1873,7 +1873,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update private_from correctly' do
-            expect { subject }.to change { category.reload.visibility.private_from }.from(nil).to(DateTime.parse("2023-10-13"))
+            expect { subject }.to change { category.reload.visibility.private_from }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1886,7 +1886,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update private_to correctly' do
-            expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse("2023-10-13"))
+            expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -2086,6 +2086,204 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         subject { response }
         it_behaves_like NOT_FOUND
+      end
+    end
+  end
+
+  context 'POST #copy' do
+    it { expect(instance).to respond_to(:copy) }
+    it { should route(:post, '/v1/admin/menu/categories/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/categories', id: 22) }
+    let!(:category) { create(:menu_category) }
+
+    let(:copy_dishes) { nil }
+    let(:copy_images) { nil }
+    let(:copy_children) { nil }
+    let(:params) { { id: category.id, copy_dishes:, copy_children:, copy_images: } }
+
+    def req(req_params = params)
+      post :copy, params: req_params
+    end
+
+    subject { req }
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '[user is authenticated]' do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      it { is_expected.to be_successful }
+      it { expect { subject }.to change { Menu::Category.count }.by(1) }
+      it do
+        subject
+        expect(parsed_response_body).not_to include(message: String)
+      end
+
+      context "when providing {copy_images: 'none'} does not copy images" do
+        before do
+          category.images << create(:image, :with_attached_image)
+        end
+
+        let(:copy_images) { 'none' }
+
+        context 'checking mock data' do
+          it { expect(category.images.count).to eq 1 }
+        end
+
+        it { expect { subject }.not_to change { Image.count } }
+        it { expect { subject }.not_to change { ImageToRecord.count } }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_images: 'link'} does not copy images but links existing" do
+        before do
+          category.images << create(:image, :with_attached_image)
+        end
+
+        let(:copy_images) { 'link' }
+
+        context 'checking mock data' do
+          it { expect(category.images.count).to eq 1 }
+        end
+
+        it { expect { subject }.not_to change { Image.count } }
+        it { expect { subject }.not_to change { category.reload.images.count } }
+        it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_images: 'full'} copy and links them" do
+        before do
+          category.images << create(:image, :with_attached_image)
+        end
+
+        let(:copy_images) { 'full' }
+
+        context 'checking mock data' do
+          it { expect(category.images.count).to eq 1 }
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_dishes: 'none'} does not copy dishes" do
+        before do
+          category.dishes = create_list(:menu_dish, 3)
+        end
+
+        let(:copy_dishes) { 'none' }
+
+        context 'checking mock data' do
+          it { expect(category.dishes.count).to eq 3 }
+        end
+
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to change { Menu::DishesInCategory.count } }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_dishes: 'link'} does not copy dishes but links them." do
+        before do
+          category.dishes = create_list(:menu_dish, 3)
+        end
+
+        let(:copy_dishes) { 'link' }
+
+        context 'checking mock data' do
+          it { expect(category.dishes.count).to eq 3 }
+        end
+
+        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to change { category.reload.dishes.count } }
+        it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_dishes: 'full'} copy dishes" do
+        before do
+          category.dishes = create_list(:menu_dish, 3)
+        end
+
+        let(:copy_dishes) { 'full' }
+
+        context 'checking mock data' do
+          it { expect(category.dishes.count).to eq 3 }
+        end
+
+        it { expect { subject }.to change { Menu::Dish.count }.by(3) }
+        it { expect { subject }.not_to change { category.reload.dishes.count } }
+        it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_children: 'none'}, should not copy children." do
+        before do
+          create_list(:menu_category, 3, visibility: nil, parent: category)
+        end
+
+        let(:copy_children) { 'none' }
+
+        context 'checking mock data' do
+          it { expect(category.children.count).to eq 3 }
+        end
+
+        it { expect { subject }.to change { Menu::Category.count }.by(1) }
+        it { expect { subject }.not_to change { category.reload.children.count } }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing {copy_children: 'full'}, should copy all children." do
+        before do
+          create_list(:menu_category, 3, visibility: nil, parent: category)
+        end
+
+        let(:copy_children) { 'full' }
+
+        context 'checking mock data' do
+          it { expect(category.children.count).to eq 3 }
+        end
+
+        it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
+        it { expect { subject }.not_to change { category.reload.children.count } }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
       end
     end
   end
