@@ -104,7 +104,11 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
     end
 
     context 'when category has no price' do
-      let(:category) { create(:menu_category, price: nil) }
+      let(:category) do
+        create(:menu_category, price: nil).tap do |cat|
+          cat.dishes = create_list(:menu_dish, 3, price: nil)
+        end
+      end
 
       it { expect(category.price).to be_nil }
 
