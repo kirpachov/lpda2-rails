@@ -12,6 +12,7 @@ module Menu
     string :copy_images, default: DEFAULT_COPY_IMAGES
     string :copy_dishes, default: DEFAULT_COPY_DISHES
     string :copy_children, default: DEFAULT_COPY_CHILDREN
+    integer :parent_id, default: nil
 
     validates :copy_images, inclusion: { in: %w[full link none] }, allow_blank: true
     validates :copy_dishes, inclusion: { in: %w[full link none] }, allow_blank: true
@@ -47,7 +48,7 @@ module Menu
         end
       end
 
-      @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
+      @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES).merge(parent_id: parent_id))
       @new.other = (old.other || {}).merge(copied_from: old.id)
 
       return true if @new.valid? && @new.save

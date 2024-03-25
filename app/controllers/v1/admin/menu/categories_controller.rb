@@ -104,7 +104,8 @@ module V1
           current_user:,
           copy_images: params[:copy_images],
           copy_dishes: params[:copy_dishes],
-          copy_children: params[:copy_children]
+          copy_children: params[:copy_children],
+          parent_id: params[:parent_id]
         )
 
         if call.valid?

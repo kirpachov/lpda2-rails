@@ -1342,7 +1342,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         let(:params) { { id: category.id, secret_desc: 'ciaobanana', description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it 'should not update parent' do
-          expect { req params }.not_to change { category.reload.secret_desc }
+          expect { req params }.not_to(change { category.reload.secret_desc })
         end
 
         it 'checking mock data' do
@@ -1377,7 +1377,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         let(:params) { { id: category.id, parent_id: nil, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it 'should not update parent' do
-          expect { req params }.not_to change { category.reload.parent }
+          expect { req params }.not_to(change { category.reload.parent })
         end
 
         context 'response[:item]' do
@@ -1518,7 +1518,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Category.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -1532,7 +1532,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Category.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -1581,8 +1581,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.to change { category.reload.visibility.daily_from } }
-        it { expect { subject }.to change { category.reload.visibility.daily_to } }
+        it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
+        it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
 
         context 'response should contain new daily_from and daily_to values' do
           before { subject }
@@ -1604,8 +1604,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.to change { category.reload.visibility.daily_from } }
-        it { expect { subject }.not_to change { category.reload.visibility.daily_to } }
+        it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
+        it { expect { subject }.not_to(change { category.reload.visibility.daily_to }) }
       end
 
       context 'should allow to update just daily_to without setting daily_from' do
@@ -1616,8 +1616,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.daily_from } }
-        it { expect { subject }.to change { category.reload.visibility.daily_to } }
+        it { expect { subject }.not_to(change { category.reload.visibility.daily_from }) }
+        it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
       end
 
       context 'when category was already public should not stop from updating any other field: should check if can publish only if publishing right now.' do
@@ -1628,7 +1628,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_visible } }
+        it { expect { subject }.not_to(change { category.reload.visibility.public_visible }) }
         it { expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2023-10-10')) }
 
         it 'should update public_from and return 200' do
@@ -1644,7 +1644,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it 'should not update public_visible to true' do
-          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          expect { subject }.not_to(change { category.reload.visibility.public_visible })
           should have_http_status(:unprocessable_entity)
           should_not be_successful
         end
@@ -1689,7 +1689,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it 'should not update public_visible to true' do
-          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          expect { subject }.not_to(change { category.reload.visibility.public_visible })
           should have_http_status(:unprocessable_entity)
           should_not be_successful
         end
@@ -1702,7 +1702,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it 'should not update public_visible to true' do
-          expect { subject }.not_to change { category.reload.visibility.public_visible }
+          expect { subject }.not_to(change { category.reload.visibility.public_visible })
           should have_http_status(:unprocessable_entity)
           should_not be_successful
         end
@@ -1728,7 +1728,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it 'should not be able to update private_visible or public_visible to true' do
-          expect { subject }.not_to change { category.reload.visibility.private_visible }
+          expect { subject }.not_to(change { category.reload.visibility.private_visible })
           should have_http_status(:unprocessable_entity)
           should_not be_successful
         end
@@ -1761,9 +1761,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_from } }
+        it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_to } }
+        it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
 
         it 'should not be able to update public_from or public_to and return 422' do
           should have_http_status(:unprocessable_entity)
@@ -1782,9 +1782,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_from } }
+        it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_to } }
+        it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
 
         it 'should not be able to update private_from or private_to and return 422' do
           should have_http_status(:unprocessable_entity)
@@ -1803,9 +1803,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_from } }
+        it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
 
-        it { expect { subject }.not_to change { category.reload.visibility.public_to } }
+        it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
 
         it 'should not be able to update public_from or public_to and return 422' do
           should have_http_status(:unprocessable_entity)
@@ -1824,9 +1824,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_from } }
+        it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
 
-        it { expect { subject }.not_to change { category.reload.visibility.private_to } }
+        it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
 
         it 'should not be able to update private_from or public_to and return 422' do
           should have_http_status(:unprocessable_entity)
@@ -1920,14 +1920,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       it { is_expected.to be_successful }
       it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
-      it { expect { subject }.not_to change { Menu::Dish.count } }
-      it { expect { subject }.not_to change { Menu::Category.count } }
+      it { expect { subject }.not_to(change { Menu::Dish.count }) }
+      it { expect { subject }.not_to(change { Menu::Category.count }) }
 
       context 'when adding twice same dish' do
         before { req }
 
-        it { expect { req }.not_to change { category.reload.dishes.count } }
-        it { expect { req }.not_to change { Menu::DishesInCategory.count } }
+        it { expect { req }.not_to(change { category.reload.dishes.count }) }
+        it { expect { req }.not_to(change { Menu::DishesInCategory.count }) }
 
         context '[after second request]' do
           before { req }
@@ -1968,7 +1968,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
         it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
         it { expect { subject }.to change { Menu::Dish.count }.by(1) }
-        it { expect { subject }.not_to change { Menu::Category.count } }
+        it { expect { subject }.not_to(change { Menu::Category.count }) }
 
         context '[after request]' do
           before { subject }
@@ -1987,9 +1987,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it { should have_http_status(:unprocessable_entity) }
           it { expect(parsed_response_body).to include(message: String) }
-          it { expect { subject }.not_to change { category.reload.dishes.count } }
-          it { expect { subject }.not_to change { Menu::DishesInCategory.count } }
-          it { expect { subject }.not_to change { Menu::Dish.count } }
+          it { expect { subject }.not_to(change { category.reload.dishes.count }) }
+          it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
+          it { expect { subject }.not_to(change { Menu::Dish.count }) }
         end
       end
     end
@@ -2098,7 +2098,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     let(:copy_dishes) { nil }
     let(:copy_images) { nil }
     let(:copy_children) { nil }
-    let(:params) { { id: category.id, copy_dishes:, copy_children:, copy_images: } }
+    let(:parent_id) { nil }
+    let(:params) { { id: category.id, copy_dishes:, copy_children:, copy_images:, parent_id: } }
 
     def req(req_params = params)
       post :copy, params: req_params
@@ -2123,6 +2124,64 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         expect(parsed_response_body).not_to include(message: String)
       end
 
+      context "when providing parent_id" do
+        context "when providing {parent_id: nil} creates as root category" do
+          before do
+            category.update!(visibility: nil, parent: create(:menu_category))
+          end
+
+          let(:parent_id) { nil }
+
+          context 'checking mock data' do
+            it { expect(category.parent).to be_present }
+          end
+
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+          it { expect { subject }.not_to(change { category.reload.parent }) }
+          it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
+
+          it do
+            subject
+            expect(Menu::Category.order(id: :desc).first.parent).to be_blank
+          end
+
+          it "should return 200" do
+            subject
+            expect(parsed_response_body).not_to include(message: String)
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context "when providing {parent_id: <int>} creates as child of another category" do
+          before do
+            category.update!(visibility: nil, parent: create(:menu_category))
+          end
+
+          let!(:parent) { create(:menu_category) }
+          let(:parent_id) { parent.id }
+
+          context 'checking mock data' do
+            it { expect(category.parent).to be_present }
+          end
+
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+          it { expect { subject }.not_to(change { category.reload.parent }) }
+          it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
+          it { expect { subject }.to change { parent.reload.children.count }.by(1) }
+
+          it do
+            subject
+            expect(Menu::Category.order(id: :desc).first.parent&.id).to eq parent_id
+          end
+
+          it "should return 200" do
+            subject
+            expect(parsed_response_body).not_to include(message: String)
+            expect(response).to have_http_status(:ok)
+          end
+        end
+      end
+
       context "when providing {copy_images: 'none'} does not copy images" do
         before do
           category.images << create(:image, :with_attached_image)
@@ -2134,8 +2193,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(category.images.count).to eq 1 }
         end
 
-        it { expect { subject }.not_to change { Image.count } }
-        it { expect { subject }.not_to change { ImageToRecord.count } }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it { expect { subject }.not_to(change { ImageToRecord.count }) }
         it do
           subject
           expect(parsed_response_body).not_to include(message: String)
@@ -2154,8 +2213,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(category.images.count).to eq 1 }
         end
 
-        it { expect { subject }.not_to change { Image.count } }
-        it { expect { subject }.not_to change { category.reload.images.count } }
+        it { expect { subject }.not_to(change { Image.count }) }
+        it { expect { subject }.not_to(change { category.reload.images.count }) }
         it { expect { subject }.to change { ImageToRecord.count }.by(1) }
         it do
           subject
@@ -2195,8 +2254,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(category.dishes.count).to eq 3 }
         end
 
-        it { expect { subject }.not_to change { Menu::Dish.count } }
-        it { expect { subject }.not_to change { Menu::DishesInCategory.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
+        it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
         it do
           subject
           expect(parsed_response_body).not_to include(message: String)
@@ -2215,8 +2274,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(category.dishes.count).to eq 3 }
         end
 
-        it { expect { subject }.not_to change { Menu::Dish.count } }
-        it { expect { subject }.not_to change { category.reload.dishes.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
+        it { expect { subject }.not_to(change { category.reload.dishes.count }) }
         it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
         it do
           subject
@@ -2237,7 +2296,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it { expect { subject }.to change { Menu::Dish.count }.by(3) }
-        it { expect { subject }.not_to change { category.reload.dishes.count } }
+        it { expect { subject }.not_to(change { category.reload.dishes.count }) }
         it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
         it do
           subject
@@ -2258,7 +2317,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it { expect { subject }.to change { Menu::Category.count }.by(1) }
-        it { expect { subject }.not_to change { category.reload.children.count } }
+        it { expect { subject }.not_to(change { category.reload.children.count }) }
         it do
           subject
           expect(parsed_response_body).not_to include(message: String)
@@ -2278,7 +2337,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
-        it { expect { subject }.not_to change { category.reload.children.count } }
+        it { expect { subject }.not_to(change { category.reload.children.count }) }
         it do
           subject
           expect(parsed_response_body).not_to include(message: String)
