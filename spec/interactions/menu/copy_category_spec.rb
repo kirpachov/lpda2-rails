@@ -311,4 +311,80 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       end
     end
   end
+
+  context 'params' do
+    let(:current_user) { create(:user) }
+    let(:old) { create(:menu_category) }
+
+    it "when {current_user: User, old: Menu::Category}" do
+      call = described_class.run(params: { current_user:, old: })
+      call.validate
+      expect(call.errors.full_messages).to be_empty
+      expect(call).to be_valid
+    end
+
+    it "when {current_user: nil, old: Menu::Category}" do
+      call = described_class.run(params: { current_user: nil, old: })
+      call.validate
+      expect(call.errors[:current_user]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: nil}" do
+      call = described_class.run(params: { current_user:, old: nil })
+      call.validate
+      expect(call.errors[:old]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {}" do
+      call = described_class.run(params: {})
+      call.validate
+      expect(call.errors[:old]).to be_present
+      expect(call.errors[:current_user]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: Menu::Category, unsupported_key: 'some-value'}" do
+      call = described_class.run(params: { current_user:, old:, unsupported_key: 'some-value' })
+      call.validate
+      expect(call.errors[:params]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: Menu::Category, copy_dishes: 'invalid-value'}" do
+      call = described_class.run(params: { current_user:, old:, copy_dishes: 'invalid-value' })
+      call.validate
+      expect(call.errors[:copy_dishes]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: Menu::Category, copy_children: 'invalid-value'}" do
+      call = described_class.run(params: { current_user:, old:, copy_children: 'invalid-value' })
+      call.validate
+      expect(call.errors[:copy_children]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: Menu::Category, copy_images: 'invalid-value'}" do
+      call = described_class.run(params: { current_user:, old:, copy_images: 'invalid-value' })
+      call.validate
+      expect(call.errors[:copy_images]).to be_present
+      expect(call.errors.full_messages).not_to be_empty
+      expect(call).not_to be_valid
+    end
+
+    it "when {current_user: User, old: Menu::Category, copy_images: 'full'}" do
+      call = described_class.run(params: { current_user:, old:, copy_images: 'full' })
+      call.validate
+      expect(call.errors.full_messages).to be_empty
+      expect(call).to be_valid
+    end
+  end
 end

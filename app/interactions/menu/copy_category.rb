@@ -6,6 +6,8 @@ module Menu
     DEFAULT_COPY_DISHES = "full"
     DEFAULT_COPY_CHILDREN = "full"
 
+    PERMITTED_KEYS = %i[old current_user parent_id copy_images copy_dishes copy_children].freeze
+
     # ACCEPTING:
     # old: Category, required
     # current_user: User, required
@@ -15,6 +17,14 @@ module Menu
     # copy_dishes: String, inclusion: [full, link, none]
     # copy_children: String, inclusion: [full, none]
     interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
+
+    validate :validate_params_keys
+    validate :validate_copy_images
+    validate :validate_copy_dishes
+    validate :validate_copy_children
+    validate :validate_parent_id
+    validate :validate_current_user
+    validate :validate_old
 
     DONT_COPY_ATTRIBUTES = %w[id created_at updated_at secret index secret_desc menu_visibility_id].freeze
 
@@ -139,6 +149,36 @@ module Menu
       true
     rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
       errors.add(:base, "Cannot copy child category: #{e.message}", details: e)
+    end
+
+    ##################
+    # Validations
+    ##################
+    def validate_params_keys
+      actual_keys = params.keys.map(&:to_sym)
+      return if (unknown_keys = (actual_keys - PERMITTED_KEYS)).empty?
+
+      unknown_keys.each do |key, value|
+        errors.add(:params, "Unknown key: #{key} with value: #{value}")
+      end
+    end
+
+    def validate_parent_id
+      return if params[:parent_id].blank? || params[:parent_id].is_a?(Integer)
+
+      errors.add(:parent_id, "must be an Integer or nil. got: #{params[:parent_id].class}")
+    end
+
+    def validate_current_user
+      return if current_user.is_a?(User)
+
+      errors.add(:current_user, "must be a User. got: #{current_user.class}")
+    end
+
+    def validate_old
+      return if old.is_a?(::Menu::Category)
+
+      errors.add(:old, "must be a Category. got: #{old.class}")
     end
   end
 end
