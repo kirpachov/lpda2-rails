@@ -33,7 +33,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
     let!(:current_user) { create(:user) }
     let(:old) { category }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params) }
+    subject { described_class.run(params: params) }
 
     context 'basic' do
       before do
@@ -152,8 +152,14 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
 
         it { expect { subject }.to change { Menu::Category.count }.by(old.children.count + 1) }
 
+        it "is successful" do
+          subject.validate
+          expect(subject.errors.full_messages).to be_empty
+          expect(subject).to be_valid
+        end
+
         it 'copies children' do
-          expect(subject.result.children.count).to eq old.children.count
+          expect(subject.result.children.reload.count).to eq old.children.reload.count
 
           I18n.available_locales.each do |locale|
             Mobility.with_locale(locale) do

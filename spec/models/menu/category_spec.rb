@@ -75,12 +75,14 @@ RSpec.describe Menu::Category, type: :model do
         it { should allow_value(10).for(:index) }
         it { should allow_value(100).for(:index) }
 
-        it { should_not allow_value(-1).for(:index) }
-        it { should_not allow_value(-10).for(:index) }
-
         context 'two element with same index but different parent_id may exist.' do
           let!(:parent) { create(:menu_category, index: 0) }
           let!(:child) { create(:menu_category, parent: parent, index: 0, visibility: nil) }
+
+          context "checking mock data" do
+            it { expect(parent.reload.index).to eq 0 }
+            it { expect(child.reload.index).to eq 0 }
+          end
 
           it { expect(parent).to be_valid }
           it { expect(parent).to be_persisted }

@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :menu_category, class: "Menu::Category" do
     status { 'active' }
-    index { nil }
+    index { 0 }
     secret { SecureRandom.hex(20) }
     secret_desc { nil }
     other { {} }

@@ -10,13 +10,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
   let(:instance) { described_class.new }
 
   def create_menu_categories(count, attrs = {})
-    attrs[:menu_visibility] ||= create(:menu_visibility)
-
-    items = count.times.map do |i|
-      build(:menu_category, attrs.merge(index: i + 1))
-    end
-
-    Menu::Category.import! items, validate: false
+    create_list(:menu_category, count, attrs)
+    # attrs[:menu_visibility] ||= create(:menu_visibility)
+    #
+    # items = count.times.map do |i|
+    #   build(:menu_category, attrs.merge(index: i))
+    # end
+    #
+    # Menu::Category.import! items, validate: false
   end
 
   context '#index' do
@@ -147,7 +148,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         before { create_menu_categories(2) }
         it { expect(Menu::Category.count).to eq 2 }
         it { expect(Menu::Category.all.pluck(:status)).to all(eq 'active') }
-        it { expect(Menu::Category.all.pluck(:index).sort!).to eq [1, 2].sort! }
+        it { expect(Menu::Category.all.pluck(:index).sort!).to eq [0, 1].sort! }
 
         context 'simple case - no params' do
           before { req }
@@ -155,8 +156,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           subject { parsed_response_body[:items] }
           it { expect(subject).to be_a(Array) }
           it { expect(subject.count).to eq 2 }
-          it { expect(subject[0][:index]).to eq 1 }
-          it { expect(subject[1][:index]).to eq 2 }
+          it { expect(subject[0][:index]).to eq 0 }
+          it { expect(subject[1][:index]).to eq 1 }
         end
 
         context 'by switching indexes' do

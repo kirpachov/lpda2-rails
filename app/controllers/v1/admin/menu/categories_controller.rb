@@ -112,14 +112,17 @@ module V1
       end
 
       def copy
-        call = ::Menu::CopyCategory.run(
+        copy_params = {
           old: @item,
           current_user:,
           copy_images: params[:copy_images],
           copy_dishes: params[:copy_dishes],
           copy_children: params[:copy_children],
-          parent_id: params[:parent_id]
-        )
+        }
+
+        copy_params.merge!(parent_id: params[:parent_id]) if params.key?(:parent_id)
+
+        call = ::Menu::CopyCategory.run(params: copy_params)
 
         if call.valid?
           @item = call.result
@@ -183,6 +186,7 @@ module V1
       def update_params
         update_params = params.permit(:parent_id, :secret_desc)
         update_params.merge!(visibility_id: nil) if update_params[:parent_id].is_a?(Integer) || update_params[:parent_id].is_a?(String)
+        # update_params.merge!(index: nil) if update_params.key?(:parent_id) && update_params[:parent_id].blank?
         update_params
       end
 

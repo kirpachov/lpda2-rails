@@ -6,17 +6,15 @@ module Menu
     DEFAULT_COPY_DISHES = "full"
     DEFAULT_COPY_CHILDREN = "full"
 
-    record :old, class: Category
-    record :current_user, class: User
-
-    string :copy_images, default: DEFAULT_COPY_IMAGES
-    string :copy_dishes, default: DEFAULT_COPY_DISHES
-    string :copy_children, default: DEFAULT_COPY_CHILDREN
-    integer :parent_id, default: nil
-
-    validates :copy_images, inclusion: { in: %w[full link none] }, allow_blank: true
-    validates :copy_dishes, inclusion: { in: %w[full link none] }, allow_blank: true
-    validates :copy_children, inclusion: { in: %w[full none] }, allow_blank: true
+    # ACCEPTING:
+    # old: Category, required
+    # current_user: User, required
+    #
+    # parent_id: Integer | NullClass
+    # copy_images: String, inclusion: [full, link, none]
+    # copy_dishes: String, inclusion: [full, link, none]
+    # copy_children: String, inclusion: [full, none]
+    interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
     DONT_COPY_ATTRIBUTES = %w[id created_at updated_at secret index secret_desc menu_visibility_id].freeze
 
@@ -40,6 +38,44 @@ module Menu
 
     private
 
+    def old
+      params[:old]
+    end
+
+    def current_user
+      params[:current_user]
+    end
+
+    def copy_images
+      params.fetch(:copy_images, DEFAULT_COPY_IMAGES)
+    end
+
+    def validate_copy_images
+      return if copy_images.in?(%w[full link none])
+
+      errors.add(:copy_images, :inclusion, value: copy_images)
+    end
+
+    def copy_dishes
+      params.fetch(:copy_dishes, DEFAULT_COPY_DISHES)
+    end
+
+    def validate_copy_dishes
+      return if copy_dishes.in?(%w[full link none])
+
+      errors.add(:copy_dishes, :inclusion, value: copy_dishes)
+    end
+
+    def copy_children
+      params.fetch(:copy_children, DEFAULT_COPY_CHILDREN)
+    end
+
+    def validate_copy_children
+      return if copy_children.in?(%w[full none])
+
+      errors.add(:copy_children, :inclusion, value: copy_children)
+    end
+
     def do_copy_category
       I18n.available_locales.each do |locale|
         Mobility.with_locale(locale) do
@@ -48,7 +84,8 @@ module Menu
         end
       end
 
-      @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES).merge(parent_id: parent_id))
+      @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
+      @new.parent_id = params[:parent_id].blank? ? nil : params[:parent_id] if params.key?(:parent_id)
       @new.other = (old.other || {}).merge(copied_from: old.id)
 
       return true if @new.valid? && @new.save

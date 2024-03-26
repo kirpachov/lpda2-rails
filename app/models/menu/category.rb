@@ -90,13 +90,13 @@ module Menu
     # @param [Hash] options
     # @option options [User] :current_user
     def copy!(options = {})
-      CopyCategory.run!(options.merge(old: self))
+      CopyCategory.run!(params: options.merge(old: self))
     end
 
     # @param [Hash] options
     # @option options [User] :current_user
     def copy(options = {})
-      CopyCategory.run(options.merge(old: self))
+      CopyCategory.run(params: options.merge(old: self))
     end
 
     def assign_default_visibility_if_necessary
@@ -124,9 +124,11 @@ module Menu
     end
 
     def assign_valid_index
-      return if index.present?
+      self.index = Category.where(parent_id:).count
 
-      self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
+      if Category.where(parent_id:, index:).present?
+        self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
+      end
     end
 
     def remove_parent!
