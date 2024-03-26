@@ -4,7 +4,7 @@ class Setting
   DEFAULTS = {
     default_language: {
       # value: :en,
-      default: I18n.default_locale,
+      default: I18n.default_locale
     },
 
     available_locales: {
@@ -26,7 +26,7 @@ class Setting
         instagram_url: 'https://www.instagram.com/laportadacqua',
         tripadvisor_url: 'https://www.tripadvisor.it/Restaurant_Review-g187870-d1735599-Reviews-La_Porta_D_Acqua-Venice_Veneto.html',
         homepage_url: 'https://laportadacqua.com',
-        google_url: 'https://g.page/laportadacqua?share',
+        google_url: 'https://g.page/laportadacqua?share'
       },
       parser: :json
     }

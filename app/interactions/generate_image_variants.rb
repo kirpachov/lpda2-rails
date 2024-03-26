@@ -10,10 +10,10 @@ class GenerateImageVariants < ActiveInteraction::Base
   def execute
     # image.attached_image.variant(resize: '100x100').processed
 
-    if image.children.where(tag: 'blur').empty?
-      Image.create!(original: image, filename: filename_with(image.filename, 'blur'), tag: "blur").tap do |blur_image|
-        blur_image.attached_image.attach(io: blur, filename: filename_with(image.filename, 'blur'))
-      end
+    return unless image.children.where(tag: 'blur').empty?
+
+    Image.create!(original: image, filename: filename_with(image.filename, 'blur'), tag: 'blur').tap do |blur_image|
+      blur_image.attached_image.attach(io: blur, filename: filename_with(image.filename, 'blur'))
     end
   end
 

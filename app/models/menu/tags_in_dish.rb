@@ -5,8 +5,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
-    belongs_to :menu_tag, class_name: "Menu::Tag", optional: false
+    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
+    belongs_to :menu_tag, class_name: 'Menu::Tag', optional: false
 
     alias_attribute :dish, :menu_dish
     alias_attribute :tag, :menu_tag
@@ -34,7 +34,7 @@ module Menu
     end
 
     def assign_valid_index
-      self.index = self.class.where(dish: dish).order(index: :desc).first&.index.to_i + 1
+      self.index = self.class.where(dish:).order(index: :desc).first&.index.to_i + 1
     end
   end
 end

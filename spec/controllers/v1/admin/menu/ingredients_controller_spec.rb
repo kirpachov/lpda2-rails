@@ -11,10 +11,13 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#index' do
     it { expect(instance).to respond_to(:index) }
-    it { should route(:get, '/v1/admin/menu/ingredients').to(format: :json, action: :index, controller: 'v1/admin/menu/ingredients') }
+    it {
+      should route(:get, '/v1/admin/menu/ingredients').to(format: :json, action: :index,
+                                                          controller: 'v1/admin/menu/ingredients')
+    }
 
     def req(params = {})
-      get :index, params: params
+      get :index, params:
     end
 
     context 'when user is not authenticated' do
@@ -69,7 +72,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
       context 'when filtering by name' do
         let(:name) { 'first' }
-        let!(:menu_ingredient) { create(:menu_ingredient, name: name, description: nil) }
+        let!(:menu_ingredient) { create(:menu_ingredient, name:, description: nil) }
         before do
           create(:menu_ingredient, name: 'second', description: nil)
         end
@@ -167,7 +170,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#show' do
     it { expect(instance).to respond_to(:show) }
-    it { should route(:get, '/v1/admin/menu/ingredients/1').to(format: :json, action: :show, controller: 'v1/admin/menu/ingredients', id: 1) }
+    it {
+      should route(:get, '/v1/admin/menu/ingredients/1').to(format: :json, action: :show,
+                                                            controller: 'v1/admin/menu/ingredients', id: 1)
+    }
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     def req(id, params = {})
@@ -205,7 +211,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { should route(:patch, '/v1/admin/menu/ingredients/22').to(format: :json, action: :update, controller: 'v1/admin/menu/ingredients', id: 22) }
+    it {
+      should route(:patch, '/v1/admin/menu/ingredients/22').to(format: :json, action: :update,
+                                                               controller: 'v1/admin/menu/ingredients', id: 22)
+    }
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     def req(id, params = {})
@@ -228,7 +237,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         let!(:ingredient) { create(:menu_ingredient, :with_image_with_attachment) }
 
         subject do
-          req(ingredient.id, image: "null")
+          req(ingredient.id, image: 'null')
           parsed_response_body[:item]
         end
 
@@ -352,10 +361,13 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#create' do
     it { expect(instance).to respond_to(:create) }
-    it { should route(:post, '/v1/admin/menu/ingredients').to(format: :json, action: :create, controller: 'v1/admin/menu/ingredients') }
+    it {
+      should route(:post, '/v1/admin/menu/ingredients').to(format: :json, action: :create,
+                                                           controller: 'v1/admin/menu/ingredients')
+    }
 
     def req(params = {})
-      post :create, params: params
+      post :create, params:
     end
 
     context 'when user is not authenticated' do
@@ -383,11 +395,11 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
       context 'if providing name as JSON-encoded string in two languages' do
         subject do
-          req(name: { it: "italian", en: "english" }.to_json)
+          req(name: { it: 'italian', en: 'english' }.to_json)
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Ingredient, :count).by(1)
           expect(Menu::Ingredient.count).to eq 1
         end
@@ -396,11 +408,11 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
         context 'response[:item]' do
           subject do
-            req(name: { it: "italian", en: "english" }.to_json)
+            req(name: { it: 'italian', en: 'english' }.to_json)
             parsed_response_body[:item]
           end
 
-          it { should include(name: "english") }
+          it { should include(name: 'english') }
         end
       end
 
@@ -461,7 +473,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { should route(:delete, '/v1/admin/menu/ingredients/22').to(format: :json, action: :destroy, controller: 'v1/admin/menu/ingredients', id: 22) }
+    it {
+      should route(:delete, '/v1/admin/menu/ingredients/22').to(format: :json, action: :destroy,
+                                                                controller: 'v1/admin/menu/ingredients', id: 22)
+    }
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     def req(id, params = {})
@@ -486,10 +501,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      it "should not delete item from database but update its status" do
+      it 'should not delete item from database but update its status' do
         menu_ingredient
 
-        expect { req(menu_ingredient.id) }.not_to change { Menu::Ingredient.count }
+        expect { req(menu_ingredient.id) }.not_to(change { Menu::Ingredient.count })
         expect(Menu::Ingredient.find(menu_ingredient.id).status).to eq('deleted')
       end
 
@@ -510,7 +525,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Ingredient.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Ingredient.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -526,7 +541,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Ingredient.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Ingredient.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -543,7 +558,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   context '#copy' do
     it { expect(instance).to respond_to(:copy) }
-    it { should route(:post, '/v1/admin/menu/ingredients/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/ingredients', id: 22) }
+    it {
+      should route(:post, '/v1/admin/menu/ingredients/22/copy').to(format: :json, action: :copy,
+                                                                   controller: 'v1/admin/menu/ingredients', id: 22)
+    }
     let!(:ingredient) { create(:menu_ingredient) }
 
     def req(id, params = {})
@@ -581,7 +599,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(ingredient.image&.id).to be_present }
 
         context 'and providing {copy_image: "full"}' do
-          subject { req(ingredient.id, { copy_image: "full" }) }
+          subject { req(ingredient.id, { copy_image: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -600,9 +618,9 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
 
         context 'and providing {copy_image: "link"}' do
-          subject { req(ingredient.id, { copy_image: "link" }) }
+          subject { req(ingredient.id, { copy_image: 'link' }) }
 
-          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
 
           context '[after req]' do
@@ -616,10 +634,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
 
         context 'and providing {copy_image: "none"}' do
-          subject { req(ingredient.id, { copy_image: "none" }) }
+          subject { req(ingredient.id, { copy_image: 'none' }) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
 
           context '[after req]' do
             before { subject }

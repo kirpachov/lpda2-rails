@@ -11,7 +11,7 @@ RSpec.describe Menu::Dish, type: :model do
     include_examples TEST_MODEL_CHANGE_INCLUSION
   end
 
-  context "can be translated" do
+  context 'can be translated' do
     subject { create(:menu_dish) }
 
     include_examples MODEL_MOBILITY_EXAMPLES, field: :name
@@ -73,7 +73,7 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect(subject.categories.count).to eq 0 }
       it { expect(category.dishes.count).to eq 0 }
 
-      it "should assign category" do
+      it 'should assign category' do
         subject.categories = [category]
         expect(subject.reload.categories.count).to eq 1
         expect(category.reload.dishes.count).to eq 1
@@ -112,7 +112,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.ingredients.count).to eq 0 }
         it { expect(ingredient.dishes.count).to eq 0 }
 
-        it "should assign ingredient" do
+        it 'should assign ingredient' do
           subject.ingredients = [ingredient]
           expect(subject.reload.ingredients.count).to eq 1
           expect(ingredient.reload.dishes.count).to eq 1
@@ -134,7 +134,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.allergens.count).to eq 0 }
         it { expect(allergen.dishes.count).to eq 0 }
 
-        it "should assign allergen" do
+        it 'should assign allergen' do
           subject.allergens = [allergen]
           expect(subject.reload.allergens.count).to eq 1
           expect(allergen.reload.dishes.count).to eq 1
@@ -156,7 +156,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.tags.count).to eq 0 }
         it { expect(tag.dishes.count).to eq 0 }
 
-        it "should assign tag" do
+        it 'should assign tag' do
           subject.tags = [tag]
           expect(subject.reload.tags.count).to eq 1
           expect(tag.reload.dishes.count).to eq 1

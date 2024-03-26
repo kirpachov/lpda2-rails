@@ -41,7 +41,7 @@ module Auth
 
       # Check if user exists
       if @user.nil?
-        errors.add :authentication, I18n.t(".errors.messages.invalid_email_or_password")
+        errors.add :authentication, I18n.t('.errors.messages.invalid_email_or_password')
         return nil
       end
 
@@ -98,7 +98,7 @@ module Auth
       max_attempts = Rails.configuration.app[:max_login_attempts].to_i
       if user.failed_attempts >= max_attempts
         user.temporarily_block!
-        errors.add :account_blocked, I18n.t("errors.messages.too_failed_attempts")
+        errors.add :account_blocked, I18n.t('errors.messages.too_failed_attempts')
       end
 
       user.save!

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Note: below is defined HAS_IMAGE_HELPER
+# NOTE: below is defined HAS_IMAGE_HELPER
 
 HAS_IMAGES_HELPER = 'HAS_IMAGES_HELPER'
 
@@ -18,11 +18,11 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
   context 'can add images with "<< <ImageInstance>"' do
     let(:image) { create(:image, :with_attached_image) }
 
-    it "should change subject images count + 1" do
+    it 'should change subject images count + 1' do
       expect { subject.images << image }.to change { subject.reload.images.count }.by(1)
     end
 
-    it "should change subject images to record count + 1" do
+    it 'should change subject images to record count + 1' do
       expect { subject.images << image }.to change { subject.reload.image_to_records.count }.by(1)
     end
 
@@ -30,12 +30,12 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
       before { subject.images << image }
 
       it { expect(subject.images).to include(image) }
-      it { expect(image.image_to_records).to include(subject.image_to_records.find_by(image: image)) }
-      it { expect(image.image_to_records.find_by(image: image).record).to eq(subject) }
-      it { expect(image.image_to_records.find_by(image: image).record_id).to eq(subject.id) }
+      it { expect(image.image_to_records).to include(subject.image_to_records.find_by(image:)) }
+      it { expect(image.image_to_records.find_by(image:).record).to eq(subject) }
+      it { expect(image.image_to_records.find_by(image:).record_id).to eq(subject.id) }
 
       context 'cant add the same image twice' do
-        it "should fail." do
+        it 'should fail.' do
           expect { subject.images << image }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
@@ -45,7 +45,7 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
   context 'when trying to attach a image that does not have any attached_image' do
     let(:image) { create(:image) }
 
-    it "should fail." do
+    it 'should fail.' do
       expect { subject.images << image }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
@@ -79,7 +79,7 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
 
       it 'banana' do
         subject
-        expect { subject.move_image(2, 0) }.to change { ImageToRecord.order(:id).pluck(:updated_at) }
+        expect { subject.move_image(2, 0) }.to(change { ImageToRecord.order(:id).pluck(:updated_at) })
       end
     end
 
@@ -123,15 +123,15 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
   context 'can add image with "= <ImageInstance>"' do
     let(:image) { create(:image, :with_attached_image) }
 
-    it "should change subject image" do
+    it 'should change subject image' do
       expect { subject.image = image }.to change { subject.reload.image }.from(nil).to(image)
     end
 
-    it "should change image to record" do
+    it 'should change image to record' do
       expect { subject.image = image }.to change { subject.reload.image_to_record }.from(nil).to(be_a(ImageToRecord))
     end
 
-    it "should create image to record" do
+    it 'should create image to record' do
       expect { subject.image = image }.to change { ImageToRecord.count }.by(1)
     end
 
@@ -140,8 +140,8 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
 
       it { expect(subject.image).to eq(image) }
       # it { expect(image.image_to_record).to include(subject.image_to_record.find_by(image: image)) }
-      it { expect(image.image_to_records.find_by(image: image).record).to eq(subject) }
-      it { expect(image.image_to_records.find_by(image: image).record_id).to eq(subject.id) }
+      it { expect(image.image_to_records.find_by(image:).record).to eq(subject) }
+      it { expect(image.image_to_records.find_by(image:).record_id).to eq(subject.id) }
 
       it 'can add the same image twice' do
         expect { subject.image = image }.not_to raise_error
@@ -152,12 +152,12 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
   context 'when trying to attach a image that does not have any attached_image' do
     let(:image) { create(:image) }
 
-    it "should fail." do
+    it 'should fail.' do
       expect { subject.image = image }.not_to raise_error
     end
 
-    it "should not update image." do
-      expect { subject.image = image }.not_to change { subject.reload.image }
+    it 'should not update image.' do
+      expect { subject.image = image }.not_to(change { subject.reload.image })
     end
   end
 

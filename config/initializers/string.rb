@@ -14,9 +14,9 @@ class String
   end
 
   def intersection(other)
-    str = self.dup
+    str = dup
     other.split(//).inject(0) do |sum, char|
-      sum += 1 if str.sub!(char,'')
+      sum += 1 if str.sub!(char, '')
       sum
     end
   end

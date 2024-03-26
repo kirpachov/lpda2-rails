@@ -6,7 +6,10 @@ module V1::Admin
 
     def index
       call = ::SearchReservationTurns.run(params:)
-      return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
+      unless call.valid?
+        return render_error(status: 400, details: call.errors.as_json,
+                            message: call.errors.full_messages.join(', '))
+      end
 
       items = call.result.paginate(pagination_params)
 
@@ -35,7 +38,7 @@ module V1::Admin
     end
 
     def destroy
-      return if @item.destroy!
+      nil if @item.destroy!
 
       #   render_unprocessable_entity(@item)
       # rescue ActiveRecord::RecordInvalid
@@ -54,7 +57,11 @@ module V1::Admin
 
     def find_item
       @item = ReservationTurn.where(id: params[:id]).first
-      render_error(status: 404, message: I18n.t('record_not_found', model: ReservationTurn, id: params[:id].inspect)) if @item.nil?
+      return unless @item.nil?
+
+      render_error(status: 404,
+                   message: I18n.t('record_not_found', model: ReservationTurn,
+                                                       id: params[:id].inspect))
     end
 
     def full_json(item_or_items)
@@ -62,13 +69,14 @@ module V1::Admin
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::ReservationTurn)
 
-      raise ArgumentError, "Invalid params. ReservationTurn or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+      raise ArgumentError,
+            "Invalid params. ReservationTurn or ActiveRecord::Relation expected, but #{item_or_items.class} given"
     end
 
     def single_item_full_json(item)
       item.as_json.merge(
         starts_at: item.starts_at.strftime('%k:%M'),
-        ends_at: item.ends_at.strftime('%k:%M'),
+        ends_at: item.ends_at.strftime('%k:%M')
       )
     end
   end

@@ -8,7 +8,7 @@ class PublicCreateReservation < ActiveInteraction::Base
   validate :datetime_is_not_in_the_past
   validate :datetime_has_reservation_turn
   validate :datetime_is_in_valid_reservation_turn_step
-  # TODO validate datetime is not in a holiday.
+  # TODO: validate datetime is not in a holiday.
 
   validate :people_count_is_valid
   validate :people_count_is_not_zero
@@ -86,7 +86,7 @@ class PublicCreateReservation < ActiveInteraction::Base
 
   def reservation_turn
     @reservation_turn ||= ReservationTurn.where(weekday: (datetime.wday - 1) % 7)
-                                         .where('starts_at <= ? AND ends_at >= ?', datetime.strftime("%k:%M"), datetime.strftime("%k:%M")).first
+                                         .where('starts_at <= ? AND ends_at >= ?', datetime.strftime('%k:%M'), datetime.strftime('%k:%M')).first
   end
 
   # ###################################
@@ -100,7 +100,7 @@ class PublicCreateReservation < ActiveInteraction::Base
 
   def phone_is_valid
     # return if phone.blank? || phone.length >= 5
-    return if phone.match(/\A\+?[\d\s\-\(\).]{7,}\z/)
+    return if phone.match(/\A\+?[\d\s\-().]{7,}\z/)
 
     errors.add(:phone, "#{phone.inspect} is not a valid phone")
   end
@@ -157,7 +157,8 @@ class PublicCreateReservation < ActiveInteraction::Base
     return if params[:datetime].to_s.blank?
     return if params[:datetime].to_s.match(/\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}\z/)
 
-    errors.add(:datetime, "has invalid format. Please use the format: YYYY-MM-DD HH:MM. Got: #{params[:datetime].inspect}")
+    errors.add(:datetime,
+               "has invalid format. Please use the format: YYYY-MM-DD HH:MM. Got: #{params[:datetime].inspect}")
   end
 
   def email_is_present

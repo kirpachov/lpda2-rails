@@ -7,7 +7,7 @@ class GenToken < ActiveInteraction::Base
   # ###################################
   class << self
     def for!(model, field, options = {})
-      GenToken.run!(options.merge(model: model, field: field))
+      GenToken.run!(options.merge(model:, field:))
     end
   end
 
@@ -49,9 +49,7 @@ class GenToken < ActiveInteraction::Base
   private
 
   def validate_field
-    if field.class != String && field.class != Symbol
-      return errors.add(:field, 'Must be a string or a symbol.')
-    end
+    return errors.add(:field, 'Must be a string or a symbol.') if field.class != String && field.class != Symbol
 
     errors.add(:field, "Not in list of columns for #{model}.") unless model.column_names.include?(field.to_s)
   end

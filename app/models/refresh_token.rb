@@ -33,10 +33,13 @@ class RefreshToken < ApplicationRecord
   # ################################
   class << self
     def generate_for(user_or_its_id)
-      raise ArgumentError, 'user_or_its_id must be a User or an Integer' unless user_or_its_id.is_a?(User) || user_or_its_id.is_a?(Integer)
+      unless user_or_its_id.is_a?(User) || user_or_its_id.is_a?(Integer)
+        raise ArgumentError,
+              'user_or_its_id must be a User or an Integer'
+      end
 
       user_id = user_or_its_id.is_a?(User) ? user_or_its_id.id : user_or_its_id
-      refresh_token = RefreshToken.new(user_id: user_id, expires_at: DEFAULT_EXPIRATION_TIME.from_now)
+      refresh_token = RefreshToken.new(user_id:, expires_at: DEFAULT_EXPIRATION_TIME.from_now)
       refresh_token.save
 
       refresh_token
@@ -78,5 +81,5 @@ class RefreshToken < ApplicationRecord
     update(expires_at: Time.now)
   end
 
-  alias_method :expired!, :expire!
+  alias expired! expire!
 end

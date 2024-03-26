@@ -69,7 +69,7 @@ module TrackModelChanges
       # user_id: args[:user_id] || $current_user&.id,
       change_type:,
       record_changes: args.slice(*self.class.column_names),
-      changed_fields: args.slice(*self.class.column_names).keys,
+      changed_fields: args.slice(*self.class.column_names).keys
       # version: ??
     }.to_json)
   end

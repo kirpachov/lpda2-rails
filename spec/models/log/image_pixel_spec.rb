@@ -40,7 +40,9 @@ RSpec.describe Log::ImagePixel, type: :model do
 
       it { expect(pixel.events).to include(event) }
       it do
-        expect { pixel.events.create!(attributes_for(:log_image_pixel_event)) }.to change { pixel.reload.events.count }.from(1).to(2)
+        expect { pixel.events.create!(attributes_for(:log_image_pixel_event)) }.to change {
+                                                                                     pixel.reload.events.count
+                                                                                   }.from(1).to(2)
       end
     end
   end

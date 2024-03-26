@@ -25,13 +25,13 @@ class Setting < ApplicationRecord
     end
 
     def [](key)
-      where(key: key).first&.value || default(key)
+      where(key:).first&.value || default(key)
     end
 
     def create_missing
       DEFAULTS.each do |key, data|
         data[:value] ||= data[:default]
-        where(key: key).first_or_create!(data.as_json(except: :default))
+        where(key:).first_or_create!(data.as_json(except: :default))
       end
     end
   end

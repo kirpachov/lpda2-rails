@@ -64,7 +64,9 @@ class Image < ApplicationRecord
     # Create by controller params
     # Image.create_from_param(params[:image])
     def create_from_param!(data)
-      raise "ActionDispatch::Http::UploadedFile expected, got #{data.class}" unless data.is_a?(ActionDispatch::Http::UploadedFile)
+      unless data.is_a?(ActionDispatch::Http::UploadedFile)
+        raise "ActionDispatch::Http::UploadedFile expected, got #{data.class}"
+      end
 
       record = create!(filename: data.original_filename)
       record.attached_image.attach(io: data, filename: data.original_filename)
@@ -83,7 +85,7 @@ class Image < ApplicationRecord
       return @image_variants[tag] if @image_variants[tag].present?
 
       # GenerateImageVariants.run!(image: self)
-      @image_variants[tag] ||= children.visible.where(tag: tag).first
+      @image_variants[tag] ||= children.visible.where(tag:).first
     end
   end
 
@@ -142,13 +144,13 @@ class Image < ApplicationRecord
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value("status", value)
+    @attributes.write_cast_value('status', value)
   end
 
   def tag=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value("tag", value)
+    @attributes.write_cast_value('tag', value)
   end
 
   def is_original?

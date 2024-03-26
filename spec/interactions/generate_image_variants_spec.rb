@@ -11,7 +11,7 @@ RSpec.describe GenerateImageVariants, type: :interaction do
 
     context 'non-original image should not be valid' do
       let(:image) { create(:image, :with_attached_image, :with_original) }
-      subject { described_class.run(image: image) }
+      subject { described_class.run(image:) }
 
       it { expect(image).to be_valid }
       it { expect(image).to be_persisted }
@@ -19,7 +19,7 @@ RSpec.describe GenerateImageVariants, type: :interaction do
       it { expect(image.children).to be_empty }
 
       context 'errors' do
-        subject { described_class.run(image: image).errors }
+        subject { described_class.run(image:).errors }
         it { should be_a(ActiveModel::Errors) }
         it { should_not be_empty }
         it { should include(:image) }
@@ -27,10 +27,10 @@ RSpec.describe GenerateImageVariants, type: :interaction do
       end
 
       context 'after run' do
-        subject { described_class.run(image: image) }
+        subject { described_class.run(image:) }
         it { expect(image.children).to be_empty }
 
-        it "image should not have a child image" do
+        it 'image should not have a child image' do
           expect { subject }.to change { image.children.count }.by(0)
         end
       end
@@ -38,21 +38,21 @@ RSpec.describe GenerateImageVariants, type: :interaction do
 
     context 'original image should be valid' do
       let(:image) { create(:image, :with_attached_image) }
-      subject { described_class.run(image: image) }
+      subject { described_class.run(image:) }
 
       it { expect(image).to be_valid }
       it { expect(image).to be_persisted }
       it { should be_valid }
       context 'errors' do
-        subject { described_class.run(image: image).errors }
+        subject { described_class.run(image:).errors }
         it { should be_a(ActiveModel::Errors) }
         it { should be_empty }
       end
 
       context 'after run' do
-        subject { described_class.run(image: image) }
+        subject { described_class.run(image:) }
 
-        it "image should have a child image" do
+        it 'image should have a child image' do
           expect { subject }.to change { image.children.count }.by(number_of_variants)
         end
       end
@@ -60,13 +60,13 @@ RSpec.describe GenerateImageVariants, type: :interaction do
 
     context 'not persisted image should not be valid' do
       let(:image) { build(:image) }
-      subject { described_class.run(image: image) }
+      subject { described_class.run(image:) }
 
       it { expect(image).to be_valid }
       it { expect(image).not_to be_persisted }
       it { should_not be_valid }
       context 'errors' do
-        subject { described_class.run(image: image).errors }
+        subject { described_class.run(image:).errors }
         it { should be_a(ActiveModel::Errors) }
         it { should include(:image) }
         it { expect(subject[:image]).to include('must be persisted') }
@@ -75,13 +75,13 @@ RSpec.describe GenerateImageVariants, type: :interaction do
 
     context 'if hasnt any attached image should not be valid' do
       let(:image) { build(:image) }
-      subject { described_class.run(image: image) }
+      subject { described_class.run(image:) }
 
       it { expect(image).to be_valid }
       it { expect(image).not_to be_persisted }
       it { should_not be_valid }
       context 'errors' do
-        subject { described_class.run(image: image).errors }
+        subject { described_class.run(image:).errors }
         it { should be_a(ActiveModel::Errors) }
         it { should include(:image) }
         it { expect(subject[:image]).to include('must have an attached image') }
@@ -91,7 +91,7 @@ RSpec.describe GenerateImageVariants, type: :interaction do
 
   context 'when called twice for the same element, should not create any new record, neither touch old' do
     let(:image) { create(:image, :with_attached_image) }
-    subject { described_class.run(image: image) }
+    subject { described_class.run(image:) }
 
     it { expect(image).to be_valid }
     it { expect(image).to be_persisted }
@@ -99,34 +99,34 @@ RSpec.describe GenerateImageVariants, type: :interaction do
     it { expect(image.children).to be_empty }
 
     context 'errors' do
-      subject { described_class.run(image: image).errors }
+      subject { described_class.run(image:).errors }
       it { should be_a(ActiveModel::Errors) }
       it { should be_empty }
     end
 
     context 'after 1st run' do
-      subject { described_class.run(image: image) }
+      subject { described_class.run(image:) }
 
-      it "image should have a child image" do
+      it 'image should have a child image' do
         expect { subject }.to change { image.children.count }.by(number_of_variants)
       end
     end
 
     context 'running twice' do
       def run
-        described_class.run(image: image)
+        described_class.run(image:)
       end
 
-      context "after first run, nothing should be done" do
+      context 'after first run, nothing should be done' do
         before { run }
         it { expect(image.children.count).to eq number_of_variants }
-        it { expect { run }.not_to change { image.children.count } }
-        it { expect { run }.not_to change { image.reload.updated_at } }
-        it { expect { run }.not_to change { image.children.order(:id).first.reload.updated_at } }
+        it { expect { run }.not_to(change { image.children.count }) }
+        it { expect { run }.not_to(change { image.reload.updated_at }) }
+        it { expect { run }.not_to(change { image.children.order(:id).first.reload.updated_at }) }
 
         context 'second run' do
           subject { run }
-          it { expect { subject }.not_to change { image.children.count } }
+          it { expect { subject }.not_to(change { image.children.count }) }
           it { should be_valid }
           it { expect(subject.errors).to be_empty }
         end

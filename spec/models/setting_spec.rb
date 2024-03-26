@@ -28,7 +28,7 @@ RSpec.describe Setting, type: :model do
       let(:key) { Setting::DEFAULTS.keys.sample }
 
       before do
-        create(:setting, key: key)
+        create(:setting, key:)
       end
 
       subject { build(:setting, key: key.upcase) }
@@ -133,7 +133,7 @@ RSpec.describe Setting, type: :model do
 
       it 'should do nothing the second time its called' do
         doit
-        expect { doit }.not_to change { described_class.count }
+        expect { doit }.not_to(change { described_class.count })
       end
     end
   end

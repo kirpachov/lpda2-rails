@@ -63,7 +63,11 @@ RSpec.describe Image, type: :model do
       it { should be_valid }
       it { should be_persisted }
       it { expect(subject.attached_image).to be_an_instance_of(ActiveStorage::Attached::One) }
-      it { expect { subject.attached_image.attach(io: File.open(spec_image), filename: 'miao miao') }.not_to raise_error }
+      it {
+        expect do
+          subject.attached_image.attach(io: File.open(spec_image), filename: 'miao miao')
+        end.not_to raise_error
+      }
     end
   end
 

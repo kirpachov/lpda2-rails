@@ -19,7 +19,7 @@ class Config
     def hash
       @hash ||= app.merge(credentials)
     end
-    alias :all :hash
+    alias all hash
 
     def credentials
       @credentials ||= Rails.application.credentials.config

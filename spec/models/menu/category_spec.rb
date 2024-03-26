@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Menu::Category, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
-  context "can be translated" do
+  context 'can be translated' do
     subject { create(:menu_category) }
 
     include_examples MODEL_MOBILITY_EXAMPLES, field: :name
@@ -52,8 +52,8 @@ RSpec.describe Menu::Category, type: :model do
 
       it { should validate_presence_of(:secret) }
       it { should_not allow_value(nil).for(:secret) }
-      it { should_not allow_value("a").for(:secret) }
-      it { should allow_value("a" * min_secret_length).for(:secret) }
+      it { should_not allow_value('a').for(:secret) }
+      it { should allow_value('a' * min_secret_length).for(:secret) }
       it { should validate_uniqueness_of(:secret).case_insensitive }
 
       it { should allow_value(nil).for(:secret_desc) }
@@ -77,9 +77,9 @@ RSpec.describe Menu::Category, type: :model do
 
         context 'two element with same index but different parent_id may exist.' do
           let!(:parent) { create(:menu_category, index: 0) }
-          let!(:child) { create(:menu_category, parent: parent, index: 0, visibility: nil) }
+          let!(:child) { create(:menu_category, parent:, index: 0, visibility: nil) }
 
-          context "checking mock data" do
+          context 'checking mock data' do
             it { expect(parent.reload.index).to eq 0 }
             it { expect(child.reload.index).to eq 0 }
           end
@@ -119,36 +119,36 @@ RSpec.describe Menu::Category, type: :model do
     %i[secret secret_desc].each do |field|
       context "#{field} should be a string that can be put in a link" do
         subject { build(:menu_category) }
-        it { should allow_value("a" * min_secret_length).for(field) }
-        it { should allow_value("bananagang123123123").for(field) }
-        it { should allow_value("ba-na-na-gang-123-321").for(field) }
-        it { should allow_value("MenuInterattivo").for(field) }
-        it { should allow_value("MenuInterattivo-").for(field) }
-        it { should allow_value("MenuInterattivo_").for(field) }
+        it { should allow_value('a' * min_secret_length).for(field) }
+        it { should allow_value('bananagang123123123').for(field) }
+        it { should allow_value('ba-na-na-gang-123-321').for(field) }
+        it { should allow_value('MenuInterattivo').for(field) }
+        it { should allow_value('MenuInterattivo-').for(field) }
+        it { should allow_value('MenuInterattivo_').for(field) }
 
-        it { should_not allow_value("MenuInterattivo,").for(field) }
-        it { should_not allow_value("MenuInterattivo.").for(field) }
-        it { should_not allow_value("MenuInterattivo;").for(field) }
-        it { should_not allow_value("MenuInterattivo:").for(field) }
-        it { should_not allow_value("banana gang").for(field) }
-        it { should_not allow_value("bananagang!").for(field) }
-        it { should_not allow_value("bananagang%").for(field) }
-        it { should_not allow_value("bananagang&").for(field) }
-        it { should_not allow_value("bananagang/").for(field) }
-        it { should_not allow_value("bananagang$").for(field) }
-        it { should_not allow_value("bananagang£").for(field) }
-        it { should_not allow_value("bananagang\"").for(field) }
-        it { should_not allow_value("bananagang|").for(field) }
+        it { should_not allow_value('MenuInterattivo,').for(field) }
+        it { should_not allow_value('MenuInterattivo.').for(field) }
+        it { should_not allow_value('MenuInterattivo;').for(field) }
+        it { should_not allow_value('MenuInterattivo:').for(field) }
+        it { should_not allow_value('banana gang').for(field) }
+        it { should_not allow_value('bananagang!').for(field) }
+        it { should_not allow_value('bananagang%').for(field) }
+        it { should_not allow_value('bananagang&').for(field) }
+        it { should_not allow_value('bananagang/').for(field) }
+        it { should_not allow_value('bananagang$').for(field) }
+        it { should_not allow_value('bananagang£').for(field) }
+        it { should_not allow_value('bananagang"').for(field) }
+        it { should_not allow_value('bananagang|').for(field) }
         it { should_not allow_value("bananagang'").for(field) }
-        it { should_not allow_value("bananagang^").for(field) }
-        it { should_not allow_value("bananagang]").for(field) }
-        it { should_not allow_value("bananagang[").for(field) }
-        it { should_not allow_value("bananagang#").for(field) }
-        it { should_not allow_value("bananagang*").for(field) }
-        it { should_not allow_value("bananagang+").for(field) }
-        it { should_not allow_value("bananagang}").for(field) }
-        it { should_not allow_value("bananagang{").for(field) }
-        it { should_not allow_value("bananagang°s").for(field) }
+        it { should_not allow_value('bananagang^').for(field) }
+        it { should_not allow_value('bananagang]').for(field) }
+        it { should_not allow_value('bananagang[').for(field) }
+        it { should_not allow_value('bananagang#').for(field) }
+        it { should_not allow_value('bananagang*').for(field) }
+        it { should_not allow_value('bananagang+').for(field) }
+        it { should_not allow_value('bananagang}').for(field) }
+        it { should_not allow_value('bananagang{').for(field) }
+        it { should_not allow_value('bananagang°s').for(field) }
       end
     end
 
@@ -221,7 +221,7 @@ RSpec.describe Menu::Category, type: :model do
       it { should be_valid }
       it { should be_persisted }
       it { should have_children }
-      it "should not allow do destroy a parent." do
+      it 'should not allow do destroy a parent.' do
         expect { parent.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
       end
 
@@ -252,11 +252,11 @@ RSpec.describe Menu::Category, type: :model do
       it { should be_valid }
       it { should be_persisted }
       it { expect(subject.dishes.count).to eq 0 }
-      it "dishes should not have any category" do
+      it 'dishes should not have any category' do
         expect(dishes.map(&:categories).flatten.count).to eq 0
       end
 
-      it "should work" do
+      it 'should work' do
         expect { subject.dishes = dishes }.not_to raise_error
         expect(subject.reload.dishes.count).to eq 2
         expect(subject.dishes.map(&:id)).to match_array(dishes.map(&:id))
@@ -267,7 +267,7 @@ RSpec.describe Menu::Category, type: :model do
 
     context 'when adding visibility to a non-root category should raise error' do
       let(:parent) { create(:menu_category) }
-      subject { create(:menu_category, parent: parent, menu_visibility: nil) }
+      subject { create(:menu_category, parent:, menu_visibility: nil) }
       let(:visibility) { create(:menu_visibility) }
 
       it { expect(subject).to be_valid }
@@ -278,11 +278,11 @@ RSpec.describe Menu::Category, type: :model do
       it { expect(parent.visibility).not_to be_nil }
       it { expect(parent.visibility).to be_a(::Menu::Visibility) }
 
-      it "should raise error" do
+      it 'should raise error' do
         expect { subject.update!(menu_visibility: visibility) }.to raise_error(ActiveRecord::RecordInvalid)
       end
 
-      it "should not be valid" do
+      it 'should not be valid' do
         subject.menu_visibility = visibility
         expect(subject).to be_invalid
         expect(subject.errors[:visibility]).to be_present
@@ -297,7 +297,7 @@ RSpec.describe Menu::Category, type: :model do
       it { should be_persisted }
       it { expect(subject.dishes.count).to eq 2 }
 
-      it "should work" do
+      it 'should work' do
         expect { subject.dishes << dish }.not_to raise_error
         expect(subject.reload.dishes.count).to eq 3
         expect(dish.categories.map(&:id).uniq).to eq [subject.id]

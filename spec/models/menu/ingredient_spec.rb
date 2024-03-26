@@ -49,7 +49,7 @@ RSpec.describe Menu::Ingredient, type: :model do
     it { expect(subject.defined_enums.keys).to include('status') }
     it { should validate_inclusion_of(:status).in_array(valid_statuses) }
 
-    it { should allow_value({foo: :bar}).for(:other) }
+    it { should allow_value({ foo: :bar }).for(:other) }
     it { should allow_value({}).for(:other) }
     it { should_not allow_value(nil).for(:other) }
   end

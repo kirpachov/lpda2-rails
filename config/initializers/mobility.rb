@@ -1,7 +1,6 @@
 Mobility.configure do
   # PLUGINS
   plugins do
-
     # https://github.com/shioyama/mobility-ransack
     ransack
 

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :menu_allergen, class: "Menu::Allergen" do
+  factory :menu_allergen, class: 'Menu::Allergen' do
     name { %w[Cereali Crostacei Uova Pesce Arachidi Soia Latte FruttaGuscio Sedano].sample }
-    description { Faker::Lorem::paragraph }
+    description { Faker::Lorem.paragraph }
     other { {} }
-    status { "active" }
+    status { 'active' }
 
     trait :with_image do
       image { create(:image) }

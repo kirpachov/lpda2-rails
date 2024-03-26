@@ -39,15 +39,15 @@ RSpec.describe Menu::DishesInCategory, type: :model do
     it { expect(subject.save!).to be true }
     it { expect { subject.save! }.not_to raise_error }
 
-    it "category.dishes should include dish" do
+    it 'category.dishes should include dish' do
       expect(category.reload.dishes).to include(dish)
     end
 
-    it "dish.categories should include category" do
+    it 'dish.categories should include category' do
       expect(dish.reload.categories).to include(category)
     end
 
-    it { expect { subject.destroy! }.not_to change { Menu::Dish.count } }
-    it { expect { subject.destroy! }.not_to change { Menu::Category.count } }
+    it { expect { subject.destroy! }.not_to(change { Menu::Dish.count }) }
+    it { expect { subject.destroy! }.not_to(change { Menu::Category.count }) }
   end
 end

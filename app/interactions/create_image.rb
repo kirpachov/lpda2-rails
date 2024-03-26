@@ -29,7 +29,7 @@ class CreateImage < ActiveInteraction::Base
       return
     end
 
-    errors.add(:base, "record does not have #image= or #images<< method")
+    errors.add(:base, 'record does not have #image= or #images<< method')
   end
 
   def record?
@@ -37,13 +37,15 @@ class CreateImage < ActiveInteraction::Base
   end
 
   def record_type
-    params[:record_type].gsub(/\s+/, '').split("::").map(&:capitalize).join("::").constantize
+    params[:record_type].gsub(/\s+/, '').split('::').map(&:capitalize).join('::').constantize
   end
 
   def record
     return @record if defined?(@record)
 
-    return unless params[:record_type].is_a?(String) && params[:record_type].present? && params[:record_id].to_i.positive?
+    unless params[:record_type].is_a?(String) && params[:record_type].present? && params[:record_id].to_i.positive?
+      return
+    end
 
     @record = record_type.find(params[:record_id])
   rescue NameError
@@ -60,6 +62,7 @@ class CreateImage < ActiveInteraction::Base
       return @image_param = params[key] if params[key].is_a?(ActionDispatch::Http::UploadedFile)
     end
 
-    errors.add(:image, "Missing valid image param. Looking for :image, :file or :image_file of type ActionDispatch::Http::UploadedFile")
+    errors.add(:image,
+               'Missing valid image param. Looking for :image, :file or :image_file of type ActionDispatch::Http::UploadedFile')
   end
 end

@@ -2,7 +2,6 @@
 
 module Menu
   class Ingredient < ApplicationRecord
-
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
@@ -19,7 +18,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    has_many :menu_ingredients_in_dishes, class_name: 'Menu::IngredientsInDish', foreign_key: :menu_ingredient_id, dependent: :destroy
+    has_many :menu_ingredients_in_dishes, class_name: 'Menu::IngredientsInDish', foreign_key: :menu_ingredient_id,
+                                          dependent: :destroy
     has_many :menu_dishes, class_name: 'Menu::Dish', through: :menu_ingredients_in_dishes
     alias_attribute :dishes, :menu_dishes
 
@@ -85,7 +85,7 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value("status", value)
+      @attributes.write_cast_value('status', value)
     end
 
     private

@@ -3,7 +3,6 @@
 CONTROLLER_UTILS_CONTEXT = 'CONTROLLER_UTILS_CONTEXT'
 
 RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
-
   def set_locale(locale = 'en')
     headers['Accept-Language'] = locale
   end
@@ -30,7 +29,7 @@ RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
     end
   end
 
-  alias find_errors find_error
+  alias_method :find_errors, :find_error
 
   # Errors after a failed Http request.
   # Usually the http status code is 422 (Unprocessable Entity), and the response body is formatted as:
@@ -55,7 +54,7 @@ RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
       return errors.is_a?(Array) ? errors : []
     end
 
-    find_error((params || {}).merge(errors: errors, field: field))
+    find_error((params || {}).merge(errors:, field:))
   end
 
   def are_sequnces_increasing(array)
@@ -68,6 +67,6 @@ RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
   # @param date [String] => date in format "YYYY-MM-DD HH:MM"
   # @return [String] => date in format "YYYY-MM-DDTHH:MM:00.000Z
   def to_iso8601(date)
-    "#{date.split(" ").first}T#{date.split(" ").last}:00.000Z"
+    "#{date.split(' ').first}T#{date.split(' ').last}:00.000Z"
   end
 end

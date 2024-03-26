@@ -14,13 +14,16 @@ if Rails.application.credentials.secret_key_base.nil?
   This may be caused by missing credentials.yml.enc file.
   You can update configs by running in terminal:
   EDITOR=nano rails credentials:edit
-  
+
   ERROR
 end
 
-%w[base_url frontend_base_url cancel_reservation_path temporary_block_duration].filter { |required_config| Config.public_send(required_config).blank? }.join(', ').tap do |required_configs|
+%w[base_url frontend_base_url cancel_reservation_path temporary_block_duration].filter do |required_config|
+  Config.public_send(required_config).blank?
+end.join(', ').tap do |required_configs|
   next unless required_configs.present?
-  raise  <<-ERROR
+
+  raise <<-ERROR
 
 
     Required but missing configs: #{required_configs}

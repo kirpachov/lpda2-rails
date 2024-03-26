@@ -3,7 +3,8 @@
 class CreateLogDeliveredEmails < ActiveRecord::Migration[7.0]
   def change
     create_table :log_delivered_emails do |t|
-      t.belongs_to :record, polymorphic: true, index: true, comment: %(Record this email is associated. Optional.), null: true
+      t.belongs_to :record, polymorphic: true, index: true, comment: %(Record this email is associated. Optional.),
+                            null: true
       t.text :text
       t.text :html
       t.text :subject

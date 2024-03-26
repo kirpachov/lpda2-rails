@@ -7,7 +7,10 @@ module V1
 
       def index
         call = ::Menu::SearchIngredients.run(params:)
-        return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
+        unless call.valid?
+          return render_error(status: 400, details: call.errors.as_json,
+                              message: call.errors.full_messages.join(', '))
+        end
 
         items = call.result.paginate(pagination_params)
 
@@ -39,7 +42,9 @@ module V1
         @item.assign_translation('name', params[:name]) if params.key?(:name)
         @item.assign_translation('description', params[:description]) if params.key?(:description)
 
-        @item.image = Image.create_from_param!(params[:image]) if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
+        if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
+          @item.image = Image.create_from_param!(params[:image])
+        end
 
         return show if @item.valid? && @item.save
 
@@ -58,7 +63,7 @@ module V1
         call = ::Menu::CopyIngredient.run(
           old: @item,
           current_user:,
-          copy_image: params[:copy_image],
+          copy_image: params[:copy_image]
         )
 
         if call.valid?
@@ -76,7 +81,8 @@ module V1
 
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Ingredient)
 
-        raise ArgumentError, "Invalid params. Menu::Ingredient or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+        raise ArgumentError,
+              "Invalid params. Menu::Ingredient or ActiveRecord::Relation expected, but #{item_or_items.class} given"
       end
 
       def single_item_full_json(item)
@@ -90,7 +96,11 @@ module V1
 
       def find_item
         @item = Menu::Ingredient.visible.where(id: params[:id]).first
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Ingredient, id: params[:id].inspect)) if @item.nil?
+        return unless @item.nil?
+
+        render_error(status: 404,
+                     message: I18n.t('record_not_found', model: Menu::Ingredient,
+                                                         id: params[:id].inspect))
       end
     end
   end

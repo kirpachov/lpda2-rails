@@ -23,7 +23,9 @@ class SearchImages < ActiveInteraction::Base
 
     if record_type.present? && params[:record_id].present?
       #   TODO order by ImageToRecord.position
-      items = items.joins(:image_to_records).where('image_to_records.record_type = ? AND image_to_records.record_id = ?', record_type, params[:record_id].to_s)
+      items = items.joins(:image_to_records).where(
+        'image_to_records.record_type = ? AND image_to_records.record_id = ?', record_type, params[:record_id].to_s
+      )
                    .order('image_to_records.position')
     end
 
@@ -31,6 +33,6 @@ class SearchImages < ActiveInteraction::Base
   end
 
   def record_type
-    params[:record_type].to_s.gsub(/\s+/, '').split("::").map(&:capitalize).join("::")
+    params[:record_type].to_s.gsub(/\s+/, '').split('::').map(&:capitalize).join('::')
   end
 end

@@ -11,10 +11,12 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#index' do
     it { expect(instance).to respond_to(:index) }
-    it { should route(:get, '/v1/admin/menu/dishes').to(format: :json, action: :index, controller: 'v1/admin/menu/dishes') }
+    it {
+      should route(:get, '/v1/admin/menu/dishes').to(format: :json, action: :index, controller: 'v1/admin/menu/dishes')
+    }
 
     def req(params = {})
-      get :index, params: params
+      get :index, params:
     end
 
     context 'when user is not authenticated' do
@@ -70,7 +72,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
       context 'when filtering by name' do
         let(:name) { 'first' }
-        let!(:menu_dish) { create(:menu_dish, name: name, description: nil) }
+        let!(:menu_dish) { create(:menu_dish, name:, description: nil) }
         before do
           create(:menu_dish, name: 'second', description: nil)
         end
@@ -173,7 +175,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         subject do
-          req(price: "15.5")
+          req(price: '15.5')
           parsed_response_body[:items]
         end
 
@@ -191,7 +193,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         subject do
-          req(price: "15.5")
+          req(price: '15.5')
           parsed_response_body[:items]
         end
 
@@ -288,7 +290,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         subject do
-          req(price: { more_than: "10.1" })
+          req(price: { more_than: '10.1' })
           parsed_response_body[:items]
         end
 
@@ -308,7 +310,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         subject do
-          req(price: { more_than: "10", less_than: "12" })
+          req(price: { more_than: '10', less_than: '12' })
           parsed_response_body[:items]
         end
 
@@ -328,7 +330,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         subject do
-          req(price: { more_than: "10", less_than: 11.9 })
+          req(price: { more_than: '10', less_than: 11.9 })
           parsed_response_body[:items]
         end
 
@@ -342,7 +344,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { should route(:patch, '/v1/admin/menu/dishes/22').to(format: :json, action: :update, controller: 'v1/admin/menu/dishes', id: 22) }
+    it {
+      should route(:patch, '/v1/admin/menu/dishes/22').to(format: :json, action: :update,
+                                                          controller: 'v1/admin/menu/dishes', id: 22)
+    }
     let(:menu_dish) { create(:menu_dish) }
 
     def req(id, params = {})
@@ -527,10 +532,13 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#create' do
     it { expect(instance).to respond_to(:create) }
-    it { should route(:post, '/v1/admin/menu/dishes').to(format: :json, action: :create, controller: 'v1/admin/menu/dishes') }
+    it {
+      should route(:post, '/v1/admin/menu/dishes').to(format: :json, action: :create,
+                                                      controller: 'v1/admin/menu/dishes')
+    }
 
     def req(params = {})
-      post :create, params: params
+      post :create, params:
     end
 
     context 'when user is not authenticated' do
@@ -574,9 +582,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      it { expect { req(price: "15.7") }.to change(Menu::Dish, :count).by(1) }
+      it { expect { req(price: '15.7') }.to change(Menu::Dish, :count).by(1) }
       context 'when creating new dish with {price: "15.7"}' do
-        before { req(price: "15.7") }
+        before { req(price: '15.7') }
         subject { parsed_response_body[:item] }
         it { is_expected.to include(name: nil) }
         it { is_expected.to include(description: nil) }
@@ -615,7 +623,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { should route(:delete, '/v1/admin/menu/dishes/22').to(format: :json, action: :destroy, controller: 'v1/admin/menu/dishes', id: 22) }
+    it {
+      should route(:delete, '/v1/admin/menu/dishes/22').to(format: :json, action: :destroy,
+                                                           controller: 'v1/admin/menu/dishes', id: 22)
+    }
     let(:menu_dish) { create(:menu_dish) }
 
     def req(id, params = {})
@@ -640,10 +651,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      it "should not delete item from database but update its status" do
+      it 'should not delete item from database but update its status' do
         menu_dish
 
-        expect { req(menu_dish.id) }.not_to change { Menu::Dish.count }
+        expect { req(menu_dish.id) }.not_to(change { Menu::Dish.count })
         expect(Menu::Dish.find(menu_dish.id).status).to eq('deleted')
       end
 
@@ -664,7 +675,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Dish.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -680,7 +691,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
           response
         end
 
-        it { expect { subject }.not_to change { Menu::Dish.visible.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.visible.count }) }
         it { should have_http_status(:unprocessable_entity) }
         it { should_not be_successful }
       end
@@ -697,7 +708,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#copy' do
     it { expect(instance).to respond_to(:copy) }
-    it { should route(:post, '/v1/admin/menu/dishes/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/dishes', id: 22) }
+    it {
+      should route(:post, '/v1/admin/menu/dishes/22/copy').to(format: :json, action: :copy,
+                                                              controller: 'v1/admin/menu/dishes', id: 22)
+    }
     let!(:dish) { create(:menu_dish) }
 
     def req(id, params = {})
@@ -734,7 +748,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect(dish.images.count).to be_positive }
 
         context 'and providing {copy_images: "full"}' do
-          subject { req(dish.id, { copy_images: "full" }) }
+          subject { req(dish.id, { copy_images: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -753,9 +767,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_images: "link"}' do
-          subject { req(dish.id, { copy_images: "link" }) }
+          subject { req(dish.id, { copy_images: 'link' }) }
 
-          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.to change { ImageToRecord.count }.by(images.count) }
 
           context '[after req]' do
@@ -767,10 +781,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_images: "none"}' do
-          subject { req(dish.id, { copy_images: "none" }) }
+          subject { req(dish.id, { copy_images: 'none' }) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
 
           context '[after req]' do
             before { subject }
@@ -789,7 +803,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect(dish.ingredients.count).to be_positive }
 
         context 'and providing {copy_ingredients: "full"}' do
-          subject { req(dish.id, { copy_ingredients: "full" }) }
+          subject { req(dish.id, { copy_ingredients: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -808,9 +822,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_ingredients: "link"}' do
-          subject { req(dish.id, { copy_ingredients: "link" }) }
+          subject { req(dish.id, { copy_ingredients: 'link' }) }
 
-          it { expect { subject }.not_to change { Menu::Ingredient.count } }
+          it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
           it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(ingredients.count) }
 
           context '[after req]' do
@@ -822,10 +836,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_ingredients: "none"}' do
-          subject { req(dish.id, { copy_ingredients: "none" }) }
+          subject { req(dish.id, { copy_ingredients: 'none' }) }
 
-          it { expect { subject }.not_to change { Menu::Ingredient.count } }
-          it { expect { subject }.not_to change { Menu::IngredientsInDish.count } }
+          it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+          it { expect { subject }.not_to(change { Menu::IngredientsInDish.count }) }
 
           context '[after req]' do
             before { subject }
@@ -844,7 +858,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect(dish.allergens.count).to be_positive }
 
         context 'and providing {copy_allergens: "full"}' do
-          subject { req(dish.id, { copy_allergens: "full" }) }
+          subject { req(dish.id, { copy_allergens: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -863,9 +877,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_allergens: "link"}' do
-          subject { req(dish.id, { copy_allergens: "link" }) }
+          subject { req(dish.id, { copy_allergens: 'link' }) }
 
-          it { expect { subject }.not_to change { Menu::Allergen.count } }
+          it { expect { subject }.not_to(change { Menu::Allergen.count }) }
           it { expect { subject }.to change { Menu::AllergensInDish.count }.by(allergens.count) }
 
           context '[after req]' do
@@ -877,10 +891,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_allergens: "none"}' do
-          subject { req(dish.id, { copy_allergens: "none" }) }
+          subject { req(dish.id, { copy_allergens: 'none' }) }
 
-          it { expect { subject }.not_to change { Menu::Allergen.count } }
-          it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
+          it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+          it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }
 
           context '[after req]' do
             before { subject }
@@ -899,7 +913,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect(dish.tags.count).to be_positive }
 
         context 'and providing {copy_tags: "full"}' do
-          subject { req(dish.id, { copy_tags: "full" }) }
+          subject { req(dish.id, { copy_tags: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -918,9 +932,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_tags: "link"}' do
-          subject { req(dish.id, { copy_tags: "link" }) }
+          subject { req(dish.id, { copy_tags: 'link' }) }
 
-          it { expect { subject }.not_to change { Menu::Tag.count } }
+          it { expect { subject }.not_to(change { Menu::Tag.count }) }
           it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
 
           context '[after req]' do
@@ -932,10 +946,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
 
         context 'and providing {copy_tags: "none"}' do
-          subject { req(dish.id, { copy_tags: "none" }) }
+          subject { req(dish.id, { copy_tags: 'none' }) }
 
-          it { expect { subject }.not_to change { Menu::Tag.count } }
-          it { expect { subject }.not_to change { Menu::TagsInDish.count } }
+          it { expect { subject }.not_to(change { Menu::Tag.count }) }
+          it { expect { subject }.not_to(change { Menu::TagsInDish.count }) }
 
           context '[after req]' do
             before { subject }
@@ -950,7 +964,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#add_ingredient' do
     it { expect(instance).to respond_to(:add_ingredient) }
-    it { should route(:post, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :add_ingredient, controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :add_ingredient,
+                                                                        controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:ingredient) { create(:menu_ingredient) }
 
@@ -973,14 +990,14 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to be_successful }
       it { expect { subject }.to change { dish.reload.ingredients.count }.by(1) }
       it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(1) }
-      it { expect { subject }.not_to change { Menu::Dish.count } }
-      it { expect { subject }.not_to change { Menu::Ingredient.count } }
+      it { expect { subject }.not_to(change { Menu::Dish.count }) }
+      it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
 
       context 'when adding twice same ingredient' do
         before { req }
 
-        it { expect { req }.not_to change { dish.reload.ingredients.count } }
-        it { expect { req }.not_to change { Menu::IngredientsInDish.count } }
+        it { expect { req }.not_to(change { dish.reload.ingredients.count }) }
+        it { expect { req }.not_to(change { Menu::IngredientsInDish.count }) }
 
         context '[after second request]' do
           before { req }
@@ -1021,7 +1038,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect { subject }.to change { dish.reload.ingredients.count }.by(1) }
         it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(1) }
         it { expect { subject }.to change { Menu::Ingredient.count }.by(1) }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
 
         context '[after request]' do
           before { subject }
@@ -1040,9 +1057,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
           it { should have_http_status(:unprocessable_entity) }
           it { expect(parsed_response_body).to include(message: String) }
-          it { expect { subject }.not_to change { dish.reload.ingredients.count } }
-          it { expect { subject }.not_to change { Menu::IngredientsInDish.count } }
-          it { expect { subject }.not_to change { Menu::Ingredient.count } }
+          it { expect { subject }.not_to(change { dish.reload.ingredients.count }) }
+          it { expect { subject }.not_to(change { Menu::IngredientsInDish.count }) }
+          it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
         end
       end
     end
@@ -1050,7 +1067,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#remove_ingredient' do
     it { expect(instance).to respond_to(:remove_ingredient) }
-    it { should route(:delete, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :remove_ingredient, controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55) }
+    it {
+      should route(:delete, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :remove_ingredient,
+                                                                          controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:ingredient) { create(:menu_ingredient) }
     before { dish.ingredients << ingredient }
@@ -1094,7 +1114,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#add_tag' do
     it { expect(instance).to respond_to(:add_tag) }
-    it { should route(:post, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :add_tag, controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :add_tag,
+                                                                 controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:tag) { create(:menu_tag) }
 
@@ -1117,14 +1140,14 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to be_successful }
       it { expect { subject }.to change { dish.reload.tags.count }.by(1) }
       it { expect { subject }.to change { Menu::TagsInDish.count }.by(1) }
-      it { expect { subject }.not_to change { Menu::Dish.count } }
-      it { expect { subject }.not_to change { Menu::Tag.count } }
+      it { expect { subject }.not_to(change { Menu::Dish.count }) }
+      it { expect { subject }.not_to(change { Menu::Tag.count }) }
 
       context 'when adding twice same tag' do
         before { req }
 
-        it { expect { req }.not_to change { dish.reload.tags.count } }
-        it { expect { req }.not_to change { Menu::TagsInDish.count } }
+        it { expect { req }.not_to(change { dish.reload.tags.count }) }
+        it { expect { req }.not_to(change { Menu::TagsInDish.count }) }
 
         context '[after second request]' do
           before { req }
@@ -1165,7 +1188,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect { subject }.to change { dish.reload.tags.count }.by(1) }
         it { expect { subject }.to change { Menu::TagsInDish.count }.by(1) }
         it { expect { subject }.to change { Menu::Tag.count }.by(1) }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
 
         context '[after request]' do
           before { subject }
@@ -1184,9 +1207,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
           it { should have_http_status(:unprocessable_entity) }
           it { expect(parsed_response_body).to include(message: String) }
-          it { expect { subject }.not_to change { dish.reload.tags.count } }
-          it { expect { subject }.not_to change { Menu::TagsInDish.count } }
-          it { expect { subject }.not_to change { Menu::Tag.count } }
+          it { expect { subject }.not_to(change { dish.reload.tags.count }) }
+          it { expect { subject }.not_to(change { Menu::TagsInDish.count }) }
+          it { expect { subject }.not_to(change { Menu::Tag.count }) }
         end
       end
     end
@@ -1194,7 +1217,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#remove_tag' do
     it { expect(instance).to respond_to(:remove_tag) }
-    it { should route(:delete, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :remove_tag, controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55) }
+    it {
+      should route(:delete, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :remove_tag,
+                                                                   controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:tag) { create(:menu_tag) }
     before { dish.tags << tag }
@@ -1238,7 +1264,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#add_allergen' do
     it { expect(instance).to respond_to(:add_allergen) }
-    it { should route(:post, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :add_allergen, controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :add_allergen,
+                                                                      controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:allergen) { create(:menu_allergen) }
 
@@ -1261,14 +1290,14 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to be_successful }
       it { expect { subject }.to change { dish.reload.allergens.count }.by(1) }
       it { expect { subject }.to change { Menu::AllergensInDish.count }.by(1) }
-      it { expect { subject }.not_to change { Menu::Dish.count } }
-      it { expect { subject }.not_to change { Menu::Allergen.count } }
+      it { expect { subject }.not_to(change { Menu::Dish.count }) }
+      it { expect { subject }.not_to(change { Menu::Allergen.count }) }
 
       context 'when adding twice same allergen' do
         before { req }
 
-        it { expect { req }.not_to change { dish.reload.allergens.count } }
-        it { expect { req }.not_to change { Menu::AllergensInDish.count } }
+        it { expect { req }.not_to(change { dish.reload.allergens.count }) }
+        it { expect { req }.not_to(change { Menu::AllergensInDish.count }) }
 
         context '[after second request]' do
           before { req }
@@ -1309,7 +1338,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect { subject }.to change { dish.reload.allergens.count }.by(1) }
         it { expect { subject }.to change { Menu::AllergensInDish.count }.by(1) }
         it { expect { subject }.to change { Menu::Allergen.count }.by(1) }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
 
         context '[after request]' do
           before { subject }
@@ -1328,9 +1357,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
           it { should have_http_status(:unprocessable_entity) }
           it { expect(parsed_response_body).to include(message: String) }
-          it { expect { subject }.not_to change { dish.reload.allergens.count } }
-          it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
-          it { expect { subject }.not_to change { Menu::Allergen.count } }
+          it { expect { subject }.not_to(change { dish.reload.allergens.count }) }
+          it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }
+          it { expect { subject }.not_to(change { Menu::Allergen.count }) }
         end
       end
     end
@@ -1338,7 +1367,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#remove_allergen' do
     it { expect(instance).to respond_to(:remove_allergen) }
-    it { should route(:delete, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :remove_allergen, controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55) }
+    it {
+      should route(:delete, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :remove_allergen,
+                                                                        controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:allergen) { create(:menu_allergen) }
     before { dish.allergens << allergen }
@@ -1382,7 +1414,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#add_image' do
     it { expect(instance).to respond_to(:add_image) }
-    it { should route(:post, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :add_image, controller: 'v1/admin/menu/dishes', id: 22, image_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :add_image,
+                                                                   controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:image) { create(:image, :with_attached_image) }
 
@@ -1405,14 +1440,14 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to be_successful }
       it { expect { subject }.to change { dish.reload.images.count }.by(1) }
       it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-      it { expect { subject }.not_to change { Menu::Dish.count } }
-      it { expect { subject }.not_to change { Image.count } }
+      it { expect { subject }.not_to(change { Menu::Dish.count }) }
+      it { expect { subject }.not_to(change { Image.count }) }
 
       context 'when adding twice same image' do
         before { req }
 
-        it { expect { req }.not_to change { dish.reload.images.count } }
-        it { expect { req }.not_to change { ImageToRecord.count } }
+        it { expect { req }.not_to(change { dish.reload.images.count }) }
+        it { expect { req }.not_to(change { ImageToRecord.count }) }
 
         context '[after second request]' do
           before { req }
@@ -1453,7 +1488,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it { expect { subject }.to change { dish.reload.images.count }.by(1) }
         it { expect { subject }.to change { ImageToRecord.count }.by(1) }
         it { expect { subject }.to change { Image.count }.by(1) }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
 
         context '[after request]' do
           before { subject }
@@ -1472,9 +1507,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
           it { should have_http_status(:unprocessable_entity) }
           it { expect(parsed_response_body).to include(message: String) }
-          it { expect { subject }.not_to change { dish.reload.images.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
-          it { expect { subject }.not_to change { Image.count } }
+          it { expect { subject }.not_to(change { dish.reload.images.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
+          it { expect { subject }.not_to(change { Image.count }) }
         end
       end
     end
@@ -1482,7 +1517,10 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
   context '#remove_image' do
     it { expect(instance).to respond_to(:remove_image) }
-    it { should route(:delete, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :remove_image, controller: 'v1/admin/menu/dishes', id: 22, image_id: 55) }
+    it {
+      should route(:delete, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :remove_image,
+                                                                     controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
+    }
     let!(:dish) { create(:menu_dish) }
     let!(:image) { create(:image, :with_attached_image) }
     before { dish.images << image }
@@ -1509,7 +1547,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to have_http_status(:ok) }
       it { expect { subject }.to change { dish.reload.images.count }.by(-1) }
       it { expect { subject }.to change { ImageToRecord.count }.by(-1) }
-      it { expect { subject }.not_to change { Image.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
 
       context 'if removing non-existing image' do
         before { req(dish.id, 999_999_999) }

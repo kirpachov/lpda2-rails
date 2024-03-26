@@ -30,9 +30,7 @@ module Menu
       lt = params[:price].key?(:less_than) ? params[:price][:less_than].to_f : nil
       gt = params[:price].key?(:more_than) ? params[:price][:more_than].to_f : nil
 
-      if gt && lt
-        return items.where("#{Dish.table_name}.price >= ? AND #{Dish.table_name}.price <= ?", gt, lt)
-      end
+      return items.where("#{Dish.table_name}.price >= ? AND #{Dish.table_name}.price <= ?", gt, lt) if gt && lt
 
       return items.where("#{Dish.table_name}.price <= ?", lt) if lt
 

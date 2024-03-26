@@ -9,14 +9,14 @@ module ActiveModel
       options[:except] ||= []
       options[:except] << 'base'
 
-      to_merge = { message: message }
+      to_merge = { message: }
       to_merge[:details] = recursive_details if options[:recursive_details] && options[:details]
       as_json(options).merge(to_merge).with_indifferent_access
     end
 
     def recursive_details
       options[:details].filter { |er| er.is_a?(ActiveModel::Errors) }.map do |errors|
-        errors.full_json(options: options)
+        errors.full_json(options:)
       end
     end
   end

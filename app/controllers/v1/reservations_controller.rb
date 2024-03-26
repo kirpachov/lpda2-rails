@@ -8,9 +8,12 @@ module V1
     def create
       call = PublicCreateReservation.run(params: params.permit!.to_h)
 
-      return render_error(status: 422, details: call.errors.full_json, message: call.errors.full_messages.join(', ')) unless call.valid?
+      unless call.valid?
+        return render_error(status: 422, details: call.errors.full_json,
+                            message: call.errors.full_messages.join(', '))
+      end
 
-      # TODO send mail
+      # TODO: send mail
 
       @item = call.result
       show
@@ -32,7 +35,11 @@ module V1
 
     def find_item
       @item = ::Reservation.visible.where(secret: params[:secret]).first
-      render_error(status: 404, message: I18n.t('record_not_found', model: Reservation, id: params[:secret].inspect)) if @item.nil?
+      return unless @item.nil?
+
+      render_error(status: 404,
+                   message: I18n.t('record_not_found', model: Reservation,
+                                                       id: params[:secret].inspect))
     end
 
     def full_json(item)

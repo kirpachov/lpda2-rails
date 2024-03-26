@@ -58,7 +58,8 @@ module V1::Admin
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::ReservationTag)
 
-      raise ArgumentError, "Invalid params. ReservationTag or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+      raise ArgumentError,
+            "Invalid params. ReservationTag or ActiveRecord::Relation expected, but #{item_or_items.class} given"
     end
 
     def single_item_full_json(item)
@@ -67,7 +68,11 @@ module V1::Admin
 
     def find_item
       @item = ReservationTag.visible.where(id: params[:id]).first
-      render_error(status: 404, message: I18n.t('record_not_found', model: ReservationTag, id: params[:id].inspect)) if @item.nil?
+      return unless @item.nil?
+
+      render_error(status: 404,
+                   message: I18n.t('record_not_found', model: ReservationTag,
+                                                       id: params[:id].inspect))
     end
   end
 end

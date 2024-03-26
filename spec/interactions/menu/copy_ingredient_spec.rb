@@ -26,7 +26,7 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
       end
 
       it 'enqueue a job to save the changes with current user info' do
-        allow(SaveModelChangeJob).to receive(:perform_async).with(include("user_id" => current_user.id))
+        allow(SaveModelChangeJob).to receive(:perform_async).with(include('user_id' => current_user.id))
         subject
       end
     end
@@ -94,7 +94,7 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
     context 'when ingredient has image and providing {copy_image: "full"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { ingredient.image = image }
-      let(:params) { { old:, current_user:, copy_image: "full" } }
+      let(:params) { { old:, current_user:, copy_image: 'full' } }
 
       it { expect(subject.result.image).to be_present }
 
@@ -121,15 +121,15 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
     context 'when ingredient has image and providing {copy_image: "link"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { ingredient.image = image }
-      let(:params) { { old:, current_user:, copy_image: "link" } }
+      let(:params) { { old:, current_user:, copy_image: 'link' } }
 
       it { expect(subject.result.image).to be_present }
 
       it { expect(subject.errors).to be_empty }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
 
       it { expect(subject.result.image.url).to eq ingredient.image.url }
       it { expect(subject.result.image.id).to eq ingredient.image.id }
@@ -138,14 +138,14 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
     context 'when ingredient has image and providing {copy_image: "none"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { ingredient.image = image }
-      let(:params) { { old:, current_user:, copy_image: "none" } }
+      let(:params) { { old:, current_user:, copy_image: 'none' } }
 
       it { expect(subject.result.image).to be_nil }
       it { expect(subject.result.reload.image).to be_nil }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
     end
 
     context 'when ingredient has image record associated but without actual blob attached' do
@@ -154,14 +154,14 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
 
       it { expect(subject.result.image).not_to be_present }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
     end
 
     context 'if image creation fails' do
       let!(:image) { create(:image, :with_attached_image) }
-      let(:params) { { old:, current_user:, copy_image: "full" } }
+      let(:params) { { old:, current_user:, copy_image: 'full' } }
 
       before do
         ingredient.image = image
@@ -172,14 +172,14 @@ RSpec.describe Menu::CopyIngredient, type: :interaction do
       end
 
       it 'does not create any record and returns errors' do
-        expect { subject }.not_to change { Image.count }
+        expect { subject }.not_to(change { Image.count })
         expect(subject.errors).not_to be_empty
       end
 
-      it { expect { subject }.not_to change { Menu::Allergen.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
-      it { expect { subject }.not_to change { ImageToRecord.count } }
+      it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }
+      it { expect { subject }.not_to(change { ImageToRecord.count }) }
     end
   end
 end

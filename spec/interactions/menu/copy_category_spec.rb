@@ -9,7 +9,7 @@ RSpec.shared_examples 'fail to copy category' do
       Menu::Dish, Menu::AllergensInDish,
       Menu::Allergen, Menu::Tag,
       Menu::Ingredient, Menu::IngredientsInDish,
-      Menu::TagsInDish, Image, ImageToRecord,
+      Menu::TagsInDish, Image, ImageToRecord
     ]
 
     records_count_before = models.map(&:count)
@@ -19,7 +19,7 @@ RSpec.shared_examples 'fail to copy category' do
   end
 
   it 'does not copy dishes' do
-    expect { subject }.not_to change { Menu::Dish.count }
+    expect { subject }.not_to(change { Menu::Dish.count })
     expect(subject.result.dishes.count).to eq 0
     expect(subject.result).not_to be_persisted
     expect(subject.errors.full_messages).not_to be_empty
@@ -33,7 +33,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
     let!(:current_user) { create(:user) }
     let(:old) { category }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params: params) }
+    subject { described_class.run(params:) }
 
     context 'basic' do
       before do
@@ -146,13 +146,13 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
           create_list(:menu_category, 3, visibility: nil, parent: old)
         end
 
-        context "checking mock data" do
+        context 'checking mock data' do
           it { expect(old.children.count).to be_positive }
         end
 
         it { expect { subject }.to change { Menu::Category.count }.by(old.children.count + 1) }
 
-        it "is successful" do
+        it 'is successful' do
           subject.validate
           expect(subject.errors.full_messages).to be_empty
           expect(subject).to be_valid
@@ -176,7 +176,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
           create_list(:menu_category, 3, visibility: nil, parent: old)
         end
 
-        context "checking mock data" do
+        context 'checking mock data' do
           it { expect(old.children.count).to be_positive }
         end
 
@@ -187,7 +187,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       end
 
       it 'enqueue a job to save the changes with current user info' do
-        allow(SaveModelChangeJob).to receive(:perform_async).with(include("user_id" => current_user.id))
+        allow(SaveModelChangeJob).to receive(:perform_async).with(include('user_id' => current_user.id))
         subject
       end
     end
@@ -234,10 +234,10 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       before { category.dishes = [dish] }
       let(:params) { { old:, current_user:, copy_dishes: 'none' } }
 
-      it { expect { subject }.not_to change { Menu::DishesInCategory.count } }
+      it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
 
       it 'does not copy dishes' do
-        expect { subject }.not_to change { Menu::Dish.count }
+        expect { subject }.not_to(change { Menu::Dish.count })
         expect(subject.result.dishes.count).to eq 0
       end
     end
@@ -276,7 +276,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       def prevent_save(model)
         allow_any_instance_of(model).to receive(:valid?).and_return(false)
         errors = ActiveModel::Errors.new(model)
-        errors.add(:base, "Some error message")
+        errors.add(:base, 'Some error message')
         allow_any_instance_of(model).to receive(:errors).and_return(errors)
       end
 
@@ -316,14 +316,14 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
     let(:current_user) { create(:user) }
     let(:old) { create(:menu_category) }
 
-    it "when {current_user: User, old: Menu::Category}" do
+    it 'when {current_user: User, old: Menu::Category}' do
       call = described_class.run(params: { current_user:, old: })
       call.validate
       expect(call.errors.full_messages).to be_empty
       expect(call).to be_valid
     end
 
-    it "when {current_user: nil, old: Menu::Category}" do
+    it 'when {current_user: nil, old: Menu::Category}' do
       call = described_class.run(params: { current_user: nil, old: })
       call.validate
       expect(call.errors[:current_user]).to be_present
@@ -331,7 +331,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       expect(call).not_to be_valid
     end
 
-    it "when {current_user: User, old: nil}" do
+    it 'when {current_user: User, old: nil}' do
       call = described_class.run(params: { current_user:, old: nil })
       call.validate
       expect(call.errors[:old]).to be_present
@@ -339,7 +339,7 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       expect(call).not_to be_valid
     end
 
-    it "when {}" do
+    it 'when {}' do
       call = described_class.run(params: {})
       call.validate
       expect(call.errors[:old]).to be_present

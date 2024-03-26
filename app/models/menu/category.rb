@@ -2,7 +2,6 @@
 
 module Menu
   class Category < ApplicationRecord
-
     # ##############################
     # Constants, modules
     # ##############################
@@ -20,12 +19,12 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_visibility, dependent: :destroy, class_name: "Menu::Visibility", optional: true
+    belongs_to :menu_visibility, dependent: :destroy, class_name: 'Menu::Visibility', optional: true
     alias_attribute :visibility_id, :menu_visibility_id
     alias_attribute :visibility, :menu_visibility
 
-    belongs_to :parent, class_name: "Menu::Category", optional: true
-    has_many :children, class_name: "Menu::Category", foreign_key: :parent_id #, dependent: :destroy
+    belongs_to :parent, class_name: 'Menu::Category', optional: true
+    has_many :children, class_name: 'Menu::Category', foreign_key: :parent_id # , dependent: :destroy
 
     has_many :menu_dishes_in_categories, class_name: 'Menu::DishesInCategory', foreign_key: :menu_category_id
 
@@ -36,8 +35,10 @@ module Menu
     # Validations
     # ##############################
     validates :status, presence: true, inclusion: { in: VALID_STATUSES }
-    validates :secret, presence: true, length: { minimum: SECRET_MIN_LENGTH }, uniqueness: { case_sensitive: false }, format: { multiline: true, with: /^[a-zA-Z0-9_\-]+$/ }
-    validates :secret_desc, uniqueness: { case_sensitive: false }, allow_nil: true, format: { multiline: true, with: /^[a-zA-Z0-9_\-]+$/ }
+    validates :secret, presence: true, length: { minimum: SECRET_MIN_LENGTH }, uniqueness: { case_sensitive: false },
+                       format: { multiline: true, with: /^[a-zA-Z0-9_-]+$/ }
+    validates :secret_desc, uniqueness: { case_sensitive: false }, allow_nil: true,
+                            format: { multiline: true, with: /^[a-zA-Z0-9_-]+$/ }
     validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true, uniqueness: { scope: :parent_id }
     validate :other_cannot_be_nil
@@ -72,8 +73,7 @@ module Menu
       def filter_by_query(query)
         return all unless query.present?
 
-        where(id: ransack(name_cont: query).result.select(:id)
-        ).or(where(id: ransack(description_cont: query).result.select(:id)))
+        where(id: ransack(name_cont: query).result.select(:id)).or(where(id: ransack(description_cont: query).result.select(:id)))
       end
     end
 
@@ -126,9 +126,9 @@ module Menu
     def assign_valid_index
       self.index = Category.where(parent_id:).count
 
-      if Category.where(parent_id:, index:).present?
-        self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
-      end
+      return unless Category.where(parent_id:, index:).present?
+
+      self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
     end
 
     def remove_parent!
@@ -146,7 +146,7 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value("status", value)
+      @attributes.write_cast_value('status', value)
     end
 
     def move(to_index)
@@ -185,14 +185,14 @@ module Menu
       return if parent.nil? && parent_id.nil?
       return if visibility.nil? && visibility_id.nil?
 
-      errors.add(:visibility, "must be nil unless root category")
+      errors.add(:visibility, 'must be nil unless root category')
     end
 
     def visibility_must_be_present_if_root
       return if visibility_id.present? || visibility.present?
       return if parent.present? || parent_id.present?
 
-      errors.add(:visibility, "must be present if root category")
+      errors.add(:visibility, 'must be present if root category')
     end
 
     def other_cannot_be_nil

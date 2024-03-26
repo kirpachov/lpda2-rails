@@ -1,5 +1,5 @@
 module Menu
   def self.table_name_prefix
-    "menu_"
+    'menu_'
   end
 end

@@ -58,7 +58,7 @@ class ReservationTurn < ApplicationRecord
     overlapping = overlapping.where.not(id:) if persisted?
     return if overlapping.empty?
 
-    errors.add(:starts_at, "overlaps with other turn(s)", overlapping: overlapping.pluck(:id))
+    errors.add(:starts_at, 'overlaps with other turn(s)', overlapping: overlapping.pluck(:id))
   end
 
   def ends_at_overlaps_other_turn
@@ -68,7 +68,7 @@ class ReservationTurn < ApplicationRecord
     overlapping = overlapping.where.not(id:) if persisted?
     return if overlapping.empty?
 
-    errors.add(:ends_at, "overlaps with other turn(s)", overlapping: overlapping.pluck(:id))
+    errors.add(:ends_at, 'overlaps with other turn(s)', overlapping: overlapping.pluck(:id))
   end
 
   # def should_not_overlap_with_other_reservation_turns

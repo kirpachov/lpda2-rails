@@ -38,7 +38,9 @@ class SearchReservations < ActiveInteraction::Base
       end
     end
 
-    return items.order(order_by) if order_by.is_a?(String) && order_by.present? && items.column_names.include?(order_by.split(" ").first)
+    if order_by.is_a?(String) && order_by.present? && items.column_names.include?(order_by.split(' ').first)
+      return items.order(order_by)
+    end
 
     # ALIASING
     if order_by.is_a?(Hash)
@@ -86,7 +88,7 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   def is_true?(value)
-    ['true', '1'].include?(value.to_s)
+    %w[true 1].include?(value.to_s)
   end
 
   def items
@@ -102,7 +104,9 @@ class SearchReservations < ActiveInteraction::Base
   def filter_by_query(items)
     return items unless params[:query].is_a?(String)
 
-    items.where("lower(#{Reservation.table_name}.fullname) ILIKE ? OR lower(#{Reservation.table_name}.notes) ILIKE ? or lower(#{Reservation.table_name}.email) ILIKE ?", "%#{params[:query].downcase}%", "%#{params[:query].downcase}%", "%#{params[:query].downcase}%")
+    items.where(
+      "lower(#{Reservation.table_name}.fullname) ILIKE ? OR lower(#{Reservation.table_name}.notes) ILIKE ? or lower(#{Reservation.table_name}.email) ILIKE ?", "%#{params[:query].downcase}%", "%#{params[:query].downcase}%", "%#{params[:query].downcase}%"
+    )
   end
 
   def filter_by_status(items)

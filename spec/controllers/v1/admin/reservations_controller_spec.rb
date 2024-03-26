@@ -4,9 +4,10 @@ require 'rails_helper'
 
 RESERVATION_TEST_STRUCTURE = 'RESERVATION_TEST_STRUCTURE'
 RSpec.shared_context RESERVATION_TEST_STRUCTURE do |options = {}|
-  it "should have valid structure" do
+  it 'should have valid structure' do
     expect(subject).to be_a(Hash)
-    expect(subject).to include(id: Integer, created_at: String, updated_at: String, datetime: String, people: Integer, status: String)
+    expect(subject).to include(id: Integer, created_at: String, updated_at: String, datetime: String, people: Integer,
+                               status: String)
   end
 
   # true => check presence
@@ -86,7 +87,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         %w[active noshow cancelled].each do |status|
           context "when filtering by status: #{status.inspect}" do
-            before { req(status: status) }
+            before { req(status:) }
 
             subject { response }
             it { should have_http_status(:ok) }
@@ -235,7 +236,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         context 'response[:items]' do
           subject { parsed_response_body[:items] }
 
-          it { should all(include(secret: secret)) }
+          it { should all(include(secret:)) }
         end
 
         context 'response[:items][0]' do
@@ -248,9 +249,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
       context 'search by query' do
         let!(:reservations) do
           [
-            create(:reservation, status: :active, fullname: 'Wassa Bratan', email: 'giuly@presley', notes: 'Please be kind'),
+            create(:reservation, status: :active, fullname: 'Wassa Bratan', email: 'giuly@presley',
+                                 notes: 'Please be kind'),
             create(:reservation, status: :active, fullname: 'Gigi', email: 'luis@sal', notes: 'Dont worry'),
-            create(:reservation, status: :active, fullname: 'Orologio', email: 'gianni@morandi', notes: 'idk something else'),
+            create(:reservation, status: :active, fullname: 'Orologio', email: 'gianni@morandi',
+                                 notes: 'idk something else')
           ]
         end
 
@@ -292,7 +295,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
             create(:reservation, status: :active, datetime: Time.now),
             create(:reservation, status: :active, datetime: 1.day.ago),
             create(:reservation, status: :active, datetime: 2.day.ago),
-            create(:reservation, status: :active, datetime: 3.day.ago),
+            create(:reservation, status: :active, datetime: 3.day.ago)
           ]
         end
 
@@ -320,7 +323,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           subject { response }
           it { should have_http_status(:ok) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
-          it { expect(parsed_response_body[:items].map { |item| item[:datetime].to_date }).to all(eq(1.day.from_now.to_date.to_date)) }
+          it {
+            expect(parsed_response_body[:items].map do |item|
+                     item[:datetime].to_date
+                   end).to all(eq(1.day.from_now.to_date.to_date))
+          }
         end
 
         context 'when filtering by {date_from: 1.day.from_now.to_date, date_to: 1.day.from_now.to_date}' do
@@ -333,7 +340,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           subject { response }
           it { should have_http_status(:ok) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
-          it { expect(parsed_response_body[:items].map { |item| item[:datetime].to_date }).to all(eq(1.day.from_now.to_date.to_date)) }
+          it {
+            expect(parsed_response_body[:items].map do |item|
+                     item[:datetime].to_date
+                   end).to all(eq(1.day.from_now.to_date.to_date))
+          }
         end
 
         # SHOULD ACTUALLY IGNORE TIME WHEN PROVIDING 'date_from'
@@ -343,7 +354,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           subject { response }
           it { should have_http_status(:ok) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
-          it { expect(parsed_response_body[:items].map { |item| item[:datetime].to_date }).to all(eq(1.day.from_now.to_date.to_date)) }
+          it {
+            expect(parsed_response_body[:items].map do |item|
+                     item[:datetime].to_date
+                   end).to all(eq(1.day.from_now.to_date.to_date))
+          }
         end
 
         # SHOULD NOT IGNORE TIME WHEN PARAM IS CALLED 'datetime_from'
@@ -466,7 +481,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               req(order_by: { attribute_alias => 'datetime', direction_alias => 'DESC' })
             end
 
-            it "should allow any combination between aliases." do
+            it 'should allow any combination between aliases.' do
               expect(parsed_response_body).to include(items: Array, metadata: Hash)
               expect(parsed_response_body[:items].length).to eq 3
               expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601('2024-10-12 20:00')
@@ -482,7 +497,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           create(:reservation, datetime: '2024-10-12 19:00')
           create(:reservation, datetime: '2024-10-12 20:00')
           create(:reservation, datetime: '2024-10-12 14:00')
-          req(order_by: "datetime DESC")
+          req(order_by: 'datetime DESC')
         end
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
@@ -497,7 +512,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           create(:reservation, datetime: '2024-10-12 19:00')
           create(:reservation, datetime: '2024-10-12 20:00')
           create(:reservation, datetime: '2024-10-12 14:00')
-          req(order_by: "datetime ASC")
+          req(order_by: 'datetime ASC')
         end
 
         it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
@@ -594,20 +609,20 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(item: Hash)
 
           expect(parsed_response_body[:item]).to include(
-                                                   fullname: String,
-                                                   datetime: String,
-                                                   status: String,
-                                                   secret: String,
-                                                   people: Integer,
-                                                   table: String,
-                                                   notes: String,
-                                                   email: String,
-                                                   phone: String,
-                                                   other: Hash,
-                                                   created_at: String,
-                                                   updated_at: String,
-                                                   id: Integer
-                                                 )
+            fullname: String,
+            datetime: String,
+            status: String,
+            secret: String,
+            people: Integer,
+            table: String,
+            notes: String,
+            email: String,
+            phone: String,
+            other: Hash,
+            created_at: String,
+            updated_at: String,
+            id: Integer
+          )
           expect(response).to have_http_status(:ok)
         end
       end
@@ -623,7 +638,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               it 'should return provided info' do
                 req
                 expect(parsed_response_body).to include(item: Hash)
-                expect(parsed_response_body[:item]).to include(fullname: fullname, people: people)
+                expect(parsed_response_body[:item]).to include(fullname:, people:)
                 expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').first)
                 expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').last)
                 expect(response).to have_http_status(:ok)
@@ -640,7 +655,8 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
                       it 'should return provided info' do
                         expect { req }.to change(Reservation, :count).by(1)
                         expect(parsed_response_body).to include(item: Hash)
-                        expect(parsed_response_body[:item]).to include(fullname:, people:, email:, table: table.to_s, notes:)
+                        expect(parsed_response_body[:item]).to include(fullname:, people:, email:, table: table.to_s,
+                                                                       notes:)
                         expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').first)
                         expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(' ').last)
                         expect(response).to have_http_status(:ok)
@@ -658,7 +674,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/reservations/2').to(action: :update, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/reservations/2').to(action: :update, id: '2', format: :json)
+    }
 
     let(:reservation) { create(:reservation) }
 
@@ -763,12 +781,14 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { expect(described_class).to route(:delete, '/v1/admin/reservations/2').to(action: :destroy, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:delete, '/v1/admin/reservations/2').to(action: :destroy, id: '2', format: :json)
+    }
 
     let(:reservation) { create(:reservation) }
 
     def req(id = reservation.id)
-      delete :destroy, params: { id: id }
+      delete :destroy, params: { id: }
     end
 
     context 'when user is not authenticated' do
@@ -803,7 +823,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
   context '#update_status' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/reservations/2/status/arrived').to(status: 'arrived', action: :update_status, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/reservations/2/status/arrived').to(status: 'arrived',
+                                                                                             action: :update_status, id: '2', format: :json)
+    }
 
     let(:reservation) { create(:reservation) }
 
@@ -853,7 +876,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         let(:status) { 'cancelled' }
 
         it do
-          expect { req }.not_to change { reservation.reload.status }
+          expect { req }.not_to(change { reservation.reload.status })
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:bad_request)
           expect(parsed_response_body[:message].to_s.downcase).to include('status')
@@ -864,7 +887,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         let(:status) { 'deleted' }
 
         it do
-          expect { req }.not_to change { reservation.reload.status }
+          expect { req }.not_to(change { reservation.reload.status })
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:bad_request)
           expect(parsed_response_body[:message].to_s.downcase).to include('status')
@@ -874,7 +897,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
   end
 
   context 'POST #add_tag' do
-    it { expect(described_class).to route(:post, '/v1/admin/reservations/2/add_tag/3').to(tag_id: '3', action: :add_tag, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:post, '/v1/admin/reservations/2/add_tag/3').to(tag_id: '3', action: :add_tag,
+                                                                                       id: '2', format: :json)
+    }
     it { expect(instance).to respond_to(:add_tag) }
 
     let(:reservation) { create(:reservation) }
@@ -911,10 +937,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
 
         it { expect { req }.to change { TagInReservation.count }.by(1) }
-        it { expect { req }.not_to change { Reservation.count } }
-        it { expect { req }.not_to change { ReservationTag.count } }
+        it { expect { req }.not_to(change { Reservation.count }) }
+        it { expect { req }.not_to(change { ReservationTag.count }) }
         it { expect { req }.to change { reservation.reload.tags.count }.from(0).to(1) }
-        it { expect { req }.not_to change { tag.reload.as_json } }
+        it { expect { req }.not_to(change { tag.reload.as_json }) }
 
         it 'should be successful' do
           req
@@ -928,7 +954,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it 'can try to add twice the tag, will be added just once.' do
           expect { req }.to change { TagInReservation.count }.by(1)
           expect(response).to have_http_status(:ok)
-          expect { req }.not_to change { TagInReservation.count }
+          expect { req }.not_to(change { TagInReservation.count })
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
@@ -945,7 +971,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           allow_any_instance_of(TagInReservation).to receive(:errors).and_return(errors)
         end
 
-        it { expect { req }.not_to change { TagInReservation.count } }
+        it { expect { req }.not_to(change { TagInReservation.count }) }
         it 'should return 422 with message' do
           req
           expect(parsed_response_body).to include(message: String)
@@ -957,7 +983,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
   end
 
   context 'DELETE #remove_tag' do
-    it { expect(described_class).to route(:delete, '/v1/admin/reservations/2/remove_tag/3').to(tag_id: '3', action: :remove_tag, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:delete, '/v1/admin/reservations/2/remove_tag/3').to(tag_id: '3',
+                                                                                            action: :remove_tag, id: '2', format: :json)
+    }
     it { expect(instance).to respond_to(:remove_tag) }
 
     let(:reservation) { create(:reservation) }
@@ -993,11 +1022,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
 
         it { expect { req }.to change { TagInReservation.count }.by(-1) }
-        it { expect { req }.not_to change { Reservation.count } }
-        it { expect { req }.not_to change { ReservationTag.count } }
+        it { expect { req }.not_to(change { Reservation.count }) }
+        it { expect { req }.not_to(change { ReservationTag.count }) }
         it { expect { req }.to change { reservation.reload.tags.count }.from(1).to(0) }
-        it { expect { req }.not_to change { tag.reload.as_json } }
-        it { expect { req }.not_to change { reservation.reload.as_json } }
+        it { expect { req }.not_to(change { tag.reload.as_json }) }
+        it { expect { req }.not_to(change { reservation.reload.as_json }) }
 
         it 'should be successful' do
           req
@@ -1011,7 +1040,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it 'when removing same tag twice, should be fine.' do
           expect { req }.to change { reservation.reload.tags.count }.from(1).to(0)
           expect(response).to have_http_status(:ok)
-          expect { req }.not_to change { reservation.reload.tags.count }
+          expect { req }.not_to(change { reservation.reload.tags.count })
           expect(response).to have_http_status(:ok)
         end
       end
@@ -1025,11 +1054,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
 
         it { expect { req }.to change { TagInReservation.count }.by(-1) }
-        it { expect { req }.not_to change { Reservation.count } }
-        it { expect { req }.not_to change { ReservationTag.count } }
+        it { expect { req }.not_to(change { Reservation.count }) }
+        it { expect { req }.not_to(change { ReservationTag.count }) }
         it { expect { req }.to change { reservation.reload.tags.count }.from(3).to(2) }
-        it { expect { req }.not_to change { tag.reload.as_json } }
-        it { expect { req }.not_to change { reservation.reload.as_json } }
+        it { expect { req }.not_to(change { tag.reload.as_json }) }
+        it { expect { req }.not_to(change { reservation.reload.as_json }) }
 
         it 'should be successful' do
           req
@@ -1043,7 +1072,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it 'when removing same tag twice, should be fine.' do
           expect { req }.to change { reservation.reload.tags.count }.from(3).to(2)
           expect(response).to have_http_status(:ok)
-          expect { req }.not_to change { reservation.reload.tags.count }
+          expect { req }.not_to(change { reservation.reload.tags.count })
           expect(response).to have_http_status(:ok)
         end
       end
@@ -1051,8 +1080,16 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
   end
 
   context 'POST #deliver_confirmation_email' do
-    it { expect(described_class).to route(:post, '/v1/admin/reservations/2/deliver_confirmation_email').to(action: :deliver_confirmation_email, id: "2", format: :json) }
-    it { expect(described_class).to route(:post, '/v1/admin/reservations/55/deliver_confirmation_email').to(action: :deliver_confirmation_email, id: "55", format: :json) }
+    it {
+      expect(described_class).to route(:post, '/v1/admin/reservations/2/deliver_confirmation_email').to(
+        action: :deliver_confirmation_email, id: '2', format: :json
+      )
+    }
+    it {
+      expect(described_class).to route(:post, '/v1/admin/reservations/55/deliver_confirmation_email').to(
+        action: :deliver_confirmation_email, id: '55', format: :json
+      )
+    }
     it { expect(instance).to respond_to(:deliver_confirmation_email) }
 
     let(:reservation) { create(:reservation) }
@@ -1124,7 +1161,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           let(:reservation) { create(:reservation, email: nil) }
           let(:to) { ActionMailer::Base.deliveries.last.header[:to].unparsed_value }
 
-          it { expect { req }.not_to change { ActionMailer::Base.deliveries.count } }
+          it { expect { req }.not_to(change { ActionMailer::Base.deliveries.count }) }
           it 'should be successful' do
             req
             expect(parsed_response_body).to include(message: String, details: Hash)
@@ -1144,7 +1181,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           it do
             expect(parsed_response_body.dig(:item, :delivered_emails)).to be_a(Array)
             expect(parsed_response_body.dig(:item, :delivered_emails).length).to eq 1
-            expect(parsed_response_body.dig(:item, :delivered_emails).first).to include(id: Integer, created_at: String, image_pixels: Array)
+            expect(parsed_response_body.dig(:item,
+                                            :delivered_emails).first).to include(id: Integer, created_at: String,
+                                                                                 image_pixels: Array)
             expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels)).to be_a(Array)
             expect(parsed_response_body.dig(:item, :delivered_emails, 0, :image_pixels).length).to eq 0
           end

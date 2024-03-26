@@ -26,7 +26,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       it 'enqueue a job to save the changes with current user info' do
-        allow(SaveModelChangeJob).to receive(:perform_async).with(include("user_id" => current_user.id))
+        allow(SaveModelChangeJob).to receive(:perform_async).with(include('user_id' => current_user.id))
         subject
       end
     end
@@ -105,7 +105,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
     context 'when dish has images and providing {copy_images: "full"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { dish.images = [image] }
-      let(:params) { { old:, current_user:, copy_images: "full" } }
+      let(:params) { { old:, current_user:, copy_images: 'full' } }
 
       it { expect(subject.result.images).not_to be_empty }
 
@@ -132,7 +132,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
     context 'when dish has MANY images and providing {copy_images: "full"}' do
       let!(:images) { create_list(:image, 3, :with_attached_image) }
       before { dish.images = images }
-      let(:params) { { old:, current_user:, copy_images: "full" } }
+      let(:params) { { old:, current_user:, copy_images: 'full' } }
 
       it { expect(subject.result.images).not_to be_empty }
 
@@ -167,15 +167,15 @@ RSpec.describe Menu::CopyDish, type: :interaction do
     context 'when dish has images and providing {copy_images: "link"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { dish.images = [image] }
-      let(:params) { { old:, current_user:, copy_images: "link" } }
+      let(:params) { { old:, current_user:, copy_images: 'link' } }
 
       it { expect(subject.result.images).not_to be_empty }
 
       it { expect(subject.errors).to be_empty }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
 
       it { expect(subject.result.images.first.url).to eq dish.images.first.url }
       it { expect(subject.result.images.first.id).to eq dish.images.first.id }
@@ -184,33 +184,33 @@ RSpec.describe Menu::CopyDish, type: :interaction do
     context 'when dish has MANY images and providing {copy_images: "link"}' do
       let!(:images) { create_list(:image, 3, :with_attached_image) }
       before { dish.images = images }
-      let(:params) { { old:, current_user:, copy_images: "link" } }
+      let(:params) { { old:, current_user:, copy_images: 'link' } }
 
       it { expect(subject.result.images).not_to be_empty }
       it { expect(subject.result.images.count).to eq dish.images.count }
 
       it { expect(subject.errors).to be_empty }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
 
       it { expect(subject.result.images.first.url).to eq dish.images.first.url }
       it { expect(subject.result.images.first.id).to eq dish.images.first.id }
-      it { expect(subject.result.images.map { |img| img.url }).to eq dish.images.map { |img| img.url } }
+      it { expect(subject.result.images.map { |img| img.url }).to eq(dish.images.map { |img| img.url }) }
     end
 
     context 'when dish has images and providing {copy_images: "none"}' do
       let!(:image) { create(:image, :with_attached_image) }
       before { dish.images = [image] }
-      let(:params) { { old:, current_user:, copy_images: "none" } }
+      let(:params) { { old:, current_user:, copy_images: 'none' } }
 
       it { expect(subject.result.images).to be_empty }
       it { expect(subject.result.reload.images).to be_empty }
 
-      it { expect { subject }.not_to change { Image.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
-      it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
+      it { expect { subject }.not_to(change { Image.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
+      it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
     end
 
     context 'when dish has ingredients' do
@@ -223,7 +223,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_ingredients: "full"}' do
-        let(:params) { { old:, current_user:, copy_ingredients: "full" } }
+        let(:params) { { old:, current_user:, copy_ingredients: 'full' } }
 
         it { expect { subject }.to change { Menu::Ingredient.count }.by(ingredients.count) }
         it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(ingredients.count) }
@@ -241,28 +241,28 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_ingredients: "link"}' do
-        let(:params) { { old:, current_user:, copy_ingredients: "link" } }
+        let(:params) { { old:, current_user:, copy_ingredients: 'link' } }
 
         it { expect(subject.result.ingredients).not_to be_empty }
         it { expect(subject.result.ingredients.map(&:id)).to match_array(ingredients.map(&:id)) }
         it { expect(subject.result.ingredients.map(&:id)).to match_array(old.ingredients.map(&:id)) }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
         it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(ingredients.count) }
 
         context 'when ingredients have images' do
           let(:ingredients) { create_list(:menu_ingredient, 3, :with_image_with_attachment) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
         end
       end
 
       context 'when providing {copy_ingredients: "none"}' do
-        let(:params) { { old:, current_user:, copy_ingredients: "none" } }
+        let(:params) { { old:, current_user:, copy_ingredients: 'none' } }
         it { expect(subject.result.ingredients).to be_empty }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
-        it { expect { subject }.not_to change { Menu::IngredientsInDish.count } }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+        it { expect { subject }.not_to(change { Menu::IngredientsInDish.count }) }
       end
     end
 
@@ -276,7 +276,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_tags: "full"}' do
-        let(:params) { { old:, current_user:, copy_tags: "full" } }
+        let(:params) { { old:, current_user:, copy_tags: 'full' } }
 
         it { expect { subject }.to change { Menu::Tag.count }.by(tags.count) }
         it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
@@ -303,27 +303,27 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_tags: "link"}' do
-        let(:params) { { old:, current_user:, copy_tags: "link" } }
+        let(:params) { { old:, current_user:, copy_tags: 'link' } }
 
         it { expect(subject.result.tags).not_to be_empty }
         it { expect(subject.result.tags.map(&:id)).to match_array(tags.map(&:id)) }
         it { expect(subject.result.tags.map(&:id)).to match_array(old.tags.map(&:id)) }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
         it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
 
         context 'when tags have images' do
           let(:tags) { create_list(:menu_tag, 3, :with_image_with_attachment) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
         end
 
         context 'when tags have colors' do
           let(:tags) { 3.times.map { create(:menu_tag, color: Faker::Color.hex_color) } }
 
-          it { expect { subject }.not_to change { Menu::Tag.count } }
+          it { expect { subject }.not_to(change { Menu::Tag.count }) }
           it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
           it { expect(subject.result.tags.map(&:color)).to match_array(old.tags.map(&:color)) }
           it { expect(subject.result.tags.map(&:color)).to match_array(tags.map(&:color)) }
@@ -331,10 +331,10 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_tags: "none"}' do
-        let(:params) { { old:, current_user:, copy_tags: "none" } }
+        let(:params) { { old:, current_user:, copy_tags: 'none' } }
         it { expect(subject.result.tags).to be_empty }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
-        it { expect { subject }.not_to change { Menu::TagsInDish.count } }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
+        it { expect { subject }.not_to(change { Menu::TagsInDish.count }) }
       end
     end
 
@@ -348,7 +348,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_allergens: "full"}' do
-        let(:params) { { old:, current_user:, copy_allergens: "full" } }
+        let(:params) { { old:, current_user:, copy_allergens: 'full' } }
 
         it { expect { subject }.to change { Menu::Allergen.count }.by(allergens.count) }
         it { expect { subject }.to change { Menu::AllergensInDish.count }.by(allergens.count) }
@@ -366,29 +366,29 @@ RSpec.describe Menu::CopyDish, type: :interaction do
       end
 
       context 'when providing {copy_allergens: "link"}' do
-        let(:params) { { old:, current_user:, copy_allergens: "link" } }
+        let(:params) { { old:, current_user:, copy_allergens: 'link' } }
 
         it { expect(subject.result.allergens).not_to be_empty }
         it { expect(subject.result.allergens.map(&:id)).to match_array(allergens.map(&:id)) }
         it { expect(subject.result.allergens.map(&:id)).to match_array(old.allergens.map(&:id)) }
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
         it { expect { subject }.to change { Menu::AllergensInDish.count }.by(allergens.count) }
 
         context 'when allergens have images' do
           let(:allergens) { create_list(:menu_allergen, 3, :with_image_with_attachment) }
 
-          it { expect { subject }.not_to change { Image.count } }
-          it { expect { subject }.not_to change { ImageToRecord.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Attachment.count } }
-          it { expect { subject }.not_to change { ActiveStorage::Blob.count } }
+          it { expect { subject }.not_to(change { Image.count }) }
+          it { expect { subject }.not_to(change { ImageToRecord.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Attachment.count }) }
+          it { expect { subject }.not_to(change { ActiveStorage::Blob.count }) }
         end
       end
 
       context 'when providing {copy_allergens: "none"}' do
-        let(:params) { { old:, current_user:, copy_allergens: "none" } }
+        let(:params) { { old:, current_user:, copy_allergens: 'none' } }
         it { expect(subject.result.allergens).to be_empty }
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
-        it { expect { subject }.not_to change { Menu::AllergensInDish.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+        it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }
       end
     end
 
@@ -410,10 +410,10 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
         it { expect(dish.allergens.count).to be_positive }
 
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
         it { expect(subject.errors).not_to be_empty }
         it { expect(subject.errors.full_messages.join(', ')).to include('Cannot copy allergen:') }
         it { expect(subject).to be_invalid }
@@ -426,10 +426,10 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
         it { expect(dish.tags.count).to be_positive }
 
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
         it { expect(subject.errors).not_to be_empty }
         it { expect(subject.errors.full_messages.join(', ')).to include('Cannot copy tag:') }
         it { expect(subject).to be_invalid }
@@ -442,10 +442,10 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
         it { expect(dish.ingredients.count).to be_positive }
 
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
         it { expect(subject.errors).not_to be_empty }
         it { expect(subject.errors.full_messages.join(', ')).to include('Cannot copy ingredient:') }
         it { expect(subject).to be_invalid }
@@ -455,14 +455,14 @@ RSpec.describe Menu::CopyDish, type: :interaction do
         before do
           allow_any_instance_of(Menu::Dish).to receive(:valid?).and_return(false)
           errors = ActiveModel::Errors.new(Menu::Dish)
-          errors.add(:base, "Some error message")
+          errors.add(:base, 'Some error message')
           allow_any_instance_of(Menu::Dish).to receive(:errors).and_return(errors)
         end
 
-        it { expect { subject }.not_to change { Menu::Allergen.count } }
-        it { expect { subject }.not_to change { Menu::Tag.count } }
-        it { expect { subject }.not_to change { Menu::Ingredient.count } }
-        it { expect { subject }.not_to change { Menu::Dish.count } }
+        it { expect { subject }.not_to(change { Menu::Allergen.count }) }
+        it { expect { subject }.not_to(change { Menu::Tag.count }) }
+        it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
+        it { expect { subject }.not_to(change { Menu::Dish.count }) }
         it { expect(subject.errors).not_to be_empty }
         it { expect(subject).to be_invalid }
       end

@@ -9,7 +9,7 @@ RSpec.shared_examples MODEL_MOBILITY_EXAMPLES do |args = {}|
   it { should respond_to("#{args[:field]}=") }
   it { should respond_to("#{args[:field]}?") }
 
-  it "checking mock data: should be a existing instance" do
+  it 'checking mock data: should be a existing instance' do
     expect(subject).to be_a(ActiveRecord::Base)
     expect(subject).to be_valid
     expect(subject).to be_persisted
@@ -54,12 +54,12 @@ RSpec.shared_examples MODEL_MOBILITY_EXAMPLES do |args = {}|
   end
 
   pending "can find elements with ilike match for #{args[:field]}" do
-    # TODO test this kind of query works
+    # TODO: test this kind of query works
     # subject.class.i18n { name.matches("foo") }
     # subject.class.i18n { name.matches("foo").and(content.matches("bar")) }
 
     subject.send("#{args[:field]}=", 'test')
-    items = subject.class.i18n { send(args[:field]).matches("%te%") }
+    items = subject.class.i18n { send(args[:field]).matches('%te%') }
     expect(items.count).to be > 0
     expect(items).to include(subject)
   end

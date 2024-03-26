@@ -2,7 +2,6 @@
 
 # User-level preferences, like language.
 class Preference < ApplicationRecord
-
   # ################################
   # Associations
   # ################################
@@ -22,7 +21,7 @@ class Preference < ApplicationRecord
   class << self
     def create_missing_for(user)
       DEFAULTS.each do |key, data|
-        where(key: key, user: user).first_or_create!(data.as_json(except: :default))
+        where(key:, user:).first_or_create!(data.as_json(except: :default))
       end
     end
 

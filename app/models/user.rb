@@ -2,7 +2,6 @@
 
 # Users of the application.
 class User < ApplicationRecord
-
   # ################################
   # Constants, settings, modules, et...
   # ################################
@@ -14,7 +13,8 @@ class User < ApplicationRecord
   # ################################
   # Validations
   # ################################
-  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: 'is not a valid email' }, uniqueness: { case_sensitive: false }
+  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: 'is not a valid email' },
+                    uniqueness: { case_sensitive: false }
   validates :username, presence: false, uniqueness: { case_sensitive: false, allow_blank: true }
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
 
@@ -41,7 +41,7 @@ class User < ApplicationRecord
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value("status", value)
+    @attributes.write_cast_value('status', value)
   end
 
   def create_missing_preferences
@@ -68,7 +68,7 @@ class User < ApplicationRecord
   end
 
   def preference(key)
-    preferences.where(key: key).first
+    preferences.where(key:).first
   end
 
   def preference_value(key)
@@ -76,7 +76,7 @@ class User < ApplicationRecord
   end
 
   def preferences_hash
-    preferences.map { |p| [p.key, (p.value || Preference.default(p.key))] }.to_h
+    preferences.map { |p| [p.key, p.value || Preference.default(p.key)] }.to_h
   end
 
   private

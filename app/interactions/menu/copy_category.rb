@@ -2,9 +2,9 @@
 
 module Menu
   class CopyCategory < ActiveInteraction::Base
-    DEFAULT_COPY_IMAGES = "full"
-    DEFAULT_COPY_DISHES = "full"
-    DEFAULT_COPY_CHILDREN = "full"
+    DEFAULT_COPY_IMAGES = 'full'
+    DEFAULT_COPY_DISHES = 'full'
+    DEFAULT_COPY_CHILDREN = 'full'
 
     PERMITTED_KEYS = %i[old current_user parent_id copy_images copy_dishes copy_children].freeze
 
@@ -32,14 +32,13 @@ module Menu
 
     def execute
       ::Log::ModelChange.with_current_user(current_user) do
-
         @new = Category.new
 
         Category.transaction do
           raise ActiveRecord::Rollback unless do_copy_category &&
-            do_copy_images &&
-            do_copy_dishes &&
-            do_copy_children
+                                              do_copy_images &&
+                                              do_copy_dishes &&
+                                              do_copy_children
         end
 
         @new
@@ -122,7 +121,6 @@ module Menu
       end
 
       true
-
     rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
       errors.add(:base, "Cannot copy image: #{e.message}", details: e)
       false

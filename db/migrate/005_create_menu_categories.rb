@@ -9,8 +9,10 @@ class CreateMenuCategories < ActiveRecord::Migration[7.0]
       t.text    :secret_desc, null: true
       t.jsonb   :other,       null: false, default: {}
       t.float   :price,       null: true
-      t.bigint :parent_id,    null: true, index: true, foreign_key: { to_table: :menu_categories, on_delete: :cascade }, class_name: "Menu::Category"
-      t.belongs_to :menu_visibility, null: true, foreign_key: true, index: true, on_delete: :cascade, class_name: "Menu::Visibility"
+      t.bigint :parent_id,    null: true, index: true,
+                              foreign_key: { to_table: :menu_categories, on_delete: :cascade }, class_name: 'Menu::Category'
+      t.belongs_to :menu_visibility, null: true, foreign_key: true, index: true, on_delete: :cascade,
+                                     class_name: 'Menu::Visibility'
 
       t.timestamps
       t.index %w[index parent_id], unique: true

@@ -2,11 +2,10 @@
 
 module Menu
   class Tag < ApplicationRecord
-
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
-    DEFAULT_COLOR = '#000000'.freeze
+    DEFAULT_COLOR = '#000000'
     VALID_STATUSES = %w[active deleted].freeze
     include HasImageAttached
     include TrackModelChanges
@@ -89,7 +88,7 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value("status", value)
+      @attributes.write_cast_value('status', value)
     end
 
     private

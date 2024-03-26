@@ -117,14 +117,18 @@ RSpec.describe Reservation, type: :model do
         before { reservation.tags = tags }
         subject { reservation.reload }
 
-        it { expect { subject.reservation_tags = [create(:reservation_tag)] }.to change { subject.reload.tags.count }.from(3).to(1) }
+        it {
+          expect { subject.reservation_tags = [create(:reservation_tag)] }.to change {
+                                                                                subject.reload.tags.count
+                                                                              }.from(3).to(1)
+        }
 
         it { expect { subject.destroy! }.to change { Reservation.count }.by(-1) }
         it { expect { subject.destroy! }.to change { TagInReservation.count }.by(-3) }
-        it { expect { subject.destroy! }.not_to change { ReservationTag.count } }
+        it { expect { subject.destroy! }.not_to(change { ReservationTag.count }) }
 
-        it { expect { subject.tags = [] }.not_to change { Reservation.count } }
-        it { expect { subject.tags = [] }.not_to change { ReservationTag.count } }
+        it { expect { subject.tags = [] }.not_to(change { Reservation.count }) }
+        it { expect { subject.tags = [] }.not_to(change { ReservationTag.count }) }
         it { expect { subject.tags = [] }.to change { TagInReservation.count }.by(-3) }
       end
     end
@@ -138,7 +142,7 @@ RSpec.describe Reservation, type: :model do
         subject { reservation.confirmation_email }
 
         it { expect { subject }.not_to raise_error }
-        it { expect { subject }.not_to change { ActionMailer::Base.deliveries.count } }
+        it { expect { subject }.not_to(change { ActionMailer::Base.deliveries.count }) }
         it { expect { subject }.to change { Log::ImagePixel.count }.by(1) }
         it { expect(subject.body.encoded).to include(Log::ImagePixel.last.url) }
       end
@@ -153,8 +157,8 @@ RSpec.describe Reservation, type: :model do
         end
 
         it { expect { subject }.not_to raise_error }
-        it { expect { subject }.not_to change { ActionMailer::Base.deliveries.count } }
-        it { expect { subject }.not_to change { Log::ImagePixel.count } }
+        it { expect { subject }.not_to(change { ActionMailer::Base.deliveries.count }) }
+        it { expect { subject }.not_to(change { Log::ImagePixel.count }) }
       end
     end
   end

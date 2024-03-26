@@ -21,15 +21,14 @@ module Menu
 
     def execute
       ::Log::ModelChange.with_current_user(current_user) do
-
         @new = Dish.new
 
         Dish.transaction do
           raise ActiveRecord::Rollback unless do_copy_dish &&
-            do_copy_images &&
-            do_copy_ingredients &&
-            do_copy_tags &&
-            do_copy_allergens
+                                              do_copy_images &&
+                                              do_copy_ingredients &&
+                                              do_copy_tags &&
+                                              do_copy_allergens
         end
 
         @new
@@ -66,7 +65,6 @@ module Menu
       end
 
       true
-
     rescue ActiveRecord::RecordInvalid => e
       errors.add(:base, "Cannot copy image: #{e.message}", details: e)
       false
@@ -77,7 +75,7 @@ module Menu
 
       old.ingredients.each do |old_ingredient|
         if copy_ingredients == 'full'
-          @new.ingredients << old_ingredient.copy!(current_user: current_user)
+          @new.ingredients << old_ingredient.copy!(current_user:)
         elsif copy_ingredients == 'link'
           @new.ingredients << old_ingredient
         end
@@ -94,7 +92,7 @@ module Menu
 
       old.tags.each do |old_tag|
         if copy_tags == 'full'
-          @new.tags << old_tag.copy!(current_user: current_user)
+          @new.tags << old_tag.copy!(current_user:)
         elsif copy_tags == 'link'
           @new.tags << old_tag
         end
@@ -111,7 +109,7 @@ module Menu
 
       old.allergens.each do |old_allergen|
         if copy_allergens == 'full'
-          @new.allergens << old_allergen.copy!(current_user: current_user)
+          @new.allergens << old_allergen.copy!(current_user:)
         elsif copy_allergens == 'link'
           @new.allergens << old_allergen
         end

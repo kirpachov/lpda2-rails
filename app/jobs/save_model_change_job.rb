@@ -3,7 +3,7 @@
 # Saving model changes in a background job
 class SaveModelChangeJob
   include Sidekiq::Worker
-   sidekiq_options retry: 0, queue: 'default'
+  sidekiq_options retry: 0, queue: 'default'
 
   def perform(data)
     Log::ModelChange.create!(data)

@@ -11,7 +11,10 @@ module V1
 
     def index
       call = ::SearchImages.run(params:)
-      return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
+      unless call.valid?
+        return render_error(status: 400, details: call.errors.as_json,
+                            message: call.errors.full_messages.join(', '))
+      end
 
       items = call.result.paginate(pagination_params)
 
@@ -33,8 +36,8 @@ module V1
         return render json: { image_ids: record.reload.images.pluck(:id) }
       end
 
-      # TODO manage case of single image.
-      raise "unimplemented."
+      # TODO: manage case of single image.
+      raise 'unimplemented.'
     end
 
     # Update images associated to some record.
@@ -50,14 +53,15 @@ module V1
           end
         end
       elsif record.respond_to?(:image)
-        # TODO manage case of single image.
-        raise "unimplemented."
+        # TODO: manage case of single image.
+        raise 'unimplemented.'
         # record.image = params[:image_id].present? ? Image.where(id: params[:image_id].to_i) : nil
       else
         return render_error(status: 400, message: 'record does not support #images or #image.')
       end
 
-      render json: { record_type: record.class.name, record_id: params[:record_id].to_i, image_ids: record.reload.images.pluck(:id) }
+      render json: { record_type: record.class.name, record_id: params[:record_id].to_i,
+                     image_ids: record.reload.images.pluck(:id) }
     end
 
     def create
@@ -90,11 +94,13 @@ module V1
     def record
       @record ||= record_type.constantize.find(params[:record_id])
     rescue ActiveRecord::RecordNotFound, NameError
-      render_error(status: 404, message: I18n.t('record_not_found', model: params[:record_type].to_s, id: params[:record_id].inspect))
+      render_error(status: 404,
+                   message: I18n.t('record_not_found', model: params[:record_type].to_s,
+                                                       id: params[:record_id].inspect))
     end
 
     def record_type
-      params[:record_type].to_s.gsub(/\s+/, '').split("::").map(&:capitalize).join("::")
+      params[:record_type].to_s.gsub(/\s+/, '').split('::').map(&:capitalize).join('::')
     end
 
     def serve_image(image)
@@ -114,7 +120,9 @@ module V1
     def find_item_by_key
       @image = Image.visible.find_by!(key: params[:key])
     rescue ActiveRecord::RecordNotFound
-      render_error(status: 404, message: "#{I18n.t('record_not_found_by', model: Image, attribute: :key, value: params[:key].inspect)}")
+      render_error(status: 404,
+                   message: "#{I18n.t('record_not_found_by', model: Image, attribute: :key,
+                                                             value: params[:key].inspect)}")
     end
 
     def find_pixel_by_secret
@@ -122,13 +130,17 @@ module V1
       @pixel.events.create!(event_data: { ip: request.remote_ip }, event_time: Time.now)
       @image = Image.find_by!(id: @pixel.image_id)
     rescue ActiveRecord::RecordNotFound
-      render_error(status: 404, message: "#{I18n.t('record_not_found', model: Log::ImagePixel, id: params[:key].inspect)}")
+      render_error(status: 404,
+                   message: "#{I18n.t('record_not_found', model: Log::ImagePixel,
+                                                          id: params[:key].inspect)}")
     end
 
     def find_variant
       @variant = @image.find_variant!(params[:variant].to_s)
     rescue ActiveRecord::RecordNotFound
-      render_error(status: 404, message: "#{I18n.t('record_not_found', model: Image, id: params[:id].inspect)}#{params[:variant].present? ? " with variant #{params[:variant].inspect}" : ''}")
+      render_error(status: 404,
+                   message: "#{I18n.t('record_not_found', model: Image,
+                                                          id: params[:id].inspect)}#{params[:variant].present? ? " with variant #{params[:variant].inspect}" : ''}")
     end
 
     def full_json(item_or_items)

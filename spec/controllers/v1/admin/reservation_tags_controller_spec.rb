@@ -11,10 +11,10 @@ RSpec.shared_examples RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE do |options = {
 
   if options
     %w[title bg_color color].each do |field|
-      if options[field]
-        it "should have #{options[field].to_s.inspect} #{field}" do
-          should include(title: options[field])
-        end
+      next unless options[field]
+
+      it "should have #{options[field].to_s.inspect} #{field}" do
+        should include(title: options[field])
       end
     end
   end
@@ -75,7 +75,10 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/reservation_tags/21').to(id: "21", action: :update, format: :json) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/reservation_tags/21').to(id: '21', action: :update,
+                                                                                   format: :json)
+    }
 
     let(:reservation_tag) { create(:reservation_tag) }
 
@@ -96,7 +99,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
       context 'when no data is provided, nothing is changed.' do
         before { reservation_tag }
 
-        it { expect { req }.not_to change { reservation_tag.reload.as_json } }
+        it { expect { req }.not_to(change { reservation_tag.reload.as_json }) }
       end
 
       context 'when :title is provided, will update title' do
@@ -104,7 +107,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         let(:title) { Faker::Lorem.sentence }
         let(:params) { { title: } }
 
-        it { expect { req }.to change { reservation_tag.reload.title } }
+        it { expect { req }.to(change { reservation_tag.reload.title }) }
       end
 
       context 'when :bg_color is provided, will update bg_color' do
@@ -112,7 +115,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         let(:bg_color) { Faker::Color.hex_color }
         let(:params) { { bg_color: } }
 
-        it { expect { req }.to change { reservation_tag.reload.bg_color } }
+        it { expect { req }.to(change { reservation_tag.reload.bg_color }) }
       end
 
       context 'when :color is provided, will update color' do
@@ -120,7 +123,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         let(:color) { Faker::Color.hex_color }
         let(:params) { { color: } }
 
-        it { expect { req }.to change { reservation_tag.reload.color } }
+        it { expect { req }.to(change { reservation_tag.reload.color }) }
       end
     end
   end
@@ -197,7 +200,9 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
       end
 
       context 'if name, color and bg_color are provided, is ok.' do
-        let(:params) { { title: Faker::Lorem.paragraph, color: Faker::Color.hex_color, bg_color: Faker::Color.hex_color } }
+        let(:params) do
+          { title: Faker::Lorem.paragraph, color: Faker::Color.hex_color, bg_color: Faker::Color.hex_color }
+        end
 
         it { expect { req(params) }.to change(ReservationTag, :count).by(1) }
 
@@ -214,7 +219,10 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { expect(described_class).to route(:delete, '/v1/admin/reservation_tags/77').to(id: '77', action: :destroy, format: :json) }
+    it {
+      expect(described_class).to route(:delete, '/v1/admin/reservation_tags/77').to(id: '77', action: :destroy,
+                                                                                    format: :json)
+    }
 
     let(:params) { {} }
 

@@ -7,7 +7,7 @@ RSpec.shared_context CONTROLLER_AUTHENTICATION_CONTEXT do
 
   def authenticate_request(user: nil)
     user ||= create(:user)
-    @refresh_token = create(:refresh_token, user: user)
+    @refresh_token = create(:refresh_token, user:)
     @current_user = user.reload
 
     @request.headers['Authorization'] = "Bearer #{Auth::JsonWebToken.encode_refresh_token_data(@refresh_token)}"

@@ -10,7 +10,6 @@ Rails.application.routes.draw do
 
   defaults format: :json do
     scope module: :v1, path: 'v1' do
-
       resources :images, only: %w[index show create] do
         member do
           get 'download', action: :download
@@ -47,7 +46,6 @@ Rails.application.routes.draw do
             post 'deliver_confirmation_email'
           end
         end
-
 
         resources :preferences, only: %i[index] do
           collection do

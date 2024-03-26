@@ -13,12 +13,11 @@ module Menu
 
     def execute
       ::Log::ModelChange.with_current_user(current_user) do
-
         @new = Tag.new
 
         Tag.transaction do
           raise ActiveRecord::Rollback unless do_copy_tag &&
-            do_copy_image
+                                              do_copy_image
         end
 
         @new

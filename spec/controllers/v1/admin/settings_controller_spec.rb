@@ -33,7 +33,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
 
         it { should be_a(Hash) }
         it { should_not be_empty }
-        it "checking values" do
+        it 'checking values' do
           expect(subject.keys).to include(*setting_keys)
           expect(subject['default_language']).to eq Setting.default(:default_language).to_s
         end
@@ -43,7 +43,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
 
   context '#value' do
     def req(key = setting_keys.sample)
-      get :value, params: { key: key }
+      get :value, params: { key: }
     end
 
     it 'should return the value of the setting' do
@@ -96,7 +96,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
 
     context 'checking mock data' do
       it do
-        expect(Setting.find_by(key: key).value).not_to eq nil
+        expect(Setting.find_by(key:).value).not_to eq nil
       end
     end
 
@@ -118,10 +118,13 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
   end
 
   context '#update' do
-    it { should route(:patch, '/v1/admin/settings/default_language').to(action: :update, key: 'default_language', 'format': :json) }
+    it {
+      should route(:patch, '/v1/admin/settings/default_language').to(action: :update, key: 'default_language',
+                                                                     'format': :json)
+    }
 
     def req(key, value)
-      patch :update, params: { key: key, value: value }
+      patch :update, params: { key:, value: }
     end
 
     it 'should be successful' do

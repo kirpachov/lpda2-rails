@@ -4,12 +4,12 @@ class Preference
   DEFAULTS = {
     language: {
       # value: :en,
-      default: I18n.default_locale,
+      default: I18n.default_locale
     },
 
     known_languages: {
       # value: [:en],
-      default: I18n.available_locales,
+      default: I18n.available_locales
     },
 
     timezone: {

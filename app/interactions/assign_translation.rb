@@ -3,7 +3,8 @@
 class AssignTranslation < ActiveInteraction::Base
   object :record, class: ApplicationRecord
   string :attribute
-  interface :value, methods: Hash.new.methods & String.new.methods & ActionController::Parameters.new.methods, default: nil
+  interface :value, methods: {}.methods & String.new.methods & ActionController::Parameters.new.methods,
+                    default: nil
 
   validates :record, presence: true
   validates :attribute, presence: true
@@ -32,7 +33,9 @@ class AssignTranslation < ActiveInteraction::Base
   private
 
   def attribute_is_translatable
-    return if record.class.respond_to?(:mobility_attributes) && record.class.mobility_attributes.include?(attribute.to_s)
+    if record.class.respond_to?(:mobility_attributes) && record.class.mobility_attributes.include?(attribute.to_s)
+      return
+    end
 
     errors.add(:attribute, :not_translatable)
   end
@@ -46,7 +49,7 @@ class AssignTranslation < ActiveInteraction::Base
 
   def validate_value_hash
     value.keys.reject { |locale| I18n.available_locales.include?(locale.to_sym) }.each do |invalid_key|
-      errors.add(attribute, I18n.t("errors.messages.invalid_locale", lang: invalid_key))
+      errors.add(attribute, I18n.t('errors.messages.invalid_locale', lang: invalid_key))
     end
   end
 end

@@ -3,26 +3,24 @@
 CANNOT_PUBLISH_CATEGORY = 'cannot publish category'
 RSpec.shared_examples CANNOT_PUBLISH_CATEGORY do |options = nil|
   context 'checking mock data' do
-    it "should have a subject of type Menu::CanPublishCategory" do
+    it 'should have a subject of type Menu::CanPublishCategory' do
       expect(subject).to be_a(Menu::CanPublishCategory)
     end
 
-    it "should have a let(:category) of type Menu::Category" do
+    it 'should have a let(:category) of type Menu::Category' do
       expect(category).to eq category
       expect(category).to be_a(Menu::Category)
-      expect { category }.not_to change { Menu::Category.count }
+      expect { category }.not_to(change { Menu::Category.count })
     end
   end
 
   it { expect(call.result).to eq false }
   it { expect(reasons).not_to be_empty }
-  it { expect { subject }.not_to change { category.reload.visibility&.as_json } }
+  it { expect { subject }.not_to(change { category.reload.visibility&.as_json }) }
 
-  if options
-    if options[:expected_reasons].is_a?(Array)
-      options[:expected_reasons].each do |reason|
-        it { expect(reasons_codes).to include(reason) }
-      end
+  if options && options[:expected_reasons].is_a?(Array)
+    options[:expected_reasons].each do |reason|
+      it { expect(reasons_codes).to include(reason) }
     end
   end
 end

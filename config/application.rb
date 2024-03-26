@@ -1,6 +1,6 @@
-require_relative "boot"
+require_relative 'boot'
 
-require "rails/all"
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -24,7 +24,7 @@ module Lpda2
                               controller_specs: true,
                               request_specs: false
 
-      generate.fixture_replacement :factory_bot, dir: "spec/factories"
+      generate.fixture_replacement :factory_bot, dir: 'spec/factories'
     end
 
     config.eager_load_paths << Rails.root.join('lib')
@@ -49,19 +49,19 @@ module Lpda2
     imap = Rails.configuration.app[:imap]
     Mail.defaults do
       if imap
-        retriever_method :imap, :address        => imap[:address],
-                                :port           => imap[:port],
-                                :user_name      => imap[:user_name],
-                                :password       => imap[:password],
-                                :enable_ssl     => imap[:enable_ssl]
+        retriever_method :imap, address: imap[:address],
+                                port: imap[:port],
+                                user_name: imap[:user_name],
+                                password: imap[:password],
+                                enable_ssl: imap[:enable_ssl]
       end
 
       if smtp
-        delivery_method :smtp, :address         => smtp[:address],
-                                :port           => smtp[:port],
-                                :authentication => smtp[:authentication],
-                                :password       => smtp[:password],
-                                :user_name      => smtp[:user_name]
+        delivery_method :smtp, address: smtp[:address],
+                               port: smtp[:port],
+                               authentication: smtp[:authentication],
+                               password: smtp[:password],
+                               user_name: smtp[:user_name]
       end
     end
     if smtp

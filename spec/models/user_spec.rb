@@ -181,9 +181,9 @@ RSpec.describe User, type: :model do
 
     it { should respond_to(:preference_value) }
 
-    it "assign timezone value and check if assigned." do
+    it 'assign timezone value and check if assigned.' do
       value = generate(:timezone)
-      user.preference(:timezone).update!(value: value)
+      user.preference(:timezone).update!(value:)
       expect(user.preference_value(:timezone)).to eq(user.preference(:timezone).value)
       expect(user.preference_value(:timezone)).to eq(value)
     end

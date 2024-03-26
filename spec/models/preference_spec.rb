@@ -16,8 +16,8 @@ RSpec.describe Preference, type: :model do
 
   context 'should have valid mocks' do
     10.times do
-      it { expect(build(:preference, user: user)).to be_valid }
-      it { expect { create(:preference, user: user) }.not_to raise_error }
+      it { expect(build(:preference, user:)).to be_valid }
+      it { expect { create(:preference, user:) }.not_to raise_error }
     end
   end
 
@@ -26,16 +26,16 @@ RSpec.describe Preference, type: :model do
 
     it { should validate_presence_of(:key) }
     it { should_not validate_presence_of(:value) }
-    it { should validate_uniqueness_of(:key).scoped_to(:user_id).case_insensitive  }
+    it { should validate_uniqueness_of(:key).scoped_to(:user_id).case_insensitive }
 
     context 'checking if key uniqueness is case insensitive' do
       let(:key) { Preference::DEFAULTS.keys.sample }
 
       before do
-        create(:preference, key: key, user: user)
+        create(:preference, key:, user:)
       end
 
-      subject { build(:preference, key: key.upcase, user: user) }
+      subject { build(:preference, key: key.upcase, user:) }
 
       it { should_not be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
@@ -47,14 +47,14 @@ RSpec.describe Preference, type: :model do
     end
 
     context 'when key is invalid' do
-      subject { build(:preference, key: :invalid_key, user: user) }
+      subject { build(:preference, key: :invalid_key, user:) }
 
       it { should_not be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
     end
 
     context 'when key is valid and value is nil' do
-      subject { build(:preference, key: Preference::DEFAULTS.keys.sample, user: user) }
+      subject { build(:preference, key: Preference::DEFAULTS.keys.sample, user:) }
 
       it { should be_valid }
       it { expect { subject.save! }.not_to raise_error }

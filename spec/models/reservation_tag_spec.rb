@@ -23,8 +23,8 @@ RSpec.describe ReservationTag, type: :model do
       let(:title) { Faker::Lorem.sentence }
       let!(:old) { create(:reservation_tag, title:) }
       let(:new) { build(:reservation_tag, title:) }
-      before{ new.validate }
-      subject{ new }
+      before { new.validate }
+      subject { new }
 
       it { should_not be_valid }
       it { expect(subject.errors[:title]).not_to be_empty }
@@ -69,19 +69,19 @@ RSpec.describe ReservationTag, type: :model do
     subject { tag }
 
     it { expect { tag.reservations << reservations.sample }.not_to raise_error }
-    it { expect { tag.reservations << reservations.sample }.not_to change { ReservationTag.count } }
+    it { expect { tag.reservations << reservations.sample }.not_to(change { ReservationTag.count }) }
     it { expect { tag.reservations << reservations.sample }.to change { TagInReservation.count }.by(1) }
     it { expect { tag.reservations << reservations.sample }.to change { tag.reload.reservations.count }.from(0).to(1) }
 
     context 'when tag has 3 reservations' do
       before { tag.reservations = reservations }
 
-      it { expect { tag.destroy! }.not_to change { Reservation.count } }
+      it { expect { tag.destroy! }.not_to(change { Reservation.count }) }
       it { expect { tag.destroy! }.to change { ReservationTag.count }.by(-1) }
       it { expect { tag.destroy! }.to change { TagInReservation.count }.by(-3) }
 
       it { expect { tag.reservations.sample.destroy! }.to change { TagInReservation.count }.by(-1) }
-      it { expect { tag.reservations.sample.destroy! }.not_to change { ReservationTag.count } }
+      it { expect { tag.reservations.sample.destroy! }.not_to(change { ReservationTag.count }) }
       it { expect { tag.reservations.sample.destroy! }.to change { Reservation.count }.by(-1) }
     end
   end

@@ -43,7 +43,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
     before { authenticate_request(user:) }
 
     def req(key = preference_keys.sample)
-      get :value, params: { key: key }
+      get :value, params: { key: }
     end
 
     it 'should return the value of the setting of this user' do
@@ -106,7 +106,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
     it { should route(:patch, '/v1/admin/preferences/language').to(action: :update, key: 'language', 'format': :json) }
 
     def req(key, value)
-      patch :update, params: { key: key, value: value }
+      patch :update, params: { key:, value: }
     end
 
     it 'should be successful' do
@@ -122,7 +122,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
         req(:language, language)
 
         expect(response).to be_successful
-        expect(Preference.where(user: user, key: :language).first.value.to_s).to eq language
+        expect(Preference.where(user:, key: :language).first.value.to_s).to eq language
       end
     end
 

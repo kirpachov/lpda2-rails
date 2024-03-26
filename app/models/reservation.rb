@@ -21,7 +21,7 @@ class Reservation < ApplicationRecord
     noshow: 'noshow',
 
     # People that cancelled (deleted by user-side)
-    cancelled: 'cancelled',
+    cancelled: 'cancelled'
   }
 
   # ################################
@@ -68,7 +68,7 @@ class Reservation < ApplicationRecord
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value("status", value)
+    @attributes.write_cast_value('status', value)
   end
 
   def create_email_pixel(image:, delivered_email:)
@@ -76,7 +76,7 @@ class Reservation < ApplicationRecord
       record: self,
       image:,
       delivered_email:,
-      event_type: 'email_open',
+      event_type: 'email_open'
     )
   end
 

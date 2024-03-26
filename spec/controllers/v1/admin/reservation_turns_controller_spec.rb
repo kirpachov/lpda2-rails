@@ -57,23 +57,25 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
         it { expect(subject.dig(:metadata, :total_count)).to eq 1 }
       end
 
-      context "when filtering by query" do
+      context 'when filtering by query' do
         before do
-          create(:reservation_turn, weekday: 0, name: "First", starts_at: '10:00', ends_at: '13:00')
-          create(:reservation_turn, weekday: 1, name: "Last", starts_at: '18:00', ends_at: '19:00')
+          create(:reservation_turn, weekday: 0, name: 'First', starts_at: '10:00', ends_at: '13:00')
+          create(:reservation_turn, weekday: 1, name: 'Last', starts_at: '18:00', ends_at: '19:00')
           req(query: 'First')
         end
 
         subject { parsed_response_body }
         it { expect(subject.dig(:metadata, :total_count)).to eq 1 }
-        it { expect(subject[:items]).to all(include(name: "First")) }
+        it { expect(subject[:items]).to all(include(name: 'First')) }
       end
     end
   end
 
   context '#show' do
     it { expect(instance).to respond_to(:show) }
-    it { expect(described_class).to route(:get, '/v1/admin/reservation_turns/2').to(action: :show, format: :json, id: 2) }
+    it {
+      expect(described_class).to route(:get, '/v1/admin/reservation_turns/2').to(action: :show, format: :json, id: 2)
+    }
 
     let(:reservation_turn) { create(:reservation_turn) }
 
@@ -127,10 +129,14 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
     context '(authenticated)' do
       before { authenticate_request }
 
-      it { expect { req(starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2) }.to change(ReservationTurn, :count).by(1) }
+      it {
+        expect do
+          req(starts_at: '10:00', ends_at: '11:00', name: 'Pranzo', weekday: 2)
+        end.to change(ReservationTurn, :count).by(1)
+      }
 
       context 'providing { starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2 }' do
-        let(:params) { { starts_at: "10:00", ends_at: "11:00", name: "Pranzo", weekday: 2 } }
+        let(:params) { { starts_at: '10:00', ends_at: '11:00', name: 'Pranzo', weekday: 2 } }
         before { req }
 
         subject { response }
@@ -150,7 +156,7 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
       end
 
       context 'providing { starts_at: "18:00", ends_at: "19:00", name: "Cena 1", weekday: 5 }' do
-        let(:params) { { starts_at: "18:00", ends_at: "19:00", name: "Cena 1", weekday: 5 } }
+        let(:params) { { starts_at: '18:00', ends_at: '19:00', name: 'Cena 1', weekday: 5 } }
         before { req }
 
         subject { response }
@@ -173,7 +179,10 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/reservation_turns/2').to(action: :update, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/reservation_turns/2').to(action: :update, id: '2',
+                                                                                   format: :json)
+    }
 
     let(:reservation_turn) { create(:reservation_turn, starts_at: '10:00', ends_at: '13:00') }
 
@@ -193,11 +202,11 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
 
       it do
         reservation_turn
-        expect { req(reservation_turn.id, starts_at: "10:00") }.not_to change(ReservationTurn, :count)
+        expect { req(reservation_turn.id, starts_at: '10:00') }.not_to change(ReservationTurn, :count)
       end
 
       context 'providing { starts_at: "11:00" }' do
-        let(:params) { { starts_at: "11:00" } }
+        let(:params) { { starts_at: '11:00' } }
         before { req }
 
         subject { response }
@@ -226,12 +235,15 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { expect(described_class).to route(:delete, '/v1/admin/reservation_turns/2').to(action: :destroy, id: "2", format: :json) }
+    it {
+      expect(described_class).to route(:delete, '/v1/admin/reservation_turns/2').to(action: :destroy, id: '2',
+                                                                                    format: :json)
+    }
 
     let(:reservation_turn) { create(:reservation_turn) }
 
     def req(id = reservation_turn.id)
-      delete :destroy, params: { id: id }
+      delete :destroy, params: { id: }
     end
 
     context 'when user is not authenticated' do

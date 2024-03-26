@@ -6,8 +6,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
-    belongs_to :menu_category, class_name: "Menu::Category", optional: false
+    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
+    belongs_to :menu_category, class_name: 'Menu::Category', optional: false
 
     # ##############################
     # Aliases
@@ -21,7 +21,8 @@ module Menu
     # ##############################
     # Validations
     # ##############################
-    validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true, uniqueness: { scope: :category_id }
+    validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true,
+                      uniqueness: { scope: :category_id }
     validates :menu_dish_id, uniqueness: { scope: :menu_category_id }
 
     # ##############################
@@ -38,7 +39,7 @@ module Menu
     end
 
     def assign_valid_index
-      self.index = self.class.where(category: category).order(index: :desc).first&.index.to_i + 1
+      self.index = self.class.where(category:).order(index: :desc).first&.index.to_i + 1
     end
   end
 end

@@ -39,7 +39,10 @@ module V1
       end
 
       def validate_key_exists
-        render json: { message: I18n.t('preferences.key_not_found') }, status: 404 unless (@setting = Setting.where(key: params[:key]).first).present?
+        return if (@setting = Setting.where(key: params[:key]).first).present?
+
+        render json: { message: I18n.t('preferences.key_not_found') },
+               status: 404
       end
     end
   end

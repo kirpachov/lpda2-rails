@@ -42,6 +42,7 @@ class Setting
     def validate_available_locales
       return unless record.value.is_a?(Array)
       return if (invalid_locales = record.value.reject { |v| I18n.available_locales.include?(v.to_sym) }).empty?
+
       # return if record.value.all? { |v| I18n.available_locales.include?(v.to_sym) }
 
       record.errors.add(:value, "contains invalid languages: #{invalid_locales.join(', ')}")
@@ -50,14 +51,17 @@ class Setting
     def validate_max_people_per_reservation
       return if record.value.to_i.positive?
 
-      record.errors.add(:value, "should be a positive integer")
+      record.errors.add(:value, 'should be a positive integer')
     end
 
     def validate_email_images
       return record.errors.add(:value, "should be a Hash, got #{record.value.class}") unless record.value.is_a?(Hash)
 
       record.value.each do |_key, val|
-        record.errors.add(:value, "should be a url, got #{val.class}") unless val.is_a?(String) && val.match?(URI::DEFAULT_PARSER.make_regexp)
+        unless val.is_a?(String) && val.match?(URI::DEFAULT_PARSER.make_regexp)
+          record.errors.add(:value,
+                            "should be a url, got #{val.class}")
+        end
       end
     end
 

@@ -24,9 +24,7 @@ module Menu
         categories = value ? categories.with_fixed_price : categories.without_fixed_price
       end
 
-      categories = categories.order(:index)
-
-      categories
+      categories.order(:index)
     end
   end
 end

@@ -2,7 +2,6 @@
 
 module Dev
   class CatImage < ActiveInteraction::Base
-
     class << self
       def create
         ::Image.create_from_url(url: run!.sample)
@@ -43,11 +42,11 @@ module Dev
 
       errors.add(:api_key, 'is required')
       errors.add(:base, <<~ERROR
-Api key is required to fetch cat images.
-You can get one from https://thecatapi.com/
-Once you got the key, add it to config/app.yml as 'cat_api_key'
-ERROR
-)
+        Api key is required to fetch cat images.
+        You can get one from https://thecatapi.com/
+        Once you got the key, add it to config/app.yml as 'cat_api_key'
+      ERROR
+      )
     end
 
     def api_key

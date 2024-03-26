@@ -17,7 +17,7 @@ RSpec.describe Preference::DEFAULTS do
     user.preferences.destroy_all
 
     subject.each do |key, preference_data|
-      preference = Preference.new(preference_data.except(:default).merge(key: key, user: user))
+      preference = Preference.new(preference_data.except(:default).merge(key:, user:))
       expect(preference).to be_valid
       expect(preference.errors).to be_empty
       expect(preference.save).to be true

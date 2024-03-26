@@ -10,7 +10,8 @@ class CreateMissingImages < ActiveInteraction::Base
       next if File.directory?(filepath)
       next unless File.extname(filepath).in?(%w[.png .jpg .jpeg .gif .svg .jpeg])
 
-      key = filepath.split("/autocreate/").last.split('.')[0..-2].join('.').gsub('/', '_').gsub(/[^a-z0-9_\-]/i, '').downcase
+      key = filepath.split('/autocreate/').last.split('.')[0..-2].join('.').gsub('/', '_').gsub(/[^a-z0-9_-]/i,
+                                                                                                '').downcase
 
       next if Image.where(key:).count.positive?
 

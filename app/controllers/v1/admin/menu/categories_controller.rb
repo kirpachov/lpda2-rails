@@ -12,7 +12,10 @@ module V1
 
       def index
         call = ::Menu::SearchCategories.run(params:)
-        return render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(', ')) unless call.valid?
+        unless call.valid?
+          return render_error(status: 400, details: call.errors.as_json,
+                              message: call.errors.full_messages.join(', '))
+        end
 
         items = call.result.paginate(pagination_params)
 
@@ -77,10 +80,7 @@ module V1
         # Checking if can publish.
         # If not publishing, don't care if can publish.
         # If publishing, check if can publish.
-        if @item.visibility.valid? && @item.visibility.save
-
-          return show
-        end
+        return show if @item.visibility.valid? && @item.visibility.save
 
         render_unprocessable_entity(@item)
       end
@@ -117,7 +117,7 @@ module V1
           current_user:,
           copy_images: params[:copy_images],
           copy_dishes: params[:copy_dishes],
-          copy_children: params[:copy_children],
+          copy_children: params[:copy_children]
         }
 
         copy_params.merge!(parent_id: params[:parent_id]) if params.key?(:parent_id)
@@ -150,7 +150,9 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Category, id: params[:category_child_id].inspect))
+        render_error(status: 404,
+                     message: I18n.t('record_not_found', model: Menu::Category,
+                                                         id: params[:category_child_id].inspect))
       end
 
       private
@@ -176,7 +178,8 @@ module V1
       end
 
       def visibility_params
-        params.permit(:public_visible, :public_from, :public_to, :private_visible, :private_from, :private_to, :daily_from, :daily_to)
+        params.permit(:public_visible, :public_from, :public_to, :private_visible, :private_from, :private_to,
+                      :daily_from, :daily_to)
       end
 
       def create_params
@@ -185,14 +188,20 @@ module V1
 
       def update_params
         update_params = params.permit(:parent_id, :secret_desc)
-        update_params.merge!(visibility_id: nil) if update_params[:parent_id].is_a?(Integer) || update_params[:parent_id].is_a?(String)
+        if update_params[:parent_id].is_a?(Integer) || update_params[:parent_id].is_a?(String)
+          update_params.merge!(visibility_id: nil)
+        end
         # update_params.merge!(index: nil) if update_params.key?(:parent_id) && update_params[:parent_id].blank?
         update_params
       end
 
       def find_category
         @item = Menu::Category.visible.where(id: params[:id]).first
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Category, id: params[:id].inspect)) if @item.nil?
+        return unless @item.nil?
+
+        render_error(status: 404,
+                     message: I18n.t('record_not_found', model: Menu::Category,
+                                                         id: params[:id].inspect))
       end
 
       def full_json(item_or_items)
@@ -200,7 +209,8 @@ module V1
 
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Category)
 
-        raise ArgumentError, "Invalid params. Menu::Category or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+        raise ArgumentError,
+              "Invalid params. Menu::Category or ActiveRecord::Relation expected, but #{item_or_items.class} given"
       end
 
       def single_item_full_json(item)

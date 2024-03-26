@@ -15,7 +15,7 @@ class ApplicationController < ActionController::API
   end
 
   def render_unauthorized
-    render_error status: 401, message: 'Unauthorized' # TODO TRANSLATE THIS
+    render_error status: 401, message: 'Unauthorized' # TODO: TRANSLATE THIS
   end
 
   def render_unprocessable_entity(record)
@@ -72,13 +72,14 @@ class ApplicationController < ActionController::API
       total_pages: resources.total_pages,
       total_count: resources.total_entries
     }.merge(
-      params: params.except(:controller, :action, :format, :page, :per_page, :offset).permit!.to_h.transform_values do |value|
-        next value.to_i if value.is_a?(String) && value.match?(/^\d+$/) && value.to_i.to_s == value
-        next true if value.is_a?(String) && value == 'true'
-        next false if value.is_a?(String) && value == 'false'
+      params: params.except(:controller, :action, :format, :page, :per_page,
+                            :offset).permit!.to_h.transform_values do |value|
+                next value.to_i if value.is_a?(String) && value.match?(/^\d+$/) && value.to_i.to_s == value
+                next true if value.is_a?(String) && value == 'true'
+                next false if value.is_a?(String) && value == 'false'
 
-        value
-      end
+                value
+              end
     )
   end
 end

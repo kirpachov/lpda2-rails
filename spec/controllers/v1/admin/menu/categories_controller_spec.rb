@@ -25,7 +25,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     it { expect(described_class).to route(:get, '/v1/admin/menu/categories').to(action: :index, format: :json) }
 
     def req(params = {})
-      get :index, params: params
+      get :index, params:
     end
 
     context 'when user is not authenticated' do
@@ -219,12 +219,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass
+          )
+        }
 
         it { expect(subject[:images].count).to eq 2 }
       end
@@ -249,7 +251,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
             it { expect(subject.count).to eq 2 }
             it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 2 }
-            it { expect(Menu::Category.where(id: subject.map { |j| j[:id] }.uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id)) }
+            it {
+              expect(Menu::Category.where(id: subject.map do |j|
+                                                j[:id]
+                                              end.uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
+            }
           end
 
           context 'metadata' do
@@ -269,7 +275,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
             it { expect(subject.count).to eq 3 }
             it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 3 }
-            it { expect(Menu::Category.where(id: subject.map { |j| j[:id] }.uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id)) }
+            it {
+              expect(Menu::Category.where(id: subject.map do |j|
+                                                j[:id]
+                                              end.uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
+            }
           end
 
           context 'metadata' do
@@ -456,7 +466,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#show' do
     def req(params = {})
-      get :show, params: params
+      get :show, params:
     end
 
     let(:category) { create(:menu_category) }
@@ -485,12 +495,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
 
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass
+          )
+        }
 
         it { expect(subject[:images].count).to eq 0 }
       end
@@ -536,19 +548,21 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
 
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass
+          )
+        }
 
         it { expect(subject[:images].count).to eq 2 }
       end
 
       context 'when category has parent' do
         let(:parent) { create(:menu_category) }
-        let(:category) { create(:menu_category, parent: parent, visibility: nil) }
+        let(:category) { create(:menu_category, parent:, visibility: nil) }
 
         subject do
           req(id: category.id)
@@ -560,13 +574,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
 
         it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
-        it { should include(
-                      parent_id: Integer,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                      parent: Hash
-                    ) }
+        it {
+          should include(
+            parent_id: Integer,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass,
+            parent: Hash
+          )
+        }
       end
 
       context 'when category has name' do
@@ -620,8 +636,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     end
 
     it { expect(instance).to respond_to(:dashboard_data) }
-    it { expect(described_class).to route(:get, '/v1/admin/menu/categories/2/dashboard_data').to(action: :dashboard_data, format: :json, id: 2) }
-    it { expect(described_class).to route(:get, '/v1/admin/menu/categories/100/dashboard_data').to(action: :dashboard_data, format: :json, id: 100) }
+    it {
+      expect(described_class).to route(:get, '/v1/admin/menu/categories/2/dashboard_data').to(action: :dashboard_data,
+                                                                                              format: :json, id: 2)
+    }
+    it {
+      expect(described_class).to route(:get, '/v1/admin/menu/categories/100/dashboard_data').to(action: :dashboard_data,
+                                                                                                format: :json, id: 100)
+    }
 
     context 'if user is unauthorized' do
       before { req(id: category.id) }
@@ -678,7 +700,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     it { expect(described_class).to route(:post, '/v1/admin/menu/categories').to(action: :create, format: :json) }
 
     def req(params = {})
-      post :create, params: params
+      post :create, params:
     end
 
     context 'when user is not authenticated' do
@@ -700,12 +722,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass
+          )
+        }
 
         it { expect(subject[:images].count).to eq 0 }
       end
@@ -736,12 +760,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
-          it { should include(
-                        parent_id: Integer,
-                        name: NilClass,
-                        description: NilClass,
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: Integer,
+              name: NilClass,
+              description: NilClass,
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -771,12 +797,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: NilClass,
-                        description: NilClass,
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: NilClass,
+              description: NilClass,
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -806,12 +834,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: 'test',
-                        description: NilClass,
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: 'test',
+              description: NilClass,
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -841,12 +871,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: NilClass,
-                        description: 'test',
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: NilClass,
+              description: 'test',
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -877,12 +909,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
-          it { should include(
-                        parent_id: Integer,
-                        name: 'test',
-                        description: 'test',
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: Integer,
+              name: 'test',
+              description: 'test',
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -912,12 +946,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: "test-#{I18n.locale}",
-                        description: NilClass,
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: "test-#{I18n.locale}",
+              description: NilClass,
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -947,12 +983,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: NilClass,
-                        description: "test-#{I18n.locale}",
-                        secret_desc: NilClass,
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: NilClass,
+              description: "test-#{I18n.locale}",
+              secret_desc: NilClass
+            )
+          }
 
           it { expect(subject[:images].count).to eq 0 }
         end
@@ -1019,10 +1057,13 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22').to(action: :update, format: :json, id: 22) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/menu/categories/22').to(action: :update, format: :json,
+                                                                                  id: 22)
+    }
 
     def req(params = {})
-      patch :update, params: params
+      patch :update, params:
     end
 
     context 'when user is not authenticated' do
@@ -1044,13 +1085,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: NilClass,
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: NilClass,
+            images: []
+          )
+        }
       end
 
       context 'if cannot find category by id' do
@@ -1070,13 +1113,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: 'Hello',
-                      description: NilClass,
-                      secret_desc: NilClass,
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: 'Hello',
+            description: NilClass,
+            secret_desc: NilClass,
+            images: []
+          )
+        }
       end
 
       context 'with {description: "Hello"}' do
@@ -1090,13 +1135,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: 'Hello',
-                      secret_desc: NilClass,
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: 'Hello',
+            secret_desc: NilClass,
+            images: []
+          )
+        }
       end
 
       context 'with {secret_desc: "Hello"}' do
@@ -1110,13 +1157,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: NilClass,
-                      secret_desc: 'Hello',
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: NilClass,
+            secret_desc: 'Hello',
+            images: []
+          )
+        }
       end
 
       context 'with {name: "Hello", description: "Hello", secret_desc: "Hello"}' do
@@ -1130,13 +1179,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: 'HelloName',
-                      description: 'HelloDesc',
-                      secret_desc: 'HelloSecret',
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: 'HelloName',
+            description: 'HelloDesc',
+            secret_desc: 'HelloSecret',
+            images: []
+          )
+        }
       end
 
       context 'with {name: {it: "Hello", en: "Hello"}}' do
@@ -1150,13 +1201,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: 'Hello',
-                      description: NilClass,
-                      secret_desc: NilClass,
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: 'Hello',
+            description: NilClass,
+            secret_desc: NilClass,
+            images: []
+          )
+        }
 
         context 'after request' do
           before { req(id: category.id, name: { it: 'Ciao', en: 'Hello' }) }
@@ -1178,13 +1231,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
         it_behaves_like ADMIN_MENU_CATEGORY
-        it { should include(
-                      parent_id: NilClass,
-                      name: NilClass,
-                      description: 'Hello',
-                      secret_desc: NilClass,
-                      images: []
-                    ) }
+        it {
+          should include(
+            parent_id: NilClass,
+            name: NilClass,
+            description: 'Hello',
+            secret_desc: NilClass,
+            images: []
+          )
+        }
 
         context 'after request' do
           before { req(id: category.id, description: { it: 'Ciao', en: 'Hello' }) }
@@ -1218,13 +1273,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
-          it { should include(
-                        parent_id: Integer,
-                        name: NilClass,
-                        description: NilClass,
-                        secret_desc: NilClass,
-                        images: []
-                      ) }
+          it {
+            should include(
+              parent_id: Integer,
+              name: NilClass,
+              description: NilClass,
+              secret_desc: NilClass,
+              images: []
+            )
+          }
         end
 
         context 'after request' do
@@ -1236,7 +1293,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       context 'with {parent_id: nil}' do
         let!(:parent) { create(:menu_category) }
-        let!(:category) { create(:menu_category, visibility: nil, parent: parent) }
+        let!(:category) { create(:menu_category, visibility: nil, parent:) }
 
         subject do
           req(id: category.id, parent_id: nil)
@@ -1261,13 +1318,15 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
 
-          it { should include(
-                        parent_id: NilClass,
-                        name: NilClass,
-                        description: NilClass,
-                        secret_desc: NilClass,
-                        images: []
-                      ) }
+          it {
+            should include(
+              parent_id: NilClass,
+              name: NilClass,
+              description: NilClass,
+              secret_desc: NilClass,
+              images: []
+            )
+          }
         end
 
         context 'after request' do
@@ -1340,7 +1399,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context 'passing {secret_desc: "ciaobanana", description: {it: <String>, invalid_locale: <String>}}' do
         let!(:parent) { create(:menu_category) }
         let!(:category) { create(:menu_category, parent:, visibility: nil) }
-        let(:params) { { id: category.id, secret_desc: 'ciaobanana', description: { it: 'test-it', invalid_locale: 'test-invalid' } } }
+        let(:params) do
+          { id: category.id, secret_desc: 'ciaobanana', description: { it: 'test-it', invalid_locale: 'test-invalid' } }
+        end
 
         it 'should not update parent' do
           expect { req params }.not_to(change { category.reload.secret_desc })
@@ -1483,10 +1544,13 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { expect(described_class).to route(:DELETE, '/v1/admin/menu/categories/22').to(action: :destroy, format: :json, id: 22) }
+    it {
+      expect(described_class).to route(:DELETE, '/v1/admin/menu/categories/22').to(action: :destroy, format: :json,
+                                                                                   id: 22)
+    }
 
     def req(params = {})
-      delete :destroy, params: params
+      delete :destroy, params:
     end
 
     context 'when user is not authenticated' do
@@ -1548,7 +1612,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#visibility' do
     it { expect(instance).to respond_to(:visibility) }
-    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/visibility').to(action: :visibility, format: :json, id: 22) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/visibility').to(action: :visibility,
+                                                                                             format: :json, id: 22)
+    }
 
     def req(id, params = {})
       patch :visibility, params: params.merge(id:)
@@ -1561,7 +1628,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
     context '(authenticated)' do
       before { authenticate_request }
-      let(:visibility) { create(:menu_visibility, public_visible: false, private_visible: false, public_from: nil, public_to: nil, private_from: nil, private_to: nil) }
+      let(:visibility) do
+        create(:menu_visibility, public_visible: false, private_visible: false, public_from: nil, public_to: nil,
+                                 private_from: nil, private_to: nil)
+      end
       let(:category) { create(:menu_category, visibility:) }
 
       context 'checking mock data' do
@@ -1630,7 +1700,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it { expect { subject }.not_to(change { category.reload.visibility.public_visible }) }
-        it { expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2023-10-10')) }
+        it {
+          expect { subject }.to change {
+                                  category.reload.visibility.public_from
+                                }.from(nil).to(DateTime.parse('2023-10-10'))
+        }
 
         it 'should update public_from and return 200' do
           should have_http_status(:ok)
@@ -1741,9 +1815,17 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        it { expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2022-10-8')) }
+        it {
+          expect { subject }.to change {
+                                  category.reload.visibility.public_from
+                                }.from(nil).to(DateTime.parse('2022-10-8'))
+        }
 
-        it { expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse('2021-1-1')) }
+        it {
+          expect { subject }.to change {
+                                  category.reload.visibility.private_to
+                                }.from(nil).to(DateTime.parse('2021-1-1'))
+        }
 
         it 'should be able to update public_from or private_to and return 200' do
           should have_http_status(:ok)
@@ -1848,7 +1930,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update public_from correctly' do
-            expect { subject }.to change { category.reload.visibility.public_from }.from(nil).to(DateTime.parse('2023-10-13'))
+            expect { subject }.to change {
+                                    category.reload.visibility.public_from
+                                  }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1861,7 +1945,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update public_to correctly' do
-            expect { subject }.to change { category.reload.visibility.public_to }.from(nil).to(DateTime.parse('2023-10-13'))
+            expect { subject }.to change {
+                                    category.reload.visibility.public_to
+                                  }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1874,7 +1960,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update private_from correctly' do
-            expect { subject }.to change { category.reload.visibility.private_from }.from(nil).to(DateTime.parse('2023-10-13'))
+            expect { subject }.to change {
+                                    category.reload.visibility.private_from
+                                  }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1887,7 +1975,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it 'should update private_to correctly' do
-            expect { subject }.to change { category.reload.visibility.private_to }.from(nil).to(DateTime.parse('2023-10-13'))
+            expect { subject }.to change {
+                                    category.reload.visibility.private_to
+                                  }.from(nil).to(DateTime.parse('2023-10-13'))
             should have_http_status(:ok)
             should be_successful
           end
@@ -1898,7 +1988,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#add_dish' do
     it { expect(instance).to respond_to(:add_dish) }
-    it { should route(:post, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :add_dish, controller: 'v1/admin/menu/categories', id: 22, dish_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :add_dish,
+                                                                       controller: 'v1/admin/menu/categories', id: 22, dish_id: 55)
+    }
     let!(:category) { create(:menu_category) }
     let!(:dish) { create(:menu_dish) }
 
@@ -1998,7 +2091,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#remove_dish' do
     it { expect(instance).to respond_to(:remove_dish) }
-    it { should route(:delete, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :remove_dish, controller: 'v1/admin/menu/categories', id: 22, dish_id: 55) }
+    it {
+      should route(:delete, '/v1/admin/menu/categories/22/dishes/55').to(format: :json, action: :remove_dish,
+                                                                         controller: 'v1/admin/menu/categories', id: 22, dish_id: 55)
+    }
     let!(:category) { create(:menu_category) }
     let!(:dish) { create(:menu_dish) }
     before { category.dishes << dish }
@@ -2023,7 +2119,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       it { is_expected.to be_successful }
       it { is_expected.to have_http_status(:ok) }
-      it { req; expect(parsed_response_body[:message]).to be_blank }
+      it {
+        req
+        expect(parsed_response_body[:message]).to be_blank
+      }
       it { expect { subject }.to change { category.reload.dishes.count }.by(-1) }
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
 
@@ -2043,7 +2142,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context '#add_category' do
     it { expect(instance).to respond_to(:add_category) }
-    it { should route(:post, '/v1/admin/menu/categories/22/add_category/55').to(format: :json, action: :add_category, controller: 'v1/admin/menu/categories', id: 22, category_child_id: 55) }
+    it {
+      should route(:post, '/v1/admin/menu/categories/22/add_category/55').to(format: :json, action: :add_category,
+                                                                             controller: 'v1/admin/menu/categories', id: 22, category_child_id: 55)
+    }
     let!(:category) { create(:menu_category) }
     let!(:category_child) { create(:menu_category) }
 
@@ -2093,7 +2195,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context 'POST #copy' do
     it { expect(instance).to respond_to(:copy) }
-    it { should route(:post, '/v1/admin/menu/categories/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/categories', id: 22) }
+    it {
+      should route(:post, '/v1/admin/menu/categories/22/copy').to(format: :json, action: :copy,
+                                                                  controller: 'v1/admin/menu/categories', id: 22)
+    }
     let!(:category) { create(:menu_category) }
 
     let(:copy_dishes) { nil }
@@ -2125,8 +2230,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         expect(parsed_response_body).not_to include(message: String)
       end
 
-      context "when providing parent_id" do
-        context "when providing {parent_id: nil} creates as root category" do
+      context 'when providing parent_id' do
+        context 'when providing {parent_id: nil} creates as root category' do
           before do
             category.update!(visibility: nil, parent: create(:menu_category))
           end
@@ -2146,14 +2251,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             expect(Menu::Category.order(id: :desc).first.parent).to be_blank
           end
 
-          it "should return 200" do
+          it 'should return 200' do
             subject
             expect(parsed_response_body).not_to include(message: String)
             expect(response).to have_http_status(:ok)
           end
         end
 
-        context "when providing {parent_id: <int>} creates as child of another category" do
+        context 'when providing {parent_id: <int>} creates as child of another category' do
           before do
             category.update!(visibility: nil, parent: create(:menu_category))
           end
@@ -2175,7 +2280,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             expect(Menu::Category.order(id: :desc).first.parent&.id).to eq parent_id
           end
 
-          it "should return 200" do
+          it 'should return 200' do
             subject
             expect(parsed_response_body).not_to include(message: String)
             expect(response).to have_http_status(:ok)
@@ -2350,7 +2455,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
   context 'PATCH #move' do
     it { expect(instance).to respond_to(:move) }
-    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/move/5').to(action: :move, format: :json, id: 22, to_index: 5) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/move/5').to(action: :move, format: :json,
+                                                                                         id: 22, to_index: 5)
+    }
 
     let(:category) { create(:menu_category, index: 0) }
     let(:to_index) { 1 }
@@ -2400,7 +2508,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           expect(response).to have_http_status(:ok)
         end
 
-        context "when moving the first one as the last one" do
+        context 'when moving the first one as the last one' do
           let(:to_index) { 2 }
 
           it do
@@ -2423,7 +2531,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
         end
 
-        context "when moving the last one as the first one" do
+        context 'when moving the last one as the first one' do
           let(:to_index) { 0 }
           let(:category) { category2 }
 
@@ -2437,24 +2545,24 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
         end
 
-        context "when moving the middle one as last one" do
+        context 'when moving the middle one as last one' do
           let(:to_index) { 9 }
           let(:category) { category1 }
 
-          it { expect { subject }.not_to change { category0.reload.index } }
+          it { expect { subject }.not_to(change { category0.reload.index }) }
 
           it { expect { subject }.to change { category1.reload.index }.from(1).to(2) }
-          it { expect { subject }.to change { category1.reload.updated_at } }
+          it { expect { subject }.to(change { category1.reload.updated_at }) }
           it { expect { subject }.to change { category2.reload.index }.from(2).to(1) }
-          it { expect { subject }.to change { category2.reload.updated_at } }
+          it { expect { subject }.to(change { category2.reload.updated_at }) }
         end
 
-        context "when (fake) moving the first one as the first one" do
+        context 'when (fake) moving the first one as the first one' do
           let(:category) { category0 }
           let(:to_index) { 0 }
 
-          it { expect { subject }.not_to change { Menu::Category.order(:id).pluck(:updated_at) } }
-          it { expect { subject }.not_to change { Menu::Category.order(:id).pluck(:index) } }
+          it { expect { subject }.not_to(change { Menu::Category.order(:id).pluck(:updated_at) }) }
+          it { expect { subject }.not_to(change { Menu::Category.order(:id).pluck(:index) }) }
         end
       end
     end

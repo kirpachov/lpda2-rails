@@ -8,7 +8,8 @@ class CreateMenuIngredientsInDishes < ActiveRecord::Migration[7.0]
       t.integer :index, null: false
 
       t.timestamps
-      t.index %i[menu_dish_id menu_ingredient_id], unique: true, name: :index_menu_ingredients_in_dishes_on_dish_and_ingredient
+      t.index %i[menu_dish_id menu_ingredient_id], unique: true,
+                                                   name: :index_menu_ingredients_in_dishes_on_dish_and_ingredient
       t.index %i[menu_dish_id index], unique: true
     end
   end

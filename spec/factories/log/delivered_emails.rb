@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :log_delivered_email, class: 'Log::DeliveredEmail' do
-    text { "MyText" }
-    html { "MyText" }
-    subject { "MyText" }
+    text { 'MyText' }
+    html { 'MyText' }
+    subject { 'MyText' }
     # headers { "" }
     # raw { "MyText" }
     # pixels { "" }

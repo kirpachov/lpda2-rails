@@ -5,15 +5,17 @@
 ADMIN_MENU_CATEGORY = 'ADMIN_MENU_CATEGORY'
 RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
   it { should be_a(Hash) }
-  it { should include(
-                id: Integer,
-                status: String,
-                index: Integer,
-                secret: String,
-                images: Array,
-                created_at: String,
-                updated_at: String
-              ) }
+  it {
+    should include(
+      id: Integer,
+      status: String,
+      index: Integer,
+      secret: String,
+      images: Array,
+      created_at: String,
+      updated_at: String
+    )
+  }
 
   unless options[:skip_visibility]
     it { should include(menu_visibility_id: Integer) }
@@ -21,7 +23,10 @@ RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
 
     context 'visibility' do
       it { expect(subject[:visibility]).to be_a(Hash) }
-      it { expect(subject[:visibility]).to include(*%i[public_visible public_from public_to private_visible private_from private_to created_at updated_at id]) }
+      it {
+        expect(subject[:visibility]).to include(*%i[public_visible public_from public_to private_visible private_from
+                                                    private_to created_at updated_at id])
+      }
     end
   end
 

@@ -6,44 +6,44 @@ ADMIN_MENU_ALLERGEN_ITEM = 'ADMIN_MENU_ALLERGEN_ITEM'
 RSpec.shared_context ADMIN_MENU_ALLERGEN_ITEM do |options = {}|
   it 'should include all basic information' do
     is_expected.to include(
-                     id: Integer,
-                     created_at: String,
-                     updated_at: String,
-                   )
+      id: Integer,
+      created_at: String,
+      updated_at: String
+    )
   end
 
   if options[:has_name] == true
     it 'should have name' do
       is_expected.to include(
-                       name: String,
-                     )
+        name: String
+      )
     end
   elsif options[:has_name] == false
     it 'should NOT have name' do
       is_expected.to include(
-                       name: nil,
-                     )
+        name: nil
+      )
     end
   end
 
   if options[:has_description] == true
     it 'should have description' do
       is_expected.to include(
-                       description: String,
-                     )
+        description: String
+      )
     end
   elsif options[:has_description] == false
     it 'should NOT have description' do
       is_expected.to include(
-                       description: nil,
-                     )
+        description: nil
+      )
     end
   end
 
   if options[:has_image] == true
     it 'should have image' do
       expect(subject[:image]).to be_a(Hash)
-      # TODO may validate image content
+      # TODO: may validate image content
     end
   elsif options[:has_image] == false
     it 'should NOT have image' do
@@ -60,7 +60,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
   let(:instance) { described_class.new }
 
   def create_menu_allergens(count, attrs = {})
-    items = count.times.map do |i|
+    items = count.times.map do |_i|
       build(:menu_allergen, attrs)
     end
 
@@ -74,7 +74,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
     it { expect(described_class).to route(:get, '/v1/admin/menu/allergens').to(action: :index, format: :json) }
 
     def req(params = {})
-      get :index, params: params
+      get :index, params:
     end
 
     context 'when user is not authenticated' do
@@ -99,7 +99,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
     context 'should return all allergens, paginated' do
       before do
-        authenticate_request(user: user)
+        authenticate_request(user:)
         create_menu_allergens(10)
       end
 
@@ -191,7 +191,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
     end
 
     context '(authenticated)' do
-      before { authenticate_request(user: user) }
+      before { authenticate_request(user:) }
 
       context 'returned items should contain all relevant information' do
         let!(:image) { create(:image, :with_attached_image) }
@@ -242,7 +242,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
         end
 
-        context "when querying with {query: nil} should return all items" do
+        context 'when querying with {query: nil} should return all items' do
           subject do
             req(query: nil)
             parsed_response_body[:items]
@@ -309,7 +309,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
   context '#show' do
     def req(params = {})
-      get :show, params: params
+      get :show, params:
     end
 
     let(:allergen) { create(:menu_allergen) }
@@ -422,7 +422,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
     it { expect(described_class).to route(:post, '/v1/admin/menu/allergens').to(action: :create, format: :json) }
 
     def req(params = {})
-      post :create, params: params
+      post :create, params:
     end
 
     context 'when user is not authenticated' do
@@ -453,7 +453,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -484,11 +484,11 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
       context 'if providing name as JSON-encoded string in two languages' do
         subject do
-          req(name: { it: "italian", en: "english" }.to_json)
+          req(name: { it: 'italian', en: 'english' }.to_json)
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -497,23 +497,23 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
         context 'response[:item]' do
           subject do
-            req(name: { it: "italian", en: "english" }.to_json)
+            req(name: { it: 'italian', en: 'english' }.to_json)
             parsed_response_body[:item]
           end
 
           it_behaves_like ADMIN_MENU_ALLERGEN_ITEM, has_name: true, has_description: false, has_image: false
 
-          it { should include(name: "english") }
+          it { should include(name: 'english') }
         end
       end
 
       context 'if providing image: "", should ignore.' do
         subject do
-          req(image: "")
+          req(image: '')
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -527,7 +527,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -543,7 +543,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -569,7 +569,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -596,7 +596,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -632,7 +632,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
           response
         end
 
-        it "request should create a allergen" do
+        it 'request should create a allergen' do
           expect { subject }.to change(Menu::Allergen, :count).by(1)
           expect(Menu::Allergen.count).to eq 1
         end
@@ -728,10 +728,12 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
   context '#update' do
     it { expect(instance).to respond_to(:update) }
-    it { expect(described_class).to route(:patch, '/v1/admin/menu/allergens/22').to(action: :update, format: :json, id: 22) }
+    it {
+      expect(described_class).to route(:patch, '/v1/admin/menu/allergens/22').to(action: :update, format: :json, id: 22)
+    }
 
     def req(params = {})
-      patch :update, params: params
+      patch :update, params:
     end
 
     context 'when user is not authenticated' do
@@ -798,7 +800,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         let!(:allergen) { create(:menu_allergen, :with_image_with_attachment) }
 
         subject do
-          req(id: allergen.id, image: "null")
+          req(id: allergen.id, image: 'null')
           parsed_response_body[:item]
         end
 
@@ -1039,10 +1041,13 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
   context '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
-    it { expect(described_class).to route(:DELETE, '/v1/admin/menu/allergens/22').to(action: :destroy, format: :json, id: 22) }
+    it {
+      expect(described_class).to route(:DELETE, '/v1/admin/menu/allergens/22').to(action: :destroy, format: :json,
+                                                                                  id: 22)
+    }
 
     def req(params = {})
-      delete :destroy, params: params
+      delete :destroy, params:
     end
 
     context 'when user is not authenticated' do
@@ -1104,7 +1109,10 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
 
   context '#copy' do
     it { expect(instance).to respond_to(:copy) }
-    it { should route(:post, '/v1/admin/menu/allergens/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/allergens', id: 22) }
+    it {
+      should route(:post, '/v1/admin/menu/allergens/22/copy').to(format: :json, action: :copy,
+                                                                 controller: 'v1/admin/menu/allergens', id: 22)
+    }
     let!(:allergen) { create(:menu_allergen) }
 
     def req(id, params = {})
@@ -1142,7 +1150,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(allergen.image&.id).to be_present }
 
         context 'and providing {copy_image: "full"}' do
-          subject { req(allergen.id, { copy_image: "full" }) }
+          subject { req(allergen.id, { copy_image: 'full' }) }
 
           it { should be_successful }
           it { should have_http_status(:ok) }
@@ -1161,7 +1169,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         end
 
         context 'and providing {copy_image: "link"}' do
-          subject { req(allergen.id, { copy_image: "link" }) }
+          subject { req(allergen.id, { copy_image: 'link' }) }
 
           it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
@@ -1177,7 +1185,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         end
 
         context 'and providing {copy_image: "none"}' do
-          subject { req(allergen.id, { copy_image: "none" }) }
+          subject { req(allergen.id, { copy_image: 'none' }) }
 
           it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.not_to(change { ImageToRecord.count }) }

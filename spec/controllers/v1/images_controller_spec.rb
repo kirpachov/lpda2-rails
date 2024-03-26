@@ -36,7 +36,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       it { expect(parsed_response_body[:items].count).to eq 3 }
     end
 
-    context "when filtering for record_type and record_id" do
+    context 'when filtering for record_type and record_id' do
       before do
         create(:menu_category).images << create(:image, :with_attached_image)
         create(:menu_category).images << create(:image, :with_attached_image)
@@ -50,21 +50,21 @@ RSpec.describe V1::ImagesController, type: :controller do
         end
 
         context 'basic' do
-          before { req(record_type: "Menu::Category", record_id: Menu::Category.all.sample.id) }
+          before { req(record_type: 'Menu::Category', record_id: Menu::Category.all.sample.id) }
 
           it { expect(response).to have_http_status(:ok) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
         end
 
-        context "should fix record_type as valid class" do
+        context 'should fix record_type as valid class' do
           [
-            "menu::category",
-            "menu::category ",
-            " menu::category ",
-            " menu::category",
-            " menu::Category",
-            " menu::CategorY",
-            "meNu::CategorY",
+            'menu::category',
+            'menu::category ',
+            ' menu::category ',
+            ' menu::category',
+            ' menu::Category',
+            ' menu::CategorY',
+            'meNu::CategorY'
           ].each do |invalid_klass|
             it "when providing record_type: #{invalid_klass.inspect}" do
               req(record_type: invalid_klass, record_id: Menu::Category.all.sample.id)
@@ -75,7 +75,7 @@ RSpec.describe V1::ImagesController, type: :controller do
         end
       end
 
-      context "should not duplicate images when associated to many records" do
+      context 'should not duplicate images when associated to many records' do
         before do
           Menu::Category.first.images << create(:image, :with_attached_image)
           Menu::Category.first.images << create(:image, :with_attached_image)
@@ -83,14 +83,14 @@ RSpec.describe V1::ImagesController, type: :controller do
           Menu::Category.last.images << create(:image, :with_attached_image)
         end
 
-        it "checking mock data" do
+        it 'checking mock data' do
           expect(Menu::Category.count).to eq 2
           expect(Image.count).to eq 6
           expect(ImageToRecord.count).to eq 6
         end
 
         context 'basic' do
-          before { req(record_type: "Menu::Category", record_id: Menu::Category.all.sample.id) }
+          before { req(record_type: 'Menu::Category', record_id: Menu::Category.all.sample.id) }
           subject { parsed_response_body[:items] }
 
           it { expect(response).to have_http_status(:ok) }
@@ -122,7 +122,7 @@ RSpec.describe V1::ImagesController, type: :controller do
 
     context 'when providing {record_type: String, record_id: Integer}' do
       let!(:category) { create(:menu_category) }
-      let!(:record_type) { "Menu::Category" }
+      let!(:record_type) { 'Menu::Category' }
       let!(:record_id) { category.id }
 
       subject do
@@ -157,7 +157,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
-    context "should return 404" do
+    context 'should return 404' do
       before { req(id: 999_999_999) }
       subject { response }
       it_behaves_like NOT_FOUND
@@ -179,7 +179,7 @@ RSpec.describe V1::ImagesController, type: :controller do
     let(:all_images) { create_list(:image, 3, :with_attached_image) }
     let(:record) { create(:menu_category) }
 
-    let(:record_type) { "Menu::Category" }
+    let(:record_type) { 'Menu::Category' }
     let(:record_id) { record.id }
     let(:image_ids) { [all_images.sample.id] }
     let(:params) do
@@ -195,7 +195,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
-    context "if record could not be found" do
+    context 'if record could not be found' do
       let(:record_id) { 999_999_999 }
 
       it { expect { req }.not_to(change { record.reload.images.count }) }
@@ -206,8 +206,8 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
     end
 
-    context "if invaild record_type" do
-      let(:record_type) { "some-invalid-class" }
+    context 'if invaild record_type' do
+      let(:record_type) { 'some-invalid-class' }
 
       it { expect { req }.not_to(change { record.reload.images.count }) }
       it do
@@ -241,7 +241,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
     end
 
-    context "should allow to remove all elements by providing {image_ids: nil}" do
+    context 'should allow to remove all elements by providing {image_ids: nil}' do
       before do
         record.images = all_images
         @order_before = record.images.pluck(:id)
@@ -261,7 +261,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
     end
 
-    context "should allow to remove one element" do
+    context 'should allow to remove one element' do
       before do
         record.images = all_images
         @order_before = record.images.pluck(:id)
@@ -283,12 +283,15 @@ RSpec.describe V1::ImagesController, type: :controller do
 
   context 'PATCH #remove_from_record' do
     it { expect(instance).to respond_to(:remove_from_record) }
-    it { should route(:patch, '/v1/images/5/remove_from_record').to(format: :json, action: :remove_from_record, controller: 'v1/images', id: 5) }
+    it {
+      should route(:patch, '/v1/images/5/remove_from_record').to(format: :json, action: :remove_from_record,
+                                                                 controller: 'v1/images', id: 5)
+    }
 
     let(:all_images) { create_list(:image, 3, :with_attached_image) }
     let(:record) { create(:menu_category).tap { |cat| cat.images = all_images } }
 
-    let(:record_type) { "Menu::Category" }
+    let(:record_type) { 'Menu::Category' }
     let(:record_id) { record.id }
     let(:image_id) { all_images.sample.id }
     let(:params) do
@@ -306,7 +309,9 @@ RSpec.describe V1::ImagesController, type: :controller do
 
     it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
     it do
-      expect { req }.to change { record.reload.images.pluck(:id) }.from(record.reload.images.pluck(:id)).to(record.reload.images.pluck(:id) - [image_id])
+      expect { req }.to change {
+                          record.reload.images.pluck(:id)
+                        }.from(record.reload.images.pluck(:id)).to(record.reload.images.pluck(:id) - [image_id])
     end
 
     context 'should return 404 if cannot find image' do
@@ -332,7 +337,9 @@ RSpec.describe V1::ImagesController, type: :controller do
 
   context 'GET #download' do
     it { expect(instance).to respond_to(:download) }
-    it { should route(:get, '/v1/images/23/download').to(format: :json, action: :download, controller: 'v1/images', id: 23) }
+    it {
+      should route(:get, '/v1/images/23/download').to(format: :json, action: :download, controller: 'v1/images', id: 23)
+    }
 
     let(:image) { create(:image, :with_attached_image) }
 
@@ -371,7 +378,10 @@ RSpec.describe V1::ImagesController, type: :controller do
 
   context 'GET #download_variant' do
     it { expect(instance).to respond_to(:download_variant) }
-    it { should route(:get, '/v1/images/23/download/blur').to(format: :json, action: :download_variant, controller: 'v1/images', id: 23, variant: 'blur') }
+    it {
+      should route(:get, '/v1/images/23/download/blur').to(format: :json, action: :download_variant,
+                                                           controller: 'v1/images', id: 23, variant: 'blur')
+    }
     let(:image) { create(:image, :with_attached_image) }
 
     def req(image_id, variant, params = {})
@@ -409,7 +419,10 @@ RSpec.describe V1::ImagesController, type: :controller do
 
   context 'GET #download_by_key' do
     it { expect(instance).to respond_to(:download_by_key) }
-    it { should route(:get, '/v1/images/key/wassabratan').to(format: :json, action: :download_by_key, controller: 'v1/images', key: 'wassabratan') }
+    it {
+      should route(:get, '/v1/images/key/wassabratan').to(format: :json, action: :download_by_key, controller: 'v1/images',
+                                                          key: 'wassabratan')
+    }
 
     let(:image) { create(:image, :with_attached_image, :with_key) }
 
@@ -439,7 +452,10 @@ RSpec.describe V1::ImagesController, type: :controller do
 
   context 'GET #download_by_pixel_secret' do
     it { expect(instance).to respond_to(:download_by_pixel_secret) }
-    it { should route(:get, '/v1/images/p/wassabratan').to(format: :json, action: :download_by_pixel_secret, controller: 'v1/images', secret: 'wassabratan') }
+    it {
+      should route(:get, '/v1/images/p/wassabratan').to(format: :json, action: :download_by_pixel_secret,
+                                                        controller: 'v1/images', secret: 'wassabratan')
+    }
 
     let(:image) { create(:image, :with_attached_image) }
     let(:record) { create(:reservation) }

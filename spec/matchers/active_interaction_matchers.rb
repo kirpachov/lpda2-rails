@@ -161,7 +161,8 @@ RSpec::Matchers.define :have_input do |input_name| # rubocop:disable Metrics/Blo
     @options.each do |option_name, option_value|
       next if @input.options[option_name] == option_value
 
-      @different_options[option_name] = "#{option_name.inspect} expected to be #{option_value.inspect}, but was #{@input.options[option_name].inspect}"
+      @different_options[option_name] =
+        "#{option_name.inspect} expected to be #{option_value.inspect}, but was #{@input.options[option_name].inspect}"
     end
 
     @different_options.empty? ? true : false

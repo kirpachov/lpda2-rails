@@ -5,7 +5,8 @@ class CreateLogImagePixels < ActiveRecord::Migration[7.0]
     create_table :log_image_pixels, id: 'bigserial' do |t|
       t.belongs_to :image, null: false, foreign_key: true
 
-      t.belongs_to :delivered_email, null: false, foreign_key: { to_table: 'log_delivered_emails' }, class_name: 'Log::DeliveredEmail'
+      t.belongs_to :delivered_email, null: false, foreign_key: { to_table: 'log_delivered_emails' },
+                                     class_name: 'Log::DeliveredEmail'
 
       t.references :record,
                    polymorphic: true,

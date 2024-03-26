@@ -3,7 +3,6 @@
 module Auth
   class JsonWebToken
     class << self
-
       def encode_refresh_token_data(refresh_token)
         encode(user_id: refresh_token.user.id, refresh_token_id: refresh_token.id)
       end

@@ -33,7 +33,7 @@ module Log
     def event_type=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value("event_type", value)
+      @attributes.write_cast_value('event_type', value)
     end
 
     def url
