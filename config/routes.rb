@@ -70,6 +70,7 @@ Rails.application.routes.draw do
             member do
               post 'copy'
               patch 'visibility'
+              patch 'move/:to_index', action: :move
 
               post 'dishes/:dish_id', action: :add_dish
               delete 'dishes/:dish_id', action: :remove_dish

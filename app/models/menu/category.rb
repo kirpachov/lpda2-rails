@@ -124,6 +124,8 @@ module Menu
     end
 
     def assign_valid_index
+      return if index.present?
+
       self.index = Category.where(parent_id:).order(index: :desc).first&.index.to_i + 1
     end
 
@@ -143,6 +145,32 @@ module Menu
       super
     rescue ArgumentError
       @attributes.write_cast_value("status", value)
+    end
+
+    def move(to_index)
+      return true if index == to_index
+
+      to_index = self.class.where(parent_id:).count - 1 if to_index >= self.class.where(parent_id:).count
+
+      transaction do
+        self.class.lock
+
+        self.class.where(parent_id:).update_all('index = index + 100000')
+
+        items = self.class.where(parent_id:).order(:index).to_ary
+
+        items.filter { |t| t.id != id }.each_with_index do |image_to_record, index|
+          image_to_record.index = to_index > index ? index : index + 1
+        end
+
+        items.find { |it| it.id == id }.index = to_index
+
+        self.class.import items, on_duplicate_key_update: { columns: %i[index] }, validate: false, touch: true
+      end
+
+      reload
+
+      valid?
     end
 
     private

@@ -5,6 +5,7 @@ module V1
     class CategoriesController < ApplicationController
       before_action :find_category, only: %i[
         show update destroy visibility add_dish remove_dish add_category dashboard_data copy
+        move
       ]
 
       before_action :check_if_can_publish, only: %i[visibility]
@@ -96,6 +97,18 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+      end
+
+      def move
+        unless params.key?(:to_index) && params[:to_index].present?
+          return render_error(status: 400, message: 'to_index is required')
+        end
+
+        unless @item.move(params[:to_index].to_i) && @item.valid? && @item.errors.empty?
+          return render_unprocessable_entity(@item)
+        end
+
+        show
       end
 
       def copy

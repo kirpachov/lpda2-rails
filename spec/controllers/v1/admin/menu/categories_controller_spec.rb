@@ -2346,4 +2346,116 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       end
     end
   end
+
+  context 'PATCH #move' do
+    it { expect(instance).to respond_to(:move) }
+    it { expect(described_class).to route(:patch, '/v1/admin/menu/categories/22/move/5').to(action: :move, format: :json, id: 22, to_index: 5) }
+
+    let(:category) { create(:menu_category, index: 0) }
+    let(:to_index) { 1 }
+    let(:id) { category.id }
+    let(:params) { { id:, to_index: } }
+
+    def req(req_params = params)
+      patch :move, params: req_params
+    end
+
+    context 'when user is not authenticated' do
+      before { req }
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context '(authenticated)' do
+      before { authenticate_request }
+
+      context 'when passing a invalid id' do
+        let(:id) { 'invalid' }
+        before { req }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'when passing a invalid id' do
+        let(:id) { 999_999_999 }
+        before { req }
+        subject { response }
+        it_behaves_like NOT_FOUND
+      end
+
+      context 'basic' do
+        let(:category) { category0 }
+        let!(:category0) { create(:menu_category, index: 0) }
+        let!(:category1) { create(:menu_category, index: 1) }
+        let!(:category2) { create(:menu_category, index: 2) }
+
+        subject do
+          req
+          response
+        end
+
+        it do
+          expect { subject }.to change { category.reload.index }.from(0).to(1)
+          expect(parsed_response_body).not_to include(message: String, details: Hash)
+          expect(response).to have_http_status(:ok)
+        end
+
+        context "when moving the first one as the last one" do
+          let(:to_index) { 2 }
+
+          it do
+            expect { subject }.to change { category.reload.index }.from(0).to(2)
+            expect(parsed_response_body).not_to include(message: String, details: Hash)
+            expect(response).to have_http_status(:ok)
+          end
+
+          it do
+            expect { subject }.to change { category1.reload.index }.from(1).to(0)
+          end
+
+          it do
+            expect { subject }.to change { category2.reload.index }.from(2).to(1)
+          end
+
+          it do
+            subject
+            expect(Menu::Category.order(:index).pluck(:id)).to eq([category1.id, category2.id, category0.id])
+          end
+        end
+
+        context "when moving the last one as the first one" do
+          let(:to_index) { 0 }
+          let(:category) { category2 }
+
+          it { expect { subject }.to change { category0.reload.index }.from(0).to(1) }
+          it { expect { subject }.to change { category1.reload.index }.from(1).to(2) }
+          it { expect { subject }.to change { category2.reload.index }.from(2).to(0) }
+
+          it do
+            subject
+            expect(Menu::Category.order(:index).pluck(:id)).to eq([category2.id, category0.id, category1.id])
+          end
+        end
+
+        context "when moving the middle one as last one" do
+          let(:to_index) { 9 }
+          let(:category) { category1 }
+
+          it { expect { subject }.not_to change { category0.reload.index } }
+
+          it { expect { subject }.to change { category1.reload.index }.from(1).to(2) }
+          it { expect { subject }.to change { category1.reload.updated_at } }
+          it { expect { subject }.to change { category2.reload.index }.from(2).to(1) }
+          it { expect { subject }.to change { category2.reload.updated_at } }
+        end
+
+        context "when (fake) moving the first one as the first one" do
+          let(:category) { category0 }
+          let(:to_index) { 0 }
+
+          it { expect { subject }.not_to change { Menu::Category.order(:id).pluck(:updated_at) } }
+          it { expect { subject }.not_to change { Menu::Category.order(:id).pluck(:index) } }
+        end
+      end
+    end
+  end
 end
