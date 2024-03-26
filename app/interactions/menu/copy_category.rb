@@ -57,7 +57,9 @@ module Menu
     end
 
     def copy_images
-      params.fetch(:copy_images, DEFAULT_COPY_IMAGES)
+      return DEFAULT_COPY_IMAGES if params[:copy_images].blank?
+
+      params[:copy_images]
     end
 
     def validate_copy_images
@@ -67,7 +69,9 @@ module Menu
     end
 
     def copy_dishes
-      params.fetch(:copy_dishes, DEFAULT_COPY_DISHES)
+      return DEFAULT_COPY_DISHES if params[:copy_dishes].blank?
+
+      params[:copy_dishes]
     end
 
     def validate_copy_dishes
@@ -77,7 +81,9 @@ module Menu
     end
 
     def copy_children
-      params.fetch(:copy_children, DEFAULT_COPY_CHILDREN)
+      return DEFAULT_COPY_CHILDREN if params[:copy_children].blank?
+
+      params[:copy_children]
     end
 
     def validate_copy_children
@@ -165,6 +171,7 @@ module Menu
 
     def validate_parent_id
       return if params[:parent_id].blank? || params[:parent_id].is_a?(Integer)
+      return if params[:parent_id].is_a?(String) && params[:parent_id].to_i.to_s == params[:parent_id]
 
       errors.add(:parent_id, "must be an Integer or nil. got: #{params[:parent_id].class}")
     end
