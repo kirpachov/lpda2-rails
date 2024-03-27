@@ -13,7 +13,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
     %w[language known_languages timezone]
   end
 
-  context '#index' do
+  describe '#index' do
     before { authenticate_request(user:) }
 
     def req
@@ -23,42 +23,45 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
     context 'response' do
       subject { req }
 
-      it { should be_successful }
+      it { is_expected.to be_successful }
 
       context 'body' do
-        before { req }
-        let(:json) { parsed_response_body }
         subject { json }
 
-        it { should be_a(Hash) }
-        it { should_not be_empty }
-        it "should include all user's preferences" do
+        before { req }
+
+        let(:json) { parsed_response_body }
+
+        it { is_expected.to be_a(Hash) }
+        it { is_expected.not_to be_empty }
+
+        it "includes all user's preferences" do
           expect(json.keys).to match_array user.preferences.pluck(:key)
         end
       end
     end
   end
 
-  context '#value' do
+  describe '#value' do
     before { authenticate_request(user:) }
 
     def req(key = preference_keys.sample)
       get :value, params: { key: }
     end
 
-    it 'should return the value of the setting of this user' do
+    it 'returns the value of the setting of this user' do
       req
 
       expect(response).to be_successful
     end
 
-    it 'should return just the value of the required setting' do
+    it 'returns just the value of the required setting' do
       req(:language)
 
       expect(parsed_response_body).to eq user.preference_value(:language).to_s
     end
 
-    it 'should return error if invalid key is required' do
+    it 'returns error if invalid key is required' do
       req(:something_that_should_not_exist)
 
       expect(parsed_response_body).not_to eq nil
@@ -68,7 +71,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
     end
   end
 
-  context '#show' do
+  describe '#show' do
     before { authenticate_request(user:) }
 
     let(:key) { 'language' }
@@ -77,45 +80,50 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
       get :show, params: { key: mkey }
     end
 
-    it 'should be successful' do
+    it 'is successful' do
       req
 
       expect(response).to be_successful
     end
 
     context 'should return the full record' do
-      before { req }
-      let(:json) { parsed_response_body }
       subject { json }
 
-      it { should be_a(Hash) }
-      it { should_not be_empty }
-      it { should include(:updated_at) }
-      it { should include(:key) }
-      it { should include(:value) }
-      it { should include(:require_root) }
-      it { should_not include(:id) }
+      before { req }
 
-      it { should include(value: user.preference_value(key).to_s) }
+      let(:json) { parsed_response_body }
+
+      it { is_expected.to be_a(Hash) }
+      it { is_expected.not_to be_empty }
+      it { is_expected.to include(:updated_at) }
+      it { is_expected.to include(:key) }
+      it { is_expected.to include(:value) }
+      it { is_expected.to include(:require_root) }
+      it { is_expected.not_to include(:id) }
+
+      it { is_expected.to include(value: user.preference_value(key).to_s) }
     end
   end
 
-  context '#update' do
+  describe '#update' do
     before { authenticate_request(user:) }
 
-    it { should route(:patch, '/v1/admin/preferences/language').to(action: :update, key: 'language', 'format': :json) }
+    it {
+      expect(subject).to route(:patch, '/v1/admin/preferences/language').to(action: :update, key: 'language',
+                                                                            'format': :json)
+    }
 
     def req(key, value)
       patch :update, params: { key:, value: }
     end
 
-    it 'should be successful' do
+    it 'is successful' do
       req(:language, :en)
 
       expect(response).to be_successful
     end
 
-    it 'should be able to update the value' do
+    it 'is able to update the value' do
       languages = I18n.available_locales.map(&:to_s)
       5.times do
         language = languages.sample
@@ -126,7 +134,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
       end
     end
 
-    it 'should return 422 with error explanation if invalid value is provided' do
+    it 'returns 422 with error explanation if invalid value is provided' do
       req(:language, :some_invalid_language)
 
       expect(response).not_to be_successful
@@ -136,7 +144,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
       expect(parsed_response_body).to include(:details)
     end
 
-    it 'should return an error if invalid key is provided' do
+    it 'returns an error if invalid key is provided' do
       req(:some_strange_invalid_key, :en)
 
       expect(response).not_to be_successful

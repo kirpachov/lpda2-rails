@@ -10,88 +10,96 @@ RSpec.describe User, type: :model do
   end
 
   context 'validations' do
-    before { allow_any_instance_of(User).to receive(:assign_defaults).and_return(true) }
-    before { create(:user) }
+    before do
+      allow_any_instance_of(User).to receive(:assign_defaults).and_return(true)
+      create(:user)
+    end
 
-    it { should validate_presence_of(:email) }
-    it { should have_db_index(:email).unique(true) }
-    it { should validate_uniqueness_of(:email).case_insensitive }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to have_db_index(:email).unique(true) }
+    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
 
-    it { should_not validate_presence_of(:fullname) }
+    it { is_expected.not_to validate_presence_of(:fullname) }
 
-    it { should_not validate_presence_of(:username) }
-    it { should validate_uniqueness_of(:username).case_insensitive }
+    it { is_expected.not_to validate_presence_of(:username) }
+    it { is_expected.to validate_uniqueness_of(:username).case_insensitive }
 
-    it { should have_secure_password }
+    it { is_expected.to have_secure_password }
 
     # Should have :root_at column
-    it { should have_db_column(:root_at).of_type(:datetime) }
-    it { should have_db_column(:locked_at).of_type(:datetime) }
-    it { should have_db_column(:status).of_type(:text) }
+    it { is_expected.to have_db_column(:root_at).of_type(:datetime) }
+    it { is_expected.to have_db_column(:locked_at).of_type(:datetime) }
+    it { is_expected.to have_db_column(:status).of_type(:text) }
 
-    it { should validate_presence_of(:status) }
-    it { should validate_inclusion_of(:status).in_array(valid_statuses) }
+    it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_inclusion_of(:status).in_array(valid_statuses) }
     it { expect(described_class.defined_enums.keys).to include('status') }
   end
 
   context 'instance methods' do
     let(:instance) { described_class.new }
 
-    context '#temporarily_block!' do
-      let(:user) { create(:user) }
+    describe '#temporarily_block!' do
       subject { user }
 
-      it { should respond_to(:temporarily_block!) }
-      it { should be_valid }
-      it { should be_persisted }
+      let(:user) { create(:user) }
+
+      it { is_expected.to respond_to(:temporarily_block!) }
+      it { is_expected.to be_valid }
+      it { is_expected.to be_persisted }
       it { expect { user.temporarily_block! }.to change(user, :locked_at) }
 
       context 'after call' do
         before { user.temporarily_block! }
 
         it { expect { user.temporarily_block! }.not_to raise_error }
-        it { should be_a(User) }
+        it { is_expected.to be_a(User) }
         it { expect(user.locked_at.to_i).to eq user.reload.locked_at.to_i }
         it { expect(subject.changes).to be_empty }
       end
     end
 
-    context '#temporarily_blocked?' do
+    describe '#temporarily_blocked?' do
       context 'when locked_at is nil' do
         subject { build(:user, locked_at: nil) }
-        it { should be_valid }
+
+        it { is_expected.to be_valid }
         it { expect(subject.temporarily_blocked?).to be false }
         it { expect(subject).not_to be_temporarily_blocked }
       end
 
       context 'when locked_at is in the past' do
         subject { build(:user, locked_at: 1.year.ago) }
-        it { should be_valid }
+
+        it { is_expected.to be_valid }
         it { expect(subject.temporarily_blocked?).to be false }
         it { expect(subject).not_to be_temporarily_blocked }
       end
 
       context 'when locked_at is in the future' do
         subject { build(:user, locked_at: 1.year.from_now) }
-        it { should be_valid }
+
+        it { is_expected.to be_valid }
         it { expect(subject.temporarily_blocked?).to be true }
         it { expect(subject).to be_temporarily_blocked }
       end
 
       context 'when locked_at is now' do
         subject { build(:user, locked_at: Time.now) }
-        it { should be_valid }
+
+        it { is_expected.to be_valid }
         it { expect(subject.temporarily_blocked?).to be true }
         it { expect(subject).to be_temporarily_blocked }
       end
     end
 
-    context '#generate_refresh_token' do
+    describe '#generate_refresh_token' do
       it { expect(instance).to respond_to(:generate_refresh_token) }
 
       context 'on existing user' do
-        let(:user) { create(:user) }
         subject { user }
+
+        let(:user) { create(:user) }
 
         it { expect { user.generate_refresh_token }.not_to raise_error }
         it { expect { user.generate_refresh_token }.to change(RefreshToken, :count).by(1) }
@@ -99,15 +107,16 @@ RSpec.describe User, type: :model do
         context 'when called' do
           subject { user.generate_refresh_token }
 
-          it { should be_a RefreshToken }
-          it { should be_persisted }
-          it { should be_valid }
+          it { is_expected.to be_a RefreshToken }
+          it { is_expected.to be_persisted }
+          it { is_expected.to be_valid }
         end
       end
 
       context 'on new user' do
-        let(:user) { build(:user) }
         subject { user }
+
+        let(:user) { build(:user) }
 
         it { expect { user.generate_refresh_token }.not_to raise_error }
         it { expect { user.generate_refresh_token }.to change(RefreshToken, :count).by(0) }
@@ -115,7 +124,7 @@ RSpec.describe User, type: :model do
         context 'when called' do
           before { user.generate_refresh_token }
 
-          it { should_not be_a RefreshToken }
+          it { is_expected.not_to be_a RefreshToken }
 
           it { expect(user.errors).not_to be_empty }
         end
@@ -124,9 +133,10 @@ RSpec.describe User, type: :model do
   end
 
   context 'associations' do
-    it { should have_many(:preferences).dependent(:destroy) }
+    it { is_expected.to have_many(:preferences).dependent(:destroy) }
+
     context 'refresh tokens' do
-      it { should have_many(:refresh_tokens).dependent(:destroy) }
+      it { is_expected.to have_many(:refresh_tokens).dependent(:destroy) }
 
       context 'should be deleted if user was deleted' do
         let!(:refresh_token) { create(:refresh_token, :with_user) }
@@ -144,7 +154,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  it 'should be able to create a user with just { email }' do
+  it 'is able to create a user with just { email }' do
     user = User.new(email: Faker::Internet.email)
     expect(user).to be_valid
     expect(user.errors).to be_empty
@@ -179,7 +189,7 @@ RSpec.describe User, type: :model do
   context 'should be able to read preference value with #preference_value' do
     let(:user) { create(:user) }
 
-    it { should respond_to(:preference_value) }
+    it { is_expected.to respond_to(:preference_value) }
 
     it 'assign timezone value and check if assigned.' do
       value = generate(:timezone)
@@ -198,7 +208,7 @@ RSpec.describe User, type: :model do
   context 'should be able to find a preference by key, using #preference(key)' do
     let(:user) { create(:user) }
 
-    it { should respond_to(:preference) }
+    it { is_expected.to respond_to(:preference) }
 
     it do
       user.preference(:timezone).update!(value: generate(:timezone))

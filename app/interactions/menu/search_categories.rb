@@ -11,9 +11,7 @@ module Menu
         categories = categories.where.not(id: params[:except].split(',').map(&:to_i))
       end
 
-      if params.has_key?(:parent_id)
-        categories = categories.where(parent_id: params[:parent_id].present? ? params[:parent_id] : nil)
-      end
+      categories = categories.where(parent_id: params[:parent_id].presence) if params.has_key?(:parent_id)
 
       if params[:query].present? && params[:query].is_a?(String)
         categories = categories.where(id: Category.filter_by_query(params[:query]).select(:id))

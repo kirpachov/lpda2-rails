@@ -26,7 +26,7 @@ module V1
           return render json: {
             message: "#{I18n.t('settings.update_failed')}:#{setting.errors.full_messages.join('; ')}",
             details: setting.errors.as_json
-          }, status: 422
+          }, status: :unprocessable_entity
         end
 
         render json: setting_json(setting.reload)
@@ -42,7 +42,7 @@ module V1
         return if (@setting = Setting.where(key: params[:key]).first).present?
 
         render json: { message: I18n.t('preferences.key_not_found') },
-               status: 404
+               status: :not_found
       end
     end
   end

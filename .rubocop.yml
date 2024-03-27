@@ -1,2 +1,7 @@
 AllCops:
-  NewCops: enable
+  NewCops: disable
+
+require:
+  - rubocop-rspec
+  - rubocop-factory_bot
+  - rubocop-rails

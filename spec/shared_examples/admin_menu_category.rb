@@ -4,9 +4,10 @@
 # Expects subject to be the Hash with Menu::Category information.
 ADMIN_MENU_CATEGORY = 'ADMIN_MENU_CATEGORY'
 RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
-  it { should be_a(Hash) }
+  it { is_expected.to be_a(Hash) }
+
   it {
-    should include(
+    expect(subject).to include(
       id: Integer,
       status: String,
       index: Integer,
@@ -18,11 +19,12 @@ RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
   }
 
   unless options[:skip_visibility]
-    it { should include(menu_visibility_id: Integer) }
-    it { should include(visibility: Hash) }
+    it { is_expected.to include(menu_visibility_id: Integer) }
+    it { is_expected.to include(visibility: Hash) }
 
     context 'visibility' do
       it { expect(subject[:visibility]).to be_a(Hash) }
+
       it {
         expect(subject[:visibility]).to include(*%i[public_visible public_from public_to private_visible private_from
                                                     private_to created_at updated_at id])

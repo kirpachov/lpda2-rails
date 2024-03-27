@@ -7,17 +7,17 @@ class Setting < ApplicationRecord
   # Validations
   # ################################
   validates_with KeyValueValidator
-  validates_presence_of :key
-  validates_uniqueness_of :key, case_sensitive: false
-  validates_inclusion_of :key, in: DEFAULTS.keys.map(&:to_s) + DEFAULTS.keys.map(&:to_sym)
-  validates_inclusion_of :parser, in: %w[json], allow_nil: true
+  validates :key, presence: true
+  validates :key, uniqueness: { case_sensitive: false }
+  validates :key, inclusion: { in: DEFAULTS.keys.map(&:to_s) + DEFAULTS.keys.map(&:to_sym) }
+  validates :parser, inclusion: { in: %w[json], allow_nil: true }
 
   # ##############################
   # Class methods
   # ##############################
   class << self
     def all_hash
-      DEFAULTS.keys.map { |key| [key, self[key]] }.to_h.with_indifferent_access
+      DEFAULTS.keys.index_with { |key| self[key] }.with_indifferent_access
     end
 
     def default(key)

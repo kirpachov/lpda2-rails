@@ -3,12 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Menu::CopyDish, type: :interaction do
-  context '#execute' do
+  describe '#execute' do
+    subject { described_class.run(params) }
+
     let!(:dish) { create(:menu_dish) }
     let!(:current_user) { create(:user) }
     let(:old) { dish }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params) }
 
     context 'basic' do
       it 'creates a new dish' do
@@ -104,8 +105,9 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has images and providing {copy_images: "full"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { dish.images = [image] }
       let(:params) { { old:, current_user:, copy_images: 'full' } }
+
+      before { dish.images = [image] }
 
       it { expect(subject.result.images).not_to be_empty }
 
@@ -117,7 +119,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
       it { expect(subject.result.images.first.url).not_to eq dish.images.first.url }
 
-      it 'should have a different image' do
+      it 'has a different image' do
         new = subject.result
         dish.images.first.attached_image.blob.purge
         dish.images.first.attached_image.destroy!
@@ -131,8 +133,9 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has MANY images and providing {copy_images: "full"}' do
       let!(:images) { create_list(:image, 3, :with_attached_image) }
-      before { dish.images = images }
       let(:params) { { old:, current_user:, copy_images: 'full' } }
+
+      before { dish.images = images }
 
       it { expect(subject.result.images).not_to be_empty }
 
@@ -152,7 +155,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
       it { expect(subject.result.images.count).to eq dish.images.count }
 
-      it 'should have a different image' do
+      it 'has a different image' do
         new = subject.result
         dish.images.first.attached_image.blob.purge
         dish.images.first.attached_image.destroy!
@@ -166,8 +169,9 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has images and providing {copy_images: "link"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { dish.images = [image] }
       let(:params) { { old:, current_user:, copy_images: 'link' } }
+
+      before { dish.images = [image] }
 
       it { expect(subject.result.images).not_to be_empty }
 
@@ -183,8 +187,9 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has MANY images and providing {copy_images: "link"}' do
       let!(:images) { create_list(:image, 3, :with_attached_image) }
-      before { dish.images = images }
       let(:params) { { old:, current_user:, copy_images: 'link' } }
+
+      before { dish.images = images }
 
       it { expect(subject.result.images).not_to be_empty }
       it { expect(subject.result.images.count).to eq dish.images.count }
@@ -202,8 +207,9 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has images and providing {copy_images: "none"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { dish.images = [image] }
       let(:params) { { old:, current_user:, copy_images: 'none' } }
+
+      before { dish.images = [image] }
 
       it { expect(subject.result.images).to be_empty }
       it { expect(subject.result.reload.images).to be_empty }
@@ -215,6 +221,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has ingredients' do
       let(:ingredients) { create_list(:menu_ingredient, 3) }
+
       before { dish.ingredients = ingredients }
 
       context 'checking mock data' do
@@ -260,6 +267,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
       context 'when providing {copy_ingredients: "none"}' do
         let(:params) { { old:, current_user:, copy_ingredients: 'none' } }
+
         it { expect(subject.result.ingredients).to be_empty }
         it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
         it { expect { subject }.not_to(change { Menu::IngredientsInDish.count }) }
@@ -268,6 +276,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has tags' do
       let(:tags) { create_list(:menu_tag, 3) }
+
       before { dish.tags = tags }
 
       context 'checking mock data' do
@@ -332,6 +341,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
       context 'when providing {copy_tags: "none"}' do
         let(:params) { { old:, current_user:, copy_tags: 'none' } }
+
         it { expect(subject.result.tags).to be_empty }
         it { expect { subject }.not_to(change { Menu::Tag.count }) }
         it { expect { subject }.not_to(change { Menu::TagsInDish.count }) }
@@ -340,6 +350,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
     context 'when dish has allergens' do
       let(:allergens) { create_list(:menu_allergen, 3) }
+
       before { dish.allergens = allergens }
 
       context 'checking mock data' do
@@ -386,6 +397,7 @@ RSpec.describe Menu::CopyDish, type: :interaction do
 
       context 'when providing {copy_allergens: "none"}' do
         let(:params) { { old:, current_user:, copy_allergens: 'none' } }
+
         it { expect(subject.result.allergens).to be_empty }
         it { expect { subject }.not_to(change { Menu::Allergen.count }) }
         it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }

@@ -46,7 +46,7 @@ class Reservation < ApplicationRecord
   validates :people, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
 
-  validates_uniqueness_of :secret, case_sensitive: false
+  validates :secret, uniqueness: { case_sensitive: false }
 
   # ################################
   # Hooks / Callbacks

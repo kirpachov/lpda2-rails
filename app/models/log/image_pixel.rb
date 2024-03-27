@@ -9,7 +9,7 @@ module Log
     # ################################
     # Associations
     # ################################
-    belongs_to :image, class_name: 'Image', foreign_key: 'image_id', optional: false
+    belongs_to :image, class_name: 'Image', optional: false
     belongs_to :record, polymorphic: true, optional: false
     has_many :events, class_name: 'Log::ImagePixelEvent', dependent: :destroy, inverse_of: :image_pixel
     belongs_to :delivered_email, class_name: 'Log::DeliveredEmail', optional: false

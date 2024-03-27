@@ -4,8 +4,8 @@ require 'rails_helper'
 
 ADMIN_MENU_TAG_ITEM = 'ADMIN_MENU_TAG_ITEM'
 RSpec.shared_context ADMIN_MENU_TAG_ITEM do |options = {}|
-  it 'should include all basic information' do
-    is_expected.to include(
+  it 'includes all basic information' do
+    expect(subject).to include(
       id: Integer,
       created_at: String,
       updated_at: String
@@ -13,51 +13,51 @@ RSpec.shared_context ADMIN_MENU_TAG_ITEM do |options = {}|
   end
 
   if options[:has_name] == true
-    it 'should have name' do
-      is_expected.to include(
+    it 'has name' do
+      expect(subject).to include(
         name: String
       )
     end
   elsif options[:has_name] == false
-    it 'should NOT have name' do
-      is_expected.to include(
+    it 'does not have name' do
+      expect(subject).to include(
         name: nil
       )
     end
   end
 
   if options[:has_description] == true
-    it 'should have description' do
-      is_expected.to include(
+    it 'has description' do
+      expect(subject).to include(
         description: String
       )
     end
   elsif options[:has_description] == false
-    it 'should NOT have description' do
-      is_expected.to include(
+    it 'does not have description' do
+      expect(subject).to include(
         description: nil
       )
     end
   end
 
   if options[:has_image] == true
-    it 'should have image' do
+    it 'has image' do
       expect(subject[:image]).to be_a(Hash)
       # TODO: may validate image content
     end
   elsif options[:has_image] == false
-    it 'should NOT have image' do
-      is_expected.to include(image: nil)
+    it 'does not have image' do
+      expect(subject).to include(image: nil)
     end
   end
 
   if options[:has_color] == true
-    it 'should have color' do
-      is_expected.to include(color: String)
+    it 'has color' do
+      expect(subject).to include(color: String)
     end
   elsif options[:has_color] == false
-    it 'should NOT have color' do
-      is_expected.to include(color: nil)
+    it 'does not have color' do
+      expect(subject).to include(color: nil)
     end
   end
 end
@@ -68,6 +68,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   let(:instance) { described_class.new }
+  let(:user) { create(:user) }
 
   def create_menu_tags(count, attrs = {})
     items = count.times.map do |_i|
@@ -77,9 +78,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
     Menu::Tag.import! items, validate: false
   end
 
-  let(:user) { create(:user) }
-
-  context '#index' do
+  describe '#index' do
     it { expect(instance).to respond_to(:index) }
     it { expect(described_class).to route(:get, '/v1/admin/menu/tags').to(action: :index, format: :json) }
 
@@ -89,21 +88,25 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
     context 'when user is not authenticated' do
       before { req }
+
       it_behaves_like UNAUTHORIZED
     end
 
     context 'when user is authenticated' do
+      subject { response }
+
       before do
         authenticate_request
         req
       end
 
-      subject { response }
-      it { should have_http_status(:ok) }
+      it { is_expected.to have_http_status(:ok) }
+
       context 'response' do
         subject { parsed_response_body }
-        it { should be_a(Hash) }
-        it { should include(items: Array, metadata: Hash) }
+
+        it { is_expected.to be_a(Hash) }
+        it { is_expected.to include(items: Array, metadata: Hash) }
       end
     end
 
@@ -117,6 +120,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       it { expect(Menu::Tag.all.pluck(:status)).to all(eq 'active') }
 
       context 'without pagination params' do
+        subject { parsed_response_body }
+
         before do
           create_menu_tags(20)
           req
@@ -125,8 +130,6 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         it { expect(Menu::Tag.count).to eq 30 }
         it { expect(Menu::Tag.all.pluck(:status)).to all(eq 'active') }
 
-        subject { parsed_response_body }
-
         it { expect(subject[:items].size).to eq 10 }
         it { expect(subject[:metadata][:total_count]).to eq 30 }
         it { expect(subject[:metadata][:current_page]).to eq 1 }
@@ -134,9 +137,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'page 1' do
+        subject { parsed_response_body }
+
         before { req(page: 1, per_page: 3) }
 
-        subject { parsed_response_body }
         it { expect(subject[:items].size).to eq 3 }
         it { expect(subject[:metadata][:total_count]).to eq 10 }
         it { expect(subject[:metadata][:current_page]).to eq 1 }
@@ -144,9 +148,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'page 2' do
+        subject { parsed_response_body }
+
         before { req(page: 2, per_page: 3) }
 
-        subject { parsed_response_body }
         it { expect(subject[:items].size).to eq 3 }
         it { expect(subject[:metadata][:total_count]).to eq 10 }
         it { expect(subject[:metadata][:current_page]).to eq 2 }
@@ -164,9 +169,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'page 4' do
+        subject { parsed_response_body }
+
         before { req(page: 4, per_page: 3) }
 
-        subject { parsed_response_body }
         it { expect(subject[:items].size).to eq 1 }
         it { expect(subject[:metadata][:total_count]).to eq 10 }
         it { expect(subject[:metadata][:current_page]).to eq 4 }
@@ -174,9 +180,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'page 10' do
+        subject { parsed_response_body }
+
         before { req(page: 10, per_page: 3) }
 
-        subject { parsed_response_body }
         it { expect(subject[:items].size).to eq 0 }
         it { expect(subject[:metadata][:total_count]).to eq 10 }
         it { expect(subject[:metadata][:current_page]).to eq 10 }
@@ -204,6 +211,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       before { authenticate_request(user:) }
 
       context 'returned items should contain all relevant information' do
+        subject { parsed_response_body[:items].first }
+
         let!(:image) { create(:image, :with_attached_image) }
 
         let!(:tag) do
@@ -213,8 +222,6 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         end
 
         before { req }
-
-        subject { parsed_response_body[:items].first }
 
         context 'checking test data' do
           it { expect(Menu::Tag.count).to eq 1 }
@@ -299,14 +306,14 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'should return only non-deleted items' do
-        before do
-          create(:menu_tag, status: :active)
-          create(:menu_tag, status: :deleted)
-        end
-
         subject do
           req
           parsed_response_body[:items]
+        end
+
+        before do
+          create(:menu_tag, status: :active)
+          create(:menu_tag, status: :deleted)
         end
 
         it { expect(Menu::Tag.count).to eq 2 }
@@ -317,7 +324,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
     end
   end
 
-  context '#show' do
+  describe '#show' do
     def req(params = {})
       get :show, params:
     end
@@ -329,6 +336,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
     context 'if user is unauthorized' do
       before { req(id: tag.id) }
+
       it_behaves_like UNAUTHORIZED
     end
 
@@ -336,12 +344,12 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       before { authenticate_request }
 
       context 'basic' do
-        let(:tag) { create(:menu_tag, name: nil, description: nil) }
-
         subject do
           req(id: tag.id)
           parsed_response_body[:item]
         end
+
+        let(:tag) { create(:menu_tag, name: nil, description: nil) }
 
         it { expect(tag).to be_valid }
 
@@ -352,25 +360,30 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'when passing a invalid id' do
-        before { req(id: 'invalid') }
         subject { response }
+
+        before { req(id: 'invalid') }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'when passing a invalid id' do
-        before { req(id: 999_999) }
         subject { response }
+
+        before { req(id: 999_999) }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'when tag has image' do
-        let(:tag) { create(:menu_tag, name: nil, description: nil) }
-        before { tag.image = create(:image, :with_attached_image) }
-
         subject do
           req(id: tag.id)
           parsed_response_body[:item]
         end
+
+        let(:tag) { create(:menu_tag, name: nil, description: nil) }
+
+        before { tag.image = create(:image, :with_attached_image) }
 
         it { expect(tag).to be_valid }
         it { expect(response).to have_http_status(:ok) }
@@ -379,7 +392,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'when tag has name' do
+        subject { parsed_response_body[:item] }
+
         let(:tag) { create(:menu_tag, description: nil, name: nil) }
+
         before do
           tag.update!(name: 'test')
           tag.reload
@@ -388,16 +404,16 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
         it { expect(tag.name).to eq 'test' }
 
-        subject { parsed_response_body[:item] }
-
         it { expect(tag).to be_valid }
         it { expect(response).to have_http_status(:ok) }
 
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false, has_image: false
-        it { should include(name: 'test') }
+        it { is_expected.to include(name: 'test') }
       end
 
       context 'when tag has description (in another language)' do
+        subject { parsed_response_body[:item] }
+
         before do
           @initial_lang = I18n.locale
           I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
@@ -413,18 +429,16 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
         it { expect(tag.description).to eq "test-#{I18n.locale}" }
 
-        subject { parsed_response_body[:item] }
-
         it { expect(tag).to be_valid }
         it { expect(response).to have_http_status(:ok) }
 
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: true
-        it { should include(description: "test-#{I18n.locale}") }
+        it { is_expected.to include(description: "test-#{I18n.locale}") }
       end
     end
   end
 
-  context '#create' do
+  describe '#create' do
     it { expect(instance).to respond_to(:create) }
     it { expect(described_class).to route(:post, '/v1/admin/menu/tags').to(action: :create, format: :json) }
 
@@ -434,6 +448,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
     context 'when user is not authenticated' do
       before { req }
+
       it_behaves_like UNAUTHORIZED
     end
 
@@ -465,8 +480,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:ok) }
+        it { is_expected.to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -479,11 +494,12 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'should include translations' do
-        before { req(name: 'test') }
         subject { parsed_response_body[:item] }
 
+        before { req(name: 'test') }
+
         it do
-          is_expected.to include(translations: Hash)
+          expect(subject).to include(translations: Hash)
           expect(subject[:translations]).to include(name: Hash)
           expect(subject.dig(:translations, :name)).to include(en: 'test')
         end
@@ -500,7 +516,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
+        it { is_expected.to have_http_status(:ok) }
 
         context 'response[:item]' do
           subject do
@@ -508,7 +524,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it { should include(name: 'english') }
+          it { is_expected.to include(name: 'english') }
         end
       end
 
@@ -523,8 +539,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:ok) }
+        it { is_expected.to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -534,7 +550,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false, has_image: false
 
-          it { should include(name: 'test') }
+          it { is_expected.to include(name: 'test') }
         end
       end
 
@@ -545,10 +561,12 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         end
 
         it { expect { subject }.to change { Image.count }.by(1) }
+
         it do
           subject
           expect(parsed_response_body[:item]).to include(image: Hash)
         end
+
         it do
           subject
           expect(response).to have_http_status(:ok)
@@ -566,8 +584,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:ok) }
+        it { is_expected.to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -577,7 +595,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: false, has_description: true, has_image: false
 
-          it { should include(description: 'test') }
+          it { is_expected.to include(description: 'test') }
         end
       end
 
@@ -593,8 +611,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:ok) }
+        it { is_expected.to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -604,11 +622,13 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false, has_image: false
 
-          it { should include(name: "test-#{I18n.locale}") }
+          it { is_expected.to include(name: "test-#{I18n.locale}") }
 
           context 'after call' do
             before { subject }
+
             it { expect(Menu::Tag.count).to eq 1 }
+
             %i[it en].each do |locale|
               it { Mobility.with_locale(locale) { expect(Menu::Tag.first.name).to eq "test-#{locale}" } }
               it { Mobility.with_locale(locale) { expect(Menu::Tag.first.description).to eq nil } }
@@ -629,8 +649,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:ok) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:ok) }
+        it { is_expected.to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -640,11 +660,13 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: false, has_description: true, has_image: false
 
-          it { should include(description: "test-#{I18n.locale}") }
+          it { is_expected.to include(description: "test-#{I18n.locale}") }
 
           context 'after call' do
             before { subject }
+
             it { expect(Menu::Tag.count).to eq 1 }
+
             %i[it en].each do |locale|
               it { Mobility.with_locale(locale) { expect(Menu::Tag.first.description).to eq "test-#{locale}" } }
               it { Mobility.with_locale(locale) { expect(Menu::Tag.first.name).to eq nil } }
@@ -665,8 +687,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           expect(Menu::Tag.count).to eq 0
         end
 
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it { is_expected.to have_http_status(:unprocessable_entity) }
+        it { is_expected.not_to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -674,7 +696,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it { should be_nil }
+          it { is_expected.to be_nil }
         end
 
         context 'response[:message]' do
@@ -683,8 +705,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:message]
           end
 
-          it { should be_a(String) }
-          it { should include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
+          it { is_expected.to be_a(String) }
+          it { is_expected.to include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
         end
 
         context 'response[:details]' do
@@ -693,13 +715,14 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:details]
           end
 
-          it { should be_a(Hash) }
-          it { should include(:name) }
-          it { should include(name: Array) }
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(:name) }
+          it { is_expected.to include(name: Array) }
         end
 
         context 'after call' do
           before { subject }
+
           it { expect(Menu::Tag.count).to eq 0 }
         end
 
@@ -709,16 +732,16 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:details][:name]
           end
 
-          it { should be_a(Array) }
-          it { should_not be_empty }
-          it { should all(be_a(Hash)) }
-          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+          it { is_expected.to be_a(Array) }
+          it { is_expected.not_to be_empty }
+          it { is_expected.to all(be_a(Hash)) }
+          it { is_expected.to all(include(:attribute, :raw_type, :type, :options, :message)) }
         end
       end
     end
   end
 
-  context '#update' do
+  describe '#update' do
     it { expect(instance).to respond_to(:update) }
     it { expect(described_class).to route(:patch, '/v1/admin/menu/tags/22').to(action: :update, format: :json, id: 22) }
 
@@ -728,6 +751,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
     context 'when user is not authenticated' do
       before { req(id: 22) }
+
       it_behaves_like UNAUTHORIZED
     end
 
@@ -735,12 +759,12 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       before { authenticate_request }
 
       context 'basic' do
-        let!(:tag) { create(:menu_tag) }
-
         subject do
           req(id: tag.id, name: 'test-name', description: nil)
           parsed_response_body[:item]
         end
+
+        let!(:tag) { create(:menu_tag) }
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
@@ -749,37 +773,40 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'if cannot find tag by id' do
-        before { req(id: 'invalid') }
         subject { response }
+
+        before { req(id: 'invalid') }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'with {name: "Hello"}' do
-        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
-
         subject do
           req(id: tag.id, name: 'Hello')
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
+
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
 
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false
-        it { should include(name: 'Hello') }
+        it { is_expected.to include(name: 'Hello') }
       end
 
       context 'can remove image with {image: "null"}' do
-        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
-
         subject do
           req(id: tag.id, image: 'null')
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
+
         it { expect { subject }.to change { tag.reload.image }.to(nil) }
         it { expect { subject }.not_to(change { Image.count }) }
-        it 'should return 200' do
+
+        it 'returns 200' do
           subject
           expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
@@ -787,16 +814,17 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'can remove image with {image: nil}' do
-        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
-
         subject do
           req(id: tag.id, image: nil)
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
+
         it { expect { subject }.to change { tag.reload.image }.to(nil) }
         it { expect { subject }.not_to(change { Image.count }) }
-        it 'should return 200' do
+
+        it 'returns 200' do
           subject
           expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
@@ -804,47 +832,51 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'can update image with {image: File}' do
-        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
-
         subject do
           req(id: tag.id, image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
           response
         end
+
+        let!(:tag) { create(:menu_tag, :with_image_with_attachment) }
 
         it { expect { subject }.to change { Image.count }.by(1) }
         it { expect { subject }.to change { tag.reload.image }.to(an_instance_of(Image)) }
       end
 
       context 'with {description: "Hello"}' do
-        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
-
         subject do
           req(id: tag.id, description: 'Hello')
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
+
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
+
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: false, has_description: true
-        it { should include(description: 'Hello') }
+        it { is_expected.to include(description: 'Hello') }
       end
 
       context 'with {name: {it: "Hello", en: "Hello"}}' do
-        let!(:tag) { create(:menu_tag, description: nil) }
-
         subject do
           req(id: tag.id, name: { it: 'Ciao', en: 'Hello' })
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, description: nil) }
+
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
+
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: true, has_description: false, has_image: false
-        it { should include(name: 'Hello') }
+        it { is_expected.to include(name: 'Hello') }
 
         context 'after request' do
-          before { req(id: tag.id, name: { it: 'Ciao', en: 'Hello' }) }
           subject { tag.reload }
+
+          before { req(id: tag.id, name: { it: 'Ciao', en: 'Hello' }) }
+
           it { Mobility.with_locale(:it) { expect(subject.name).to eq 'Ciao' } }
           it { Mobility.with_locale(:it) { expect(subject.description).to eq nil } }
           it { Mobility.with_locale(:en) { expect(subject.name).to eq 'Hello' } }
@@ -856,22 +888,25 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'with {description: {it: "Hello", en: "Hello"}}' do
-        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
-
         subject do
           req(id: tag.id, description: { it: 'Ciao', en: 'Hello' })
           parsed_response_body[:item]
         end
 
+        let!(:tag) { create(:menu_tag, name: nil, description: nil) }
+
         it { expect(response).to have_http_status(:ok) }
         it { expect(response).to be_successful }
+
         it_behaves_like ADMIN_MENU_TAG_ITEM, has_name: false, has_description: true, has_image: false
 
-        it { should include(description: 'Hello') }
+        it { is_expected.to include(description: 'Hello') }
 
         context 'after request' do
-          before { req(id: tag.id, description: { it: 'Ciao', en: 'Hello' }) }
           subject { tag.reload }
+
+          before { req(id: tag.id, description: { it: 'Ciao', en: 'Hello' }) }
+
           it { expect(subject.description).to eq 'Hello' }
           it { expect(subject.description_it).to eq 'Ciao' }
           it { expect(subject.description_en).to eq 'Hello' }
@@ -879,21 +914,21 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'passing {name: {it: <String>, invalid_locale: <String>}}' do
-        let!(:tag) { create(:menu_tag) }
-        let(:params) { { id: tag.id, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
-
         subject do
           req params
           response
         end
+
+        let!(:tag) { create(:menu_tag) }
+        let(:params) { { id: tag.id, name: { it: 'test-it', invalid_locale: 'test-invalid' } } }
 
         it do
           expect { subject }.not_to change(Menu::Tag, :count)
           expect(Menu::Tag.count).to eq 1
         end
 
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it { is_expected.to have_http_status(:unprocessable_entity) }
+        it { is_expected.not_to be_successful }
 
         context 'response[:item]' do
           subject do
@@ -901,7 +936,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it { should be_nil }
+          it { is_expected.to be_nil }
         end
 
         context 'response[:message]' do
@@ -910,8 +945,8 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:message]
           end
 
-          it { should be_a(String) }
-          it { should include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
+          it { is_expected.to be_a(String) }
+          it { is_expected.to include(I18n.t('errors.messages.invalid_locale', lang: :invalid_locale)) }
         end
 
         context 'response[:details]' do
@@ -920,9 +955,9 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:details]
           end
 
-          it { should be_a(Hash) }
-          it { should include(:name) }
-          it { should include(name: Array) }
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(:name) }
+          it { is_expected.to include(name: Array) }
         end
 
         context 'response[:details][:name]' do
@@ -931,25 +966,25 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
             parsed_response_body[:details][:name]
           end
 
-          it { should be_a(Array) }
-          it { should_not be_empty }
-          it { should all(be_a(Hash)) }
-          it { should all(include(:attribute, :raw_type, :type, :options, :message)) }
+          it { is_expected.to be_a(Array) }
+          it { is_expected.not_to be_empty }
+          it { is_expected.to all(be_a(Hash)) }
+          it { is_expected.to all(include(:attribute, :raw_type, :type, :options, :message)) }
         end
       end
 
       context 'passing {name: nil} to a tag with name' do
+        subject do
+          req(id: tag.id, name: nil)
+          parsed_response_body[:item]
+        end
+
         let!(:tag) do
           mc = create(:menu_tag)
           Mobility.with_locale(:it) { mc.update!(name: 'test-it') }
           Mobility.with_locale(:en) { mc.update!(name: 'test-en') }
           mc.reload
           mc
-        end
-
-        subject do
-          req(id: tag.id, name: nil)
-          parsed_response_body[:item]
         end
 
         context 'checking mock data' do
@@ -963,8 +998,10 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         it { expect(subject[:name]).to eq nil }
 
         context 'after request' do
-          before { req(id: tag.id, name: nil) }
           subject { tag.reload }
+
+          before { req(id: tag.id, name: nil) }
+
           it { expect(subject.name).to eq nil }
           it { expect(subject.name_en).to eq nil }
           it { expect(subject.name_it).to eq 'test-it' }
@@ -972,17 +1009,17 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'passing {name: { it: nil, en: nil } } to a tag with name in both langauges' do
+        subject do
+          req(id: tag.id, name: { it: nil, en: nil })
+          parsed_response_body[:item]
+        end
+
         let!(:tag) do
           mc = create(:menu_tag)
           Mobility.with_locale(:it) { mc.update!(name: 'test-it') }
           Mobility.with_locale(:en) { mc.update!(name: 'test-en') }
           mc.reload
           mc
-        end
-
-        subject do
-          req(id: tag.id, name: { it: nil, en: nil })
-          parsed_response_body[:item]
         end
 
         context 'checking mock data' do
@@ -996,8 +1033,9 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         it { expect(subject[:name]).to eq nil }
 
         context 'after request' do
-          before { req(id: tag.id, name: { it: nil, en: nil }) }
           subject { tag.reload }
+
+          before { req(id: tag.id, name: { it: nil, en: nil }) }
 
           it { expect(subject.name).to eq nil }
           it { expect(subject.name_en).to eq nil }
@@ -1006,31 +1044,32 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       end
 
       context 'when setting name to nil with {name: nil}' do
-        let!(:tag) { create(:menu_tag, name: 'Tag name') }
-
         subject do
           req(id: tag.id, name: nil)
           parsed_response_body[:item]
         end
 
-        it { should include(name: nil) }
+        let!(:tag) { create(:menu_tag, name: 'Tag name') }
+
+        it { is_expected.to include(name: nil) }
       end
 
       context 'when setting name to nil with {name: {<locale>: nil}}' do
-        let!(:tag) { create(:menu_tag, name: 'Tag name') }
-
         subject do
           req(id: tag.id, name: { en: nil })
           parsed_response_body[:item]
         end
 
-        it { should include(name: nil) }
+        let!(:tag) { create(:menu_tag, name: 'Tag name') }
+
+        it { is_expected.to include(name: nil) }
       end
     end
   end
 
-  context '#destroy' do
+  describe '#destroy' do
     it { expect(instance).to respond_to(:destroy) }
+
     it {
       expect(described_class).to route(:DELETE, '/v1/admin/menu/tags/22').to(action: :destroy, format: :json, id: 22)
     }
@@ -1041,6 +1080,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
     context 'when user is not authenticated' do
       before { req(id: 22) }
+
       it_behaves_like UNAUTHORIZED
     end
 
@@ -1048,70 +1088,77 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       before { authenticate_request }
 
       context 'basic' do
-        let!(:tag) { create(:menu_tag) }
-
         subject do
           req(id: tag.id)
           response
         end
 
+        let!(:tag) { create(:menu_tag) }
+
         it { expect { subject }.to change { Menu::Tag.visible.count }.by(-1) }
-        it { should have_http_status(:no_content) }
-        it { should be_successful }
+        it { is_expected.to have_http_status(:no_content) }
+        it { is_expected.to be_successful }
       end
 
       context 'when cannot delete record' do
-        let!(:tag) { create(:menu_tag) }
-        before { allow_any_instance_of(Menu::Tag).to receive(:deleted!).and_return(false) }
-
         subject do
           req(id: tag.id)
           response
         end
 
+        let!(:tag) { create(:menu_tag) }
+
+        before { allow_any_instance_of(Menu::Tag).to receive(:deleted!).and_return(false) }
+
         it { expect { subject }.not_to(change { Menu::Tag.visible.count }) }
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it { is_expected.to have_http_status(:unprocessable_entity) }
+        it { is_expected.not_to be_successful }
       end
 
       context 'when record deletion raises error' do
-        let!(:tag) { create(:menu_tag) }
-        before { allow_any_instance_of(Menu::Tag).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid) }
-
         subject do
           req(id: tag.id)
           response
         end
 
+        let!(:tag) { create(:menu_tag) }
+
+        before { allow_any_instance_of(Menu::Tag).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid) }
+
         it { expect { subject }.not_to(change { Menu::Tag.visible.count }) }
-        it { should have_http_status(:unprocessable_entity) }
-        it { should_not be_successful }
+        it { is_expected.to have_http_status(:unprocessable_entity) }
+        it { is_expected.not_to be_successful }
       end
 
       context 'if cannot find tag by id' do
-        before { req(id: 22) }
         subject { response }
+
+        before { req(id: 22) }
+
         it_behaves_like NOT_FOUND
       end
     end
   end
 
-  context '#copy' do
-    it { expect(instance).to respond_to(:copy) }
-    it {
-      should route(:post, '/v1/admin/menu/tags/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/tags',
-                                                            id: 22)
-    }
+  describe '#copy' do
+    subject { req(tag.id) }
+
     let!(:tag) { create(:menu_tag) }
+
+    it { expect(instance).to respond_to(:copy) }
+
+    it {
+      expect(subject).to route(:post, '/v1/admin/menu/tags/22/copy').to(format: :json, action: :copy, controller: 'v1/admin/menu/tags',
+                                                                        id: 22)
+    }
 
     def req(id, params = {})
       post :copy, params: params.merge(id:)
     end
 
-    subject { req(tag.id) }
-
     context 'when user is not authenticated' do
       before { req(tag.id, name: Faker::Lorem.sentence) }
+
       it_behaves_like UNAUTHORIZED
     end
 
@@ -1126,13 +1173,16 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
       it { expect { subject }.to change { Menu::Tag.count }.by(1) }
 
       context 'when item does not exist' do
-        before { req(999_999_999) }
         subject { response }
+
+        before { req(999_999_999) }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'if tag has image' do
         let!(:image) { create(:image, :with_attached_image) }
+
         before { tag.image = image }
 
         it { expect(tag.image&.id).to eq(image.id) }
@@ -1141,14 +1191,15 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
         context 'and providing {copy_image: "full"}' do
           subject { req(tag.id, { copy_image: 'full' }) }
 
-          it { should be_successful }
-          it { should have_http_status(:ok) }
+          it { is_expected.to be_successful }
+          it { is_expected.to have_http_status(:ok) }
 
           it { expect { subject }.to change { Image.count }.by(1) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
 
           context '[after req]' do
             before { subject }
+
             let(:result) { ::Menu::Tag.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(parsed_response_body).to include(item: Hash) }
@@ -1165,6 +1216,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           context '[after req]' do
             before { subject }
+
             let(:result) { ::Menu::Tag.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(result.image).to be_present }
@@ -1181,6 +1233,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
           context '[after req]' do
             before { subject }
+
             let(:result) { ::Menu::Tag.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(result.image).to be_nil }

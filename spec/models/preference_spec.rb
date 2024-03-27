@@ -5,13 +5,13 @@ require 'rails_helper'
 RSpec.describe Preference, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
-  context 'associations' do
-    it { should belong_to(:user).inverse_of(:preferences).required }
-  end
-
   let(:user) do
     (u = create(:user)).preferences.destroy_all
     u
+  end
+
+  context 'associations' do
+    it { is_expected.to belong_to(:user).inverse_of(:preferences).required }
   end
 
   context 'should have valid mocks' do
@@ -24,22 +24,23 @@ RSpec.describe Preference, type: :model do
   context 'validations' do
     before { create(:user) }
 
-    it { should validate_presence_of(:key) }
-    it { should_not validate_presence_of(:value) }
-    it { should validate_uniqueness_of(:key).scoped_to(:user_id).case_insensitive }
+    it { is_expected.to validate_presence_of(:key) }
+    it { is_expected.not_to validate_presence_of(:value) }
+    it { is_expected.to validate_uniqueness_of(:key).scoped_to(:user_id).case_insensitive }
 
     context 'checking if key uniqueness is case insensitive' do
+      subject { build(:preference, key: key.upcase, user:) }
+
       let(:key) { Preference::DEFAULTS.keys.sample }
 
       before do
         create(:preference, key:, user:)
       end
 
-      subject { build(:preference, key: key.upcase, user:) }
-
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
-      it 'should have errors on key' do
+
+      it 'has errors on key' do
         subject.save
         expect(subject).not_to be_persisted
         expect(subject.errors[:key]).not_to be_empty
@@ -49,14 +50,14 @@ RSpec.describe Preference, type: :model do
     context 'when key is invalid' do
       subject { build(:preference, key: :invalid_key, user:) }
 
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
     end
 
     context 'when key is valid and value is nil' do
       subject { build(:preference, key: Preference::DEFAULTS.keys.sample, user:) }
 
-      it { should be_valid }
+      it { is_expected.to be_valid }
       it { expect { subject.save! }.not_to raise_error }
     end
   end
@@ -64,8 +65,8 @@ RSpec.describe Preference, type: :model do
   context 'class methods' do
     subject { Preference }
 
-    context '.create_missing_for' do
-      it { should respond_to(:create_missing_for) }
+    describe '.create_missing_for' do
+      it { is_expected.to respond_to(:create_missing_for) }
 
       context 'should create missing preferences for user' do
         let(:user) { create(:user) }
@@ -87,7 +88,7 @@ RSpec.describe Preference, type: :model do
           end
 
           context 'checking mock data' do
-            it 'should have 1 preference' do
+            it 'has 1 preference' do
               expect(user.preferences.count).to eq 1
             end
           end
@@ -98,8 +99,8 @@ RSpec.describe Preference, type: :model do
       end
     end
 
-    context '.default' do
-      it { should respond_to(:default) }
+    describe '.default' do
+      it { is_expected.to respond_to(:default) }
 
       context 'should return nil if invalid key is provided' do
         def doit

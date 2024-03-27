@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec::Matchers.define :have_input do |input_name| # rubocop:disable Metrics/BlockLength
+RSpec::Matchers.define :have_input do |input_name|
   # ###################################
   # Main matcher. Will call all the methods below.
   # ###################################

@@ -24,7 +24,7 @@ module V1
 
         unless updated
           return render json: { message: "#{I18n.t('preferences.update_failed')}:#{preference.errors.full_messages.join('; ')}", details: preference.errors.as_json },
-                        status: 422
+                        status: :unprocessable_entity
         end
 
         render json: preference_json(current_user.preference(params[:key]))
@@ -40,7 +40,7 @@ module V1
         return if current_user.preference(params[:key])
 
         render json: { message: I18n.t('preferences.key_not_found') },
-               status: 404
+               status: :not_found
       end
 
       def all

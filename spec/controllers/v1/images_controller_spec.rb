@@ -10,16 +10,16 @@ RSpec.describe V1::ImagesController, type: :controller do
   let(:instance) { described_class.new }
 
   context 'GET #index' do
-    it { expect(instance).to respond_to(:index) }
-    it { should route(:get, '/v1/images').to(format: :json, action: :index, controller: 'v1/images') }
-
     let(:params) { {} }
+
+    it { expect(instance).to respond_to(:index) }
+    it { is_expected.to route(:get, '/v1/images').to(format: :json, action: :index, controller: 'v1/images') }
 
     def req(req_params = params)
       get :index, params: req_params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
       expect(response).to have_http_status(:ok)
     end
@@ -90,8 +90,9 @@ RSpec.describe V1::ImagesController, type: :controller do
         end
 
         context 'basic' do
-          before { req(record_type: 'Menu::Category', record_id: Menu::Category.all.sample.id) }
           subject { parsed_response_body[:items] }
+
+          before { req(record_type: 'Menu::Category', record_id: Menu::Category.all.sample.id) }
 
           it { expect(response).to have_http_status(:ok) }
           it { expect(subject.length).to eq 3 }
@@ -101,19 +102,19 @@ RSpec.describe V1::ImagesController, type: :controller do
   end
 
   context 'POST #create' do
-    it { expect(instance).to respond_to(:create) }
-    it { should route(:post, '/v1/images').to(format: :json, action: :create, controller: 'v1/images') }
-
-    let(:record_type) { nil }
-    let(:record_id) { nil }
-    let(:image) { fixture_file_upload('cat.jpeg', 'image/jpeg') }
     let(:params) { { image:, record_type:, record_id: } }
+    let(:image) { fixture_file_upload('cat.jpeg', 'image/jpeg') }
+    let(:record_id) { nil }
+    let(:record_type) { nil }
+
+    it { expect(instance).to respond_to(:create) }
+    it { is_expected.to route(:post, '/v1/images').to(format: :json, action: :create, controller: 'v1/images') }
 
     def req(req_params = params)
       post :create, params: req_params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
       expect(response).to have_http_status(:ok)
     end
@@ -121,14 +122,14 @@ RSpec.describe V1::ImagesController, type: :controller do
     it { expect { req }.not_to(change { ImageToRecord.count }) }
 
     context 'when providing {record_type: String, record_id: Integer}' do
-      let!(:category) { create(:menu_category) }
-      let!(:record_type) { 'Menu::Category' }
-      let!(:record_id) { category.id }
-
       subject do
         req
         parsed_response_body
       end
+
+      let!(:category) { create(:menu_category) }
+      let!(:record_type) { 'Menu::Category' }
+      let!(:record_id) { category.id }
 
       it do
         subject
@@ -142,55 +143,61 @@ RSpec.describe V1::ImagesController, type: :controller do
   end
 
   context 'GET #show' do
-    it { expect(instance).to respond_to(:show) }
-    it { should route(:get, '/v1/images/2').to(format: :json, action: :show, controller: 'v1/images', id: 2) }
-
-    let(:image) { create(:image, :with_attached_image) }
     let(:params) { { id: image.id } }
+    let(:image) { create(:image, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:show) }
+    it { is_expected.to route(:get, '/v1/images/2').to(format: :json, action: :show, controller: 'v1/images', id: 2) }
 
     def req(req_params = params)
       get :show, params: req_params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
       expect(response).to have_http_status(:ok)
     end
 
     context 'should return 404' do
-      before { req(id: 999_999_999) }
       subject { response }
+
+      before { req(id: 999_999_999) }
+
       it_behaves_like NOT_FOUND
     end
 
     context 'should include image url' do
-      before { req }
       subject { parsed_response_body[:item] }
 
-      it { should include(id: Integer) }
-      it { should include(url: String) }
+      before { req }
+
+      it { is_expected.to include(id: Integer) }
+      it { is_expected.to include(url: String) }
     end
   end
 
   context 'PATCH #update_record' do
-    it { expect(instance).to respond_to(:update_record) }
-    it { should route(:patch, '/v1/images/record').to(format: :json, action: :update_record, controller: 'v1/images') }
-
-    let(:all_images) { create_list(:image, 3, :with_attached_image) }
-    let(:record) { create(:menu_category) }
-
-    let(:record_type) { 'Menu::Category' }
-    let(:record_id) { record.id }
-    let(:image_ids) { [all_images.sample.id] }
     let(:params) do
       { record_type:, record_id:, image_ids: }
     end
+    let(:image_ids) { [all_images.sample.id] }
+    let(:record_id) { record.id }
+    let(:record_type) { 'Menu::Category' }
+    let(:record) { create(:menu_category) }
+    let(:all_images) { create_list(:image, 3, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:update_record) }
+
+    it {
+      expect(subject).to route(:patch, '/v1/images/record').to(format: :json, action: :update_record,
+                                                               controller: 'v1/images')
+    }
 
     def req(req_params = params)
       patch :update_record, params: req_params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
       expect(response).to have_http_status(:ok)
     end
@@ -199,6 +206,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       let(:record_id) { 999_999_999 }
 
       it { expect { req }.not_to(change { record.reload.images.count }) }
+
       it do
         req
         expect(parsed_response_body).to include(message: String, details: Hash)
@@ -210,6 +218,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       let(:record_type) { 'some-invalid-class' }
 
       it { expect { req }.not_to(change { record.reload.images.count }) }
+
       it do
         req
         expect(parsed_response_body).to include(message: String, details: Hash)
@@ -234,6 +243,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       it { expect { req }.not_to(change { record.reload.images.count }) }
       it { expect { req }.not_to(change { ImageToRecord.count }) }
       it { expect { req }.to(change { ImageToRecord.all.pluck(:id) }) }
+
       it do
         req
         expect(record.reload.images.pluck(:id)).not_to eq @order_before
@@ -247,14 +257,15 @@ RSpec.describe V1::ImagesController, type: :controller do
         @order_before = record.images.pluck(:id)
       end
 
+      let(:image_ids) { nil }
+
       context 'mock data' do
         it { expect(record.reload.images.count).to be_positive }
       end
 
-      let(:image_ids) { nil }
-
       it { expect { req }.to(change { record.reload.images.count }.to(0)) }
       it { expect { req }.to(change { ImageToRecord.count }) }
+
       it do
         req
         expect(response).to have_http_status(:ok)
@@ -282,32 +293,33 @@ RSpec.describe V1::ImagesController, type: :controller do
   end
 
   context 'PATCH #remove_from_record' do
-    it { expect(instance).to respond_to(:remove_from_record) }
-    it {
-      should route(:patch, '/v1/images/5/remove_from_record').to(format: :json, action: :remove_from_record,
-                                                                 controller: 'v1/images', id: 5)
-    }
-
-    let(:all_images) { create_list(:image, 3, :with_attached_image) }
-    let(:record) { create(:menu_category).tap { |cat| cat.images = all_images } }
-
-    let(:record_type) { 'Menu::Category' }
-    let(:record_id) { record.id }
-    let(:image_id) { all_images.sample.id }
     let(:params) do
       { record_type:, record_id:, id: image_id }
     end
+    let(:image_id) { all_images.sample.id }
+    let(:record_id) { record.id }
+    let(:record_type) { 'Menu::Category' }
+    let(:record) { create(:menu_category).tap { |cat| cat.images = all_images } }
+    let(:all_images) { create_list(:image, 3, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:remove_from_record) }
+
+    it {
+      expect(subject).to route(:patch, '/v1/images/5/remove_from_record').to(format: :json, action: :remove_from_record,
+                                                                             controller: 'v1/images', id: 5)
+    }
 
     def req(req_params = params)
       patch :remove_from_record, params: req_params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
       expect(response).to have_http_status(:ok)
     end
 
     it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
+
     it do
       expect { req }.to change {
                           record.reload.images.pluck(:id)
@@ -316,52 +328,58 @@ RSpec.describe V1::ImagesController, type: :controller do
 
     context 'should return 404 if cannot find image' do
       let(:image_id) { 999_999_999 }
+
       before { req }
-      it { expect(response).to have_http_status(404) }
+
+      it { expect(response).to have_http_status(:not_found) }
     end
 
     context 'should return 404 if cannot find record because of record type' do
       let(:record_type) { 'invalid-record-type' }
+
       before { req }
 
-      it { expect(response).to have_http_status(404) }
+      it { expect(response).to have_http_status(:not_found) }
     end
 
     context 'should return 404 if cannot find record because of record id' do
       let(:record_id) { 999_999_999 }
+
       before { req }
 
-      it { expect(response).to have_http_status(404) }
+      it { expect(response).to have_http_status(:not_found) }
     end
   end
 
   context 'GET #download' do
-    it { expect(instance).to respond_to(:download) }
-    it {
-      should route(:get, '/v1/images/23/download').to(format: :json, action: :download, controller: 'v1/images', id: 23)
-    }
-
     let(:image) { create(:image, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:download) }
+
+    it {
+      expect(subject).to route(:get, '/v1/images/23/download').to(format: :json, action: :download,
+                                                                  controller: 'v1/images', id: 23)
+    }
 
     def req(image_id, params = {})
       get :download, params: params.merge(id: image_id)
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req(image.id)
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
     end
 
-    it 'should return 404 if cannot find image' do
+    it 'returns 404 if cannot find image' do
       req(999_999_999)
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(:not_found)
     end
 
     context 'when has no :attached_image' do
-      it 'should return 500' do
+      it 'returns 500' do
         image.attached_image.purge
         req(image.id)
-        expect(response).to have_http_status(500)
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
 
@@ -371,18 +389,20 @@ RSpec.describe V1::ImagesController, type: :controller do
         req(image.id)
       end
 
-      it { expect(response).to have_http_status(500) }
+      it { expect(response).to have_http_status(:internal_server_error) }
       it { expect(parsed_response_body).to include(message: String) }
     end
   end
 
   context 'GET #download_variant' do
-    it { expect(instance).to respond_to(:download_variant) }
-    it {
-      should route(:get, '/v1/images/23/download/blur').to(format: :json, action: :download_variant,
-                                                           controller: 'v1/images', id: 23, variant: 'blur')
-    }
     let(:image) { create(:image, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:download_variant) }
+
+    it {
+      expect(subject).to route(:get, '/v1/images/23/download/blur').to(format: :json, action: :download_variant,
+                                                                       controller: 'v1/images', id: 23, variant: 'blur')
+    }
 
     def req(image_id, variant, params = {})
       get :download_variant, params: params.merge(id: image_id, variant:)
@@ -401,85 +421,86 @@ RSpec.describe V1::ImagesController, type: :controller do
     end
 
     context 'when variant is not found' do
-      it 'should return 404' do
+      it 'returns 404' do
         req(image.id, 'impossible_variant')
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(:not_found)
       end
     end
 
     context 'when has no :attached_image' do
-      it 'should return 500' do
+      it 'returns 500' do
         image.generate_image_variants!
         image.blur_image.attached_image.purge
         req(image.id, 'blur')
-        expect(response).to have_http_status(500)
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
   end
 
   context 'GET #download_by_key' do
-    it { expect(instance).to respond_to(:download_by_key) }
-    it {
-      should route(:get, '/v1/images/key/wassabratan').to(format: :json, action: :download_by_key, controller: 'v1/images',
-                                                          key: 'wassabratan')
-    }
-
+    let(:params) { { key: image.key } }
     let(:image) { create(:image, :with_attached_image, :with_key) }
 
-    let(:params) { { key: image.key } }
+    it { expect(instance).to respond_to(:download_by_key) }
+
+    it {
+      expect(subject).to route(:get, '/v1/images/key/wassabratan').to(format: :json, action: :download_by_key, controller: 'v1/images',
+                                                                      key: 'wassabratan')
+    }
 
     def req(_params = params)
       get :download_by_key, params: _params
     end
 
-    it 'should return 200' do
+    it 'returns 200' do
       req
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(response.body).to eq(image.attached_image.download)
     end
 
-    it 'should return 404 if cannot find image' do
+    it 'returns 404 if cannot find image' do
       req(key: 'impossible_key')
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(:not_found)
     end
 
-    it 'should return 500 if has no :attached_image' do
+    it 'returns 500 if has no :attached_image' do
       image.attached_image.purge
       req
-      expect(response).to have_http_status(500)
+      expect(response).to have_http_status(:internal_server_error)
     end
   end
 
   context 'GET #download_by_pixel_secret' do
-    it { expect(instance).to respond_to(:download_by_pixel_secret) }
-    it {
-      should route(:get, '/v1/images/p/wassabratan').to(format: :json, action: :download_by_pixel_secret,
-                                                        controller: 'v1/images', secret: 'wassabratan')
-    }
-
-    let(:image) { create(:image, :with_attached_image) }
-    let(:record) { create(:reservation) }
-    let(:pixel) { create(:log_image_pixel, :with_delivered_email, image:, record:) }
     let(:params) { { secret: pixel.secret } }
+    let(:pixel) { create(:log_image_pixel, :with_delivered_email, image:, record:) }
+    let(:record) { create(:reservation) }
+    let(:image) { create(:image, :with_attached_image) }
+
+    it { expect(instance).to respond_to(:download_by_pixel_secret) }
+
+    it {
+      expect(subject).to route(:get, '/v1/images/p/wassabratan').to(format: :json, action: :download_by_pixel_secret,
+                                                                    controller: 'v1/images', secret: 'wassabratan')
+    }
 
     def req(_params = params)
       get :download_by_pixel_secret, params: _params
     end
 
-    it 'should return 404 if cannot find image' do
+    it 'returns 404 if cannot find image' do
       req(secret: 'impossible_secret')
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(:not_found)
     end
 
-    it 'should return 500 if has no :attached_image' do
+    it 'returns 500 if has no :attached_image' do
       image.attached_image.purge
       req
-      expect(response).to have_http_status(500)
+      expect(response).to have_http_status(:internal_server_error)
     end
 
-    it 'should return 200 usually' do
+    it 'returns 200 usually' do
       req
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(response.body).to eq(image.attached_image.download)
     end
 

@@ -9,8 +9,8 @@ RSpec.describe Log::ModelChange, type: :model do
   end
 
   context 'associations' do
-    it { should belong_to(:record) }
-    it { should belong_to(:user).optional }
+    it { is_expected.to belong_to(:record) }
+    it { is_expected.to belong_to(:user).optional }
   end
 
   context 'validations' do
@@ -19,10 +19,10 @@ RSpec.describe Log::ModelChange, type: :model do
       allow_any_instance_of(described_class).to receive(:assign_defaults).and_return(true)
     end
 
-    it { should validate_presence_of(:change_type) }
-    it { should validate_presence_of(:version) }
-    it { should validate_uniqueness_of(:version).scoped_to(:record_id, :record_type) }
-    it { should validate_numericality_of(:version).only_integer.is_greater_than(0) }
-    it { should validate_inclusion_of(:change_type).in_array(%w[create update delete]) }
+    it { is_expected.to validate_presence_of(:change_type) }
+    it { is_expected.to validate_presence_of(:version) }
+    it { is_expected.to validate_uniqueness_of(:version).scoped_to(:record_id, :record_type) }
+    it { is_expected.to validate_numericality_of(:version).only_integer.is_greater_than(0) }
+    it { is_expected.to validate_inclusion_of(:change_type).in_array(%w[create update delete]) }
   end
 end

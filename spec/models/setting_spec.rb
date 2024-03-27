@@ -6,7 +6,7 @@ RSpec.describe Setting, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   context 'associations' do
-    it { should_not belong_to(:user) }
+    it { is_expected.not_to belong_to(:user) }
   end
 
   context 'should have valid mocks' do
@@ -19,24 +19,25 @@ RSpec.describe Setting, type: :model do
   context 'validations' do
     context 'basic' do
       before { create(:setting) }
-      it { should validate_presence_of(:key) }
-      it { should_not validate_presence_of(:value) }
-      it { should validate_uniqueness_of(:key).case_insensitive }
+
+      it { is_expected.to validate_presence_of(:key) }
+      it { is_expected.not_to validate_presence_of(:value) }
+      it { is_expected.to validate_uniqueness_of(:key).case_insensitive }
     end
 
     context 'checking if key uniqueness is case insensitive' do
+      subject { build(:setting, key: key.upcase) }
+
       let(:key) { Setting::DEFAULTS.keys.sample }
 
       before do
         create(:setting, key:)
       end
 
-      subject { build(:setting, key: key.upcase) }
-
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
 
-      it 'should have errors on key' do
+      it 'has errors on key' do
         subject.save
         expect(subject).not_to be_persisted
         expect(subject.errors[:key]).not_to be_empty
@@ -46,14 +47,14 @@ RSpec.describe Setting, type: :model do
     context 'when key is invalid' do
       subject { build(:setting, key: :invalid_key) }
 
-      it { should_not be_valid }
+      it { is_expected.not_to be_valid }
       it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
     end
 
     context 'when key is valid and value is nil' do
       subject { build(:setting, key: Setting::DEFAULTS.keys.sample) }
 
-      it { should be_valid }
+      it { is_expected.to be_valid }
       it { expect { subject.save! }.not_to raise_error }
     end
   end
@@ -61,8 +62,8 @@ RSpec.describe Setting, type: :model do
   context 'class methods' do
     subject { Setting }
 
-    context '.default' do
-      it { should respond_to(:default) }
+    describe '.default' do
+      it { is_expected.to respond_to(:default) }
 
       context 'should return nil if invalid key is provided' do
         def doit
@@ -83,7 +84,7 @@ RSpec.describe Setting, type: :model do
       end
     end
 
-    context '.all_hash' do
+    describe '.all_hash' do
       before do
         Setting.destroy_all
         Setting.create(key: :default_language)
@@ -91,7 +92,7 @@ RSpec.describe Setting, type: :model do
 
       let(:all_hash) { described_class.all_hash }
 
-      it { should respond_to(:all_hash) }
+      it { is_expected.to respond_to(:all_hash) }
       it { expect(all_hash).to be_a(Hash) }
       it { expect(all_hash).to be_a(HashWithIndifferentAccess) }
       it { expect(all_hash[:default_language].to_s).to eq I18n.default_locale.to_s }
@@ -118,7 +119,7 @@ RSpec.describe Setting, type: :model do
       end
     end
 
-    context '.create_missing' do
+    describe '.create_missing' do
       before do
         Setting.destroy_all
       end
@@ -127,11 +128,11 @@ RSpec.describe Setting, type: :model do
         described_class.create_missing
       end
 
-      it { should respond_to(:create_missing) }
+      it { is_expected.to respond_to(:create_missing) }
       it { expect { doit }.to change { described_class.count }.by(Setting::DEFAULTS.count) }
       it { expect { doit }.not_to raise_error }
 
-      it 'should do nothing the second time its called' do
+      it 'does nothing the second time its called' do
         doit
         expect { doit }.not_to(change { described_class.count })
       end

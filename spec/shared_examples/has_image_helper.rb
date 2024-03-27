@@ -8,21 +8,21 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
   it { expect(described_class).to be_a(Class) }
 
   it { expect(subject).to be_a(ApplicationRecord) }
-  it { should have_many(:image_to_records) }
-  it { should have_many(:images).through(:image_to_records) }
-  it { should be_valid }
-  it { should be_persisted }
+  it { is_expected.to have_many(:image_to_records) }
+  it { is_expected.to have_many(:images).through(:image_to_records) }
+  it { is_expected.to be_valid }
+  it { is_expected.to be_persisted }
   it { expect(subject.images).to be_empty }
   it { expect(subject.image_to_records).to be_empty }
 
   context 'can add images with "<< <ImageInstance>"' do
     let(:image) { create(:image, :with_attached_image) }
 
-    it 'should change subject images count + 1' do
+    it 'changes subject images count + 1' do
       expect { subject.images << image }.to change { subject.reload.images.count }.by(1)
     end
 
-    it 'should change subject images to record count + 1' do
+    it 'changes subject images to record count + 1' do
       expect { subject.images << image }.to change { subject.reload.image_to_records.count }.by(1)
     end
 
@@ -35,7 +35,7 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
       it { expect(image.image_to_records.find_by(image:).record_id).to eq(subject.id) }
 
       context 'cant add the same image twice' do
-        it 'should fail.' do
+        it 'fail.s' do
           expect { subject.images << image }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
@@ -45,13 +45,14 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
   context 'when trying to attach a image that does not have any attached_image' do
     let(:image) { create(:image) }
 
-    it 'should fail.' do
+    it 'fail.s' do
       expect { subject.images << image }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
   context 'when element is deleted, association to image should be deleted but the image itself no.' do
     let(:image) { create(:image, :with_attached_image) }
+
     before { subject.images << image }
 
     it { expect { subject.destroy }.not_to change(Image, :count) }
@@ -60,8 +61,9 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
 
   context 'elements are ordered by :position field in ImageToRecord' do
     let(:images) { create_list(:image, 3, :with_attached_image) }
-    before { subject.images << images }
     let(:image_to_records) { subject.image_to_records.order(:position) }
+
+    before { subject.images << images }
 
     it { expect(subject.images.map(&:id)).to eq(images.map(&:id)) }
     it { expect(subject.image_to_records).to eq(image_to_records) }
@@ -75,6 +77,7 @@ RSpec.shared_examples HAS_IMAGES_HELPER do
 
     context 'moving image should update the updated_at field of the image_to_records' do
       let(:images) { create_list(:image, 3, :with_attached_image) }
+
       before { subject.images = images }
 
       it 'banana' do
@@ -113,25 +116,25 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
   it { expect(described_class).to be_a(Class) }
 
   it { expect(subject).to be_a(ApplicationRecord) }
-  it { should have_one(:image_to_record) }
-  it { should have_one(:image).through(:image_to_record) }
-  it { should be_valid }
-  it { should be_persisted }
+  it { is_expected.to have_one(:image_to_record) }
+  it { is_expected.to have_one(:image).through(:image_to_record) }
+  it { is_expected.to be_valid }
+  it { is_expected.to be_persisted }
   it { expect(subject.image).to be_nil }
   it { expect(subject.image_to_record).to be_nil }
 
   context 'can add image with "= <ImageInstance>"' do
     let(:image) { create(:image, :with_attached_image) }
 
-    it 'should change subject image' do
+    it 'changes subject image' do
       expect { subject.image = image }.to change { subject.reload.image }.from(nil).to(image)
     end
 
-    it 'should change image to record' do
+    it 'changes image to record' do
       expect { subject.image = image }.to change { subject.reload.image_to_record }.from(nil).to(be_a(ImageToRecord))
     end
 
-    it 'should create image to record' do
+    it 'creates image to record' do
       expect { subject.image = image }.to change { ImageToRecord.count }.by(1)
     end
 
@@ -152,17 +155,18 @@ RSpec.shared_examples HAS_IMAGE_HELPER do
   context 'when trying to attach a image that does not have any attached_image' do
     let(:image) { create(:image) }
 
-    it 'should fail.' do
+    it 'fail.s' do
       expect { subject.image = image }.not_to raise_error
     end
 
-    it 'should not update image.' do
+    it 'does not update image.' do
       expect { subject.image = image }.not_to(change { subject.reload.image })
     end
   end
 
   context 'when element is deleted, association to image should be deleted but the image itself no.' do
     let(:image) { create(:image, :with_attached_image) }
+
     before { subject.image = image }
 
     it { expect { subject.destroy }.not_to change(Image, :count) }

@@ -100,7 +100,7 @@ module Menu
       end
 
       @new.assign_attributes(old.attributes.except(*DONT_COPY_ATTRIBUTES))
-      @new.parent_id = params[:parent_id].blank? ? nil : params[:parent_id] if params.key?(:parent_id)
+      @new.parent_id = (params[:parent_id].presence) if params.key?(:parent_id)
       @new.other = (old.other || {}).merge(copied_from: old.id)
 
       return true if @new.valid? && @new.save

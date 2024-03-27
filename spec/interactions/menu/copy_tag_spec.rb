@@ -3,12 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Menu::CopyTag, type: :interaction do
-  context '#execute' do
+  describe '#execute' do
+    subject { described_class.run(params) }
+
     let!(:tag) { create(:menu_tag) }
     let!(:current_user) { create(:user) }
     let(:old) { tag }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params) }
 
     context 'basic' do
       it 'creates a new tag' do
@@ -102,8 +103,9 @@ RSpec.describe Menu::CopyTag, type: :interaction do
 
     context 'when tag has image and providing {copy_image: "full"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { tag.image = image }
       let(:params) { { old:, current_user:, copy_image: 'full' } }
+
+      before { tag.image = image }
 
       it { expect(subject.result.image).to be_present }
 
@@ -115,7 +117,7 @@ RSpec.describe Menu::CopyTag, type: :interaction do
 
       it { expect(subject.result.image.url).not_to eq tag.image.url }
 
-      it 'should have a different image' do
+      it 'has a different image' do
         new = subject.result
         tag.image.attached_image.blob.purge
         tag.image.attached_image.destroy!
@@ -129,8 +131,9 @@ RSpec.describe Menu::CopyTag, type: :interaction do
 
     context 'when tag has image and providing {copy_image: "link"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { tag.image = image }
       let(:params) { { old:, current_user:, copy_image: 'link' } }
+
+      before { tag.image = image }
 
       it { expect(subject.result.image).to be_present }
 
@@ -146,8 +149,9 @@ RSpec.describe Menu::CopyTag, type: :interaction do
 
     context 'when tag has image and providing {copy_image: "none"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { tag.image = image }
       let(:params) { { old:, current_user:, copy_image: 'none' } }
+
+      before { tag.image = image }
 
       it { expect(subject.result.image).to be_nil }
       it { expect(subject.result.reload.image).to be_nil }
@@ -159,6 +163,7 @@ RSpec.describe Menu::CopyTag, type: :interaction do
 
     context 'when tag has image record associated but without actual blob attached' do
       let!(:image) { create(:image) }
+
       before { tag.image = image }
 
       it { expect(subject.result.image).not_to be_present }

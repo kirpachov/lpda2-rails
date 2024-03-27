@@ -17,14 +17,14 @@ module Log
     # ############################
     # Validations
     # ############################
-    validates_presence_of :change_type, :version
+    validates :change_type, :version, presence: true
 
     validate :changed_fields_must_be_array_validator
     validate :changed_fields_must_refer_to_record_attributes, if: -> { %w[create update].include?(change_type) }
     validate :record_changes_cannot_be_empty, if: -> { %w[create update].include?(change_type) }
     validates :version, numericality: { only_integer: true, greater_than: 0 }
     validates :change_type, inclusion: { in: %w[create update delete] }
-    validates_uniqueness_of :version, scope: %i[record_id record_type]
+    validates :version, uniqueness: { scope: %i[record_id record_type] }
 
     # ############################
     # Callbacks

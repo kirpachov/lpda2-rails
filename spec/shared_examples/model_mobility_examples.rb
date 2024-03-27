@@ -3,11 +3,11 @@
 MODEL_MOBILITY_EXAMPLES = 'MODEL_MOBILITY_EXAMPLES'
 
 RSpec.shared_examples MODEL_MOBILITY_EXAMPLES do |args = {}|
-  it { should respond_to(:text_translations) }
-  it { should respond_to(args[:field]) }
-  it { should respond_to("#{args[:field]}_backend") }
-  it { should respond_to("#{args[:field]}=") }
-  it { should respond_to("#{args[:field]}?") }
+  it { is_expected.to respond_to(:text_translations) }
+  it { is_expected.to respond_to(args[:field]) }
+  it { is_expected.to respond_to("#{args[:field]}_backend") }
+  it { is_expected.to respond_to("#{args[:field]}=") }
+  it { is_expected.to respond_to("#{args[:field]}?") }
 
   it 'checking mock data: should be a existing instance' do
     expect(subject).to be_a(ActiveRecord::Base)
@@ -32,14 +32,14 @@ RSpec.shared_examples MODEL_MOBILITY_EXAMPLES do |args = {}|
     end
   end
 
-  it "should have locale_accessors for #{args[:field]}" do
+  it "has locale_accessors for #{args[:field]}" do
     I18n.available_locales.each do |locale|
       expect(subject).to respond_to("#{args[:field]}_#{locale}")
       expect(subject).to respond_to("#{args[:field]}_#{locale}=")
     end
   end
 
-  it "should have attribute_methods for #{args[:field]}" do
+  it "has attribute_methods for #{args[:field]}" do
     expect { subject.translated_attributes }.not_to raise_error
     expect(subject.translated_attributes).to be_a(Hash)
     expect(subject.translated_attributes).to include(args[:field].to_s)

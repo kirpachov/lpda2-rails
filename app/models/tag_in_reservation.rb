@@ -11,5 +11,5 @@ class TagInReservation < ApplicationRecord
   # ################################
   # Validations
   # ################################
-  validates_uniqueness_of :reservation_id, scope: :reservation_tag_id
+  validates :reservation_id, uniqueness: { scope: :reservation_tag_id }
 end

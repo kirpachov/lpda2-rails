@@ -5,30 +5,32 @@ require 'rails_helper'
 RSpec.describe Reservation, type: :model do
   context 'validations' do
     context 'datetime should be present' do
-      it { should validate_presence_of(:datetime) }
-      it { should_not allow_value(nil).for(:datetime) }
-      it { should allow_value(Time.zone.now).for(:datetime) }
+      it { is_expected.to validate_presence_of(:datetime) }
+      it { is_expected.not_to allow_value(nil).for(:datetime) }
+      it { is_expected.to allow_value(Time.zone.now).for(:datetime) }
 
       context 'when datetime is nil' do
         subject { build(:reservation, datetime: nil) }
+
         before { subject.valid? }
 
-        it { should_not be_valid }
+        it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         it { expect(subject.errors[:datetime]).not_to be_empty }
       end
     end
 
     context 'fullname should be present' do
-      it { should validate_presence_of(:fullname) }
-      it { should_not allow_value(nil).for(:fullname) }
-      it { should allow_value(Time.zone.now).for(:fullname) }
+      it { is_expected.to validate_presence_of(:fullname) }
+      it { is_expected.not_to allow_value(nil).for(:fullname) }
+      it { is_expected.to allow_value(Time.zone.now).for(:fullname) }
 
       context 'when fullname is nil' do
         subject { build(:reservation, fullname: nil) }
+
         before { subject.valid? }
 
-        it { should_not be_valid }
+        it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         it { expect(subject.errors[:fullname]).not_to be_empty }
       end
@@ -37,15 +39,16 @@ RSpec.describe Reservation, type: :model do
     context 'secret should be present' do
       before { allow(GenToken).to receive(:for!).and_return(nil) }
 
-      it { should validate_presence_of(:secret) }
-      it { should_not allow_value(nil).for(:secret) }
-      it { should allow_value(Time.zone.now).for(:secret) }
+      it { is_expected.to validate_presence_of(:secret) }
+      it { is_expected.not_to allow_value(nil).for(:secret) }
+      it { is_expected.to allow_value(Time.zone.now).for(:secret) }
 
       context 'when secret is nil' do
         subject { build(:reservation, secret: nil) }
+
         before { subject.valid? }
 
-        it { should_not be_valid }
+        it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         it { expect(subject.errors[:secret]).not_to be_empty }
       end
@@ -54,51 +57,53 @@ RSpec.describe Reservation, type: :model do
     context 'secret should be unique' do
       before { create(:reservation, secret: '123wassa') }
 
-      it { should validate_uniqueness_of(:secret).case_insensitive }
-      it { should_not allow_value('123wassa').for(:secret) }
-      it { should_not allow_value('123Wassa').for(:secret) }
+      it { is_expected.to validate_uniqueness_of(:secret).case_insensitive }
+      it { is_expected.not_to allow_value('123wassa').for(:secret) }
+      it { is_expected.not_to allow_value('123Wassa').for(:secret) }
     end
 
     context 'people should be present' do
-      it { should validate_presence_of(:people) }
-      it { should_not allow_value(nil).for(:people) }
-      it { should allow_value(1).for(:people) }
-      it { should_not allow_value(0).for(:people) }
-      it { should_not allow_value(-1).for(:people) }
-      it { should_not allow_value(1.5).for(:people) }
+      it { is_expected.to validate_presence_of(:people) }
+      it { is_expected.not_to allow_value(nil).for(:people) }
+      it { is_expected.to allow_value(1).for(:people) }
+      it { is_expected.not_to allow_value(0).for(:people) }
+      it { is_expected.not_to allow_value(-1).for(:people) }
+      it { is_expected.not_to allow_value(1.5).for(:people) }
 
       context 'when people is nil' do
         subject { build(:reservation, people: nil) }
+
         before { subject.valid? }
 
-        it { should_not be_valid }
+        it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         it { expect(subject.errors[:people]).not_to be_empty }
       end
     end
 
     context 'email can be blank' do
-      it { should allow_value(nil).for(:email) }
-      it { should allow_value('').for(:email) }
-      it { should allow_value('sasha@email').for(:email) }
-      it { should_not allow_value('sasha@').for(:email) }
-      it { should_not allow_value('sasha').for(:email) }
-      it { should_not allow_value('wassa').for(:email) }
+      it { is_expected.to allow_value(nil).for(:email) }
+      it { is_expected.to allow_value('').for(:email) }
+      it { is_expected.to allow_value('sasha@email').for(:email) }
+      it { is_expected.not_to allow_value('sasha@').for(:email) }
+      it { is_expected.not_to allow_value('sasha').for(:email) }
+      it { is_expected.not_to allow_value('wassa').for(:email) }
     end
 
     context 'status should be present' do
-      it { should validate_presence_of(:status) }
-      it { should_not allow_value(nil).for(:status) }
-      it { should allow_value('active').for(:status) }
-      it { should allow_value('deleted').for(:status) }
-      it { should allow_value('cancelled').for(:status) }
-      it { should allow_value('noshow').for(:status) }
+      it { is_expected.to validate_presence_of(:status) }
+      it { is_expected.not_to allow_value(nil).for(:status) }
+      it { is_expected.to allow_value('active').for(:status) }
+      it { is_expected.to allow_value('deleted').for(:status) }
+      it { is_expected.to allow_value('cancelled').for(:status) }
+      it { is_expected.to allow_value('noshow').for(:status) }
 
       context 'when status is nil' do
         subject { build(:reservation, status: nil) }
+
         before { subject.valid? }
 
-        it { should_not be_valid }
+        it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
         it { expect(subject.errors[:status]).not_to be_empty }
       end
@@ -112,10 +117,12 @@ RSpec.describe Reservation, type: :model do
       end
 
       context 'when initially has 3 tags' do
+        subject { reservation.reload }
+
         let!(:reservation) { create(:reservation) }
         let!(:tags) { create_list(:reservation_tag, 3) }
+
         before { reservation.tags = tags }
-        subject { reservation.reload }
 
         it {
           expect { subject.reservation_tags = [create(:reservation_tag)] }.to change {
@@ -135,11 +142,13 @@ RSpec.describe Reservation, type: :model do
   end
 
   context 'instance methods' do
-    context '#confirmation_email' do
+    describe '#confirmation_email' do
       context 'basic' do
-        before { CreateMissingImages.run! }
-        let!(:reservation) { create(:reservation) }
         subject { reservation.confirmation_email }
+
+        before { CreateMissingImages.run! }
+
+        let!(:reservation) { create(:reservation) }
 
         it { expect { subject }.not_to raise_error }
         it { expect { subject }.not_to(change { ActionMailer::Base.deliveries.count }) }
@@ -148,9 +157,11 @@ RSpec.describe Reservation, type: :model do
       end
 
       context 'if image does not exist' do
-        before { Image.delete_all }
-        let!(:reservation) { create(:reservation) }
         subject { reservation.confirmation_email }
+
+        before { Image.delete_all }
+
+        let!(:reservation) { create(:reservation) }
 
         context 'checking mock data' do
           it { expect(Image.count).to eq 0 }

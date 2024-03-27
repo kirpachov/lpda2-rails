@@ -26,10 +26,10 @@ require 'webmock/rspec'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
-Dir[Rails.root.join('spec', 'contexts', '**', '*.rb')].sort.each { |f| require f }
-Dir[Rails.root.join('spec', 'shared_examples', '**', '*.rb')].sort.each { |f| require f }
-Dir[Rails.root.join('spec', 'matchers', '**', '*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec/contexts/**/*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec/shared_examples/**/*.rb')].sort.each { |f| require f }
+Dir[Rails.root.join('spec/matchers/**/*.rb')].sort.each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -53,15 +53,15 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do
+  config.before do
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before(:each) do |example|
+  config.before do |example|
     DatabaseCleaner.start unless example.metadata[:skip_db_cleaner]
   end
 
-  config.append_after(:each) do |example|
+  config.append_after do |example|
     DatabaseCleaner.clean unless example.metadata[:skip_db_cleaner]
 
     Faker::UniqueGenerator.clear unless example.metadata[:skip_faker_reset]

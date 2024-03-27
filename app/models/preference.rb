@@ -11,9 +11,9 @@ class Preference < ApplicationRecord
   # Validations
   # ################################
   validates_with KeyValueValidator
-  validates_presence_of :key
-  validates_uniqueness_of :key, scope: :user_id, case_sensitive: false
-  validates_inclusion_of :key, in: DEFAULTS.keys.map(&:to_s)
+  validates :key, presence: true
+  validates :key, uniqueness: { scope: :user_id, case_sensitive: false }
+  validates :key, inclusion: { in: DEFAULTS.keys.map(&:to_s) }
 
   # ################################
   # Class methods

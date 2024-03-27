@@ -6,15 +6,16 @@ RSpec.describe Log::ImagePixel, type: :model do
   context 'validations' do
     it { is_expected.to validate_presence_of(:event_type) }
     it { is_expected.to validate_inclusion_of(:event_type).in_array(%w[email_open]) }
-    it { should_not allow_value('invalid').for(:event_type) }
-    %w[email_open].each do |event_type|
-      it { should allow_value(event_type).for(:event_type) }
-    end
-    it { should_not allow_value('').for(:event_type) }
-    it { should_not allow_value(nil).for(:event_type) }
+    it { is_expected.not_to allow_value('invalid').for(:event_type) }
 
-    it { should_not allow_value(nil).for(:secret) }
-    it { should_not allow_value('').for(:secret) }
+    %w[email_open].each do |event_type|
+      it { is_expected.to allow_value(event_type).for(:event_type) }
+    end
+    it { is_expected.not_to allow_value('').for(:event_type) }
+    it { is_expected.not_to allow_value(nil).for(:event_type) }
+
+    it { is_expected.not_to allow_value(nil).for(:secret) }
+    it { is_expected.not_to allow_value('').for(:secret) }
     it { is_expected.to validate_presence_of(:secret) }
   end
 
@@ -34,11 +35,13 @@ RSpec.describe Log::ImagePixel, type: :model do
 
     context 'has many events' do
       let!(:event) { create(:log_image_pixel_event, image_pixel: pixel) }
+
       before do
         pixel.reload
       end
 
       it { expect(pixel.events).to include(event) }
+
       it do
         expect { pixel.events.create!(attributes_for(:log_image_pixel_event)) }.to change {
                                                                                      pixel.reload.events.count
@@ -50,18 +53,18 @@ RSpec.describe Log::ImagePixel, type: :model do
   context 'instance methods' do
     let!(:pixel) { build(:log_image_pixel) }
 
-    it 'should set event_type' do
+    it 'sets event_type' do
       expect(pixel.event_type).to be_present
     end
 
-    it 'should set secret' do
+    it 'sets secret' do
       expect(pixel.secret).to be_present
     end
 
-    context '#url' do
+    describe '#url' do
       it { expect(pixel).to respond_to(:url) }
 
-      it 'should return the url' do
+      it 'returns the url' do
         expect(pixel.url).to match(/^http/)
       end
     end

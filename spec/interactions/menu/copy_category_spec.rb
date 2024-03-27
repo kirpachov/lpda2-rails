@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.shared_examples 'fail to copy category' do
-  it 'should not create any record' do
+  it 'does not create any record' do
     models = [
       Menu::Category, Menu::DishesInCategory,
       Menu::Dish, Menu::AllergensInDish,
@@ -23,17 +23,18 @@ RSpec.shared_examples 'fail to copy category' do
     expect(subject.result.dishes.count).to eq 0
     expect(subject.result).not_to be_persisted
     expect(subject.errors.full_messages).not_to be_empty
-    is_expected.to be_invalid
+    expect(subject).to be_invalid
   end
 end
 
 RSpec.describe Menu::CopyCategory, type: :interaction do
-  context '#execute' do
+  describe '#execute' do
+    subject { described_class.run(params:) }
+
     let!(:category) { create(:menu_category) }
     let!(:current_user) { create(:user) }
     let(:old) { category }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params:) }
 
     context 'basic' do
       before do
@@ -203,8 +204,9 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
 
     context 'copying dishes with {copy_dishes: "full"}' do
       let!(:dish) { create(:menu_dish) }
-      before { category.dishes = [dish] }
       let(:params) { { old:, current_user:, copy_dishes: 'full' } }
+
+      before { category.dishes = [dish] }
 
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
 
@@ -217,8 +219,9 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
 
     context 'copying dishes with {copy_dishes: "link"}' do
       let!(:dish) { create(:menu_dish) }
-      before { category.dishes = [dish] }
       let(:params) { { old:, current_user:, copy_dishes: 'link' } }
+
+      before { category.dishes = [dish] }
 
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
 
@@ -231,8 +234,9 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
 
     context 'NOT copying dishes with {copy_dishes: "none"}' do
       let!(:dish) { create(:menu_dish) }
-      before { category.dishes = [dish] }
       let(:params) { { old:, current_user:, copy_dishes: 'none' } }
+
+      before { category.dishes = [dish] }
 
       it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
 

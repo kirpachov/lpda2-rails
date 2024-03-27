@@ -6,7 +6,7 @@ RSpec.describe ImageToRecord do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   context 'associations' do
-    it { should belong_to(:image) }
-    it { should belong_to(:record) }
+    it { is_expected.to belong_to(:image) }
+    it { is_expected.to belong_to(:record) }
   end
 end

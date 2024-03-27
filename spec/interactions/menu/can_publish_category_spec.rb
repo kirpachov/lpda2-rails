@@ -3,11 +3,11 @@
 CANNOT_PUBLISH_CATEGORY = 'cannot publish category'
 RSpec.shared_examples CANNOT_PUBLISH_CATEGORY do |options = nil|
   context 'checking mock data' do
-    it 'should have a subject of type Menu::CanPublishCategory' do
+    it 'has a subject of type Menu::CanPublishCategory' do
       expect(subject).to be_a(Menu::CanPublishCategory)
     end
 
-    it 'should have a let(:category) of type Menu::Category' do
+    it 'has a let(:category) of type Menu::Category' do
       expect(category).to eq category
       expect(category).to be_a(Menu::Category)
       expect { category }.not_to(change { Menu::Category.count })
@@ -28,10 +28,11 @@ end
 require 'rails_helper'
 
 RSpec.describe Menu::CanPublishCategory, type: :interaction do
+  subject { call }
+
   let(:reasons) { call.reasons }
   let(:reasons_codes) { reasons.map { |er| er.options[:code].to_sym } }
   let(:call) { described_class.run(category:) }
-  subject { call }
 
   context 'cannot publish category' do
     context 'when category is not root' do
@@ -55,6 +56,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
 
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_name]
     end
+
     context 'when dish hasnt name' do
       let(:category) { create(:menu_category) }
       let(:dish) { create(:menu_dish) }

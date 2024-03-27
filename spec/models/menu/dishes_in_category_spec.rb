@@ -7,7 +7,8 @@ RSpec.describe Menu::DishesInCategory, type: :model do
 
   context 'should have valid factories' do
     subject { build(:menu_dishes_in_category) }
-    it { should be_valid }
+
+    it { is_expected.to be_valid }
     it { expect { subject.save! }.not_to raise_error }
   end
 
@@ -18,24 +19,24 @@ RSpec.describe Menu::DishesInCategory, type: :model do
       allow(subject).to receive(:assign_defaults).and_return(true)
     end
 
-    it { should belong_to(:menu_dish).required }
-    it { should respond_to(:dish) }
-    it { should respond_to(:dish=) }
+    it { is_expected.to belong_to(:menu_dish).required }
+    it { is_expected.to respond_to(:dish) }
+    it { is_expected.to respond_to(:dish=) }
 
-    it { should belong_to(:menu_category).required }
-    it { should respond_to(:category) }
-    it { should respond_to(:category=) }
+    it { is_expected.to belong_to(:menu_category).required }
+    it { is_expected.to respond_to(:category) }
+    it { is_expected.to respond_to(:category=) }
   end
 
   context 'when element is being deleted' do
+    subject { dishes_in_category }
+
     let(:category) { create(:menu_category) }
     let(:dish) { create(:menu_dish) }
 
     let!(:dishes_in_category) { create(:menu_dishes_in_category, menu_category: category, menu_dish: dish) }
 
-    subject { dishes_in_category }
-
-    it { should be_valid }
+    it { is_expected.to be_valid }
     it { expect(subject.save!).to be true }
     it { expect { subject.save! }.not_to raise_error }
 

@@ -42,7 +42,7 @@ module Auth
 
     # Find token from :token parameter, or search in Authorization headers
     def find_token
-      return token unless token.blank?
+      return token if token.present?
       return headers['Authorization'].split(' ').last if headers['Authorization'].present?
 
       errors.add(:token, I18n.t('.errors.messages.request_401'))

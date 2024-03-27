@@ -3,16 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Preference::DEFAULTS do
-  it { should be_a(Hash) }
-  it { should be_a(HashWithIndifferentAccess) }
-  it { should be_frozen }
-  it { should_not be_empty }
+  it { is_expected.to be_a(Hash) }
+  it { is_expected.to be_a(HashWithIndifferentAccess) }
+  it { is_expected.to be_frozen }
+  it { is_expected.not_to be_empty }
 
-  it 'should not repeat keys' do
+  it 'does not repeat keys' do
     expect(subject.keys.uniq).to match_array(subject.keys)
   end
 
-  it 'should all be valid Preference' do
+  it 'alls be valid Preference' do
     user = create(:user)
     user.preferences.destroy_all
 
@@ -25,7 +25,7 @@ RSpec.describe Preference::DEFAULTS do
   end
 
   %i[language known_languages timezone].each do |key|
-    it "should have a #{key} preference" do
+    it "has a #{key} preference" do
       expect(subject[key]).to be_a(Hash)
       expect(subject[key.to_s]).to be_a(Hash)
       expect(subject[key.to_sym]).to be_a(Hash)

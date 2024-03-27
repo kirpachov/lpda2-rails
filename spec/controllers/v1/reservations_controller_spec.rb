@@ -4,29 +4,11 @@ require 'rails_helper'
 
 RSpec.describe V1::ReservationsController, type: :controller do
   let(:instance) { described_class.new }
+
   include_context CONTROLLER_UTILS_CONTEXT
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   context 'POST #create' do
-    it { expect(instance).to respond_to(:create) }
-    it { should route(:post, '/v1/reservations').to(format: :json, action: :create, controller: 'v1/reservations') }
-
-    let!(:turn) do
-      create(:reservation_turn, starts_at: DateTime.parse('00:01'), ends_at: DateTime.parse('23:59'), weekday: 0)
-    end
-
-    let(:first_name) { Faker::Name.first_name }
-    let(:last_name) { Faker::Name.last_name }
-    let(:date) { Time.now.beginning_of_week + 7.days }
-    let(:datetime) { "#{date.to_date} 19:00" }
-    let(:people) { 2 }
-    let(:email) { Faker::Internet.email }
-    let(:phone) do
-      [Faker::PhoneNumber.cell_phone, Faker::PhoneNumber.cell_phone_in_e164,
-       Faker::PhoneNumber.cell_phone_with_country_code].sample
-    end
-    let(:notes) { Faker::Lorem.sentence }
-
     let(:params) do
       {
         first_name:,
@@ -38,13 +20,34 @@ RSpec.describe V1::ReservationsController, type: :controller do
         notes:
       }
     end
+    let(:notes) { Faker::Lorem.sentence }
+    let(:phone) do
+      [Faker::PhoneNumber.cell_phone, Faker::PhoneNumber.cell_phone_in_e164,
+       Faker::PhoneNumber.cell_phone_with_country_code].sample
+    end
+    let(:email) { Faker::Internet.email }
+    let(:people) { 2 }
+    let(:datetime) { "#{date.to_date} 19:00" }
+    let(:date) { Time.now.beginning_of_week + 7.days }
+    let(:last_name) { Faker::Name.last_name }
+    let(:first_name) { Faker::Name.first_name }
+    let!(:turn) do
+      create(:reservation_turn, starts_at: DateTime.parse('00:01'), ends_at: DateTime.parse('23:59'), weekday: 0)
+    end
+
+    it { expect(instance).to respond_to(:create) }
+
+    it {
+      expect(subject).to route(:post, '/v1/reservations').to(format: :json, action: :create,
+                                                             controller: 'v1/reservations')
+    }
 
     def req(data = params)
       post :create, params: data
     end
 
     context 'basic' do
-      it 'should create a reservation' do
+      it 'creates a reservation' do
         req
         expect(parsed_response_body).to include(item: Hash)
         expect(response).to have_http_status(:ok)
@@ -55,10 +58,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
           create(:reservation_turn, starts_at: DateTime.parse('00:01'), ends_at: DateTime.parse('23:59'), weekday: 1)
         end
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:datetime]).to be_present
         end
       end
@@ -66,10 +69,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when datetime is null' do
         let(:datetime) { nil }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:datetime]).to be_present
         end
       end
@@ -87,10 +90,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
           context "if datetime is '#{invalid_datetime}'" do
             let(:datetime) { invalid_datetime }
 
-            it 'should return 422' do
+            it 'returns 422' do
               req
               expect(parsed_response_body).to include(message: String, details: Hash)
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_entity)
               expect(parsed_response_body[:details][:datetime]).to be_present
               expect(parsed_response_body[:message].to_s.downcase).to include('datetime is not a valid datetime')
             end
@@ -111,10 +114,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
           context "if datetime is '#{invalid_datetime}'" do
             let(:datetime) { invalid_datetime }
 
-            it 'should return 422' do
+            it 'returns 422' do
               req
               expect(parsed_response_body).to include(message: String, details: Hash)
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_entity)
               expect(parsed_response_body[:details][:datetime]).to be_present
               expect(parsed_response_body[:message].to_s.downcase).to include('datetime has invalid format')
             end
@@ -125,10 +128,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when people is null' do
         let(:people) { nil }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:people]).to be_present
         end
       end
@@ -136,10 +139,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when people is 0' do
         let(:people) { 0 }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:people]).to be_present
         end
       end
@@ -147,10 +150,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when people is greater than max_people_per_reservation' do
         let(:people) { Setting[:max_people_per_reservation].to_i + 1 }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:people]).to be_present
         end
       end
@@ -158,10 +161,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when first_name is missing' do
         let(:first_name) { nil }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:first_name]).to be_present
         end
       end
@@ -169,10 +172,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when first_name is empty' do
         let(:first_name) { ' ' }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:first_name]).to be_present
         end
       end
@@ -180,10 +183,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when first_name is too short' do
         let(:first_name) { ' a ' }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:first_name]).to be_present
         end
       end
@@ -191,10 +194,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when last_name is missing' do
         let(:last_name) { nil }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:last_name]).to be_present
         end
       end
@@ -202,10 +205,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when last_name is empty' do
         let(:last_name) { ' ' }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:last_name]).to be_present
         end
       end
@@ -213,10 +216,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context 'when last_name is too short' do
         let(:last_name) { ' a ' }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:last_name]).to be_present
         end
       end
@@ -226,10 +229,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.to change { Reservation.count }.by(1) }
 
-        it 'should return 200 and create record' do
+        it 'returns 200 and create record' do
           req
           expect(parsed_response_body).to include(item: Hash)
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -238,10 +241,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.to change { Reservation.count }.by(1) }
 
-        it 'should return 200 and create record' do
+        it 'returns 200 and create record' do
           req
           expect(parsed_response_body).to include(item: Hash)
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -250,10 +253,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.to change { Reservation.count }.by(1) }
 
-        it 'should return 200 and create record' do
+        it 'returns 200 and create record' do
           req
           expect(parsed_response_body).to include(item: Hash)
-          expect(response).to have_http_status(200)
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -261,7 +264,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         let(:first_name) { 'Gigi' }
         let(:last_name) { 'Bagigi' }
 
-        it 'should create a reservation' do
+        it 'creates a reservation' do
           req
           expect(parsed_response_body).to include(item: Hash)
           expect(response).to have_http_status(:ok)
@@ -274,7 +277,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         let(:first_name) { 'gigi' }
         let(:last_name) { 'bagigi wassa' }
 
-        it 'should create a reservation' do
+        it 'creates a reservation' do
           req
           expect(parsed_response_body).to include(item: Hash)
           expect(response).to have_http_status(:ok)
@@ -287,7 +290,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         let(:first_name) { 'gigi pippo' }
         let(:last_name) { 'bagigi wassa pluto' }
 
-        it 'should create a reservation' do
+        it 'creates a reservation' do
           req
           expect(parsed_response_body).to include(item: Hash)
           expect(response).to have_http_status(:ok)
@@ -301,10 +304,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:email]).to be_present
         end
       end
@@ -314,10 +317,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:email]).to be_present
         end
       end
@@ -334,10 +337,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it { expect { req }.not_to(change { Reservation.count }) }
 
-            it 'should return 422' do
+            it 'returns 422' do
               req
               expect(parsed_response_body).to include(message: String, details: Hash)
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_entity)
               expect(parsed_response_body[:details][:email]).to be_present
             end
           end
@@ -349,10 +352,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:message].to_s.downcase).to include('another reservation for this datetime')
           expect(parsed_response_body[:details][:email]).not_to be_empty
         end
@@ -363,10 +366,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:email]).to be_present
         end
       end
@@ -376,10 +379,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:email]).to be_present
         end
       end
@@ -396,10 +399,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it { expect { req }.not_to(change { Reservation.count }) }
 
-            it 'should return 422' do
+            it 'returns 422' do
               req
               expect(parsed_response_body).to include(message: String, details: Hash)
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_entity)
               expect(parsed_response_body[:details][:email]).to be_present
             end
           end
@@ -411,10 +414,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:phone]).to be_present
         end
       end
@@ -424,10 +427,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.count }) }
 
-        it 'should return 422' do
+        it 'returns 422' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(422)
+          expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:phone]).to be_present
         end
       end
@@ -446,10 +449,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it { expect { req }.not_to(change { Reservation.count }) }
 
-            it 'should return 422' do
+            it 'returns 422' do
               req
               expect(parsed_response_body).to include(message: String, details: Hash)
-              expect(response).to have_http_status(422)
+              expect(response).to have_http_status(:unprocessable_entity)
               expect(parsed_response_body[:details][:phone]).to be_present
             end
           end
@@ -481,16 +484,16 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it { expect { req }.to change { Reservation.count }.by(1) }
 
-            it 'should clean the phone number before saving' do
+            it 'cleans the phone number before saving' do
               req
               vp = valid_phone.gsub('.', '').gsub(/\s+/, '').gsub(/\(/, '').gsub(/\)/, '').gsub(/-/, '')
               expect(Reservation.last.phone).to eq(vp)
             end
 
-            it 'should return 200' do
+            it 'returns 200' do
               req
               expect(parsed_response_body).to include(item: Hash)
-              expect(response).to have_http_status(200)
+              expect(response).to have_http_status(:ok)
             end
           end
         end
@@ -499,13 +502,15 @@ RSpec.describe V1::ReservationsController, type: :controller do
   end
 
   context 'PATCH #cancel' do
-    it { expect(instance).to respond_to(:cancel) }
-    it {
-      should route(:patch, '/v1/reservations/cancel').to(format: :json, action: :cancel, controller: 'v1/reservations')
-    }
-
-    let!(:reservation) { create(:reservation) }
     let(:params) { { secret: reservation.secret } }
+    let!(:reservation) { create(:reservation) }
+
+    it { expect(instance).to respond_to(:cancel) }
+
+    it {
+      expect(subject).to route(:patch, '/v1/reservations/cancel').to(format: :json, action: :cancel,
+                                                                     controller: 'v1/reservations')
+    }
 
     def req(data = params)
       patch :cancel, params: data
@@ -523,16 +528,22 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
 
       context 'if secret is not provided' do
-        let(:params) { {} }
-        before { req }
         subject { response }
+
+        let(:params) { {} }
+
+        before { req }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'if secret is invalid' do
-        let(:params) { { secret: 'some-invalid-secret' } }
-        before { req }
         subject { response }
+
+        let(:params) { { secret: 'some-invalid-secret' } }
+
+        before { req }
+
         it_behaves_like NOT_FOUND
       end
 
@@ -547,7 +558,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it { expect { req }.not_to(change { Reservation.cancelled.count }) }
         it { expect { req }.not_to(change { reservation.reload.status }) }
-        it 'should render errors' do
+
+        it 'renders errors' do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:unprocessable_entity)
@@ -557,14 +569,15 @@ RSpec.describe V1::ReservationsController, type: :controller do
   end
 
   context 'GET #show' do
-    it { expect(instance).to respond_to(:show) }
-    it {
-      should route(:get, '/v1/reservations/supersecret').to(format: :json, action: :show, controller: 'v1/reservations',
-                                                            secret: 'supersecret')
-    }
-
-    let!(:reservation) { create(:reservation) }
     let(:params) { { secret: reservation.secret } }
+    let!(:reservation) { create(:reservation) }
+
+    it { expect(instance).to respond_to(:show) }
+
+    it {
+      expect(subject).to route(:get, '/v1/reservations/supersecret').to(format: :json, action: :show, controller: 'v1/reservations',
+                                                                        secret: 'supersecret')
+    }
 
     def req(data = params)
       get :show, params: data
@@ -581,11 +594,12 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it { expect { req }.not_to(change { reservation.reload.as_json }) }
 
         context 'checking data structure' do
-          before { req }
           subject { parsed_response_body[:item] }
 
+          before { req }
+
           it {
-            is_expected.to include(
+            expect(subject).to include(
               'id' => reservation.id,
               'fullname' => reservation.fullname,
               'datetime' => reservation.datetime,
@@ -601,19 +615,23 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
 
       context 'when secret is invalid' do
-        let(:params) { { secret: 'some-invalid-secret' } }
-        before { req }
         subject { response }
+
+        let(:params) { { secret: 'some-invalid-secret' } }
+
+        before { req }
+
         it_behaves_like NOT_FOUND
       end
 
       context 'when reservation is deleted' do
+        subject { response }
+
         before do
           reservation.deleted!
           req
         end
 
-        subject { response }
         it_behaves_like NOT_FOUND
       end
     end

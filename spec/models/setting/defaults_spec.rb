@@ -3,16 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Setting::DEFAULTS do
-  it { should be_a(Hash) }
-  it { should be_a(HashWithIndifferentAccess) }
-  it { should be_frozen }
-  it { should_not be_empty }
+  it { is_expected.to be_a(Hash) }
+  it { is_expected.to be_a(HashWithIndifferentAccess) }
+  it { is_expected.to be_frozen }
+  it { is_expected.not_to be_empty }
 
-  it 'should not repeat keys' do
+  it 'does not repeat keys' do
     expect(subject.keys.uniq).to match_array(subject.keys)
   end
 
-  it 'should all be valid Setting' do
+  it 'alls be valid Setting' do
     subject.each do |key, setting_data|
       setting = Setting.new(setting_data.except(:default).merge(key:))
       setting.validate
@@ -23,7 +23,7 @@ RSpec.describe Setting::DEFAULTS do
   end
 
   %i[default_language].each do |key|
-    it "should have a #{key} setting" do
+    it "has a #{key} setting" do
       expect(subject[key]).to be_a(Hash)
       expect(subject[key.to_s]).to be_a(Hash)
       expect(subject[key.to_sym]).to be_a(Hash)

@@ -3,12 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Menu::CopyAllergen, type: :interaction do
-  context '#execute' do
+  describe '#execute' do
+    subject { described_class.run(params) }
+
     let!(:allergen) { create(:menu_allergen) }
     let!(:current_user) { create(:user) }
     let(:old) { allergen }
     let(:params) { { old:, current_user: } }
-    subject { described_class.run(params) }
 
     context 'basic' do
       it 'creates a new allergen' do
@@ -84,8 +85,9 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
 
     context 'when allergen has image and providing {copy_image: "full"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { allergen.image = image }
       let(:params) { { old:, current_user:, copy_image: 'full' } }
+
+      before { allergen.image = image }
 
       it { expect(subject.result.image).to be_present }
 
@@ -97,7 +99,7 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
 
       it { expect(subject.result.image.url).not_to eq allergen.image.url }
 
-      it 'should have a different image' do
+      it 'has a different image' do
         new = subject.result
         allergen.image.attached_image.blob.purge
         allergen.image.attached_image.destroy!
@@ -120,8 +122,9 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
 
     context 'when allergen has image and providing {copy_image: "link"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { allergen.image = image }
       let(:params) { { old:, current_user:, copy_image: 'link' } }
+
+      before { allergen.image = image }
 
       it { expect(subject.result.image).to be_present }
 
@@ -137,8 +140,9 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
 
     context 'when allergen has image and providing {copy_image: "none"}' do
       let!(:image) { create(:image, :with_attached_image) }
-      before { allergen.image = image }
       let(:params) { { old:, current_user:, copy_image: 'none' } }
+
+      before { allergen.image = image }
 
       it { expect(subject.result.image).to be_nil }
       it { expect(subject.result.reload.image).to be_nil }
@@ -150,6 +154,7 @@ RSpec.describe Menu::CopyAllergen, type: :interaction do
 
     context 'when allergen has image record associated but without actual blob attached' do
       let!(:image) { create(:image) }
+
       before { allergen.image = image }
 
       it { expect(subject.result.image).not_to be_present }

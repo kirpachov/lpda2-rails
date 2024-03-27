@@ -5,12 +5,12 @@ require 'rails_helper'
 RSpec.describe CopyImage, type: :interaction do
   before { ActiveJob::Base.queue_adapter = :test }
 
-  context '#execute' do
+  describe '#execute' do
     context 'basic' do
+      subject { described_class.run(old: image, current_user:) }
+
       let!(:image) { create(:image, :with_attached_image) }
       let!(:current_user) { create(:user) }
-
-      subject { described_class.run(old: image, current_user:) }
 
       it 'creates a new image' do
         expect { subject }.to change(Image, :count).by(1)
@@ -50,10 +50,10 @@ RSpec.describe CopyImage, type: :interaction do
     end
 
     context 'if hasnt attached image' do
+      subject { described_class.run(old: image, current_user:) }
+
       let!(:image) { create(:image) }
       let!(:current_user) { create(:user) }
-
-      subject { described_class.run(old: image, current_user:) }
 
       it 'original image has no attached image' do
         expect(image.attached_image).not_to be_present
