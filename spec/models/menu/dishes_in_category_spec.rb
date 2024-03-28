@@ -23,7 +23,7 @@ RSpec.describe Menu::DishesInCategory, type: :model do
     it { is_expected.to respond_to(:dish) }
     it { is_expected.to respond_to(:dish=) }
 
-    it { is_expected.to belong_to(:menu_category).required }
+    it { is_expected.to belong_to(:menu_category).required(false) }
     it { is_expected.to respond_to(:category) }
     it { is_expected.to respond_to(:category=) }
   end
