@@ -36,7 +36,7 @@ class ReservationTurn < ApplicationRecord
   def name_should_be_unique_for_each_weekday
     return if name.blank? || weekday.blank?
 
-    other_turns = ReservationTurn.where(weekday:).where('LOWER(name) = LOWER(?)', name)
+    other_turns = ReservationTurn.where(weekday:).where("LOWER(name) = LOWER(?)", name)
     other_turns = other_turns.where.not(id:) if persisted?
     return if other_turns.empty?
 
@@ -47,28 +47,28 @@ class ReservationTurn < ApplicationRecord
     return if starts_at.blank? || ends_at.blank?
     return if starts_at < ends_at
 
-    errors.add(:starts_at, 'should be before ends_at')
-    errors.add(:ends_at, 'should be after starts_at')
+    errors.add(:starts_at, "should be before ends_at")
+    errors.add(:ends_at, "should be after starts_at")
   end
 
   def starts_at_overlaps_other_turn
     return if starts_at.blank? || weekday.blank?
 
-    overlapping = self.class.where('? BETWEEN starts_at AND ends_at', starts_at).where(weekday:)
+    overlapping = self.class.where("? BETWEEN starts_at AND ends_at", starts_at).where(weekday:)
     overlapping = overlapping.where.not(id:) if persisted?
     return if overlapping.empty?
 
-    errors.add(:starts_at, 'overlaps with other turn(s)', overlapping: overlapping.pluck(:id))
+    errors.add(:starts_at, "overlaps with other turn(s)", overlapping: overlapping.pluck(:id))
   end
 
   def ends_at_overlaps_other_turn
     return if ends_at.blank? || weekday.blank?
 
-    overlapping = self.class.where('? BETWEEN starts_at AND ends_at', ends_at).where(weekday:)
+    overlapping = self.class.where("? BETWEEN starts_at AND ends_at", ends_at).where(weekday:)
     overlapping = overlapping.where.not(id:) if persisted?
     return if overlapping.empty?
 
-    errors.add(:ends_at, 'overlaps with other turn(s)', overlapping: overlapping.pluck(:id))
+    errors.add(:ends_at, "overlaps with other turn(s)", overlapping: overlapping.pluck(:id))
   end
 
   # def should_not_overlap_with_other_reservation_turns

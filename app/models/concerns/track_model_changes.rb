@@ -5,7 +5,7 @@ module TrackModelChanges
   extend ActiveSupport::Concern
 
   included do
-    has_many :model_changes, as: :record, class_name: 'Log::ModelChange', dependent: :destroy
+    has_many :model_changes, as: :record, class_name: "Log::ModelChange", dependent: :destroy
 
     # TODO
     # check if, when you use again this callback, this function is called
@@ -43,17 +43,17 @@ module TrackModelChanges
     changes.map do |k, v|
       next { k => [v[0], v[1]] } if SECRET_FIELDS.exclude?(k)
 
-      { k => [v[0].to_s.blank? ? nil : '[FILTERED]', v[1].to_s.blank? ? nil : '[FILTERED]'] }
+      { k => [v[0].to_s.blank? ? nil : "[FILTERED]", v[1].to_s.blank? ? nil : "[FILTERED]"] }
     end.reduce(:merge) || {}
   end
 
   def create_model_change!(args = {})
-    SaveModelChangeJob.perform_async(model_change_params(args, 'create'))
+    SaveModelChangeJob.perform_async(model_change_params(args, "create"))
   end
 
   def update_model_change!(args = {})
     # Log::ModelChange.updated!(self, args)
-    SaveModelChangeJob.perform_async(model_change_params(args, 'update'))
+    SaveModelChangeJob.perform_async(model_change_params(args, "update"))
   end
 
   def delete_model_change!(args = {})

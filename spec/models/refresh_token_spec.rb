@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe RefreshToken, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
-  context 'has valid factories' do
+  context "has valid factories" do
     it { expect { create(:refresh_token, :with_user) }.not_to raise_error }
 
-    context 'create' do
+    context "create" do
       subject { create(:refresh_token, :with_user) }
 
       it { is_expected.to be_valid }
@@ -16,7 +16,7 @@ RSpec.describe RefreshToken, type: :model do
       it { is_expected.to be_a(described_class) }
     end
 
-    context 'build' do
+    context "build" do
       subject { build(:refresh_token, :with_user) }
 
       it { is_expected.to be_valid }
@@ -25,13 +25,13 @@ RSpec.describe RefreshToken, type: :model do
     end
   end
 
-  context 'associations' do
+  context "associations" do
     it { is_expected.to belong_to(:user) }
     it { is_expected.to belong_to(:user).required }
     it { is_expected.not_to belong_to(:user).optional }
   end
 
-  context 'validations' do
+  context "validations" do
     let!(:refresh_token) { create(:refresh_token, :with_user) }
 
     before { allow_any_instance_of(RefreshToken).to receive(:assign_defaults).and_return(true) }
@@ -41,10 +41,10 @@ RSpec.describe RefreshToken, type: :model do
     it { is_expected.to validate_presence_of(:expires_at) }
   end
 
-  context 'instance methods' do
+  context "instance methods" do
     let(:instance) { described_class.new }
 
-    describe '#refresh_secret_and_expiration!' do
+    describe "#refresh_secret_and_expiration!" do
       subject { refresh_token }
 
       let(:refresh_token) { create(:refresh_token, :with_user) }
@@ -55,7 +55,7 @@ RSpec.describe RefreshToken, type: :model do
       it { expect { refresh_token.refresh_secret_and_expiration! }.to change(refresh_token, :secret) }
       it { expect { refresh_token.refresh_secret_and_expiration! }.to change(refresh_token, :expires_at) }
 
-      context 'after call' do
+      context "after call" do
         before { refresh_token.refresh_secret_and_expiration! }
 
         it { expect { refresh_token.refresh_secret_and_expiration! }.not_to raise_error }
@@ -66,11 +66,11 @@ RSpec.describe RefreshToken, type: :model do
       end
     end
 
-    describe '#expired!' do
+    describe "#expired!" do
       it { expect(instance).to respond_to(:expire!) }
       it { expect(instance).to respond_to(:expired!) }
 
-      context 'when calling on a new record, should create a record already expired' do
+      context "when calling on a new record, should create a record already expired" do
         subject { refresh_token }
 
         let(:refresh_token) { build(:refresh_token, :with_user, expires_at: 1.year.from_now) }
@@ -82,7 +82,7 @@ RSpec.describe RefreshToken, type: :model do
         it { expect { refresh_token.expire! }.not_to raise_error }
         it { expect(refresh_token.expired!).to eq true }
 
-        context 'after call' do
+        context "after call" do
           before { refresh_token.expired! }
 
           it { is_expected.to be_persisted }
@@ -91,7 +91,7 @@ RSpec.describe RefreshToken, type: :model do
         end
       end
 
-      context 'when called on an existing record, should update the record to be expired' do
+      context "when called on an existing record, should update the record to be expired" do
         subject { refresh_token }
 
         let(:refresh_token) { create(:refresh_token, :with_user, expires_at: 1.year.from_now) }
@@ -102,7 +102,7 @@ RSpec.describe RefreshToken, type: :model do
         it { expect { refresh_token.expired! }.not_to raise_error }
         it { expect(refresh_token.expired!).to eq true }
 
-        context 'after call' do
+        context "after call" do
           before { refresh_token.expired! }
 
           it { is_expected.to be_persisted }
@@ -112,7 +112,7 @@ RSpec.describe RefreshToken, type: :model do
       end
     end
 
-    describe '#expired?' do
+    describe "#expired?" do
       subject { refresh_token }
 
       let(:refresh_token) { build(:refresh_token, :with_user, expires_at: 1.year.from_now) }
@@ -125,12 +125,12 @@ RSpec.describe RefreshToken, type: :model do
       it { expect(refresh_token.expired?).to eq false }
       it { expect(refresh_token.not_expired?).to eq true }
 
-      context 'when #expired is before now' do
+      context "when #expired is before now" do
         before { refresh_token.expires_at = 1.year.ago }
 
         it { expect(refresh_token.expired?).to eq true }
 
-        context 'and object is saved' do
+        context "and object is saved" do
           before { refresh_token.save! }
 
           it { is_expected.to be_persisted }
@@ -141,10 +141,10 @@ RSpec.describe RefreshToken, type: :model do
       end
     end
 
-    describe '#generate_jwt' do
+    describe "#generate_jwt" do
       it { expect(instance).to respond_to(:generate_jwt) }
 
-      context 'on existing refresh token' do
+      context "on existing refresh token" do
         subject { refresh_token }
 
         let(:refresh_token) { create(:refresh_token, :with_user) }
@@ -153,7 +153,7 @@ RSpec.describe RefreshToken, type: :model do
         it { is_expected.to be_persisted }
         it { expect { refresh_token.generate_jwt }.not_to raise_error }
 
-        context 'when called' do
+        context "when called" do
           subject { refresh_token.generate_jwt }
 
           it { is_expected.to be_a String }
@@ -163,12 +163,12 @@ RSpec.describe RefreshToken, type: :model do
     end
   end
 
-  context 'class methods' do
-    describe '.generate_for' do
+  context "class methods" do
+    describe ".generate_for" do
       it { expect(described_class).to respond_to(:generate_for) }
 
-      context 'should generate a refresh token' do
-        context 'for the given user id' do
+      context "should generate a refresh token" do
+        context "for the given user id" do
           let(:user) { create(:user) }
 
           def call
@@ -179,7 +179,7 @@ RSpec.describe RefreshToken, type: :model do
           it { expect { call }.to change(described_class, :count).by(1) }
           it { expect(described_class.count).to eq 0 }
 
-          context 'after call' do
+          context "after call" do
             subject { call }
 
             before { call }
@@ -191,7 +191,7 @@ RSpec.describe RefreshToken, type: :model do
             it { is_expected.to be_persisted }
             it { expect(subject.user.id).to eq user.id }
 
-            context 'call errors' do
+            context "call errors" do
               subject { call.errors }
 
               before { call.validate }
@@ -201,7 +201,7 @@ RSpec.describe RefreshToken, type: :model do
           end
         end
 
-        context 'for the given User instance' do
+        context "for the given User instance" do
           let(:user) { create(:user) }
 
           def call
@@ -212,7 +212,7 @@ RSpec.describe RefreshToken, type: :model do
           it { expect { call }.to change(described_class, :count).by(1) }
           it { expect(described_class.count).to eq 0 }
 
-          context 'after call' do
+          context "after call" do
             subject { call }
 
             before { call }
@@ -224,7 +224,7 @@ RSpec.describe RefreshToken, type: :model do
             it { is_expected.to be_persisted }
             it { expect(subject.user.id).to eq user.id }
 
-            context 'call errors' do
+            context "call errors" do
               subject { call.errors }
 
               before { call.validate }
@@ -236,7 +236,7 @@ RSpec.describe RefreshToken, type: :model do
       end
     end
 
-    describe '.expired and not_expired scopes' do
+    describe ".expired and not_expired scopes" do
       let(:user) { create(:user) }
       let(:count) { 10 }
 
@@ -258,12 +258,12 @@ RSpec.describe RefreshToken, type: :model do
         RefreshToken.import! items, validate: false
       end
 
-      describe '.expired scope' do
+      describe ".expired scope" do
         it { expect(described_class).to respond_to(:expired) }
 
         it { expect(described_class.expired.count).to eq count }
 
-        context 'expired items' do
+        context "expired items" do
           subject { described_class.expired }
 
           it { is_expected.to be_a(ActiveRecord::Relation) }
@@ -271,16 +271,16 @@ RSpec.describe RefreshToken, type: :model do
           it { expect(subject.count).to eq count }
           it { expect(subject).to all(be_a(RefreshToken)) }
           it { expect(subject).to all(be_expired) }
-          it { expect(subject.pluck(:id)).to match_array(RefreshToken.where('expires_at < NOW()').pluck(:id)) }
+          it { expect(subject.pluck(:id)).to match_array(RefreshToken.where("expires_at < NOW()").pluck(:id)) }
         end
       end
 
-      describe '.not_expired scope' do
+      describe ".not_expired scope" do
         it { expect(described_class).to respond_to(:not_expired) }
 
         it { expect(described_class.not_expired.count).to eq count }
 
-        context 'not expired items' do
+        context "not expired items" do
           subject { described_class.not_expired }
 
           it { is_expected.to be_a(ActiveRecord::Relation) }
@@ -289,7 +289,7 @@ RSpec.describe RefreshToken, type: :model do
           it { expect(subject).to all(be_a(RefreshToken)) }
           it { expect(subject).to all(be_not_expired) }
           it { expect(subject.map(&:expired?)).to all(eq false) }
-          it { expect(subject.pluck(:id)).to match_array(RefreshToken.where('expires_at > NOW()').pluck(:id)) }
+          it { expect(subject.pluck(:id)).to match_array(RefreshToken.where("expires_at > NOW()").pluck(:id)) }
         end
       end
     end

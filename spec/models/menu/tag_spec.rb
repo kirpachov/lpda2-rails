@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Menu::Tag, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
@@ -9,33 +9,33 @@ RSpec.describe Menu::Tag, type: :model do
     %w[active deleted]
   end
 
-  context 'should track changes with ModelChange' do
+  context "should track changes with ModelChange" do
     let(:record) { create(:menu_tag) }
 
     include_examples TEST_MODEL_CHANGE_INCLUSION
   end
 
-  context 'can be translated' do
+  context "can be translated" do
     subject { create(:menu_tag) }
 
     include_examples MODEL_MOBILITY_EXAMPLES, field: :name
     include_examples MODEL_MOBILITY_EXAMPLES, field: :description
   end
 
-  context 'has image' do
+  context "has image" do
     subject { create(:menu_tag) }
 
     include_examples HAS_IMAGE_HELPER
   end
 
-  context 'has valid factory' do
+  context "has valid factory" do
     subject { build(:menu_tag) }
 
     it { is_expected.to be_valid }
     it { expect { subject.save! }.not_to raise_error }
     it { expect(subject.save).to eq true }
 
-    context 'when saved' do
+    context "when saved" do
       subject { create(:menu_tag) }
 
       it { is_expected.to be_valid }
@@ -43,13 +43,13 @@ RSpec.describe Menu::Tag, type: :model do
     end
   end
 
-  context 'validations' do
+  context "validations" do
     before { allow_any_instance_of(described_class).to receive(:assign_defaults).and_return(true) }
 
     it { is_expected.to validate_presence_of(:status) }
-    it { is_expected.to allow_value('active').for(:status) }
-    it { is_expected.not_to allow_value('some_invalid_status').for(:status) }
-    it { expect(subject.defined_enums.keys).to include('status') }
+    it { is_expected.to allow_value("active").for(:status) }
+    it { is_expected.not_to allow_value("some_invalid_status").for(:status) }
+    it { expect(subject.defined_enums.keys).to include("status") }
     it { is_expected.to validate_inclusion_of(:status).in_array(valid_statuses) }
 
     it { is_expected.to allow_value({ foo: :bar }).for(:other) }
@@ -57,7 +57,7 @@ RSpec.describe Menu::Tag, type: :model do
     it { is_expected.not_to allow_value(nil).for(:other) }
   end
 
-  context 'associations' do
+  context "associations" do
     it { is_expected.to have_many(:menu_tags_in_dishes) }
     it { is_expected.to have_many(:menu_dishes).through(:menu_tags_in_dishes) }
 
@@ -68,7 +68,7 @@ RSpec.describe Menu::Tag, type: :model do
       it { is_expected.to be_persisted }
       it { expect { subject.dishes = [create(:menu_dish)] }.not_to raise_error }
 
-      context 'when assigned' do
+      context "when assigned" do
         before { subject.dishes = [create(:menu_dish)] }
 
         it { is_expected.to be_valid }
@@ -85,7 +85,7 @@ RSpec.describe Menu::Tag, type: :model do
       it { is_expected.to be_persisted }
       it { expect { subject.menu_dishes = [create(:menu_dish)] }.not_to raise_error }
 
-      context 'when assigned' do
+      context "when assigned" do
         before { subject.menu_dishes = [create(:menu_dish)] }
 
         it { is_expected.to be_valid }
@@ -95,7 +95,7 @@ RSpec.describe Menu::Tag, type: :model do
       end
     end
 
-    context 'when deleted, should not delete associated dishes, but should delete association to dish itself' do
+    context "when deleted, should not delete associated dishes, but should delete association to dish itself" do
       let(:menu_tag) { create(:menu_tag) }
 
       before { menu_tag.dishes = [create(:menu_dish)] }

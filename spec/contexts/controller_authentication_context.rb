@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-CONTROLLER_AUTHENTICATION_CONTEXT = 'controller authentication'
+CONTROLLER_AUTHENTICATION_CONTEXT = "controller authentication"
 
 RSpec.shared_context CONTROLLER_AUTHENTICATION_CONTEXT do
   attr_accessor :current_user
@@ -10,6 +10,6 @@ RSpec.shared_context CONTROLLER_AUTHENTICATION_CONTEXT do
     @refresh_token = create(:refresh_token, user:)
     @current_user = user.reload
 
-    @request.headers['Authorization'] = "Bearer #{Auth::JsonWebToken.encode_refresh_token_data(@refresh_token)}"
+    @request.headers["Authorization"] = "Bearer #{Auth::JsonWebToken.encode_refresh_token_data(@refresh_token)}"
   end
 end

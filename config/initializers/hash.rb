@@ -3,6 +3,6 @@ class Hash
     value = dig(*path)
     return value if value.present?
 
-    raise "Required config missing: #{path.join('.')}"
+    raise "Required config missing: #{path.join(".")}"
   end
 end

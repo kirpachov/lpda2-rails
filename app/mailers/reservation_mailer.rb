@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ReservationMailer < ApplicationMailer
-  layout 'public'
+  layout "public"
 
   # reload!; ReservationMailer.confirmation(reservation: Reservation.last).deliver_now
   def confirmation
@@ -10,7 +10,7 @@ class ReservationMailer < ApplicationMailer
     end
 
     @reservation = params[:reservation]
-    raise 'Reservation does not have an email' if @reservation.email.blank?
+    raise "Reservation does not have an email" if @reservation.email.blank?
 
     @cancel_url = URI.join(
       Config.hash[:frontend_base_url],
@@ -24,7 +24,7 @@ class ReservationMailer < ApplicationMailer
             email_address_with_name(@reservation.email,
                                     @reservation.fullname)
           end,
-      subject: (@title = I18n.t('reservation_mailer.confirmation.subject', fullname: @reservation.fullname))
+      subject: (@title = I18n.t("reservation_mailer.confirmation.subject", fullname: @reservation.fullname))
     )
   end
 end

@@ -38,7 +38,7 @@ class SearchReservations < ActiveInteraction::Base
       end
     end
 
-    if order_by.is_a?(String) && order_by.present? && items.column_names.include?(order_by.split(' ').first)
+    if order_by.is_a?(String) && order_by.present? && items.column_names.include?(order_by.split(" ").first)
       return items.order(order_by)
     end
 
@@ -48,7 +48,7 @@ class SearchReservations < ActiveInteraction::Base
       direction = order_by[:direction] || order_by[:dir] || order_by[:order] || order_by[:sort]
 
       if attribute.present? && items.column_names.include?(attribute)
-        return items.order(attribute => direction.to_s.downcase == 'desc' ? :desc : :asc)
+        return items.order(attribute => direction.to_s.downcase == "desc" ? :desc : :asc)
       end
     end
 
@@ -119,8 +119,8 @@ class SearchReservations < ActiveInteraction::Base
 
   # Returns array of params
   def status_params
-    return params[:status].gsub(/[,;]/, ' ').split(/\s+/) if params[:status].is_a?(String)
-    return params[:statuses].gsub(/[,;]/, ' ').split(/\s+/) if params[:statuses].is_a?(String)
+    return params[:status].gsub(/[,;]/, " ").split(/\s+/) if params[:status].is_a?(String)
+    return params[:statuses].gsub(/[,;]/, " ").split(/\s+/) if params[:statuses].is_a?(String)
 
     return params[:status] if params[:status].is_a?(Array)
     return params[:statuses] if params[:statuses].is_a?(Array)

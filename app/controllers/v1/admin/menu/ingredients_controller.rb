@@ -9,7 +9,7 @@ module V1
         call = ::Menu::SearchIngredients.run(params:)
         unless call.valid?
           return render_error(status: 400, details: call.errors.as_json,
-                              message: call.errors.full_messages.join(', '))
+                              message: call.errors.full_messages.join(", "))
         end
 
         items = call.result.paginate(pagination_params)
@@ -26,21 +26,10 @@ module V1
         }
       end
 
-      def update
-        @item.assign_translation('name', params[:name]) if params.key?(:name)
-        @item.assign_translation('description', params[:description]) if params.key?(:description)
-
-        return if params.key?(:image) && !assign_image_from_param(@item, params[:image])
-
-        return show if @item.valid? && @item.save
-
-        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
-      end
-
       def create
         @item = ::Menu::Ingredient.new
-        @item.assign_translation('name', params[:name]) if params.key?(:name)
-        @item.assign_translation('description', params[:description]) if params.key?(:description)
+        @item.assign_translation("name", params[:name]) if params.key?(:name)
+        @item.assign_translation("description", params[:description]) if params.key?(:description)
 
         if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
           @item.image = Image.create_from_param!(params[:image])
@@ -48,7 +37,18 @@ module V1
 
         return show if @item.valid? && @item.save
 
-        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
+        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
+      end
+
+      def update
+        @item.assign_translation("name", params[:name]) if params.key?(:name)
+        @item.assign_translation("description", params[:description]) if params.key?(:description)
+
+        return if params.key?(:image) && !assign_image_from_param(@item, params[:image])
+
+        return show if @item.valid? && @item.save
+
+        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
       end
 
       def destroy
@@ -71,7 +71,7 @@ module V1
           return show
         end
 
-        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+        render_error(status: 422, message: call.errors.full_messages.join(", "), details: call.errors.full_json)
       end
 
       private
@@ -99,7 +99,7 @@ module V1
         return unless @item.nil?
 
         render_error(status: 404,
-                     message: I18n.t('record_not_found', model: Menu::Ingredient,
+                     message: I18n.t("record_not_found", model: Menu::Ingredient,
                                                          id: params[:id].inspect))
       end
     end

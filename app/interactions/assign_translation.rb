@@ -19,13 +19,13 @@ class AssignTranslation < ActiveInteraction::Base
   end
 
   def assign_value_string
-    record.send("#{attribute}=", value.to_s)
+    record.send(:"#{attribute}=", value.to_s)
   end
 
   def assign_value_hash
     value.each do |locale, value|
       Mobility.with_locale(locale) do
-        record.send("#{attribute}=", value.to_s)
+        record.send(:"#{attribute}=", value.to_s)
       end
     end
   end
@@ -49,7 +49,7 @@ class AssignTranslation < ActiveInteraction::Base
 
   def validate_value_hash
     value.keys.reject { |locale| I18n.available_locales.include?(locale.to_sym) }.each do |invalid_key|
-      errors.add(attribute, I18n.t('errors.messages.invalid_locale', lang: invalid_key))
+      errors.add(attribute, I18n.t("errors.messages.invalid_locale", lang: invalid_key))
     end
   end
 end

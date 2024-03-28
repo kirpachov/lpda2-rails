@@ -7,7 +7,7 @@ module ActiveModel
     # To exclude fields: errors.full_json(options: {except: ["attribute"]})
     def full_json(options: {})
       options[:except] ||= []
-      options[:except] << 'base'
+      options[:except] << "base"
 
       to_merge = { message: }
       to_merge[:details] = recursive_details if options[:recursive_details] && options[:details]

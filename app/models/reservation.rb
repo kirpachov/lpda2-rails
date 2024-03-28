@@ -9,29 +9,29 @@ class Reservation < ApplicationRecord
 
   enum status: {
     # Default status
-    active: 'active',
+    active: "active",
 
     # People arrived at the restaurant
-    arrived: 'arrived',
+    arrived: "arrived",
 
     # Reservations deleted admin-side
-    deleted: 'deleted',
+    deleted: "deleted",
 
     # People that didn't show up
-    noshow: 'noshow',
+    noshow: "noshow",
 
     # People that cancelled (deleted by user-side)
-    cancelled: 'cancelled'
+    cancelled: "cancelled"
   }
 
   # ################################
   # Associations
   # ################################
-  has_many :tags_in_reservations, class_name: 'TagInReservation', inverse_of: :reservation, dependent: :destroy
-  has_many :reservation_tags, through: :tags_in_reservations, class_name: 'ReservationTag'
-  has_many :delivered_emails, class_name: 'Log::DeliveredEmail', as: :record
-  has_many :image_pixels, class_name: 'Log::ImagePixel', as: :record, dependent: :destroy
-  has_many :pixel_events, class_name: 'Log::ImagePixelEvent', through: :image_pixels, source: :events
+  has_many :tags_in_reservations, class_name: "TagInReservation", inverse_of: :reservation, dependent: :destroy
+  has_many :reservation_tags, through: :tags_in_reservations, class_name: "ReservationTag"
+  has_many :delivered_emails, class_name: "Log::DeliveredEmail", as: :record
+  has_many :image_pixels, class_name: "Log::ImagePixel", as: :record, dependent: :destroy
+  has_many :pixel_events, class_name: "Log::ImagePixelEvent", through: :image_pixels, source: :events
   # , dependent: :nullify
 
   alias_attribute :tags, :reservation_tags
@@ -53,7 +53,7 @@ class Reservation < ApplicationRecord
   # ################################
   after_initialize do
     self.secret = GenToken.for!(Reservation, :secret) if secret.blank?
-    self.status = 'active' if status.blank?
+    self.status = "active" if status.blank?
     self.other = {} if other.nil?
   end
 
@@ -68,7 +68,7 @@ class Reservation < ApplicationRecord
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value('status', value)
+    @attributes.write_cast_value("status", value)
   end
 
   def create_email_pixel(image:, delivered_email:)
@@ -76,7 +76,7 @@ class Reservation < ApplicationRecord
       record: self,
       image:,
       delivered_email:,
-      event_type: 'email_open'
+      event_type: "email_open"
     )
   end
 
@@ -87,7 +87,7 @@ class Reservation < ApplicationRecord
 
     ReservationMailer.with(
       reservation: self,
-      pixel: image ? { image.key.gsub('email_images_', '') => create_email_pixel(image:, delivered_email:).url } : nil,
+      pixel: image ? { image.key.gsub("email_images_", "") => create_email_pixel(image:, delivered_email:).url } : nil,
       delivered_email:
     ).confirmation
   end

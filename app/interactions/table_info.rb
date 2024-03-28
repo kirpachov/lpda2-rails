@@ -3,14 +3,14 @@
 # This class will log the requested ActiveRecord table data.
 class TableInfo < ActiveInteraction::Base
   interface :model, methods: %i[columns]
-  string :output, default: 'log'
+  string :output, default: "log"
   array :columns, default: nil
 
   PERMITTED_OUTPUT_OPTIONS = %w[log].freeze
   DEFAULT_COLUMNS_TO_DISPLAY = %w[name null default type sql_type default_function comment].freeze
 
   def execute
-    puts log_table_info if output == 'log'
+    puts log_table_info if output == "log"
   end
 
   def validate

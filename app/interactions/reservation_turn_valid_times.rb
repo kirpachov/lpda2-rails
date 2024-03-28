@@ -2,8 +2,8 @@
 
 # Given a date, will return an array of times that are available for that ReservationTurn.
 class ReservationTurnValidTimes < ActiveInteraction::Base
-  record :turn, class: 'ReservationTurn'
-  string :format, default: '%H:%M'
+  record :turn, class: "ReservationTurn"
+  string :format, default: "%H:%M"
 
   def execute
     starts_at = turn.starts_at

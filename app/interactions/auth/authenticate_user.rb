@@ -41,7 +41,7 @@ module Auth
 
       # Check if user exists
       if @user.nil?
-        errors.add :authentication, I18n.t('.errors.messages.invalid_email_or_password')
+        errors.add :authentication, I18n.t(".errors.messages.invalid_email_or_password")
         return nil
       end
 
@@ -68,9 +68,9 @@ module Auth
     def user_blocked?(user)
       # return false unless user.blocked?
 
-      errors.add :temporarily_blocked, I18n.t('errors.messages.account_tmp_locked') if user.temporarily_blocked?
+      errors.add :temporarily_blocked, I18n.t("errors.messages.account_tmp_locked") if user.temporarily_blocked?
       if user.deleted?
-        errors.add :user_deleted, I18n.t('errors.messages.account_deleted')
+        errors.add :user_deleted, I18n.t("errors.messages.account_deleted")
         return true
       end
 
@@ -92,13 +92,13 @@ module Auth
 
     # Trace authentication failure and block user if necessary.
     def authentication_failed!(user)
-      errors.add :authentication, I18n.t('errors.messages.invalid_email_or_password')
+      errors.add :authentication, I18n.t("errors.messages.invalid_email_or_password")
       user.failed_attempts += 1
 
       max_attempts = Rails.configuration.app[:max_login_attempts].to_i
       if user.failed_attempts >= max_attempts
         user.temporarily_block!
-        errors.add :account_blocked, I18n.t('errors.messages.too_failed_attempts')
+        errors.add :account_blocked, I18n.t("errors.messages.too_failed_attempts")
       end
 
       user.save!

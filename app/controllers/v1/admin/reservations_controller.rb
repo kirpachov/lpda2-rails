@@ -9,7 +9,7 @@ module V1::Admin
       call = ::SearchReservations.run(params:, current_user:)
       unless call.valid?
         return render_error(status: 400, details: call.errors.as_json,
-                            message: call.errors.full_messages.join(', '))
+                            message: call.errors.full_messages.join(", "))
       end
 
       items = call.result.paginate(pagination_params)
@@ -24,16 +24,16 @@ module V1::Admin
       render json: { item: full_json(@item) }
     end
 
-    def update
-      return show if @item.update(update_params)
-
-      render_unprocessable_entity(@item)
-    end
-
     def create
       @item = ::Reservation.new(create_params)
 
       return show if @item.valid? && @item.save
+
+      render_unprocessable_entity(@item)
+    end
+
+    def update
+      return show if @item.update(update_params)
 
       render_unprocessable_entity(@item)
     end
@@ -47,8 +47,8 @@ module V1::Admin
     end
 
     def update_status
-      status = params[:status].to_s.gsub(/\s+/, '').downcase
-      return render_error(status: 400, message: I18n.t('invalid_status')) unless %w[arrived noshow
+      status = params[:status].to_s.gsub(/\s+/, "").downcase
+      return render_error(status: 400, message: I18n.t("invalid_status")) unless %w[arrived noshow
                                                                                     active].include?(status)
 
       return show if @item.update(status:)
@@ -71,7 +71,7 @@ module V1::Admin
     def deliver_confirmation_email
       if @item.email.blank?
         return render_error(status: 400,
-                            message: I18n.t('reservation_mailer.confirmation.no_email'))
+                            message: I18n.t("reservation_mailer.confirmation.no_email"))
       end
 
       @item.deliver_confirmation_email
@@ -129,7 +129,7 @@ module V1::Admin
       return unless @item.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: Reservation,
+                   message: I18n.t("record_not_found", model: Reservation,
                                                        id: params[:id].inspect))
     end
 
@@ -138,7 +138,7 @@ module V1::Admin
       return unless @tag.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: ReservationTag,
+                   message: I18n.t("record_not_found", model: ReservationTag,
                                                        id: params[:tag_id].inspect))
     end
   end

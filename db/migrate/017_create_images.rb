@@ -14,8 +14,8 @@ class CreateImages < ActiveRecord::Migration[7.0]
       t.text :key,          null: true, comment: %(Key for finding the Image for a certain purpose.)
 
       t.timestamps
-      t.index %i[tag original_id], unique: true, where: 'original_id IS NOT NULL'
-      t.index :key, unique: true, where: 'key IS NOT NULL'
+      t.index %i[tag original_id], unique: true, where: "original_id IS NOT NULL"
+      t.index :key, unique: true, where: "key IS NOT NULL"
     end
   end
 end

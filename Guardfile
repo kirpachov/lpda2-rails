@@ -16,10 +16,10 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 # guard :rspec, cmd: 'rspec -f html -o /tmp/spec_results.html', launchy: '/tmp/spec_results.html' do
-guard :rspec, cmd: 'bundle exec rspec --no-profile', notification: true do
-  watch('spec/spec_helper.rb')                        { 'spec' }
-  watch('config/routes.rb')                           { 'spec/routing' }
-  watch('app/controllers/application_controller.rb')  { 'spec/controllers' }
+guard :rspec, cmd: "bundle exec rspec --no-profile", notification: true do
+  watch("spec/spec_helper.rb")                        { "spec" }
+  watch("config/routes.rb")                           { "spec/routing" }
+  watch("app/controllers/application_controller.rb")  { "spec/controllers" }
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^app/(.+)\.rb$})                           { |m| "spec/#{m[1]}_spec.rb" }
   watch(%r{^app/(.*)(\.erb|\.haml|\.slim)$})          { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
@@ -31,12 +31,12 @@ guard :rspec, cmd: 'bundle exec rspec --no-profile', notification: true do
   watch(%r{^spec/factories/(.*)_factory\.rb$})                 { |m| "spec/models/#{m[1]}_spec.rb" }
 
   # When editing shared examples, we want to launch all specs.
-  watch(%r{^spec/shared_examples/(.*).examples\.rb$}) { 'spec' }
+  watch(%r{^spec/shared_examples/(.*).examples\.rb$}) { "spec" }
 
   # If editing matchers, run all specs.
-  watch(%r{^spec/matchers/(.*)\.rb$}) { 'spec' }
+  watch(%r{^spec/matchers/(.*)\.rb$}) { "spec" }
 
-  watch(%r{^spec/support/(.*)\.rb$}) { 'spec' }
+  watch(%r{^spec/support/(.*)\.rb$}) { "spec" }
 
   # watch(%r{^app/(.*)(\.erb|\.haml|\.slim)$})          { |m| "spec/#{m[1]}#{m[2]}_spec.rb" }
   # watch(%r{^lib/(.+)\.rb$})                           { |m| "spec/lib/#{m[1]}_spec.rb" }

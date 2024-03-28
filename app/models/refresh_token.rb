@@ -25,8 +25,8 @@ class RefreshToken < ApplicationRecord
   # ################################
   # Scopes
   # ################################
-  scope :expired, -> { where('expires_at < ?', Time.now) }
-  scope :not_expired, -> { where('expires_at >= ?', Time.now) }
+  scope :expired, -> { where("expires_at < ?", Time.now) }
+  scope :not_expired, -> { where("expires_at >= ?", Time.now) }
 
   # ################################
   # Class methods
@@ -35,7 +35,7 @@ class RefreshToken < ApplicationRecord
     def generate_for(user_or_its_id)
       unless user_or_its_id.is_a?(User) || user_or_its_id.is_a?(Integer)
         raise ArgumentError,
-              'user_or_its_id must be a User or an Integer'
+              "user_or_its_id must be a User or an Integer"
       end
 
       user_id = user_or_its_id.is_a?(User) ? user_or_its_id.id : user_or_its_id

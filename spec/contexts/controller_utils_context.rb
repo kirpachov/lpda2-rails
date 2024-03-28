@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-CONTROLLER_UTILS_CONTEXT = 'CONTROLLER_UTILS_CONTEXT'
+CONTROLLER_UTILS_CONTEXT = "CONTROLLER_UTILS_CONTEXT"
 
 RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
-  def set_locale(locale = 'en')
-    headers['Accept-Language'] = locale
+  def set_locale(locale = "en")
+    headers["Accept-Language"] = locale
   end
 
   def parsed_response_body
@@ -67,6 +67,6 @@ RSpec.shared_context CONTROLLER_UTILS_CONTEXT, type: :controller do
   # @param date [String] => date in format "YYYY-MM-DD HH:MM"
   # @return [String] => date in format "YYYY-MM-DDTHH:MM:00.000Z
   def to_iso8601(date)
-    "#{date.split(' ').first}T#{date.split(' ').last}:00.000Z"
+    "#{date.split(" ").first}T#{date.split(" ").last}:00.000Z"
   end
 end

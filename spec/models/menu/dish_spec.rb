@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Menu::Dish, type: :model do
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
-  context 'should track changes with ModelChange' do
+  context "should track changes with ModelChange" do
     let(:record) { create(:menu_dish) }
 
     include_examples TEST_MODEL_CHANGE_INCLUSION
   end
 
-  context 'can be translated' do
+  context "can be translated" do
     subject { create(:menu_dish) }
 
     include_examples MODEL_MOBILITY_EXAMPLES, field: :name
     include_examples MODEL_MOBILITY_EXAMPLES, field: :description
   end
 
-  context 'has image' do
+  context "has image" do
     subject { create(:menu_dish) }
 
     include_examples HAS_IMAGES_HELPER
@@ -28,7 +28,7 @@ RSpec.describe Menu::Dish, type: :model do
     Menu::Dish::VALID_STATUSES
   end
 
-  context 'has valid factories' do
+  context "has valid factories" do
     subject { build(:menu_dish) }
 
     it { is_expected.to be_valid }
@@ -36,8 +36,8 @@ RSpec.describe Menu::Dish, type: :model do
     it { expect { subject.save! }.not_to raise_error }
   end
 
-  context 'validations' do
-    context 'has price. Price can be nil or 0 but never negative' do
+  context "validations" do
+    context "has price. Price can be nil or 0 but never negative" do
       subject { build(:menu_dish) }
 
       it { is_expected.to allow_value(nil).for(:price) }
@@ -46,7 +46,7 @@ RSpec.describe Menu::Dish, type: :model do
       it { is_expected.not_to allow_value(-1).for(:price) }
       it { is_expected.not_to allow_value(-10).for(:price) }
 
-      context 'when price is -1' do
+      context "when price is -1" do
         subject { build(:menu_dish, price: -1) }
 
         it { is_expected.not_to be_valid }
@@ -55,15 +55,15 @@ RSpec.describe Menu::Dish, type: :model do
       end
     end
 
-    context 'has status. status must be in VALID_STATUSES' do
+    context "has status. status must be in VALID_STATUSES" do
       subject { build(:menu_dish) }
 
-      it { is_expected.to allow_value('active').for(:status) }
+      it { is_expected.to allow_value("active").for(:status) }
       it { is_expected.to validate_inclusion_of(:status).in_array(valid_statuses) }
     end
   end
 
-  context 'associations' do
+  context "associations" do
     it { is_expected.to have_many(:menu_dishes_in_categories) }
     it { is_expected.to have_many(:menu_categories) }
     it { expect(described_class.new).to respond_to(:categories) }
@@ -78,14 +78,14 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect(subject.categories.count).to eq 0 }
       it { expect(category.dishes.count).to eq 0 }
 
-      it 'assigns category' do
+      it "assigns category" do
         subject.categories = [category]
         expect(subject.reload.categories.count).to eq 1
         expect(category.reload.dishes.count).to eq 1
       end
     end
 
-    context 'when deleted, should destroy all DishInCategory' do
+    context "when deleted, should destroy all DishInCategory" do
       subject { dish }
 
       let(:dish) { create(:menu_dish) }
@@ -99,11 +99,11 @@ RSpec.describe Menu::Dish, type: :model do
       it { expect(dish.categories.count).to eq 1 }
       it { expect(category.dishes.count).to eq 1 }
       it { expect { dish.destroy! }.to change { Menu::DishesInCategory.count }.by(-1) }
-      it { expect { dish.destroy! }.to change { Menu::Visibility.count }.by(0) }
-      it { expect { dish.destroy! }.to change { Menu::Category.count }.by(0) }
+      it { expect { dish.destroy! }.not_to(change { Menu::Visibility.count }) }
+      it { expect { dish.destroy! }.not_to(change { Menu::Category.count }) }
     end
 
-    context 'has many ingredients' do
+    context "has many ingredients" do
       it { is_expected.to have_many(:menu_ingredients_in_dishes) }
       it { is_expected.to have_many(:menu_ingredients).through(:menu_ingredients_in_dishes) }
 
@@ -119,7 +119,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.ingredients.count).to eq 0 }
         it { expect(ingredient.dishes.count).to eq 0 }
 
-        it 'assigns ingredient' do
+        it "assigns ingredient" do
           subject.ingredients = [ingredient]
           expect(subject.reload.ingredients.count).to eq 1
           expect(ingredient.reload.dishes.count).to eq 1
@@ -127,7 +127,7 @@ RSpec.describe Menu::Dish, type: :model do
       end
     end
 
-    context 'has many allergens' do
+    context "has many allergens" do
       it { is_expected.to have_many(:menu_allergens_in_dishes) }
       it { is_expected.to have_many(:menu_allergens).through(:menu_allergens_in_dishes) }
 
@@ -143,7 +143,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.allergens.count).to eq 0 }
         it { expect(allergen.dishes.count).to eq 0 }
 
-        it 'assigns allergen' do
+        it "assigns allergen" do
           subject.allergens = [allergen]
           expect(subject.reload.allergens.count).to eq 1
           expect(allergen.reload.dishes.count).to eq 1
@@ -151,7 +151,7 @@ RSpec.describe Menu::Dish, type: :model do
       end
     end
 
-    context 'has many tags' do
+    context "has many tags" do
       it { is_expected.to have_many(:menu_tags_in_dishes) }
       it { is_expected.to have_many(:menu_tags).through(:menu_tags_in_dishes) }
 
@@ -167,7 +167,7 @@ RSpec.describe Menu::Dish, type: :model do
         it { expect(subject.tags.count).to eq 0 }
         it { expect(tag.dishes.count).to eq 0 }
 
-        it 'assigns tag' do
+        it "assigns tag" do
           subject.tags = [tag]
           expect(subject.reload.tags.count).to eq 1
           expect(tag.reload.dishes.count).to eq 1
@@ -176,7 +176,7 @@ RSpec.describe Menu::Dish, type: :model do
     end
   end
 
-  context 'instance methods' do
+  context "instance methods" do
     subject { build(:menu_dish) }
 
     it { is_expected.to respond_to(:menu_dishes_in_categories) }

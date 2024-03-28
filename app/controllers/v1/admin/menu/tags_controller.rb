@@ -8,7 +8,7 @@ module V1::Admin::Menu
       call = ::Menu::SearchTags.run(params:)
       unless call.valid?
         return render_error(status: 400, details: call.errors.as_json,
-                            message: call.errors.full_messages.join(', '))
+                            message: call.errors.full_messages.join(", "))
       end
 
       items = call.result.paginate(pagination_params)
@@ -27,8 +27,8 @@ module V1::Admin::Menu
 
     def create
       @item = Menu::Tag.new
-      @item.assign_translation('name', params[:name]) if params[:name].present?
-      @item.assign_translation('description', params[:description]) if params[:description].present?
+      @item.assign_translation("name", params[:name]) if params[:name].present?
+      @item.assign_translation("description", params[:description]) if params[:description].present?
 
       @item.image = Image.create_from_param!(params[:image]) if params[:image].is_a?(ActionDispatch::Http::UploadedFile)
 
@@ -38,8 +38,8 @@ module V1::Admin::Menu
     end
 
     def update
-      @item.assign_translation('name', params[:name]) if params.key?(:name)
-      @item.assign_translation('description', params[:description]) if params.key?(:description)
+      @item.assign_translation("name", params[:name]) if params.key?(:name)
+      @item.assign_translation("description", params[:description]) if params.key?(:description)
 
       return if params.key?(:image) && !assign_image_from_param(@item, params[:image])
 
@@ -68,7 +68,7 @@ module V1::Admin::Menu
         return show
       end
 
-      render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+      render_error(status: 422, message: call.errors.full_messages.join(", "), details: call.errors.full_json)
     end
 
     private
@@ -78,7 +78,7 @@ module V1::Admin::Menu
       return unless @item.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: Menu::Tag,
+                   message: I18n.t("record_not_found", model: Menu::Tag,
                                                        id: params[:id].inspect))
     end
 

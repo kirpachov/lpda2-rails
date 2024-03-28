@@ -8,7 +8,7 @@ module V1::Admin
       call = ::SearchReservationTurns.run(params:)
       unless call.valid?
         return render_error(status: 400, details: call.errors.as_json,
-                            message: call.errors.full_messages.join(', '))
+                            message: call.errors.full_messages.join(", "))
       end
 
       items = call.result.paginate(pagination_params)
@@ -60,7 +60,7 @@ module V1::Admin
       return unless @item.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: ReservationTurn,
+                   message: I18n.t("record_not_found", model: ReservationTurn,
                                                        id: params[:id].inspect))
     end
 
@@ -75,8 +75,8 @@ module V1::Admin
 
     def single_item_full_json(item)
       item.as_json.merge(
-        starts_at: item.starts_at.strftime('%k:%M'),
-        ends_at: item.ends_at.strftime('%k:%M')
+        starts_at: item.starts_at.strftime("%k:%M"),
+        ends_at: item.ends_at.strftime("%k:%M")
       )
     end
   end

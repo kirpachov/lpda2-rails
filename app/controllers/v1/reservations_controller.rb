@@ -5,12 +5,18 @@ module V1
     before_action :find_item, only: %i[show cancel]
     skip_before_action :authenticate_user
 
+    def show
+      render json: {
+        item: full_json(@item)
+      }
+    end
+
     def create
       call = PublicCreateReservation.run(params: params.permit!.to_h)
 
       unless call.valid?
         return render_error(status: 422, details: call.errors.full_json,
-                            message: call.errors.full_messages.join(', '))
+                            message: call.errors.full_messages.join(", "))
       end
 
       # TODO: send mail
@@ -25,12 +31,6 @@ module V1
       render_unprocessable_entity(@item)
     end
 
-    def show
-      render json: {
-        item: full_json(@item)
-      }
-    end
-
     private
 
     def find_item
@@ -38,7 +38,7 @@ module V1
       return unless @item.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: Reservation,
+                   message: I18n.t("record_not_found", model: Reservation,
                                                        id: params[:secret].inspect))
     end
 

@@ -7,7 +7,7 @@ module V1::Admin
     def index
       items = ReservationTag.visible
 
-      items = items.where('title ILIKE ?', "%#{params[:query]}%") if params[:query].present?
+      items = items.where("title ILIKE ?", "%#{params[:query]}%") if params[:query].present?
 
       items = items.paginate(pagination_params)
 
@@ -21,18 +21,18 @@ module V1::Admin
       render json: { item: full_json(@item) }
     end
 
-    def update
-      return show if @item.update(update_params)
-
-      render_error(status: 422, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
-    end
-
     def create
       @item = ::ReservationTag.new(create_params)
 
       return show if @item.valid? && @item.save
 
-      render_error(status: 422, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
+      render_error(status: 422, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
+    end
+
+    def update
+      return show if @item.update(update_params)
+
+      render_error(status: 422, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
     end
 
     def destroy
@@ -71,7 +71,7 @@ module V1::Admin
       return unless @item.nil?
 
       render_error(status: 404,
-                   message: I18n.t('record_not_found', model: ReservationTag,
+                   message: I18n.t("record_not_found", model: ReservationTag,
                                                        id: params[:id].inspect))
     end
   end

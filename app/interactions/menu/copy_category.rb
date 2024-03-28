@@ -2,9 +2,9 @@
 
 module Menu
   class CopyCategory < ActiveInteraction::Base
-    DEFAULT_COPY_IMAGES = 'full'
-    DEFAULT_COPY_DISHES = 'full'
-    DEFAULT_COPY_CHILDREN = 'full'
+    DEFAULT_COPY_IMAGES = "full"
+    DEFAULT_COPY_DISHES = "full"
+    DEFAULT_COPY_CHILDREN = "full"
 
     PERMITTED_KEYS = %i[old current_user parent_id copy_images copy_dishes copy_children].freeze
 
@@ -110,12 +110,12 @@ module Menu
     end
 
     def do_copy_images
-      return true if old.images.empty? || copy_images.to_s == 'none'
+      return true if old.images.empty? || copy_images.to_s == "none"
 
       old.images.filter { |img| img.attached_image.attached? }.each do |old_image|
-        if copy_images == 'full'
+        if copy_images == "full"
           @new.images << old_image.copy!(current_user:)
-        elsif copy_images == 'link'
+        elsif copy_images == "link"
           @new.images << old_image
         end
       end
@@ -127,12 +127,12 @@ module Menu
     end
 
     def do_copy_dishes
-      return true if old.dishes.empty? || copy_dishes.to_s == 'none'
+      return true if old.dishes.empty? || copy_dishes.to_s == "none"
 
       old.dishes.each do |old_dish|
-        if copy_dishes == 'full'
+        if copy_dishes == "full"
           @new.dishes << old_dish.copy!(current_user:)
-        elsif copy_dishes == 'link'
+        elsif copy_dishes == "link"
           @new.dishes << old_dish
         end
       end
@@ -144,7 +144,7 @@ module Menu
     end
 
     def do_copy_children
-      return true if old.children.empty? || copy_children.to_s == 'none'
+      return true if old.children.empty? || copy_children.to_s == "none"
 
       old.children.each do |old_child|
         @new.children << old_child.copy!(current_user:)

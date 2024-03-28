@@ -23,7 +23,7 @@ module V1
         updated = preference.update(value: params[:value])
 
         unless updated
-          return render json: { message: "#{I18n.t('preferences.update_failed')}:#{preference.errors.full_messages.join('; ')}", details: preference.errors.as_json },
+          return render json: { message: "#{I18n.t("preferences.update_failed")}:#{preference.errors.full_messages.join("; ")}", details: preference.errors.as_json },
                         status: :unprocessable_entity
         end
 
@@ -39,7 +39,7 @@ module V1
       def validate_key_exists
         return if current_user.preference(params[:key])
 
-        render json: { message: I18n.t('preferences.key_not_found') },
+        render json: { message: I18n.t("preferences.key_not_found") },
                status: :not_found
       end
 

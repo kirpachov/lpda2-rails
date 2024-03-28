@@ -6,8 +6,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
-    belongs_to :menu_category, class_name: 'Menu::Category', optional: true
+    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
+    belongs_to :menu_category, class_name: "Menu::Category", optional: true
 
     # ##############################
     # Aliases

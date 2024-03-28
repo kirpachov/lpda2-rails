@@ -5,6 +5,6 @@ module Log
     # ################################
     # Associations
     # ################################
-    belongs_to :image_pixel, class_name: 'Log::ImagePixel', optional: false
+    belongs_to :image_pixel, class_name: "Log::ImagePixel", optional: false
   end
 end

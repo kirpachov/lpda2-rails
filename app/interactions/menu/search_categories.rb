@@ -8,7 +8,7 @@ module Menu
       categories = Category.visible
 
       if params[:except].present? && params[:except].is_a?(String)
-        categories = categories.where.not(id: params[:except].split(',').map(&:to_i))
+        categories = categories.where.not(id: params[:except].split(",").map(&:to_i))
       end
 
       categories = categories.where(parent_id: params[:parent_id].presence) if params.has_key?(:parent_id)
@@ -18,7 +18,7 @@ module Menu
       end
 
       if params[:fixed_price].present?
-        value = params[:fixed_price].to_s.downcase == 'true'
+        value = params[:fixed_price].to_s.downcase == "true"
         categories = value ? categories.with_fixed_price : categories.without_fixed_price
       end
 

@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -10,10 +10,10 @@ module Lpda2
   class Application < Rails::Application
     config.load_defaults 7.0
 
-    config.app = config_for('app.example').symbolize_keys
-    config.app.merge!(config_for('app').symbolize_keys) if File.exist?('config/app.yml')
+    config.app = config_for("app.example").symbolize_keys
+    config.app.merge!(config_for("app").symbolize_keys) if File.exist?("config/app.yml")
 
-    config.time_zone = 'UTC'
+    config.time_zone = "UTC"
 
     config.generators do |generate|
       generate.test_framework :rspec,
@@ -24,11 +24,11 @@ module Lpda2
                               controller_specs: true,
                               request_specs: false
 
-      generate.fixture_replacement :factory_bot, dir: 'spec/factories'
+      generate.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
-    config.eager_load_paths << Rails.root.join('lib')
-    config.eager_load_paths << Rails.root.join('test/mailers/previews')
+    config.eager_load_paths << Rails.root.join("lib")
+    config.eager_load_paths << Rails.root.join("test/mailers/previews")
 
     # config.session_store :cookie_store, key: '_interslice_session'
     # config.middleware.use ActionDispatch::Cookies
@@ -36,7 +36,7 @@ module Lpda2
     # This also configures session_options for use below
     config.middleware.use ActionDispatch::Cookies
 
-    config.session_store :cookie_store, key: '_interslice_session'
+    config.session_store :cookie_store, key: "_interslice_session"
     # Required for all session management (regardless of session_store)
     config.middleware.use config.session_store, config.session_options
 

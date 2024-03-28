@@ -17,7 +17,7 @@ module Auth
     def authenticate_and_get_user
       # Return nil if JWT token is invalid
       if jwt_payload.nil?
-        errors.add(:token, I18n.t('.errors.messages.request_401'))
+        errors.add(:token, I18n.t(".errors.messages.request_401"))
         return nil
       end
 
@@ -43,9 +43,9 @@ module Auth
     # Find token from :token parameter, or search in Authorization headers
     def find_token
       return token if token.present?
-      return headers['Authorization'].split(' ').last if headers['Authorization'].present?
+      return headers["Authorization"].split(" ").last if headers["Authorization"].present?
 
-      errors.add(:token, I18n.t('.errors.messages.request_401'))
+      errors.add(:token, I18n.t(".errors.messages.request_401"))
       nil
     end
 
@@ -53,7 +53,7 @@ module Auth
     def check_refresh_token!(refresh_token)
       return if refresh_token
 
-      errors.add(:token, I18n.t('.errors.messages.request_401'))
+      errors.add(:token, I18n.t(".errors.messages.request_401"))
       throw :failed
     end
 
@@ -62,7 +62,7 @@ module Auth
       user = refresh_token.user
       return user if user
 
-      errors.add(:user_not_found, I18n.t('.errors.messages.request_401'))
+      errors.add(:user_not_found, I18n.t(".errors.messages.request_401"))
       throw :failed
     end
 
@@ -73,7 +73,7 @@ module Auth
 
       # errors.add :temporarily_blocked, "L'account è temporaneamente bloccato!" if user.temporarily_blocked?
       # errors.add :user_banned, "L'account è stato bannato!" if user.banned?
-      errors.add :user_deleted, I18n.t('.errors.messages.request_401') if user.deleted?
+      errors.add :user_deleted, I18n.t(".errors.messages.request_401") if user.deleted?
 
       throw :failed
     end

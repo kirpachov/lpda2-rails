@@ -18,17 +18,17 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    has_many :menu_dishes_in_categories, class_name: 'Menu::DishesInCategory', foreign_key: :menu_dish_id,
+    has_many :menu_dishes_in_categories, class_name: "Menu::DishesInCategory", foreign_key: :menu_dish_id,
                                          dependent: :destroy
-    has_many :menu_categories, class_name: 'Menu::Category', through: :menu_dishes_in_categories
-    has_many :menu_ingredients_in_dishes, class_name: 'Menu::IngredientsInDish', foreign_key: :menu_dish_id,
+    has_many :menu_categories, class_name: "Menu::Category", through: :menu_dishes_in_categories
+    has_many :menu_ingredients_in_dishes, class_name: "Menu::IngredientsInDish", foreign_key: :menu_dish_id,
                                           dependent: :destroy
-    has_many :menu_ingredients, class_name: 'Menu::Ingredient', through: :menu_ingredients_in_dishes
-    has_many :menu_allergens_in_dishes, class_name: 'Menu::AllergensInDish', foreign_key: :menu_dish_id,
+    has_many :menu_ingredients, class_name: "Menu::Ingredient", through: :menu_ingredients_in_dishes
+    has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_dish_id,
                                         dependent: :destroy
-    has_many :menu_allergens, class_name: 'Menu::Allergen', through: :menu_allergens_in_dishes
-    has_many :menu_tags_in_dishes, class_name: 'Menu::TagsInDish', foreign_key: :menu_dish_id, dependent: :destroy
-    has_many :menu_tags, class_name: 'Menu::Tag', through: :menu_tags_in_dishes
+    has_many :menu_allergens, class_name: "Menu::Allergen", through: :menu_allergens_in_dishes
+    has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_dish_id, dependent: :destroy
+    has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes
 
     alias_attribute :categories, :menu_categories
     alias_attribute :ingredients, :menu_ingredients
@@ -80,7 +80,7 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value('status', value)
+      @attributes.write_cast_value("status", value)
     end
 
     # @param [Hash] options
@@ -96,7 +96,7 @@ module Menu
     end
 
     def assign_defaults
-      self.status = 'active' if status.blank?
+      self.status = "active" if status.blank?
       self.other = {} if other.nil?
     end
   end

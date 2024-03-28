@@ -4,7 +4,7 @@ class ImageToRecord < ApplicationRecord
   # ##############################
   # Associations
   # ##############################
-  belongs_to :image, class_name: 'Image', optional: false
+  belongs_to :image, class_name: "Image", optional: false
   belongs_to :record, polymorphic: true, optional: false
 
   # ##############################
@@ -30,7 +30,7 @@ class ImageToRecord < ApplicationRecord
       transaction do
         lock
 
-        where(record:).update_all('position = position + 100000')
+        where(record:).update_all("position = position + 100000")
 
         items = where(record:).order(:position).to_ary
 
@@ -59,6 +59,6 @@ class ImageToRecord < ApplicationRecord
   def image_must_have_attached_image
     return if image.nil? || image.attached_image.attached?
 
-    errors.add(:image, 'must have attached image')
+    errors.add(:image, "must have attached image")
   end
 end

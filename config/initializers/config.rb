@@ -3,7 +3,7 @@
 # Read config/app.yml and config/app.example.yml and encrypted credentials.
 class Config
   class << self
-    def method_missing(method_name, *_args, &_block)
+    def method_missing(method_name, *_args, &)
       result = hash[method_name.to_sym]
       result.is_a?(Hash) ? result.with_indifferent_access : result
     end

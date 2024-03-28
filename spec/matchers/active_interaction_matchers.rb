@@ -8,7 +8,7 @@ RSpec::Matchers.define :have_input do |input_name|
   match do |klass|
     @klass = klass.is_a?(Class) ? klass : klass.class
     unless @klass.ancestors.include?(ActiveInteraction::Base)
-      raise ArgumentError, 'The given class is not an ActiveInteraction.'
+      raise ArgumentError, "The given class is not an ActiveInteraction."
     end
 
     @input_name = input_name.to_sym
@@ -25,10 +25,10 @@ RSpec::Matchers.define :have_input do |input_name|
   # ###################################
   # Methods and utils to define the matchers
   # ###################################
-  @with_default_value_proc = proc do |default_value = '_dont_check_value_itself_but_only_presence'|
+  @with_default_value_proc = proc do |default_value = "_dont_check_value_itself_but_only_presence"|
     is_optional!
     # next/break ?
-    next if default_value == '_dont_check_value_itself_but_only_presence'
+    next if default_value == "_dont_check_value_itself_but_only_presence"
 
     @check_default_value = true
     @default_value = default_value
@@ -41,7 +41,7 @@ RSpec::Matchers.define :have_input do |input_name|
     when Symbol, String, Class
       @input_type = input_type.to_s.downcase
     else
-      raise ArgumentError, 'The given input type is not supported.'
+      raise ArgumentError, "The given input type is not supported."
     end
 
     unless %w[
@@ -56,7 +56,7 @@ RSpec::Matchers.define :have_input do |input_name|
 
   @with_option_proc = proc do |option_name, option_value|
     if !option_name.is_a?(String) && !option_name.is_a?(Symbol)
-      raise ArgumentError, 'The given option name is not a String or Symbol.'
+      raise ArgumentError, "The given option name is not a String or Symbol."
     end
 
     @check_options = true
@@ -68,7 +68,7 @@ RSpec::Matchers.define :have_input do |input_name|
     @check_options = true
     puts "Redefining options: #{@options} with #{options}" unless @options.nil?
 
-    raise ArgumentError, 'The given options are not a Hash.' unless options.is_a?(Hash)
+    raise ArgumentError, "The given options are not a Hash." unless options.is_a?(Hash)
 
     @options = options
   end
@@ -120,15 +120,15 @@ RSpec::Matchers.define :have_input do |input_name|
     errors << "Does not exist input called #{@input_name.inspect}" unless check_input_presence
     unless @input.nil?
       errors << "Type mismatch #{@input_type.inspect}" unless check_input_type
-      errors << "Options mismatch: #{@different_options.values.join('; ')}" unless check_options
+      errors << "Options mismatch: #{@different_options.values.join("; ")}" unless check_options
 
       if @input.default? && !check_default_value
         errors << "Default value mismatch: expected #{@default_value.inspect}, but was #{@input.default}"
       end
 
       unless check_default_value_presence
-        errors << 'isn\'t optional' if is_optional?
-        errors << 'isn\'t mandatory' if is_mandatory?
+        errors << "isn't optional" if is_optional?
+        errors << "isn't mandatory" if is_mandatory?
       end
     end
     "Expected #{@klass} to #{spec_description}.\n#{errors.join("\n")}"
@@ -140,9 +140,9 @@ RSpec::Matchers.define :have_input do |input_name|
   end
 
   def spec_description
-    a = 'have'
-    a += ' mandatory' if is_mandatory?
-    a += ' optional' if is_optional?
+    a = "have"
+    a += " mandatory" if is_mandatory?
+    a += " optional" if is_optional?
     a += " input #{@input_name.inspect}"
     a += " of type #{@input_type}" if @check_input_type
     a += " #{@default_value}" if is_mandatory? && @check_default_value
@@ -175,18 +175,18 @@ RSpec::Matchers.define :have_input do |input_name|
   def check_input_type
     return true unless @check_input_type
 
-    return @input.is_a?(ActiveInteraction::InterfaceFilter) if @input_type == 'interface'
+    return @input.is_a?(ActiveInteraction::InterfaceFilter) if @input_type == "interface"
 
     # return @input.is_a?(ActiveInteraction::ObjectFilter) if @input_type == 'object'
 
     if @input.is_a?(ActiveInteraction::ObjectFilter)
-      return true if @input_type == 'object'
+      return true if @input_type == "object"
 
       return @input.options[:class].to_s.downcase == @input_type
     end
 
     if @input_type.is_a?(String)
-      return true if @input_type == 'array' && @input.instance_of?(ActiveInteraction::ArrayFilter)
+      return true if @input_type == "array" && @input.instance_of?(ActiveInteraction::ArrayFilter)
 
       return @input.database_column_type.to_s == @input_type
     end

@@ -3,16 +3,16 @@
 module Log
   class ImagePixel < ApplicationRecord
     enum event_type: {
-      email_open: 'email_open'
+      email_open: "email_open"
     }
 
     # ################################
     # Associations
     # ################################
-    belongs_to :image, class_name: 'Image', optional: false
+    belongs_to :image, class_name: "Image", optional: false
     belongs_to :record, polymorphic: true, optional: false
-    has_many :events, class_name: 'Log::ImagePixelEvent', dependent: :destroy, inverse_of: :image_pixel
-    belongs_to :delivered_email, class_name: 'Log::DeliveredEmail', optional: false
+    has_many :events, class_name: "Log::ImagePixelEvent", dependent: :destroy, inverse_of: :image_pixel
+    belongs_to :delivered_email, class_name: "Log::DeliveredEmail", optional: false
 
     # ################################
     # Validations
@@ -33,7 +33,7 @@ module Log
     def event_type=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value('event_type', value)
+      @attributes.write_cast_value("event_type", value)
     end
 
     def url

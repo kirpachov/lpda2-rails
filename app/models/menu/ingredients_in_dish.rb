@@ -5,8 +5,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
-    belongs_to :menu_ingredient, class_name: 'Menu::Ingredient', optional: false
+    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
+    belongs_to :menu_ingredient, class_name: "Menu::Ingredient", optional: false
 
     alias_attribute :dish, :menu_dish
     alias_attribute :ingredient, :menu_ingredient

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :menu_visibility, class: 'Menu::Visibility' do
+  factory :menu_visibility, class: "Menu::Visibility" do
     public_visible { false }
     private_visible { false }
 

@@ -8,8 +8,8 @@ class ReservationTag < ApplicationRecord
   # ################################
   # Associations
   # ################################
-  has_many :tags_in_reservations, class_name: 'TagInReservation', inverse_of: :reservation_tag, dependent: :destroy
-  has_many :reservations, through: :tags_in_reservations, class_name: 'Reservation'
+  has_many :tags_in_reservations, class_name: "TagInReservation", inverse_of: :reservation_tag, dependent: :destroy
+  has_many :reservations, through: :tags_in_reservations, class_name: "Reservation"
 
   # ################################
   # Validators

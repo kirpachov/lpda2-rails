@@ -45,13 +45,13 @@ class Setting
 
       # return if record.value.all? { |v| I18n.available_locales.include?(v.to_sym) }
 
-      record.errors.add(:value, "contains invalid languages: #{invalid_locales.join(', ')}")
+      record.errors.add(:value, "contains invalid languages: #{invalid_locales.join(", ")}")
     end
 
     def validate_max_people_per_reservation
       return if record.value.to_i.positive?
 
-      record.errors.add(:value, 'should be a positive integer')
+      record.errors.add(:value, "should be a positive integer")
     end
 
     def validate_email_images

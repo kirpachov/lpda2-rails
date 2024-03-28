@@ -6,12 +6,12 @@
 class CreateMissingImages < ActiveInteraction::Base
   def execute
     # Read all files from the directory
-    Dir.glob('app/assets/img/autocreate/**/**').map do |filepath|
+    Dir.glob("app/assets/img/autocreate/**/**").map do |filepath|
       next if File.directory?(filepath)
       next unless File.extname(filepath).in?(%w[.png .jpg .jpeg .gif .svg .jpeg])
 
-      key = filepath.split('/autocreate/').last.split('.')[0..-2].join('.').gsub('/', '_').gsub(/[^a-z0-9_-]/i,
-                                                                                                '').downcase
+      key = filepath.split("/autocreate/").last.split(".")[0..-2].join(".").tr("/", "_").gsub(/[^a-z0-9_-]/i,
+                                                                                              "").downcase
 
       next if Image.where(key:).count.positive?
 

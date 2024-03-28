@@ -79,11 +79,11 @@ module Menu
     end
 
     def category_invalid!
-      reason(:category_invalid, "Category is invalid: #{category.errors.full_messages.join(', ')}")
+      reason(:category_invalid, "Category is invalid: #{category.errors.full_messages.join(", ")}")
     end
 
     def missing_dishes!
-      reason(:missing_dishes, 'Category has no dishes')
+      reason(:missing_dishes, "Category has no dishes")
     end
 
     def dish_without_ingredients!(dish)
@@ -95,7 +95,7 @@ module Menu
     end
 
     def dish_invalid!(dish)
-      reason(:dish_invalid, "Dish '#{dish.name}' is invalid: #{dish.errors.full_messages.join(', ')}",
+      reason(:dish_invalid, "Dish '#{dish.name}' is invalid: #{dish.errors.full_messages.join(", ")}",
              { dish_id: dish.id })
     end
 
