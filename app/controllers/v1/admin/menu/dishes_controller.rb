@@ -7,6 +7,8 @@ module V1
         show update destroy copy
         add_ingredient remove_ingredient add_tag remove_tag add_allergen remove_allergen
         add_image remove_image
+        update_status
+        remove_from_category
       ]
 
       def index
@@ -40,12 +42,24 @@ module V1
         render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
       end
 
+      def update_status
+        return show if @item.update(status: params[:status].to_s)
+
+        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
+      end
+
       def create
         @item = ::Menu::Dish.new(price: params.key?(:price) ? params[:price].to_f : nil)
         @item.assign_translation('name', params[:name]) if params.key?(:name)
         @item.assign_translation('description', params[:description]) if params.key?(:description)
 
-        return show if @item.valid? && @item.save
+        if @item.valid? && @item.save
+          if params.key? :category_id
+            ::Menu::DishesInCategory.create!(menu_dish: @item, menu_category_id: params[:category_id].present? ? params[:category_id].to_i : nil)
+          end
+
+          return show
+        end
 
         render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(', '))
       end
@@ -56,6 +70,11 @@ module V1
         render_unprocessable_entity(@item)
       rescue ActiveRecord::RecordInvalid
         render_unprocessable_entity(@item)
+      end
+
+      def remove_from_category
+        Menu::DishesInCategory.where(menu_dish_id: @item.id, menu_category_id: params[:category_id].blank? ? nil : params[:category_id].to_i).destroy_all
+        show
       end
 
       def copy
@@ -89,7 +108,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t('record_not_found', model: Menu::Ingredient,
-                                                         id: params[:ingredient_id].inspect))
+                                     id: params[:ingredient_id].inspect))
       end
 
       def remove_ingredient
@@ -98,7 +117,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t('record_not_found', model: Menu::Ingredient,
-                                                         id: params[:ingredient_id].inspect))
+                                     id: params[:ingredient_id].inspect))
       end
 
       def add_tag
@@ -135,7 +154,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t('record_not_found', model: Menu::Allergen,
-                                                         id: params[:allergen_id].inspect))
+                                     id: params[:allergen_id].inspect))
       end
 
       def remove_allergen
@@ -144,7 +163,7 @@ module V1
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404,
                      message: I18n.t('record_not_found', model: Menu::Allergen,
-                                                         id: params[:allergen_id].inspect))
+                                     id: params[:allergen_id].inspect))
       end
 
       def add_image
@@ -193,7 +212,7 @@ module V1
 
         render_error(status: 404,
                      message: I18n.t('record_not_found', model: Menu::Dish,
-                                                         id: params[:id].inspect))
+                                     id: params[:id].inspect))
       end
     end
   end

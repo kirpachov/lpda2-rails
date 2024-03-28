@@ -11,7 +11,7 @@ module Menu
     translates :name
     translates :description
 
-    VALID_STATUSES = %w[active deleted].freeze
+    VALID_STATUSES = %w[active inactive deleted].freeze
 
     enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
 

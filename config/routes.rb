@@ -99,6 +99,11 @@ Rails.application.routes.draw do
             member do
               post 'copy'
 
+              delete 'remove_from_category/:category_id', action: :remove_from_category
+              delete 'remove_from_category', action: :remove_from_category
+
+              patch 'status/:status', action: :update_status
+
               post 'ingredients/:ingredient_id', action: :add_ingredient
               delete 'ingredients/:ingredient_id', action: :remove_ingredient
 

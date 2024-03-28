@@ -9,7 +9,9 @@ module Menu
         filter_by_description(
           filter_by_name(
             filter_by_price(
-              filter_by_status(items)
+              filter_by_category(
+                filter_by_status(items)
+              )
             )
           )
         )
@@ -20,6 +22,16 @@ module Menu
 
     def items
       Dish.visible
+    end
+
+    def filter_by_category(items)
+      return items unless params.key?(:category_id)
+
+      items.where(
+        id: Menu::DishesInCategory.where(
+          menu_category_id: params[:category_id].present? ? params[:category_id].to_i : nil
+        ).select(:menu_dish_id)
+      )
     end
 
     def filter_by_price(items)
