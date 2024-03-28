@@ -13,8 +13,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:index) }
 
     it {
-      is_expected.to route(:get, '/v1/admin/menu/dishes').to(format: :json, action: :index,
-                                                             controller: 'v1/admin/menu/dishes')
+      expect(subject).to route(:get, '/v1/admin/menu/dishes').to(format: :json, action: :index,
+                                                                 controller: 'v1/admin/menu/dishes')
     }
 
     def req(params = {})
@@ -61,7 +61,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         end
       end
 
-      context "when filtering by category_id" do
+      context 'when filtering by category_id' do
         let!(:category) do
           create(:menu_category).tap do |cat|
             cat.dishes << create(:menu_dish)
@@ -72,19 +72,22 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
           create(:menu_category).dishes << create(:menu_dish)
         end
 
-        context "checking mock data" do
+        context 'checking mock data' do
           it { expect(Menu::Dish.count).to be >= 2 }
           it { expect(Menu::Category.count).to be >= 2 }
           it { expect(category.dishes.count).to eq 1 }
         end
 
-        context "when {category_id: <id>}" do
-          before { req(category_id: category.id) }
+        context 'when {category_id: <id>}' do
           subject { parsed_response_body }
+
+          before { req(category_id: category.id) }
+
           it { expect(response).to have_http_status(:ok) }
+
           it do
             expect(subject).not_to include(message: String)
-            is_expected.to include(items: Array)
+            expect(subject).to include(items: Array)
             expect(subject[:items].count).to eq 1
           end
         end
@@ -389,8 +392,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:update) }
 
     it {
-      is_expected.to route(:patch, '/v1/admin/menu/dishes/22').to(format: :json, action: :update,
-                                                                  controller: 'v1/admin/menu/dishes', id: 22)
+      expect(subject).to route(:patch, '/v1/admin/menu/dishes/22').to(format: :json, action: :update,
+                                                                      controller: 'v1/admin/menu/dishes', id: 22)
     }
 
     def req(id, params = {})
@@ -620,8 +623,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:create) }
 
     it do
-      is_expected.to route(:post, '/v1/admin/menu/dishes').to(format: :json, action: :create,
-                                                              controller: 'v1/admin/menu/dishes')
+      expect(subject).to route(:post, '/v1/admin/menu/dishes').to(format: :json, action: :create,
+                                                                  controller: 'v1/admin/menu/dishes')
     end
 
     def req(params = {})
@@ -643,7 +646,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
       it { expect { req(description: 'desc') }.to change(Menu::Dish, :count).by(1) }
 
-      context "when category_id is provided but blank, should create dish without category (root dish)." do
+      context 'when category_id is provided but blank, should create dish without category (root dish).' do
         subject do
           req(category_id: '', description: 'desc')
           parsed_response_body[:item]
@@ -651,19 +654,24 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
 
         it { is_expected.to include(name: nil) }
         it { is_expected.to include(description: 'desc') }
-        it { subject; expect(response).to be_successful }
+
+        it {
+          subject
+          expect(response).to be_successful
+        }
+
         it { expect { subject }.to change { Menu::Dish.count }.by(1) }
         it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
         it { expect { subject }.to change { Menu::DishesInCategory.where(menu_category_id: nil).count }.by(1) }
       end
 
-      context "when category_id is present, should create dish as category child" do
-        let(:category) { create(:menu_category) }
-
+      context 'when category_id is present, should create dish as category child' do
         subject do
           req(category_id: category.id, description: 'desc')
           parsed_response_body[:item]
         end
+
+        let(:category) { create(:menu_category) }
 
         it { is_expected.to include(name: nil) }
         it { is_expected.to include(description: 'desc') }
@@ -766,8 +774,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:destroy) }
 
     it {
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22').to(format: :json, action: :destroy,
-                                                                   controller: 'v1/admin/menu/dishes', id: 22)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22').to(format: :json, action: :destroy,
+                                                                       controller: 'v1/admin/menu/dishes', id: 22)
     }
 
     def req(id, params = {})
@@ -862,13 +870,13 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:remove_from_category) }
 
     it do
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/remove_from_category').to(format: :json, action: :remove_from_category,
-                                                                                        controller: 'v1/admin/menu/dishes', id: 22)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/remove_from_category').to(format: :json, action: :remove_from_category,
+                                                                                            controller: 'v1/admin/menu/dishes', id: 22)
     end
 
     it do
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/remove_from_category/7').to(format: :json, action: :remove_from_category,
-                                                                                          controller: 'v1/admin/menu/dishes', id: 22, category_id: 7)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/remove_from_category/7').to(format: :json, action: :remove_from_category,
+                                                                                              controller: 'v1/admin/menu/dishes', id: 22, category_id: 7)
     end
 
     def req(id = dish.id, category_id = category.id, params = {})
@@ -896,34 +904,34 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context "when category has dishes" do
+      context 'when category has dishes' do
         before { category }
 
-        it { expect { req }.not_to change { Menu::Dish.count } }
-        it { expect { req }.not_to change { Menu::Dish.visible.count } }
-        it { expect { req }.not_to change { dish.reload.status } }
+        it { expect { req }.not_to(change { Menu::Dish.count }) }
+        it { expect { req }.not_to(change { Menu::Dish.visible.count }) }
+        it { expect { req }.not_to(change { dish.reload.status }) }
         it { expect { req }.to change { category.dishes.count }.by(-1) }
         it { expect { req }.to change { Menu::DishesInCategory.count }.by(-1) }
       end
 
-      context "when dish is root" do
+      context 'when dish is root' do
         before do
           category.dishes.delete_all # should not be necessary, just to be sure.
 
           Menu::DishesInCategory.create!(dish:)
         end
 
-        context "checking mock data" do
+        context 'checking mock data' do
           it { expect(dish.categories.count).to eq 0 }
           it { expect(Menu::Category.count).to eq 1 }
           it { expect(Menu::DishesInCategory.count).to eq 1 }
-          it { expect(Menu::DishesInCategory.where(dish: dish, category: nil).count).to eq 1 }
+          it { expect(Menu::DishesInCategory.where(dish:, category: nil).count).to eq 1 }
         end
 
         it { expect { req(dish.id, nil) }.to change { Menu::DishesInCategory.count }.by(-1) }
-        it { expect { req(dish.id, nil) }.not_to change { Menu::Dish.count } }
-        it { expect { req(dish.id, nil) }.not_to change { Menu::Dish.visible.count } }
-        it { expect { req(dish.id, nil) }.not_to change { dish.reload.status } }
+        it { expect { req(dish.id, nil) }.not_to(change { Menu::Dish.count }) }
+        it { expect { req(dish.id, nil) }.not_to(change { Menu::Dish.visible.count }) }
+        it { expect { req(dish.id, nil) }.not_to(change { dish.reload.status }) }
       end
     end
   end
@@ -936,8 +944,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:copy) }
 
     it {
-      is_expected.to route(:post, '/v1/admin/menu/dishes/22/copy').to(format: :json, action: :copy,
-                                                                      controller: 'v1/admin/menu/dishes', id: 22)
+      expect(subject).to route(:post, '/v1/admin/menu/dishes/22/copy').to(format: :json, action: :copy,
+                                                                          controller: 'v1/admin/menu/dishes', id: 22)
     }
 
     def req(id, params = {})
@@ -1214,8 +1222,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:add_ingredient) }
 
     it {
-      is_expected.to route(:post, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :add_ingredient,
-                                                                                controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
+      expect(subject).to route(:post, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :add_ingredient,
+                                                                                    controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
     }
 
     def req(dish_id = dish.id, ingredient_id = ingredient.id, params = {})
@@ -1327,8 +1335,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:remove_ingredient) }
 
     it {
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :remove_ingredient,
-                                                                                  controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/ingredients/55').to(format: :json, action: :remove_ingredient,
+                                                                                      controller: 'v1/admin/menu/dishes', id: 22, ingredient_id: 55)
     }
 
     def req(dish_id = dish.id, ingredient_id = ingredient.id, params = {})
@@ -1380,8 +1388,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:add_tag) }
 
     it {
-      is_expected.to route(:post, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :add_tag,
-                                                                         controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
+      expect(subject).to route(:post, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :add_tag,
+                                                                             controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
     }
 
     def req(dish_id = dish.id, tag_id = tag.id, params = {})
@@ -1493,8 +1501,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:remove_tag) }
 
     it {
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :remove_tag,
-                                                                           controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/tags/55').to(format: :json, action: :remove_tag,
+                                                                               controller: 'v1/admin/menu/dishes', id: 22, tag_id: 55)
     }
 
     def req(dish_id = dish.id, tag_id = tag.id, params = {})
@@ -1546,8 +1554,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:add_allergen) }
 
     it {
-      is_expected.to route(:post, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :add_allergen,
-                                                                              controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
+      expect(subject).to route(:post, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :add_allergen,
+                                                                                  controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
     }
 
     def req(dish_id = dish.id, allergen_id = allergen.id, params = {})
@@ -1659,8 +1667,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:remove_allergen) }
 
     it {
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :remove_allergen,
-                                                                                controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/allergens/55').to(format: :json, action: :remove_allergen,
+                                                                                    controller: 'v1/admin/menu/dishes', id: 22, allergen_id: 55)
     }
 
     def req(dish_id = dish.id, allergen_id = allergen.id, params = {})
@@ -1684,6 +1692,7 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to have_http_status(:ok) }
       it { expect { subject }.to change { dish.reload.allergens.count }.by(-1) }
       it { expect { subject }.to change { Menu::AllergensInDish.count }.by(-1) }
+
       it do
         req
         expect(parsed_response_body).to include(item: Hash)
@@ -1717,8 +1726,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:add_image) }
 
     it {
-      is_expected.to route(:post, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :add_image,
-                                                                           controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
+      expect(subject).to route(:post, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :add_image,
+                                                                               controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
     }
 
     def req(dish_id = dish.id, image_id = image.id, params = {})
@@ -1830,8 +1839,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:remove_image) }
 
     it {
-      is_expected.to route(:delete, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :remove_image,
-                                                                             controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
+      expect(subject).to route(:delete, '/v1/admin/menu/dishes/22/images/55').to(format: :json, action: :remove_image,
+                                                                                 controller: 'v1/admin/menu/dishes', id: 22, image_id: 55)
     }
 
     def req(dish_id = dish.id, image_id = image.id, params = {})
@@ -1884,8 +1893,8 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
     it { expect(instance).to respond_to(:update_status) }
 
     it do
-      is_expected.to route(:patch, '/v1/admin/menu/dishes/22/status/inactive').to(format: :json, action: :update_status,
-                                                                                  controller: 'v1/admin/menu/dishes', id: 22, status: 'inactive')
+      expect(subject).to route(:patch, '/v1/admin/menu/dishes/22/status/inactive').to(format: :json, action: :update_status,
+                                                                                      controller: 'v1/admin/menu/dishes', id: 22, status: 'inactive')
     end
 
     def req(dish_id = dish.id, req_status = status, params = {})
@@ -1914,8 +1923,9 @@ RSpec.describe V1::Admin::Menu::DishesController, type: :controller do
       it { is_expected.to be_successful }
       it { is_expected.to have_http_status(:ok) }
       it { expect { subject }.to change { dish.reload.status }.from('active').to('inactive') }
-      it { expect { subject }.to change { dish.reload.updated_at } }
-      it "returns item" do
+      it { expect { subject }.to(change { dish.reload.updated_at }) }
+
+      it 'returns item' do
         req
         expect(parsed_response_body).to include(item: Hash)
         expect(parsed_response_body[:item]).to include(id: dish.id, created_at: String, updated_at: String)
