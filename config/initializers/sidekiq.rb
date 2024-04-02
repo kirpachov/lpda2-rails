@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 redis_configs = {
-  url: ENV.fetch('REDIS_URL', 'redis://127.0.0.1:6379/1'),
-  namespace: "lpda:sidekiq:#{Rails.env}"
-  # namespace: 'lpda:sidekiq'
+  url: ENV.fetch('REDIS_URL', Rails.env.test? ? "redis://localhost:6379/5" : 'redis://127.0.0.1:6379/1'),
 }
 
 Sidekiq.configure_server do |config|

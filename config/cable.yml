@@ -8,6 +8,7 @@ development:
 
 test:
   <<: *default
+  url: "redis://localhost:6379/5"
 
 production:
   <<: *default
