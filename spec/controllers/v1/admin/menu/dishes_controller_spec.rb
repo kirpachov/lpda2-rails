@@ -383,6 +383,56 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(subject.size).to eq 1 }
         it { expect(subject.map { |j| j[:price] }).to contain_exactly(10) }
       end
+
+      context "when a dish is shared by two categories and filtering for that category_id" do
+        let(:category0) { create(:menu_category) }
+        let(:category1) { create(:menu_category) }
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          category0.dishes << dish
+          category1.dishes << dish
+          create(:menu_category).dishes << create(:menu_dish)
+        end
+
+        context "checking mock data" do
+          it { expect(Menu::Dish.count).to eq 2 }
+          it { expect(Menu::Category.count).to eq 3 }
+          it { expect(category0.dishes.count).to eq 1 }
+          it { expect(category1.dishes.count).to eq 1 }
+        end
+
+        it do
+          req(category_id: category0.id)
+          expect(parsed_response_body[:items].count).to eq 1
+          expect(parsed_response_body[:items]).to all(include(id: dish.id))
+        end
+      end
+
+      context "when a category has two dishes and filtering for category_id" do
+        let(:category) { create(:menu_category) }
+        let(:dish0) { create(:menu_dish) }
+        let(:dish1) { create(:menu_dish) }
+
+        before do
+          category.dishes << dish0
+          category.dishes << dish1
+          create(:menu_category).dishes << create(:menu_dish)
+          create(:menu_category).dishes << create(:menu_dish)
+        end
+
+        context "checking mock data" do
+          it { expect(Menu::Dish.count).to eq 4 }
+          it { expect(Menu::Category.count).to eq 3 }
+          it { expect(category.dishes.count).to eq 2 }
+        end
+
+        it do
+          req(category_id: category.id)
+          expect(parsed_response_body[:items].count).to eq 2
+          expect(parsed_response_body[:items].map{|j| j[:id]}).to match_array([dish0.id, dish1.id])
+        end
+      end
     end
   end
 

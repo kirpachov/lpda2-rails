@@ -71,6 +71,7 @@ group :development, :test do
   gem "rspec-rails", "~> 6.0.1"
   gem "rubocop", "~> 1.60.2", require: false
   gem "rubocop-factory_bot", "~> 2.25.1", require: false
+  gem "rubocop-performance", "~> 1.20.2", require: false
   gem "rubocop-rails", "~> 2.15.0", require: false
   gem "rubocop-rspec", "~> 2.27.1", require: false
   gem "shoulda-matchers", "~> 5.2.0", require: false

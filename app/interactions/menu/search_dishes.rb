@@ -23,8 +23,9 @@ module Menu
     private
 
     def order(items)
-      # TODO add other order options
-      order_by_index_in_category(items)
+      return order_by_index_in_category(items) if params.key?(:category_id)
+
+      items
     end
 
     def order_by_index_in_category(items)
