@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 redis_configs = {
-  url: ENV.fetch('REDIS_URL', Rails.env.test? ? "redis://localhost:6379/5" : 'redis://127.0.0.1:6379/1'),
+  url: ENV.fetch("REDIS_URL", Rails.env.test? ? "redis://localhost:6379/5" : "redis://127.0.0.1:6379/1")
 }
 
 Sidekiq.configure_server do |config|
@@ -13,7 +13,7 @@ Sidekiq.configure_server do |config|
   config[:concurrency] = ActiveRecord::Base.connection_pool.size
 
   config.redis = redis_configs
-  schedule_file = 'config/schedule.yml'
+  schedule_file = "config/schedule.yml"
   Sidekiq::Cron::Job.load_from_hash YAML.load_file(schedule_file) if File.exist?(schedule_file)
 
   # accepts :expiration (optional)
