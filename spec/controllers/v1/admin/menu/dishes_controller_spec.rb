@@ -283,7 +283,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(Menu::Dish.pluck(:price).uniq).to contain_exactly(8, 10, 12) }
         it { expect(subject.size).to eq 2 }
         it { is_expected.to all(include(price: Numeric)) }
-        it { expect(subject.map { |j| j[:price] }).to contain_exactly(8, 10) }
+        it { expect(subject.pluck(:price)).to contain_exactly(8, 10) }
       end
 
       context "when filtering by price {price: {more_than: 10}" do
@@ -303,7 +303,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(Menu::Dish.pluck(:price).uniq).to contain_exactly(8, 10, 12) }
         it { expect(subject.size).to eq 2 }
         it { is_expected.to all(include(price: Numeric)) }
-        it { expect(subject.map { |j| j[:price] }).to contain_exactly(10, 12) }
+        it { expect(subject.pluck(:price)).to contain_exactly(10, 12) }
       end
 
       context "when filtering by price {price: {more_than: 10.1}" do
@@ -361,7 +361,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(Menu::Dish.count).to eq 4 }
         it { expect(Menu::Dish.pluck(:price).uniq).to contain_exactly(8, 10, 12, 14) }
         it { expect(subject.size).to eq 2 }
-        it { expect(subject.map { |j| j[:price] }).to contain_exactly(10, 12) }
+        it { expect(subject.pluck(:price)).to contain_exactly(10, 12) }
       end
 
       context 'when filtering by price {price: {more_than: "10", less_than: 11.9}' do
@@ -381,7 +381,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(Menu::Dish.count).to eq 4 }
         it { expect(Menu::Dish.pluck(:price).uniq).to contain_exactly(8, 10, 12, 14) }
         it { expect(subject.size).to eq 1 }
-        it { expect(subject.map { |j| j[:price] }).to contain_exactly(10) }
+        it { expect(subject.pluck(:price)).to contain_exactly(10) }
       end
 
       context "when a dish is shared by two categories and filtering for that category_id" do
@@ -430,7 +430,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it do
           req(category_id: category.id)
           expect(parsed_response_body[:items].count).to eq 2
-          expect(parsed_response_body[:items].map{|j| j[:id]}).to match_array([dish0.id, dish1.id])
+          expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish0.id, dish1.id)
         end
       end
     end
@@ -817,11 +817,11 @@ RSpec.describe V1::Admin::Menu::DishesController do
       end
 
       context %(when creating new dish with {name: {it: "wassa-it", en: "wassa-en"}) do
+        subject { parsed_response_body[:item] }
+
         before do
           req(name: { it: "wassa-it", en: "wassa-en" }, description: { it: "bratan-it", en: "bratan-en" })
         end
-
-        subject { parsed_response_body[:item] }
 
         it { expect(subject).to include(translations: Hash) }
         it { expect(subject[:translations]).to include(name: Hash) }
@@ -2020,6 +2020,11 @@ RSpec.describe V1::Admin::Menu::DishesController do
       end
     end
 
+    let(:params) { { to_index:, category_id:, id: dish_id } }
+    let(:dish_id) { second.id }
+    let(:category_id) { category.id }
+    let(:to_index) { 0 }
+
     it { expect(instance).to respond_to(:move) }
 
     it do
@@ -2027,17 +2032,12 @@ RSpec.describe V1::Admin::Menu::DishesController do
                                                                            controller: "v1/admin/menu/dishes", id: 22)
     end
 
-    let(:to_index) { 0 }
-    let(:category_id) { category.id }
-    let(:dish_id) { second.id }
-    let(:params) { { to_index:, category_id:, id: dish_id } }
-
     def req(rparams = params)
       patch :move, params: rparams
     end
 
     def list_items
-      get :index, params: { category_id: category_id }
+      get :index, params: { category_id: }
       parsed_response_body[:items]
     end
 
@@ -2056,6 +2056,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         subject { response }
 
         let(:dish_id) { 999_999_999 }
+
         before { req }
 
         it_behaves_like NOT_FOUND
@@ -2063,10 +2064,11 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       context "when not providing category_id" do
         subject { response }
+
         let(:category_id) { nil }
 
-        it "should return 422" do
-          expect { req }.not_to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }
+        it "returns 422" do
+          expect { req }.not_to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) })
           expect(parsed_response_body).to include(message: String)
           expect(response).to have_http_status(:unprocessable_entity)
         end
@@ -2074,10 +2076,11 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       context "when not providing index" do
         subject { response }
+
         let(:to_index) { nil }
 
-        it "should return 422" do
-          expect { req }.not_to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }
+        it "returns 422" do
+          expect { req }.not_to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) })
           expect(parsed_response_body).to include(message: String)
           expect(response).to have_http_status(:unprocessable_entity)
         end
@@ -2085,15 +2088,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       context "when moving to position 0 from position 1" do
         let(:to_index) { 0 }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [second.id, first.id, last.id]
+          expect(list_items.pluck(:id)).to eq [second.id, first.id, last.id]
         end
 
         it do
@@ -2106,15 +2110,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       context "when moving to position 2 from position 1" do
         let(:to_index) { 2 }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, last.id, second.id]
+          expect(list_items.pluck(:id)).to eq [first.id, last.id, second.id]
         end
 
         it do
@@ -2127,15 +2132,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       context "when moving to position 100 from position 1" do
         let(:to_index) { 100 }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, last.id, second.id]
+          expect(list_items.pluck(:id)).to eq [first.id, last.id, second.id]
         end
 
         it do
@@ -2149,15 +2155,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
       context "when moving to position 0 from position 2" do
         let(:to_index) { 0 }
         let(:dish_id) { last.id }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [last.id, first.id, second.id]
+          expect(list_items.pluck(:id)).to eq [last.id, first.id, second.id]
         end
 
         it do
@@ -2171,15 +2178,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
       context "when moving to position 0 from position 1" do
         let(:to_index) { 1 }
         let(:dish_id) { last.id }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, last.id, second.id]
+          expect(list_items.pluck(:id)).to eq [first.id, last.id, second.id]
         end
 
         it do
@@ -2193,15 +2201,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
       context "when moving to position 2 from position 0" do
         let(:to_index) { 2 }
         let(:dish_id) { first.id }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [second.id, last.id, first.id]
+          expect(list_items.pluck(:id)).to eq [second.id, last.id, first.id]
         end
 
         it do
@@ -2215,15 +2224,16 @@ RSpec.describe V1::Admin::Menu::DishesController do
       context "when moving to position 1 from position 0" do
         let(:to_index) { 1 }
         let(:dish_id) { first.id }
+
         before { params }
 
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:index) } }
-        it { expect { req }.to change { Menu::DishesInCategory.order(:id).pluck(:updated_at) } }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:index) }) }
+        it { expect { req }.to(change { Menu::DishesInCategory.order(:id).pluck(:updated_at) }) }
 
         it do
-          expect(list_items.map { |j| j[:id] }).to eq [first.id, second.id, last.id]
+          expect(list_items.pluck(:id)).to eq [first.id, second.id, last.id]
           req
-          expect(list_items.map { |j| j[:id] }).to eq [second.id, first.id, last.id]
+          expect(list_items.pluck(:id)).to eq [second.id, first.id, last.id]
         end
 
         it do

@@ -13,7 +13,7 @@ module Menu
     interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
     validate do
-      # Note: category_id can be nil.
+      # NOTE: category_id can be nil.
       errors.add(:category_id, :invalid) if category_id.present? && category_id <= 0
       # errors.add(:category_id, :invalid) if category_id.to_i <= 0
       errors.add(:to_index, :missing) if to_index.nil?

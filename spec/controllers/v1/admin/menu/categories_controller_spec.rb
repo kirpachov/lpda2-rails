@@ -145,7 +145,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it { expect(subject.length).to eq 10 }
         it { expect(subject).to all(be_a(Hash)) }
-        it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 10 }
+        it { expect(subject.pluck(:id).uniq.count).to eq 10 }
       end
     end
 
@@ -188,7 +188,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           it { expect(Menu::Category.count).to eq 4 }
 
           it { expect(subject).to be_a(Array) }
-          it { expect(subject.map { |j| j[:id] }).to eq Menu::Category.order(:index).pluck(:id) }
+          it { expect(subject.pluck(:id)).to eq Menu::Category.order(:index).pluck(:id) }
         end
       end
 
@@ -205,7 +205,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
 
         it { expect(subject.count).to eq 1 }
-        it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+        it { expect(subject.pluck(:id).uniq.count).to eq 1 }
         it { expect(subject.first[:id]).to eq Menu::Category.last.id }
       end
 
@@ -264,12 +264,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
 
             it { expect(subject.count).to eq 2 }
-            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 2 }
+            it { expect(subject.pluck(:id).uniq.count).to eq 2 }
 
             it {
-              expect(Menu::Category.where(id: subject.map do |j|
-                                                j[:id]
-                                              end.uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
+              expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
             }
           end
 
@@ -291,12 +289,10 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
 
             it { expect(subject.count).to eq 3 }
-            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 3 }
+            it { expect(subject.pluck(:id).uniq.count).to eq 3 }
 
             it {
-              expect(Menu::Category.where(id: subject.map do |j|
-                                                j[:id]
-                                              end.uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
+              expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
             }
           end
 
@@ -338,7 +334,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it { expect(subject.count).to eq 5 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 5 }
         end
 
         context "when querying with {query: nil} should return all items" do
@@ -348,7 +344,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it { expect(subject.count).to eq 5 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 5 }
         end
 
         context "when querying with {query: 'Category #1'} should return just the first item" do
@@ -358,7 +354,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Category #1!!!" }
         end
 
@@ -369,7 +365,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Category #1!!!" }
           it { expect(subject.first[:description]).to eq "Description for #1!!!" }
         end
@@ -381,7 +377,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Category #5!!!" }
           it { expect(subject.first[:description]).to eq "Description for #5!!!" }
         end
@@ -416,9 +412,9 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
 
             it { expect(subject.count).to eq 5 }
-            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
-            it { expect(subject.map { |j| j[:price] }.uniq).to all(be_positive) }
-            it { expect(subject.map { |j| j[:price] }.uniq).to all(be_a(Numeric)) }
+            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+            it { expect(subject.pluck(:price).uniq).to all(be_positive) }
+            it { expect(subject.pluck(:price).uniq).to all(be_a(Numeric)) }
           end
 
           context "metadata" do
@@ -459,8 +455,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
 
             it { expect(subject.count).to eq 5 }
-            it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
-            it { expect(subject.map { |j| j[:price] }.uniq).to eq [nil] }
+            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+            it { expect(subject.pluck(:price).uniq).to eq [nil] }
           end
 
           context "metadata" do

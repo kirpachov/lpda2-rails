@@ -203,7 +203,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
 
         it { expect(subject.length).to eq 10 }
         it { expect(subject).to all(be_a(Hash)) }
-        it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 10 }
+        it { expect(subject.pluck(:id).uniq.count).to eq 10 }
       end
     end
 
@@ -256,7 +256,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           end
 
           it { expect(subject.count).to eq 5 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 5 }
         end
 
         context "when querying with {query: nil} should return all items" do
@@ -266,7 +266,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           end
 
           it { expect(subject.count).to eq 5 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 5 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 5 }
         end
 
         context "when querying with {query: 'Tag #1'} should return just the first item" do
@@ -276,7 +276,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Tag #1!!!" }
         end
 
@@ -287,7 +287,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Tag #1!!!" }
           it { expect(subject.first[:description]).to eq "Description for #1!!!" }
         end
@@ -299,7 +299,7 @@ RSpec.describe V1::Admin::Menu::TagsController, type: :controller do
           end
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.map { |j| j[:id] }.uniq.count).to eq 1 }
+          it { expect(subject.pluck(:id).uniq.count).to eq 1 }
           it { expect(subject.first[:name]).to eq "Tag #5!!!" }
           it { expect(subject.first[:description]).to eq "Description for #5!!!" }
         end

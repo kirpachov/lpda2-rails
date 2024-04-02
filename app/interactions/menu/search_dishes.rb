@@ -29,7 +29,11 @@ module Menu
     end
 
     def order_by_index_in_category(items)
-      items.joins(:menu_dishes_in_categories).where(:menu_dishes_in_categories => { category_id: params[:category_id].present? ? params[:category_id].to_i : nil }).order("#{Menu::DishesInCategory.table_name}.index ASC")
+      items.joins(:menu_dishes_in_categories).where(
+        menu_dishes_in_categories: {
+          category_id: params[:category_id].present? ? params[:category_id].to_i : nil
+        }
+      ).order("#{Menu::DishesInCategory.table_name}.index ASC")
     end
 
     def items
