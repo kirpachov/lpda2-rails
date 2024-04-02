@@ -15,10 +15,6 @@ RSpec.describe Menu::DishesInCategory, type: :model do
   context "associations" do
     subject { build(:menu_dishes_in_category) }
 
-    before do
-      allow(subject).to receive(:assign_defaults).and_return(true)
-    end
-
     it { is_expected.to belong_to(:menu_dish).required }
     it { is_expected.to respond_to(:dish) }
     it { is_expected.to respond_to(:dish=) }

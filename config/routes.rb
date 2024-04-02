@@ -99,6 +99,9 @@ Rails.application.routes.draw do
             member do
               post "copy"
 
+              # Providing params for "move" in request body.
+              patch "move"
+
               delete "remove_from_category/:category_id", action: :remove_from_category
               delete "remove_from_category", action: :remove_from_category
 

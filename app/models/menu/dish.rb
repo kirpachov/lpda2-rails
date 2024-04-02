@@ -99,5 +99,13 @@ module Menu
       self.status = "active" if status.blank?
       self.other = {} if other.nil?
     end
+
+    def move!(to_index:, category_id:)
+      MoveDish.run!(dish: self, params: { to_index:, category_id: })
+    end
+
+    def move(to_index:, category_id:)
+      MoveDish.run(dish: self, params: { to_index:, category_id: })
+    end
   end
 end

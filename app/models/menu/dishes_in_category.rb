@@ -28,18 +28,15 @@ module Menu
     # ##############################
     # Callbacks
     # ##############################
-    before_validation :assign_defaults, on: :create
-    before_validation :assign_valid_index, on: :update
+    after_initialize :assign_valid_index, if: -> { new_record? }
 
     # ##############################
     # Instance methods
     # ##############################
-    def assign_defaults
-      assign_valid_index if index.to_i <= 0
-    end
-
     def assign_valid_index
-      self.index = self.class.where(category:).order(index: :desc).first&.index.to_i + 1
+      return if index.present? && index.to_i >= 0
+
+      self.index = self.class.where(category_id:).count
     end
   end
 end

@@ -100,7 +100,7 @@ module V1
       end
 
       def move
-        unless params.key?(:to_index) && params[:to_index].present?
+        unless params.key?(:to_index) && params[:to_index].present? && params[:to_index].to_i >= 0
           return render_error(status: 400, message: "to_index is required")
         end
 

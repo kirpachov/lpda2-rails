@@ -10,7 +10,9 @@ module Menu
           filter_by_name(
             filter_by_price(
               filter_by_category(
-                filter_by_status(items)
+                filter_by_status(
+                  order(items)
+                )
               )
             )
           )
@@ -19,6 +21,15 @@ module Menu
     end
 
     private
+
+    def order(items)
+      # TODO add other order options
+      order_by_index_in_category(items)
+    end
+
+    def order_by_index_in_category(items)
+      items.joins(:menu_dishes_in_categories).where(:menu_dishes_in_categories => { category_id: params[:category_id].present? ? params[:category_id].to_i : nil }).order("#{Menu::DishesInCategory.table_name}.index ASC")
+    end
 
     def items
       Dish.visible

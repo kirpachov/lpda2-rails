@@ -9,6 +9,7 @@ module V1
         add_image remove_image
         update_status
         remove_from_category
+        move
       ]
 
       def index
@@ -79,6 +80,14 @@ module V1
         show
       end
 
+      def move
+        call = @item.move(to_index: params[:to_index], category_id: params[:category_id])
+
+        return render_unprocessable_entity(call) unless call.valid?
+
+        show
+      end
+
       def copy
         call = ::Menu::CopyDish.run(
           old: @item,
@@ -110,7 +119,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                                         id: params[:ingredient_id].inspect))
+                                     id: params[:ingredient_id].inspect))
       end
 
       def remove_ingredient
@@ -119,7 +128,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                                         id: params[:ingredient_id].inspect))
+                                     id: params[:ingredient_id].inspect))
       end
 
       def add_tag
@@ -156,7 +165,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Allergen,
-                                                         id: params[:allergen_id].inspect))
+                                     id: params[:allergen_id].inspect))
       end
 
       def remove_allergen
@@ -165,7 +174,7 @@ module V1
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Allergen,
-                                                         id: params[:allergen_id].inspect))
+                                     id: params[:allergen_id].inspect))
       end
 
       def add_image
@@ -204,7 +213,8 @@ module V1
         item.as_json.merge(
           name: item.name,
           description: item.description,
-          images: item.images.map { |image| image.as_json.merge(url: image.url) }
+          images: item.images.map { |image| image.as_json.merge(url: image.url) },
+          translations: item.translations_json
         )
       end
 
@@ -214,7 +224,7 @@ module V1
 
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Dish,
-                                                         id: params[:id].inspect))
+                                     id: params[:id].inspect))
       end
     end
   end
