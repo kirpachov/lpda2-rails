@@ -6,6 +6,7 @@ class CreateMenuTags < ActiveRecord::Migration[7.0]
       t.text :color,    null: false
       t.text :status,   null: false
       t.jsonb :other, null: false, default: {}
+      t.integer :member_id
 
       t.timestamps
     end

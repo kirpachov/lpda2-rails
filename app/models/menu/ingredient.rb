@@ -88,6 +88,14 @@ module Menu
       @attributes.write_cast_value("status", value)
     end
 
+    def move!(to_index:, dish_id:)
+      MoveIngredient.run!(ingredient: self, params: { to_index:, dish_id: })
+    end
+
+    def move(to_index:, dish_id:)
+      MoveIngredient.run(ingredient: self, params: { to_index:, dish_id: })
+    end
+
     private
 
     def other_cannot_be_nil

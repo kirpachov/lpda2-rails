@@ -62,6 +62,7 @@ ActiveRecord::Schema[7.0].define(version: 27) do
     t.bigint "original_id"
     t.jsonb "other", default: {}, null: false
     t.text "key", comment: "Key for finding the Image for a certain purpose."
+    t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["filename"], name: "index_images_on_filename"
@@ -126,6 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 27) do
   create_table "menu_allergens", force: :cascade do |t|
     t.text "status", null: false
     t.jsonb "other", default: {}, null: false
+    t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -164,6 +166,7 @@ ActiveRecord::Schema[7.0].define(version: 27) do
     t.text "status", null: false
     t.float "price", comment: "The price of the dish. Can be null or 0 some cases, for example when the dish is inside a category with a fixed price."
     t.jsonb "other", default: {}, null: false
+    t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -184,6 +187,7 @@ ActiveRecord::Schema[7.0].define(version: 27) do
   create_table "menu_ingredients", force: :cascade do |t|
     t.text "status", null: false
     t.jsonb "other", default: {}, null: false
+    t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -204,6 +208,7 @@ ActiveRecord::Schema[7.0].define(version: 27) do
     t.text "color", null: false
     t.text "status", null: false
     t.jsonb "other", default: {}, null: false
+    t.integer "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

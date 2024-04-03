@@ -13,6 +13,8 @@ class CreateImages < ActiveRecord::Migration[7.0]
       # Initially the files will be loaded inside the application from seeds, but users will be able to update them.
       t.text :key,          null: true, comment: %(Key for finding the Image for a certain purpose.)
 
+      t.integer :member_id
+
       t.timestamps
       t.index %i[tag original_id], unique: true, where: "original_id IS NOT NULL"
       t.index :key, unique: true, where: "key IS NOT NULL"

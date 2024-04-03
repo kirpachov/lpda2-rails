@@ -108,12 +108,15 @@ Rails.application.routes.draw do
               patch "status/:status", action: :update_status
 
               post "ingredients/:ingredient_id", action: :add_ingredient
+              patch "ingredients/:ingredient_id/move", action: :move_ingredient
               delete "ingredients/:ingredient_id", action: :remove_ingredient
 
               post "tags/:tag_id", action: :add_tag
+              patch "tags/:tag_id/move", action: :move_tag
               delete "tags/:tag_id", action: :remove_tag
 
               post "allergens/:allergen_id", action: :add_allergen
+              patch "allergens/:allergen_id/move", action: :move_allergen
               delete "allergens/:allergen_id", action: :remove_allergen
 
               post "images/:image_id", action: :add_image

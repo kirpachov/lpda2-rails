@@ -19,7 +19,7 @@ module Menu
     # Associations
     # ##############################
     has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_allergen_id,
-                                        dependent: :destroy
+             dependent: :destroy
     has_many :menu_dishes, class_name: "Menu::Dish", through: :menu_allergens_in_dishes
     alias_attribute :dishes, :menu_dishes
 
@@ -86,6 +86,14 @@ module Menu
       super
     rescue ArgumentError
       @attributes.write_cast_value("status", value)
+    end
+
+    def move!(to_index:, dish_id:)
+      MoveAllergen.run!(allergen: self, params: { to_index:, dish_id: })
+    end
+
+    def move(to_index:, dish_id:)
+      MoveAllergen.run(allergen: self, params: { to_index:, dish_id: })
     end
 
     private

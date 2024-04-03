@@ -12,10 +12,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
   describe "#index" do
     it { expect(instance).to respond_to(:index) }
 
-    it {
+    it do
       expect(subject).to route(:get, "/v1/admin/menu/ingredients").to(format: :json, action: :index,
                                                                       controller: "v1/admin/menu/ingredients")
-    }
+    end
 
     def req(params = {})
       get :index, params:
@@ -175,6 +175,37 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(Menu::Ingredient.count).to eq 2 }
         it { expect(Menu::Ingredient.visible.count).to eq 1 }
         it { is_expected.to be_empty }
+      end
+
+      context "when providing {avoid_associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_ingredient, 3)
+          dish.ingredients = [Menu::Ingredient.all.sample]
+          req(avoid_associated_dish_id: dish.id)
+          create(:menu_dish).ingredients = Menu::Ingredient.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 2 }
+      end
+
+      context "when providing {associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_ingredient, 3)
+          dish.ingredients = [Menu::Ingredient.all.sample]
+          req(associated_dish_id: dish.id)
+          create(:menu_dish).ingredients = Menu::Ingredient.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 1 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to eq dish.ingredients.first.id }
       end
     end
   end
