@@ -8,13 +8,39 @@ module Menu
       filter_by_query(
         filter_by_description(
           filter_by_name(
-            filter_by_status(items)
+            filter_by_status(
+              filter_by_avoid_associated_dish_id(
+                filter_by_associated_dish_id(
+                  order_by_index_in_associated_dish_id(
+                    items
+                  )
+                )
+              )
+            )
           )
         )
       )
     end
 
     private
+
+    def filter_by_associated_dish_id(items)
+      return items if params[:associated_dish_id].blank?
+
+      items.where(id: Menu::AllergensInDish.where(menu_dish_id: params[:associated_dish_id]).select(:allergen_id))
+    end
+
+    def order_by_index_in_associated_dish_id(items)
+      return items if params[:associated_dish_id].blank?
+
+      items.joins(:menu_allergens_in_dishes).where(menu_allergens_in_dishes: { menu_dish_id: params[:associated_dish_id] }).order("menu_allergens_in_dishes.index")
+    end
+
+    def filter_by_avoid_associated_dish_id(items)
+      return items if params[:avoid_associated_dish_id].blank?
+
+      items.where.not(id: Menu::AllergensInDish.where(menu_dish_id: params[:avoid_associated_dish_id]).select(:allergen_id))
+    end
 
     def items
       Allergen.visible

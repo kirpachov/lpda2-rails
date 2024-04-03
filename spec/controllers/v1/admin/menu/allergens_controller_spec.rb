@@ -6,37 +6,37 @@ ADMIN_MENU_ALLERGEN_ITEM = "ADMIN_MENU_ALLERGEN_ITEM"
 RSpec.shared_context ADMIN_MENU_ALLERGEN_ITEM do |options = {}|
   it "includes all basic information" do
     expect(subject).to include(
-      id: Integer,
-      created_at: String,
-      updated_at: String
-    )
+                         id: Integer,
+                         created_at: String,
+                         updated_at: String
+                       )
   end
 
   if options[:has_name] == true
     it "has name" do
       expect(subject).to include(
-        name: String
-      )
+                           name: String
+                         )
     end
   elsif options[:has_name] == false
     it "does not have name" do
       expect(subject).to include(
-        name: nil
-      )
+                           name: nil
+                         )
     end
   end
 
   if options[:has_description] == true
     it "has description" do
       expect(subject).to include(
-        description: String
-      )
+                           description: String
+                         )
     end
   elsif options[:has_description] == false
     it "does not have description" do
       expect(subject).to include(
-        description: nil
-      )
+                           description: nil
+                         )
     end
   end
 
@@ -310,6 +310,37 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(Menu::Allergen.visible.count).to eq 1 }
         it { expect(subject).to all(include(status: "active")) }
         it { expect(subject.size).to eq 1 }
+      end
+
+      context "when providing {avoid_associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_allergen, 3)
+          dish.allergens = [Menu::Allergen.all.sample]
+          req(avoid_associated_dish_id: dish.id)
+          create(:menu_dish).allergens = Menu::Allergen.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 2 }
+      end
+
+      context "when providing {associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_allergen, 3)
+          dish.allergens = [Menu::Allergen.all.sample]
+          req(associated_dish_id: dish.id)
+          create(:menu_dish).allergens = Menu::Allergen.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 1 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to eq dish.ingredients.first.id }
       end
     end
   end
