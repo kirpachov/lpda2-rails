@@ -12,10 +12,10 @@ RSpec.describe V1::Admin::Menu::DishesController do
   describe "#index" do
     it { expect(instance).to respond_to(:index) }
 
-    it {
+    it do
       expect(subject).to route(:get, "/v1/admin/menu/dishes").to(format: :json, action: :index,
                                                                  controller: "v1/admin/menu/dishes")
-    }
+    end
 
     def req(params = {})
       get :index, params:
@@ -1426,7 +1426,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
       it { expect { subject }.to change { dish.reload.ingredients.count }.by(-1) }
       it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(-1) }
 
-      context "if removing non-existing ingredient" do
+      context "when removing non-existing ingredient" do
         subject { response }
 
         before { req(dish.id, 999_999_999) }
@@ -1434,12 +1434,48 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it_behaves_like NOT_FOUND
       end
 
-      context "if removing ingredient from non-existing dish" do
+      context "when removing ingredient from non-existing dish" do
         subject { response }
 
         before { req(999_999_999) }
 
         it_behaves_like NOT_FOUND
+      end
+
+      context "when removing first ingredient, all next should change position to adapt." do
+        let!(:ingredient0) { ingredient } # already added
+        let!(:ingredient1) { create(:menu_ingredient) }
+        let!(:ingredient2) { create(:menu_ingredient) }
+
+        before do
+          dish.ingredients << ingredient1
+          dish.ingredients << ingredient2
+        end
+
+        context "checking mock data" do
+          it { expect(dish.ingredients.count).to eq 3 }
+        end
+
+        it do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect { req(dish.id, ingredient0.id) }.to change { Menu::IngredientsInDish.order(:index).pluck(:menu_ingredient_id) }.from([
+                                                                                                                                        ingredient0.id,
+                                                                                                                                        ingredient1.id,
+                                                                                                                                        ingredient2.id
+                                                                                                                                      ]).to([
+                                                                                                                                              ingredient1.id,
+                                                                                                                                              ingredient2.id
+                                                                                                                                            ])
+        end
+
+        it do
+          expect { req(dish.id, ingredient0.id) }.to change { Menu::IngredientsInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+        end
       end
     end
   end
@@ -1681,6 +1717,41 @@ RSpec.describe V1::Admin::Menu::DishesController do
         before { req(999_999_999) }
 
         it_behaves_like NOT_FOUND
+      end
+
+      context "when removing first tag, all next should change position to adapt." do
+        let!(:tag0) { tag } # already added
+        let!(:tag1) { create(:menu_tag) }
+        let!(:tag2) { create(:menu_tag) }
+
+        before do
+          dish.tags << tag1
+          dish.tags << tag2
+        end
+
+        context "checking mock data" do
+          it { expect(dish.tags.count).to eq 3 }
+        end
+
+        it do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect { req(dish.id, tag0.id) }.to change { Menu::TagsInDish.order(:index).pluck(:menu_tag_id) }.from([tag0.id,
+                                                                                                                  tag1.id,
+                                                                                                                  tag2.id
+                                                                                                                 ]).to([
+                                                                                                                         tag1.id,
+                                                                                                                         tag2.id
+                                                                                                                       ])
+        end
+
+        it do
+          expect { req(dish.id, tag0.id) }.to change { Menu::TagsInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+        end
       end
     end
   end
@@ -1929,6 +2000,41 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it_behaves_like NOT_FOUND
       end
+
+      context "when removing first allergen, all next should change position to adapt." do
+        let!(:allergen0) { allergen } # already added
+        let!(:allergen1) { create(:menu_allergen) }
+        let!(:allergen2) { create(:menu_allergen) }
+
+        before do
+          dish.allergens << allergen1
+          dish.allergens << allergen2
+        end
+
+        context "checking mock data" do
+          it { expect(dish.allergens.count).to eq 3 }
+        end
+
+        it do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect { req(dish.id, allergen0.id) }.to change { Menu::AllergensInDish.order(:index).pluck(:menu_allergen_id) }.from([allergen0.id,
+                                                                                                                  allergen1.id,
+                                                                                                                  allergen2.id
+                                                                                                                 ]).to([
+                                                                                                                         allergen1.id,
+                                                                                                                         allergen2.id
+                                                                                                                       ])
+        end
+
+        it do
+          expect { req(dish.id, allergen0.id) }.to change { Menu::AllergensInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+        end
+      end
     end
   end
 
@@ -1994,14 +2100,14 @@ RSpec.describe V1::Admin::Menu::DishesController do
       context "when moving from index 1 to index 0" do
         it do
           expect { req }.to change { Menu::AllergensInDish.order(:index).pluck(:menu_allergen_id) }.from([
-                                                                                                      allergen0.id,
-                                                                                                      allergen1.id,
-                                                                                                      allergen2.id
-                                                                                                    ]).to([
-                                                                                                            allergen1.id,
-                                                                                                            allergen0.id,
-                                                                                                            allergen2.id
-                                                                                                          ])
+                                                                                                           allergen0.id,
+                                                                                                           allergen1.id,
+                                                                                                           allergen2.id
+                                                                                                         ]).to([
+                                                                                                                 allergen1.id,
+                                                                                                                 allergen0.id,
+                                                                                                                 allergen2.id
+                                                                                                               ])
         end
       end
     end

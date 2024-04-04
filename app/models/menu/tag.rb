@@ -62,6 +62,13 @@ module Menu
 
         where(id: ransack(description_cont: query).result.select(:id))
       end
+
+      def adjust_indexes_for_dish(dish_id)
+        items = Menu::Tag.where(id: Menu::TagsInDish.where(menu_dish_id: dish_id).order(:index).select(:menu_tag_id).limit(1))
+        return if items.empty?
+
+        items.first.move!(to_index: 0, dish_id:)
+      end
     end
 
     # ##############################

@@ -60,6 +60,13 @@ module Menu
 
         where(id: ransack(description_cont: query).result.select(:id))
       end
+
+      def adjust_indexes_for_dish(dish_id)
+        items = Menu::Allergen.where(id: Menu::AllergensInDish.where(menu_dish_id: dish_id).order(:index).select(:menu_allergen_id).limit(1))
+        return if items.empty?
+
+        items.first.move!(to_index: 0, dish_id:)
+      end
     end
 
     # ##############################

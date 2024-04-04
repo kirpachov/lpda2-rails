@@ -23,12 +23,12 @@ module Menu
     has_many :menu_categories, class_name: "Menu::Category", through: :menu_dishes_in_categories
     has_many :menu_ingredients_in_dishes, class_name: "Menu::IngredientsInDish", foreign_key: :menu_dish_id,
                                           dependent: :destroy
-    has_many :menu_ingredients, class_name: "Menu::Ingredient", through: :menu_ingredients_in_dishes
+    has_many :menu_ingredients, class_name: "Menu::Ingredient", through: :menu_ingredients_in_dishes, after_remove: :after_remove_ingredient
     has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_dish_id,
                                         dependent: :destroy
-    has_many :menu_allergens, class_name: "Menu::Allergen", through: :menu_allergens_in_dishes
+    has_many :menu_allergens, class_name: "Menu::Allergen", through: :menu_allergens_in_dishes, after_remove: :after_remove_allergen
     has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_dish_id, dependent: :destroy
-    has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes
+    has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes, after_remove: :after_remove_tag
 
     alias_attribute :categories, :menu_categories
     alias_attribute :ingredients, :menu_ingredients
@@ -81,6 +81,18 @@ module Menu
       super
     rescue ArgumentError
       @attributes.write_cast_value("status", value)
+    end
+
+    def after_remove_allergen(_allergen)
+      Menu::Allergen.adjust_indexes_for_dish(id)
+    end
+
+    def after_remove_tag(_tag)
+      Menu::Tag.adjust_indexes_for_dish(id)
+    end
+
+    def after_remove_ingredient(_ingredient)
+      Menu::Ingredient.adjust_indexes_for_dish(id)
     end
 
     # @param [Hash] options
