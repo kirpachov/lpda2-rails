@@ -340,7 +340,7 @@ RSpec.describe V1::Admin::Menu::AllergensController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
         it { expect(parsed_response_body).not_to include(message: String) }
         it { expect(parsed_response_body[:items].count).to eq 1 }
-        it { expect(parsed_response_body.dig(:items, 0, :id)).to eq dish.ingredients.first.id }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to eq dish.allergens.first.id }
       end
     end
   end
