@@ -187,7 +187,7 @@ module V1
       end
 
       def update_params
-        update_params = params.permit(:parent_id, :secret_desc)
+        update_params = params.permit(:parent_id, :secret_desc, :price)
         if update_params[:parent_id].is_a?(Integer) || update_params[:parent_id].is_a?(String)
           update_params.merge!(visibility_id: nil)
         end

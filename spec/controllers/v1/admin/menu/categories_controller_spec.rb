@@ -234,11 +234,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass
+                             )
         }
 
         it { expect(subject[:images].count).to eq 2 }
@@ -521,11 +521,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass
+                             )
         }
 
         it { expect(subject[:images].count).to eq 0 }
@@ -579,11 +579,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass
+                             )
         }
 
         it { expect(subject[:images].count).to eq 2 }
@@ -605,12 +605,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
         it {
           expect(subject).to include(
-            parent_id: Integer,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass,
-            parent: Hash
-          )
+                               parent_id: Integer,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass,
+                               parent: Hash
+                             )
         }
       end
 
@@ -763,11 +763,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass
+                             )
         }
 
         it { expect(subject[:images].count).to eq 0 }
@@ -802,11 +802,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: Integer,
-              name: NilClass,
-              description: NilClass,
-              secret_desc: NilClass
-            )
+                                 parent_id: Integer,
+                                 name: NilClass,
+                                 description: NilClass,
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -839,11 +839,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: NilClass,
-              description: NilClass,
-              secret_desc: NilClass
-            )
+                                 parent_id: NilClass,
+                                 name: NilClass,
+                                 description: NilClass,
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -876,11 +876,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: "test",
-              description: NilClass,
-              secret_desc: NilClass
-            )
+                                 parent_id: NilClass,
+                                 name: "test",
+                                 description: NilClass,
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -913,11 +913,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: NilClass,
-              description: "test",
-              secret_desc: NilClass
-            )
+                                 parent_id: NilClass,
+                                 name: NilClass,
+                                 description: "test",
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -952,11 +952,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: Integer,
-              name: "test",
-              description: "test",
-              secret_desc: NilClass
-            )
+                                 parent_id: Integer,
+                                 name: "test",
+                                 description: "test",
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -989,11 +989,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: "test-#{I18n.locale}",
-              description: NilClass,
-              secret_desc: NilClass
-            )
+                                 parent_id: NilClass,
+                                 name: "test-#{I18n.locale}",
+                                 description: NilClass,
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -1026,11 +1026,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: NilClass,
-              description: "test-#{I18n.locale}",
-              secret_desc: NilClass
-            )
+                                 parent_id: NilClass,
+                                 name: NilClass,
+                                 description: "test-#{I18n.locale}",
+                                 secret_desc: NilClass
+                               )
           }
 
           it { expect(subject[:images].count).to eq 0 }
@@ -1131,12 +1131,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: NilClass,
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: NilClass,
+                               images: []
+                             )
         }
       end
 
@@ -1162,12 +1162,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: "Hello",
-            description: NilClass,
-            secret_desc: NilClass,
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: "Hello",
+                               description: NilClass,
+                               secret_desc: NilClass,
+                               images: []
+                             )
         }
       end
 
@@ -1185,13 +1185,34 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: "Hello",
-            secret_desc: NilClass,
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: "Hello",
+                               secret_desc: NilClass,
+                               images: []
+                             )
         }
+      end
+
+      context "when providing {price: 15.2}" do
+        subject do
+          req(id: category.id, price: 15.2)
+          parsed_response_body[:item]
+        end
+
+        let!(:category) { create(:menu_category) }
+
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(subject).to include(price: 15.2)
+        end
+
+        it { expect { subject }.to change { category.reload.price }.to(15.2) }
       end
 
       context 'with {secret_desc: "Hello"}' do
@@ -1208,12 +1229,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: NilClass,
-            secret_desc: "Hello",
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: NilClass,
+                               secret_desc: "Hello",
+                               images: []
+                             )
         }
       end
 
@@ -1231,12 +1252,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: "HelloName",
-            description: "HelloDesc",
-            secret_desc: "HelloSecret",
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: "HelloName",
+                               description: "HelloDesc",
+                               secret_desc: "HelloSecret",
+                               images: []
+                             )
         }
       end
 
@@ -1254,12 +1275,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: "Hello",
-            description: NilClass,
-            secret_desc: NilClass,
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: "Hello",
+                               description: NilClass,
+                               secret_desc: NilClass,
+                               images: []
+                             )
         }
 
         context "after request" do
@@ -1287,12 +1308,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like ADMIN_MENU_CATEGORY
         it {
           expect(subject).to include(
-            parent_id: NilClass,
-            name: NilClass,
-            description: "Hello",
-            secret_desc: NilClass,
-            images: []
-          )
+                               parent_id: NilClass,
+                               name: NilClass,
+                               description: "Hello",
+                               secret_desc: NilClass,
+                               images: []
+                             )
         }
 
         context "after request" do
@@ -1331,12 +1352,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: Integer,
-              name: NilClass,
-              description: NilClass,
-              secret_desc: NilClass,
-              images: []
-            )
+                                 parent_id: Integer,
+                                 name: NilClass,
+                                 description: NilClass,
+                                 secret_desc: NilClass,
+                                 images: []
+                               )
           }
         end
 
@@ -1378,12 +1399,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              parent_id: NilClass,
-              name: NilClass,
-              description: NilClass,
-              secret_desc: NilClass,
-              images: []
-            )
+                                 parent_id: NilClass,
+                                 name: NilClass,
+                                 description: NilClass,
+                                 secret_desc: NilClass,
+                                 images: []
+                               )
           }
         end
 
@@ -1701,7 +1722,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
       let(:visibility) do
         create(:menu_visibility, public_visible: false, private_visible: false, public_from: nil, public_to: nil,
-                                 private_from: nil, private_to: nil)
+               private_from: nil, private_to: nil)
       end
       let(:category) { create(:menu_category, visibility:) }
 
@@ -1775,8 +1796,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it {
           expect { subject }.to change {
-                                  category.reload.visibility.public_from
-                                }.from(nil).to(DateTime.parse("2023-10-10"))
+            category.reload.visibility.public_from
+          }.from(nil).to(DateTime.parse("2023-10-10"))
         }
 
         it "updates public_from and return 200" do
@@ -1890,14 +1911,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         it {
           expect { subject }.to change {
-                                  category.reload.visibility.public_from
-                                }.from(nil).to(DateTime.parse("2022-10-8"))
+            category.reload.visibility.public_from
+          }.from(nil).to(DateTime.parse("2022-10-8"))
         }
 
         it {
           expect { subject }.to change {
-                                  category.reload.visibility.private_to
-                                }.from(nil).to(DateTime.parse("2021-1-1"))
+            category.reload.visibility.private_to
+          }.from(nil).to(DateTime.parse("2021-1-1"))
         }
 
         it "is able to update public_from or private_to and return 200" do
@@ -2009,8 +2030,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it "updates public_from correctly" do
             expect { subject }.to change {
-                                    category.reload.visibility.public_from
-                                  }.from(nil).to(DateTime.parse("2023-10-13"))
+              category.reload.visibility.public_from
+            }.from(nil).to(DateTime.parse("2023-10-13"))
             expect(subject).to have_http_status(:ok)
             expect(subject).to be_successful
           end
@@ -2024,8 +2045,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it "updates public_to correctly" do
             expect { subject }.to change {
-                                    category.reload.visibility.public_to
-                                  }.from(nil).to(DateTime.parse("2023-10-13"))
+              category.reload.visibility.public_to
+            }.from(nil).to(DateTime.parse("2023-10-13"))
             expect(subject).to have_http_status(:ok)
             expect(subject).to be_successful
           end
@@ -2039,8 +2060,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it "updates private_from correctly" do
             expect { subject }.to change {
-                                    category.reload.visibility.private_from
-                                  }.from(nil).to(DateTime.parse("2023-10-13"))
+              category.reload.visibility.private_from
+            }.from(nil).to(DateTime.parse("2023-10-13"))
             expect(subject).to have_http_status(:ok)
             expect(subject).to be_successful
           end
@@ -2054,8 +2075,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it "updates private_to correctly" do
             expect { subject }.to change {
-                                    category.reload.visibility.private_to
-                                  }.from(nil).to(DateTime.parse("2023-10-13"))
+              category.reload.visibility.private_to
+            }.from(nil).to(DateTime.parse("2023-10-13"))
             expect(subject).to have_http_status(:ok)
             expect(subject).to be_successful
           end
