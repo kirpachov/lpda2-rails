@@ -433,6 +433,132 @@ RSpec.describe V1::Admin::Menu::DishesController do
           expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish0.id, dish1.id)
         end
       end
+
+      context "when filtering by {price_not: \"\"}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish1) { create(:menu_dish, price: nil) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+
+        before do
+          req(price_not: "")
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 2
+          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish2.id])
+        end
+      end
+
+      context "when filtering by {price_not: 15}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+        let!(:dish3) { create(:menu_dish, price: 25) }
+        let!(:dish4) { create(:menu_dish, price: 14.9) }
+
+        before do
+          req(price_not: 15)
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 3
+          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish2.id, dish3.id, dish4.id])
+        end
+      end
+
+      context "when filtering by {price: \"\"}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish1) { create(:menu_dish, price: nil) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+
+        before do
+          req(price: "")
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 1
+          expect(parsed_response_body[:items].first[:id]).to eq dish1.id
+        end
+      end
+
+      context "when filtering by {price: 15}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish1) { create(:menu_dish, price: nil) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+        let!(:dish3) { create(:menu_dish, price: 25) }
+
+        before do
+          req(price: 15)
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 1
+          expect(parsed_response_body[:items].first[:id]).to eq dish0.id
+        end
+      end
+
+      context "when filtering by {price_more_than: 15}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish1) { create(:menu_dish, price: nil) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+        let!(:dish3) { create(:menu_dish, price: 25) }
+        let!(:dish4) { create(:menu_dish, price: 14.9) }
+
+        before do
+          req(price_more_than: 15)
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 2
+          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish3.id])
+        end
+      end
+
+      context "when filtering by {price_less_than: 25}" do
+        let!(:dish0) { create(:menu_dish, price: 15) }
+        let!(:dish1) { create(:menu_dish, price: nil) }
+        let!(:dish2) { create(:menu_dish, price: 0) }
+        let!(:dish3) { create(:menu_dish, price: 25) }
+        let!(:dish4) { create(:menu_dish, price: 100) }
+
+        before do
+          req(price_less_than: 25)
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it do
+          expect(parsed_response_body[:items].count).to eq 3
+          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish3.id, dish2.id])
+        end
+      end
     end
   end
 end

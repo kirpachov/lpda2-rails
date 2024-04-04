@@ -51,12 +51,21 @@ module Menu
     end
 
     def filter_by_price(items)
-      return items unless params[:price].present?
+      # WARNING:
+      # if filtering by price_not: 15 and we have [nil, 15, 30] as prices,
+      # would expect to get [nil, 30] as result, but we get [30] instead.
+      # TODO: check why and fix this. (issue #7)
+      items = items.where.not(price: params[:price_not].present? ? params[:price_not].to_f : nil) if params.key?(:price_not)
 
-      return items.where(price: params[:price].to_f) if params[:price].is_a?(String) || params[:price].is_a?(Numeric)
+      items = items.where(price: params[:price].present? ? params[:price].to_f : nil) if params.key?(:price) && (params[:price].is_a?(String) || params[:price].is_a?(Numeric))
 
-      lt = params[:price].key?(:less_than) ? params[:price][:less_than].to_f : nil
-      gt = params[:price].key?(:more_than) ? params[:price][:more_than].to_f : nil
+      lt = nil
+      lt = params[:price][:less_than].to_f if params[:price].present? && params[:price].respond_to?(:key?) && params[:price].key?(:less_than)
+      lt = params[:price_less_than].to_f if params[:price_less_than].present? && lt.blank?
+
+      gt = nil
+      gt = params[:price][:more_than].to_f if params[:price].present? && params[:price].respond_to?(:key?) && params[:price].key?(:more_than)
+      gt = params[:price_more_than].to_f if params[:price_more_than].present? && gt.blank?
 
       return items.where("#{Dish.table_name}.price >= ? AND #{Dish.table_name}.price <= ?", gt, lt) if gt && lt
 
