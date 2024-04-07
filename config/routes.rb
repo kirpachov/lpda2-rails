@@ -99,6 +99,8 @@ Rails.application.routes.draw do
             member do
               post "copy"
 
+              get "references"
+
               # Providing params for "move" in request body.
               patch "move"
 

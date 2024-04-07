@@ -10,6 +10,7 @@ module V1
         update_status
         remove_from_category
         move move_tag move_ingredient move_allergen
+        references
       ]
 
       def index
@@ -58,6 +59,10 @@ module V1
         return show if @item.valid? && @item.save
 
         render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
+      end
+
+      def references
+        render json: @item.references_json
       end
 
       def update_status

@@ -32,15 +32,8 @@ module V1
       end
 
       def dashboard_data
-        breadcrumb = [@item]
-        parent = @item.parent
-        while parent
-          breadcrumb << parent
-          parent = parent.parent
-        end
-        breadcrumb.reverse!
         render json: {
-          breadcrumbs: breadcrumb.map { |item| item.as_json(only: %i[id]).merge(name: item.name) }
+          breadcrumbs: @item.breadcrumbs_json
         }
       end
 

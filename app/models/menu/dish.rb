@@ -19,13 +19,13 @@ module Menu
     # Associations
     # ##############################
     has_many :menu_dishes_in_categories, class_name: "Menu::DishesInCategory", foreign_key: :menu_dish_id,
-                                         dependent: :destroy
+             dependent: :destroy
     has_many :menu_categories, class_name: "Menu::Category", through: :menu_dishes_in_categories
     has_many :menu_ingredients_in_dishes, class_name: "Menu::IngredientsInDish", foreign_key: :menu_dish_id,
-                                          dependent: :destroy
+             dependent: :destroy
     has_many :menu_ingredients, class_name: "Menu::Ingredient", through: :menu_ingredients_in_dishes, after_remove: :after_remove_ingredient
     has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_dish_id,
-                                        dependent: :destroy
+             dependent: :destroy
     has_many :menu_allergens, class_name: "Menu::Allergen", through: :menu_allergens_in_dishes, after_remove: :after_remove_allergen
     has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_dish_id, dependent: :destroy
     has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes, after_remove: :after_remove_tag
@@ -118,6 +118,27 @@ module Menu
 
     def move(to_index:, category_id:)
       MoveDish.run(dish: self, params: { to_index:, category_id: })
+    end
+
+    def references_json
+      categories = []
+      # menu_categories.each do |category|
+      #   breadcrumb = [category]
+      #   parent = category.parent
+      #   while parent
+      #     breadcrumb << parent
+      #     parent = parent.parent
+      #   end
+      #   breadcrumb.reverse!
+      #   categories << breadcrumb.map { |item| item.as_json(only: %i[id]).merge(name: item.name) }
+      # end
+      menu_categories.each do |category|
+        categories << category.as_json(only: %i[id]).merge(name: category.name, breadcrumbs: category.breadcrumbs_json)
+      end
+
+      {
+        categories: categories
+      }
     end
   end
 end
