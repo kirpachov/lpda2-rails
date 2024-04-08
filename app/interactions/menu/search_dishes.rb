@@ -11,7 +11,9 @@ module Menu
             filter_by_price(
               filter_by_category(
                 filter_by_status(
-                  order(items)
+                  filter_by_except_in_category(
+                    order(items)
+                  )
                 )
               )
             )
@@ -26,6 +28,17 @@ module Menu
       return order_by_index_in_category(items) if params.key?(:category_id)
 
       items
+    end
+
+    def filter_by_except_in_category(items)
+      return items unless params.key?(:except_in_category)
+
+      ids = [params[:except_in_category]].flatten.map(&:to_s).join(",").split(",").map(&:to_i)
+      ids = nil if ids.empty?
+
+      items.where.not(
+        id: Menu::DishesInCategory.where(menu_category_id: ids).select(:menu_dish_id)
+      )
     end
 
     def order_by_index_in_category(items)

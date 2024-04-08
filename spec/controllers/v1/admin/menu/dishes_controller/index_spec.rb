@@ -559,6 +559,55 @@ RSpec.describe V1::Admin::Menu::DishesController do
           expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish3.id, dish2.id])
         end
       end
+
+      context "when filtering by {except_in_category: <category_id>}, should return all items except those who are added in the provided category id." do
+        let!(:dishes) { create_list(:menu_dish, 3) }
+
+        let!(:category) do
+          create(:menu_category).tap do |cat|
+            cat.dishes << create(:menu_dish)
+            cat.dishes << create(:menu_dish)
+          end
+        end
+
+        before do
+          req(except_in_category: category.id)
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+          expect(parsed_response_body.dig(:metadata, :total_count)).to eq 3
+        end
+      end
+
+      context "when filtering by {except_in_category: \"<category_id>,<category_id>\"}, should return all items except those who are added in the provided category id." do
+        let!(:dishes) { create_list(:menu_dish, 3) }
+
+        let!(:category0) do
+          create(:menu_category).tap do |cat|
+            cat.dishes << create(:menu_dish)
+            cat.dishes << create(:menu_dish)
+          end
+        end
+
+        let!(:category1) do
+          create(:menu_category).tap do |cat|
+            cat.dishes << create(:menu_dish)
+            cat.dishes << create(:menu_dish)
+          end
+        end
+
+        before do
+          req(except_in_category: "#{category0.id},#{category1.id}")
+        end
+
+        it do
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+          expect(parsed_response_body.dig(:metadata, :total_count)).to eq 3
+        end
+      end
     end
   end
 end

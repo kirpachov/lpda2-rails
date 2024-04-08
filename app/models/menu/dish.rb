@@ -122,16 +122,6 @@ module Menu
 
     def references_json
       categories = []
-      # menu_categories.each do |category|
-      #   breadcrumb = [category]
-      #   parent = category.parent
-      #   while parent
-      #     breadcrumb << parent
-      #     parent = parent.parent
-      #   end
-      #   breadcrumb.reverse!
-      #   categories << breadcrumb.map { |item| item.as_json(only: %i[id]).merge(name: item.name) }
-      # end
       menu_categories.each do |category|
         categories << category.as_json(only: %i[id]).merge(name: category.name, breadcrumbs: category.breadcrumbs_json)
       end
