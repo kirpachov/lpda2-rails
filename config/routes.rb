@@ -69,6 +69,7 @@ Rails.application.routes.draw do
               post "copy"
               patch "visibility"
               patch "move/:to_index", action: :move
+              patch "order_dishes"
 
               post "dishes/:dish_id", action: :add_dish
               delete "dishes/:dish_id", action: :remove_dish

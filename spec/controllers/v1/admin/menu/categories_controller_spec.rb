@@ -2196,6 +2196,99 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     end
   end
 
+  context "PATCH #order_dishes" do
+    subject { req }
+
+    let!(:dish0) { create(:menu_dish).tap { |d| d.update!(name: "Dish0") } }
+    let!(:dish1) { create(:menu_dish).tap { |d| d.update!(name: "Dish1") } }
+    let!(:dish2) { create(:menu_dish).tap { |d| d.update!(name: "Dish2") } }
+    let!(:category) do
+      create(:menu_category).tap do |c|
+        c.dishes << dish1
+        c.dishes << dish2
+        c.dishes << dish0
+      end
+    end
+
+    let(:field) { "name" }
+
+    it { expect(instance).to respond_to(:order_dishes) }
+
+    it do
+      expect(subject).to route(:patch, "/v1/admin/menu/categories/22/order_dishes").to(format: :json, action: :order_dishes,
+                                                                                       controller: "v1/admin/menu/categories", id: 22)
+    end
+
+    def req(category_id = category.id, pfield = field)
+      patch :order_dishes, params: { id: category_id, field: pfield }
+    end
+
+    context "when user is not authenticated" do
+      before { req }
+
+      it_behaves_like UNAUTHORIZED
+    end
+
+    context "[user is authenticated]" do
+      before do
+        authenticate_request(user: create(:user))
+      end
+
+      context "when providing id" do
+        let(:field) { "id" }
+
+        it do
+          ids = Menu::DishesInCategory.order(:index).pluck(:menu_dish_id)
+          expect(ids.first).to eq(dish1.id)
+          expect(ids[1]).to eq(dish2.id)
+          expect(ids[2]).to eq(dish0.id)
+          req
+
+          ids = Menu::DishesInCategory.order(:index).pluck(:menu_dish_id)
+          expect(ids.first).to eq(dish0.id)
+          expect(ids[1]).to eq(dish1.id)
+          expect(ids[2]).to eq(dish2.id)
+        end
+
+        it do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when providing :name" do
+        before do
+          Menu::Dish.order(:id).each_with_index do |dish, index|
+            dish.name = "Dish##{index}"
+            dish.save!
+          end
+        end
+
+        let(:field) { "name" }
+
+        it do
+          ids = Menu::DishesInCategory.order(:index).pluck(:menu_dish_id)
+          expect(Menu::Dish.find(ids.first).name).to eq("Dish#1")
+          expect(Menu::Dish.find(ids[1]).name).to eq("Dish#2")
+          expect(Menu::Dish.find(ids[2]).name).to eq("Dish#0")
+
+          req
+          ids = Menu::DishesInCategory.order(:index).pluck(:menu_dish_id)
+          expect(Menu::Dish.find(ids.first).name).to eq("Dish#0")
+          expect(Menu::Dish.find(ids[1]).name).to eq("Dish#1")
+          expect(Menu::Dish.find(ids[2]).name).to eq("Dish#2")
+        end
+
+        it do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+  end
+
   describe "#remove_dish" do
     subject { req }
 

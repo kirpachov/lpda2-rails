@@ -5,7 +5,7 @@ module V1
     class CategoriesController < ApplicationController
       before_action :find_category, only: %i[
         show update destroy visibility add_dish remove_dish add_category dashboard_data copy
-        move
+        move order_dishes
       ]
 
       before_action :check_if_can_publish, only: %i[visibility]
@@ -100,6 +100,16 @@ module V1
         unless @item.move(params[:to_index].to_i) && @item.valid? && @item.errors.empty?
           return render_unprocessable_entity(@item)
         end
+
+        show
+      end
+
+      def order_dishes
+        return render_error(status: 400, message: "field is required") if params[:field].blank?
+
+        call = ::Menu::OrderDishesInCategory.run(category: @item, field: params[:field].to_s)
+
+        return render_unprocessable_entity(call) unless call.valid?
 
         show
       end

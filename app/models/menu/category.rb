@@ -28,7 +28,7 @@ module Menu
 
     has_many :menu_dishes_in_categories, class_name: "Menu::DishesInCategory", foreign_key: :menu_category_id
 
-    has_many :menu_dishes, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy
+    has_many :menu_dishes, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy, after_remove: :after_remove_dish
     alias_attribute :dishes, :menu_dishes
 
     # ##############################
@@ -80,6 +80,10 @@ module Menu
     # ##############################
     # Instance methods
     # ##############################
+    def after_remove_dish(_dish)
+      Menu::Dish.adjust_indexes_for_category(id)
+    end
+
     def assign_defaults
       self.status = "active" if status.blank?
       # assign_valid_index if index.to_i.zero?
