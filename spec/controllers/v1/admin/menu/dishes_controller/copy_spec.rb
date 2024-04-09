@@ -38,7 +38,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
       it { is_expected.to be_successful }
 
-      it { expect { subject }.to change { Menu::Dish.count }.by(1) }
+      it { expect { subject }.to change(Menu::Dish, :count).by(1) }
 
       context "when item does not exist" do
         subject { response }
@@ -48,7 +48,26 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it_behaves_like NOT_FOUND
       end
 
-      context "if dish has images" do
+      context "when providing {category_id: <Menu::Category#id>}" do
+        subject { req(dish.id, category_id: category.id) }
+
+        let!(:category) { create(:menu_category) }
+
+        it { expect { subject }.to change(Menu::DishesInCategory, :count).by(1) }
+        it { expect { subject }.to change(Menu::Dish, :count).by(1) }
+        it { expect { subject }.to(change { category.reload.dishes.count }.by(1)) }
+        it do
+          subject
+          expect(parsed_response_body).not_to include(message: String)
+        end
+
+        it do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when dish has images" do
         let!(:images) { create_list(:image, 3, :with_attached_image) }
 
         before { dish.images = images }
@@ -62,8 +81,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
           it { is_expected.to be_successful }
           it { is_expected.to have_http_status(:ok) }
 
-          it { expect { subject }.to change { Image.count }.by(images.count) }
-          it { expect { subject }.to change { ImageToRecord.count }.by(images.count) }
+          it { expect { subject }.to change(Image, :count).by(images.count) }
+          it { expect { subject }.to change(ImageToRecord, :count).by(images.count) }
 
           context "[after req]" do
             before { subject }
@@ -79,8 +98,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_images: "link"}' do
           subject { req(dish.id, { copy_images: "link" }) }
 
-          it { expect { subject }.not_to(change { Image.count }) }
-          it { expect { subject }.to change { ImageToRecord.count }.by(images.count) }
+          it { expect { subject }.not_to(change(Image, :count)) }
+          it { expect { subject }.to change(ImageToRecord, :count).by(images.count) }
 
           context "[after req]" do
             before { subject }
@@ -94,8 +113,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_images: "none"}' do
           subject { req(dish.id, { copy_images: "none" }) }
 
-          it { expect { subject }.not_to(change { Image.count }) }
-          it { expect { subject }.not_to(change { ImageToRecord.count }) }
+          it { expect { subject }.not_to(change(Image, :count)) }
+          it { expect { subject }.not_to(change(ImageToRecord, :count)) }
 
           context "[after req]" do
             before { subject }
@@ -107,7 +126,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
       end
 
-      context "if dish has ingredients" do
+      context "when dish has ingredients" do
         let!(:ingredients) { create_list(:menu_ingredient, 3) }
 
         before { dish.ingredients = ingredients }
@@ -121,8 +140,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
           it { is_expected.to be_successful }
           it { is_expected.to have_http_status(:ok) }
 
-          it { expect { subject }.to change { Menu::Ingredient.count }.by(ingredients.count) }
-          it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(ingredients.count) }
+          it { expect { subject }.to change(Menu::Ingredient, :count).by(ingredients.count) }
+          it { expect { subject }.to change(Menu::IngredientsInDish, :count).by(ingredients.count) }
 
           context "[after req]" do
             before { subject }
@@ -138,8 +157,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_ingredients: "link"}' do
           subject { req(dish.id, { copy_ingredients: "link" }) }
 
-          it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
-          it { expect { subject }.to change { Menu::IngredientsInDish.count }.by(ingredients.count) }
+          it { expect { subject }.not_to(change(Menu::Ingredient, :count)) }
+          it { expect { subject }.to change(Menu::IngredientsInDish, :count).by(ingredients.count) }
 
           context "[after req]" do
             before { subject }
@@ -153,8 +172,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_ingredients: "none"}' do
           subject { req(dish.id, { copy_ingredients: "none" }) }
 
-          it { expect { subject }.not_to(change { Menu::Ingredient.count }) }
-          it { expect { subject }.not_to(change { Menu::IngredientsInDish.count }) }
+          it { expect { subject }.not_to(change(Menu::Ingredient, :count)) }
+          it { expect { subject }.not_to(change(Menu::IngredientsInDish, :count)) }
 
           context "[after req]" do
             before { subject }
@@ -166,7 +185,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
       end
 
-      context "if dish has allergens" do
+      context "when dish has allergens" do
         let!(:allergens) { create_list(:menu_allergen, 3) }
 
         before { dish.allergens = allergens }
@@ -180,8 +199,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
           it { is_expected.to be_successful }
           it { is_expected.to have_http_status(:ok) }
 
-          it { expect { subject }.to change { Menu::Allergen.count }.by(allergens.count) }
-          it { expect { subject }.to change { Menu::AllergensInDish.count }.by(allergens.count) }
+          it { expect { subject }.to change(Menu::Allergen, :count).by(allergens.count) }
+          it { expect { subject }.to change(Menu::AllergensInDish, :count).by(allergens.count) }
 
           context "[after req]" do
             before { subject }
@@ -197,8 +216,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_allergens: "link"}' do
           subject { req(dish.id, { copy_allergens: "link" }) }
 
-          it { expect { subject }.not_to(change { Menu::Allergen.count }) }
-          it { expect { subject }.to change { Menu::AllergensInDish.count }.by(allergens.count) }
+          it { expect { subject }.not_to(change(Menu::Allergen, :count)) }
+          it { expect { subject }.to change(Menu::AllergensInDish, :count).by(allergens.count) }
 
           context "[after req]" do
             before { subject }
@@ -212,8 +231,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_allergens: "none"}' do
           subject { req(dish.id, { copy_allergens: "none" }) }
 
-          it { expect { subject }.not_to(change { Menu::Allergen.count }) }
-          it { expect { subject }.not_to(change { Menu::AllergensInDish.count }) }
+          it { expect { subject }.not_to(change(Menu::Allergen, :count)) }
+          it { expect { subject }.not_to(change(Menu::AllergensInDish, :count)) }
 
           context "[after req]" do
             before { subject }
@@ -225,7 +244,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
       end
 
-      context "if dish has tags" do
+      context "when dish has tags" do
         let!(:tags) { create_list(:menu_tag, 3) }
 
         before { dish.tags = tags }
@@ -239,8 +258,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
           it { is_expected.to be_successful }
           it { is_expected.to have_http_status(:ok) }
 
-          it { expect { subject }.to change { Menu::Tag.count }.by(tags.count) }
-          it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
+          it { expect { subject }.to change(Menu::Tag, :count).by(tags.count) }
+          it { expect { subject }.to change(Menu::TagsInDish, :count).by(tags.count) }
 
           context "[after req]" do
             before { subject }
@@ -256,8 +275,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_tags: "link"}' do
           subject { req(dish.id, { copy_tags: "link" }) }
 
-          it { expect { subject }.not_to(change { Menu::Tag.count }) }
-          it { expect { subject }.to change { Menu::TagsInDish.count }.by(tags.count) }
+          it { expect { subject }.not_to(change(Menu::Tag, :count)) }
+          it { expect { subject }.to change(Menu::TagsInDish, :count).by(tags.count) }
 
           context "[after req]" do
             before { subject }
@@ -271,8 +290,8 @@ RSpec.describe V1::Admin::Menu::DishesController do
         context 'and providing {copy_tags: "none"}' do
           subject { req(dish.id, { copy_tags: "none" }) }
 
-          it { expect { subject }.not_to(change { Menu::Tag.count }) }
-          it { expect { subject }.not_to(change { Menu::TagsInDish.count }) }
+          it { expect { subject }.not_to(change(Menu::Tag, :count)) }
+          it { expect { subject }.not_to(change(Menu::TagsInDish, :count)) }
 
           context "[after req]" do
             before { subject }

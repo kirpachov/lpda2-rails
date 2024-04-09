@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 module Menu
+  # Deep copy for a Menu::Dish record.
   class CopyDish < ActiveInteraction::Base
     record :old, class: Dish
     record :current_user, class: User
+
+    # Category where to add the new dish.
+    record :category, class: Menu::Category, default: nil
 
     string :copy_images, default: "full"
     string :copy_ingredients, default: "full"
@@ -28,7 +32,8 @@ module Menu
                                               do_copy_images &&
                                               do_copy_ingredients &&
                                               do_copy_tags &&
-                                              do_copy_allergens
+                                              do_copy_allergens &&
+                                              do_add_to_category
         end
 
         @new
@@ -102,6 +107,12 @@ module Menu
     rescue ActiveRecord::RecordInvalid => e
       errors.add(:base, "Cannot copy tag: #{e.message}", details: e)
       false
+    end
+
+    def do_add_to_category
+      return true if category.nil?
+
+      category.dishes << @new
     end
 
     def do_copy_allergens

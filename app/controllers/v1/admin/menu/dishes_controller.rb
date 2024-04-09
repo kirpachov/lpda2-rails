@@ -13,6 +13,8 @@ module V1
         references
       ]
 
+      before_action :find_category, only: %i[copy]
+
       def index
         call = ::Menu::SearchDishes.run(params:)
         unless call.valid?
@@ -100,7 +102,8 @@ module V1
           copy_images: params[:copy_images],
           copy_allergens: params[:copy_allergens],
           copy_ingredients: params[:copy_ingredients],
-          copy_tags: params[:copy_tags]
+          copy_tags: params[:copy_tags],
+          category: @category
         )
 
         if call.valid?
@@ -270,6 +273,10 @@ module V1
           images: item.images.map { |image| image.as_json.merge(url: image.url) },
           translations: item.translations_json
         )
+      end
+
+      def find_category
+        @category = Menu::Category.visible.where(id: params[:category_id]).first
       end
 
       def find_item
