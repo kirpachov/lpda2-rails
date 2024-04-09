@@ -68,6 +68,23 @@ RSpec.describe Menu::Dish, type: :model do
     it { is_expected.to have_many(:menu_categories) }
     it { expect(described_class.new).to respond_to(:categories) }
 
+    context "has many suggestions" do
+      let!(:dish) { create(:menu_dish) }
+      let!(:dishes) { create_list(:menu_dish, 3) }
+
+      it do
+        s = dishes.first
+        expect { dish.suggestions << s }.to change { dish.suggestions.count }.by(1)
+        expect { dish.suggestions.delete(s) }.to change { dish.suggestions.count }.by(-1)
+        expect { dish.suggestions.delete(s) }.not_to( change { dish.suggestions.count })
+      end
+
+      it do
+        expect(dish.suggestions).to be_empty
+        expect { dish.suggestions = dishes }.to change { dish.suggestions.count }.by(3)
+      end
+    end
+
     context 'when trying to assign categories with "="' do
       subject { create(:menu_dish) }
 

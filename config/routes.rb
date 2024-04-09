@@ -102,6 +102,9 @@ Rails.application.routes.draw do
 
               get "references"
 
+              post "suggestions/:suggestion_id", action: :add_suggestion
+              delete "suggestions/:suggestion_id", action: :remove_suggestion
+
               # Providing params for "move" in request body.
               patch "move"
 

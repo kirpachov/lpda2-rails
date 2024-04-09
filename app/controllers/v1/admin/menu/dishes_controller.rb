@@ -10,7 +10,7 @@ module V1
         update_status
         remove_from_category
         move move_tag move_ingredient move_allergen
-        references
+        references add_suggestion remove_suggestion
       ]
 
       before_action :find_category, only: %i[copy]
@@ -93,6 +93,24 @@ module V1
         return render_unprocessable_entity(call) unless call.valid?
 
         show
+      end
+
+      def add_suggestion
+        @item.suggestions << Menu::Dish.visible.find(params[:suggestion_id])
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:suggestion_id].inspect))
+      end
+
+      def remove_suggestion
+        @item.suggestions.delete(Menu::Dish.visible.find(params[:suggestion_id]))
+        show
+      rescue ActiveRecord::RecordInvalid => e
+        render_error(status: 422, message: e.message)
+      rescue ActiveRecord::RecordNotFound
+        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:suggestion_id].inspect))
       end
 
       def copy
@@ -271,7 +289,8 @@ module V1
           name: item.name,
           description: item.description,
           images: item.images.map { |image| image.as_json.merge(url: image.url) },
-          translations: item.translations_json
+          translations: item.translations_json,
+          suggestions: item.suggestions.map { |suggestion| suggestion.as_json.merge(name: suggestion.name) },
         )
       end
 

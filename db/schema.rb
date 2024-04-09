@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 27) do
+ActiveRecord::Schema[7.0].define(version: 28) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -160,6 +160,19 @@ ActiveRecord::Schema[7.0].define(version: 27) do
     t.index ["parent_id"], name: "index_menu_categories_on_parent_id"
     t.index ["secret"], name: "index_menu_categories_on_secret"
     t.index ["secret_desc"], name: "index_menu_categories_on_secret_desc", unique: true, where: "(secret_desc IS NOT NULL)"
+  end
+
+  create_table "menu_dish_suggestions", force: :cascade do |t|
+    t.bigint "dish_id", null: false
+    t.bigint "suggestion_id", null: false
+    t.integer "index", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dish_id", "index"], name: "index_menu_dish_suggestions_on_dish_id_and_index", unique: true
+    t.index ["dish_id", "suggestion_id"], name: "index_menu_dish_suggestions_on_dish_id_and_suggestion_id", unique: true
+    t.index ["dish_id"], name: "index_menu_dish_suggestions_on_dish_id"
+    t.index ["suggestion_id"], name: "index_menu_dish_suggestions_on_suggestion_id"
+    t.check_constraint "dish_id <> suggestion_id", name: "dish_id_not_equal_suggestion_id"
   end
 
   create_table "menu_dishes", force: :cascade do |t|
@@ -366,6 +379,8 @@ ActiveRecord::Schema[7.0].define(version: 27) do
   add_foreign_key "menu_allergens_in_dishes", "menu_allergens"
   add_foreign_key "menu_allergens_in_dishes", "menu_dishes"
   add_foreign_key "menu_categories", "menu_visibilities"
+  add_foreign_key "menu_dish_suggestions", "menu_dishes", column: "dish_id"
+  add_foreign_key "menu_dish_suggestions", "menu_dishes", column: "suggestion_id"
   add_foreign_key "menu_dishes_in_categories", "menu_dishes"
   add_foreign_key "menu_ingredients_in_dishes", "menu_dishes"
   add_foreign_key "menu_ingredients_in_dishes", "menu_ingredients"

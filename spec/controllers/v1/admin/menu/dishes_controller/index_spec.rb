@@ -58,6 +58,9 @@ RSpec.describe V1::Admin::Menu::DishesController do
           it { is_expected.to include(name: String) }
           it { is_expected.to include(description: String) }
           it { is_expected.to include(images: Array) }
+          it { is_expected.to include(suggestions: Array) }
+          it { expect(subject[:suggestions]).to all(be_a(Hash)) }
+          it { expect(subject[:suggestions]).to all(include(id: Integer, name: String)) }
         end
       end
 
