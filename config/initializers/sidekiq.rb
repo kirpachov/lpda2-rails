@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 redis_configs = {
-  url: ENV.fetch("REDIS_URL", Rails.env.test? ? "redis://localhost:6379/5" : "redis://127.0.0.1:6379/1")
+  url: ENV.fetch("REDIS_URL", Rails.env.test? ? "redis://localhost:6379/5" : "redis://127.0.0.1:6379/1"),
+  size: ActiveRecord::Base.connection_pool.size
 }
 
 Sidekiq.configure_server do |config|
@@ -10,7 +11,7 @@ Sidekiq.configure_server do |config|
   end
 
   # FIX to ActiveRecord::ConnectionTimeoutError when sidekiq concurrency was > ActiveRecord::Base.connection_pool.size
-  config[:concurrency] = ActiveRecord::Base.connection_pool.size
+  # config[:concurrency] = ActiveRecord::Base.connection_pool.size
 
   config.redis = redis_configs
   schedule_file = "config/schedule.yml"
