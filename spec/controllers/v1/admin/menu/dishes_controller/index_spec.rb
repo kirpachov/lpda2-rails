@@ -453,7 +453,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 2
-          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish2.id])
+          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish2.id])
         end
       end
 
@@ -474,7 +474,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 3
-          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish2.id, dish3.id, dish4.id])
+          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish2.id, dish3.id, dish4.id])
         end
       end
 
@@ -537,7 +537,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 2
-          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish3.id])
+          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish3.id])
         end
       end
 
@@ -559,8 +559,45 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 3
-          expect(parsed_response_body[:items].map { |j| j[:id] }).to match_array([dish0.id, dish3.id, dish2.id])
+          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish3.id, dish2.id])
         end
+      end
+
+      context "when filtering by {except: <dish_id>}" do
+        let(:dishes) { create_list(:menu_dish, 3) }
+
+        before do
+          req(except: dishes.first.id)
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].pluck(:id)).to match_array(dishes[1..].map(&:id)) }
+      end
+
+      context "when filtering by {except: <dish_id>,<dish_id>}" do
+        let(:dishes) { create_list(:menu_dish, 3) }
+
+        before do
+          req(except: "#{dishes.first.id},#{dishes.second.id}")
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].pluck(:id)).to match_array(dishes[2..].map(&:id)) }
+      end
+
+      context "when filtering by {can_suggest: <dish_id>} will return dishes that can be added as suggestions for the dish with the provided id" do
+        let!(:already_suggested) { create_list(:menu_dish, 3) }
+        let!(:not_suggested_yet) { create_list(:menu_dish, 3) }
+        let!(:deleted_dish) { create(:menu_dish, status: :deleted) }
+        let!(:dish) { create(:menu_dish).tap { |d| d.suggestions = already_suggested } }
+
+        before { req(can_suggest: dish.id) }
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].pluck(:id)).to match_array(not_suggested_yet.map(&:id)) }
       end
 
       context "when filtering by {except_in_category: <category_id>}, should return all items except those who are added in the provided category id." do

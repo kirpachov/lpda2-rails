@@ -12,7 +12,11 @@ module Menu
               filter_by_category(
                 filter_by_status(
                   filter_by_except_in_category(
-                    order(items)
+                    filter_by_except(
+                      filter_by_can_suggest(
+                        order(items)
+                      )
+                    )
                   )
                 )
               )
@@ -24,10 +28,24 @@ module Menu
 
     private
 
+    # "can_suggest" is the id of the dish where you want to add suggestions.
+    # when this filter is provided, the returned dishes must be valid suggestions for the dish with "can_suggest".
+    def filter_by_can_suggest(items)
+      return items if params[:can_suggest].blank?
+
+      items.where.not(id: params[:can_suggest].to_i).where.not(id: Menu::DishSuggestion.where(dish_id: params[:can_suggest].to_i).select(:suggestion_id))
+    end
+
     def order(items)
       return order_by_index_in_category(items) if params.key?(:category_id)
 
       items
+    end
+
+    def filter_by_except(items)
+      return items unless params.key?(:except)
+
+      items.where.not(id: [params[:except]].flatten.join(",").split(",").map(&:to_i))
     end
 
     def filter_by_except_in_category(items)

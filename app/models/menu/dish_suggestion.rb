@@ -16,23 +16,8 @@ module Menu
     # ##############################
     # Validations
     # ##############################
-    validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false, uniqueness: { scope: :dish_id }
-    validates :index, uniqueness: { scope: :dish_id }
     validate :dish_id_not_equal_suggestion_id
-
-    # ##############################
-    # Callbacks
-    # ##############################
-    after_initialize :assign_valid_index, if: -> { new_record? }
-
-    # ##############################
-    # Instance methods
-    # ##############################
-    def assign_valid_index
-      return if index.present? && index.to_i >= 0
-
-      self.index = self.class.where(dish_id:).count
-    end
+    validates :dish_id, uniqueness: { scope: :suggestion_id }, if: -> { dish_id.present? && suggestion_id.present? }
 
     private
 

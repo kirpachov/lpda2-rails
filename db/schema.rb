@@ -165,10 +165,8 @@ ActiveRecord::Schema[7.0].define(version: 28) do
   create_table "menu_dish_suggestions", force: :cascade do |t|
     t.bigint "dish_id", null: false
     t.bigint "suggestion_id", null: false
-    t.integer "index", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["dish_id", "index"], name: "index_menu_dish_suggestions_on_dish_id_and_index", unique: true
     t.index ["dish_id", "suggestion_id"], name: "index_menu_dish_suggestions_on_dish_id_and_suggestion_id", unique: true
     t.index ["dish_id"], name: "index_menu_dish_suggestions_on_dish_id"
     t.index ["suggestion_id"], name: "index_menu_dish_suggestions_on_suggestion_id"
