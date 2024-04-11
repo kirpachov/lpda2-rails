@@ -43,6 +43,8 @@ gem "sidekiq-status", "~> 3.0.3"
 
 gem "active_interaction", "~> 5.2.0"
 
+gem "rubyXL", "~> 3.4.26", require: false
+
 gem "text-table", "~> 1.2.4"
 
 gem "oj", "~> 3.14.3"
