@@ -10,18 +10,18 @@ module Dev::Menu
 
     def execute
       CSV.foreach(file, headers: true, col_sep: ";", liberal_parsing: true) do |row|
-        ingredient = Menu::Allergen.find_or_initialize_by(member_id: row["id"])
+        allergen = Menu::Allergen.find_or_initialize_by(member_id: row["id"])
         Mobility.with_locale(:it) do
-          ingredient.name = row["name.it"]
+          allergen.name = row["name.it"]
         end
 
         Mobility.with_locale(:en) do
-          ingredient.name = row["name.en"]
+          allergen.name = row["name.en"]
         end
 
-        # TODO: attach image from row["imageId"]
+        allergen.image = Image.where(member_id: row["imageId"]).first if row["imageId"].present?
 
-        ingredient.save!
+        allergen.save!
       end
     end
   end

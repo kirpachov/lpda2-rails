@@ -21,7 +21,7 @@ module Dev::Menu
           ingredient.description = row["description.en"]
         end
 
-        # TODO: attach image from row["imageId"]
+        ingredient.image = Image.where(member_id: row["imageId"]).first if row["imageId"].present?
 
         ingredient.save!
       end

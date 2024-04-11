@@ -62,7 +62,7 @@ ActiveRecord::Schema[7.0].define(version: 28) do
     t.bigint "original_id"
     t.jsonb "other", default: {}, null: false
     t.text "key", comment: "Key for finding the Image for a certain purpose."
-    t.integer "member_id"
+    t.string "member_id", comment: "External id of image."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["filename"], name: "index_images_on_filename"

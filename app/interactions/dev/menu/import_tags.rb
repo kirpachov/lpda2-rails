@@ -23,7 +23,7 @@ module Dev::Menu
 
         tag.color = row["color"] if row["color"].present?
 
-        # TODO: attach image from row["imageId"]
+        tag.image = Image.where(member_id: row["imageId"]).first if row["imageId"].present?
 
         tag.save!
       end
