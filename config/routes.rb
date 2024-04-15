@@ -64,6 +64,8 @@ Rails.application.routes.draw do
         end
 
         scope module: :menu, path: "menu" do
+          get "export", action: :export, controller: :export
+
           resources :categories, only: %i[index show create update destroy] do
             member do
               post "copy"
