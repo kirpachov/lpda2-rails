@@ -2,7 +2,7 @@
 
 # STRUCTURE OF Menu::Category information returned by admin controllers.
 # Expects subject to be the Hash with Menu::Category information.
-ADMIN_MENU_CATEGORY = 'ADMIN_MENU_CATEGORY'
+ADMIN_MENU_CATEGORY = "ADMIN_MENU_CATEGORY"
 RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
   it { is_expected.to be_a(Hash) }
 
@@ -22,7 +22,7 @@ RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
     it { is_expected.to include(menu_visibility_id: Integer) }
     it { is_expected.to include(visibility: Hash) }
 
-    context 'visibility' do
+    context "visibility" do
       it { expect(subject[:visibility]).to be_a(Hash) }
 
       it {
@@ -32,7 +32,7 @@ RSpec.shared_examples ADMIN_MENU_CATEGORY do |options = {}|
     end
   end
 
-  context 'images' do
+  context "images" do
     it { expect(subject[:images]).to be_a(Array) }
     it { expect(subject[:images]).to all(be_a(Hash)) }
     it { expect(subject[:images]).to all(include(*%i[id url filename created_at updated_at])) }

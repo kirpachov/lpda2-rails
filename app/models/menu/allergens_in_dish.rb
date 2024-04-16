@@ -5,8 +5,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
-    belongs_to :menu_allergen, class_name: 'Menu::Allergen', optional: false
+    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
+    belongs_to :menu_allergen, class_name: "Menu::Allergen", optional: false
 
     alias_attribute :dish, :menu_dish
     alias_attribute :allergen, :menu_allergen
@@ -23,18 +23,15 @@ module Menu
     # ##############################
     # Callbacks
     # ##############################
-    before_validation :assign_defaults, on: :create
-    before_validation :assign_valid_index, on: :update
+    after_initialize :assign_valid_index, if: -> { new_record? }
 
     # ##############################
     # Instance methods
     # ##############################
-    def assign_defaults
-      assign_valid_index if index.to_i <= 0
-    end
-
     def assign_valid_index
-      self.index = self.class.where(dish:).order(index: :desc).first&.index.to_i + 1
+      return if index.present? && index.to_i >= 0
+
+      self.index = self.class.where(dish_id:).count
     end
   end
 end

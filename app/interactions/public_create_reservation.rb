@@ -61,11 +61,11 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def first_name
-    @first_name ||= params[:first_name].to_s.strip.split(' ').map(&:capitalize).join(' ')
+    @first_name ||= params[:first_name].to_s.strip.split(" ").map(&:capitalize).join(" ")
   end
 
   def last_name
-    @last_name ||= params[:last_name].to_s.strip.split(' ').map(&:capitalize).join(' ')
+    @last_name ||= params[:last_name].to_s.strip.split(" ").map(&:capitalize).join(" ")
   end
 
   def email
@@ -73,7 +73,7 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def phone
-    @phone ||= params[:phone].to_s.gsub(/[.\-()\s]+/, '')
+    @phone ||= params[:phone].to_s.gsub(/[.\-()\s]+/, "")
   end
 
   def people
@@ -86,7 +86,7 @@ class PublicCreateReservation < ActiveInteraction::Base
 
   def reservation_turn
     @reservation_turn ||= ReservationTurn.where(weekday: (datetime.wday - 1) % 7)
-                                         .where('starts_at <= ? AND ends_at >= ?', datetime.strftime('%k:%M'), datetime.strftime('%k:%M')).first
+                                         .where("starts_at <= ? AND ends_at >= ?", datetime.strftime("%k:%M"), datetime.strftime("%k:%M")).first
   end
 
   # ###################################
@@ -95,12 +95,12 @@ class PublicCreateReservation < ActiveInteraction::Base
   def phone_is_present
     return if phone.present?
 
-    errors.add(:phone, 'is missing')
+    errors.add(:phone, "is missing")
   end
 
   def phone_is_valid
     # return if phone.blank? || phone.length >= 5
-    return if phone.match(/\A\+?[\d\s\-().]{7,}\z/)
+    return if /\A\+?[\d\s\-().]{7,}\z/.match?(phone)
 
     errors.add(:phone, "#{phone.inspect} is not a valid phone")
   end
@@ -108,11 +108,11 @@ class PublicCreateReservation < ActiveInteraction::Base
   def first_name_is_present
     return if first_name.present?
 
-    errors.add(:first_name, 'is missing')
+    errors.add(:first_name, "is missing")
   end
 
   def first_name_is_valid
-    return if first_name.match(/\A[A-Za-z\s']{2,}\z/)
+    return if /\A[A-Za-z\s']{2,}\z/.match?(first_name)
 
     errors.add(:first_name, "#{first_name.inspect} is not a valid first name")
   end
@@ -120,11 +120,11 @@ class PublicCreateReservation < ActiveInteraction::Base
   def last_name_is_present
     return if last_name.present?
 
-    errors.add(:last_name, 'is missing')
+    errors.add(:last_name, "is missing")
   end
 
   def last_name_is_valid
-    return if last_name.match(/\A[A-Za-z\s']{2,}\z/)
+    return if /\A[A-Za-z\s']{2,}\z/.match?(last_name)
 
     errors.add(:last_name, "#{last_name.inspect} is not a valid last name")
   end
@@ -132,30 +132,30 @@ class PublicCreateReservation < ActiveInteraction::Base
   def people_count_is_valid
     return if people.is_a?(Integer)
 
-    errors.add(:people, 'is not a valid number')
+    errors.add(:people, "is not a valid number")
   end
 
   def people_count_is_not_zero
     return if people > 0
 
-    errors.add(:people, 'is zero')
+    errors.add(:people, "is zero")
   end
 
   def people_count_is_not_greater_than_max_people_count
     return if people <= max_people_count
 
-    errors.add(:people, 'is greater than the maximum allowed')
+    errors.add(:people, "is greater than the maximum allowed")
   end
 
   def datetime_is_valid
     return if datetime.is_a?(DateTime)
 
-    errors.add(:datetime, 'is not a valid datetime')
+    errors.add(:datetime, "is not a valid datetime")
   end
 
   def datetime_format_is_valid
     return if params[:datetime].to_s.blank?
-    return if params[:datetime].to_s.match(/\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}\z/)
+    return if /\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}\z/.match?(params[:datetime].to_s)
 
     errors.add(:datetime,
                "has invalid format. Please use the format: YYYY-MM-DD HH:MM. Got: #{params[:datetime].inspect}")
@@ -164,39 +164,39 @@ class PublicCreateReservation < ActiveInteraction::Base
   def email_is_present
     return if email.present?
 
-    errors.add(:email, 'is empty or missing')
+    errors.add(:email, "is empty or missing")
   end
 
   def email_is_valid
     return if email.match(URI::MailTo::EMAIL_REGEXP)
 
-    errors.add(:email, 'is not a valid email')
+    errors.add(:email, "is not a valid email")
   end
 
   def no_other_reservations_for_this_email_and_datetime
     return if Reservation.visible.where(email:, datetime:).empty?
 
-    errors.add(:email, 'has another reservation for this datetime')
+    errors.add(:email, "has another reservation for this datetime")
   end
 
   def datetime_is_not_in_the_past
     return if datetime.nil?
     return if datetime > Time.zone.now
 
-    errors.add(:datetime, 'is in the past')
+    errors.add(:datetime, "is in the past")
   end
 
   def datetime_has_reservation_turn
     return if datetime.nil?
     return if reservation_turn
 
-    errors.add(:datetime, 'is not a valid date: there is no reservation turn for this datetime')
+    errors.add(:datetime, "is not a valid date: there is no reservation turn for this datetime")
   end
 
   def datetime_is_in_valid_reservation_turn_step
     return if datetime.nil? || reservation_turn.nil?
     return if datetime.to_i % reservation_turn.step == 0
 
-    errors.add(:datetime, 'is not in a valid reservation turn step')
+    errors.add(:datetime, "is not in a valid reservation turn step")
   end
 end

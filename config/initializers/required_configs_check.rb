@@ -4,7 +4,7 @@
 # If some of them are missing, it will raise an error.
 # And app won't even start.
 
-require_relative 'config'
+require_relative "config"
 
 if Rails.application.credentials.secret_key_base.nil?
   raise <<-ERROR
@@ -20,7 +20,7 @@ end
 
 %w[base_url frontend_base_url cancel_reservation_path temporary_block_duration].filter do |required_config|
   Config.public_send(required_config).blank?
-end.join(', ').tap do |required_configs|
+end.join(", ").tap do |required_configs|
   next unless required_configs.present?
 
   raise <<-ERROR

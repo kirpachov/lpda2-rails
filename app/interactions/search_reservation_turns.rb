@@ -9,7 +9,7 @@ class SearchReservationTurns < ActiveInteraction::Base
 
     items = filter_by_date(items)
 
-    items = items.where('name ILIKE ?', "%#{params[:query]}%") if params[:query].present?
+    items = items.where("name ILIKE ?", "%#{params[:query]}%") if params[:query].present?
 
     items
   end

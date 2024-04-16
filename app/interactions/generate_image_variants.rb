@@ -10,10 +10,10 @@ class GenerateImageVariants < ActiveInteraction::Base
   def execute
     # image.attached_image.variant(resize: '100x100').processed
 
-    return unless image.children.where(tag: 'blur').empty?
+    return unless image.children.where(tag: "blur").empty?
 
-    Image.create!(original: image, filename: filename_with(image.filename, 'blur'), tag: 'blur').tap do |blur_image|
-      blur_image.attached_image.attach(io: blur, filename: filename_with(image.filename, 'blur'))
+    Image.create!(original: image, filename: filename_with(image.filename, "blur"), tag: "blur").tap do |blur_image|
+      blur_image.attached_image.attach(io: blur, filename: filename_with(image.filename, "blur"))
     end
   end
 
@@ -25,7 +25,7 @@ class GenerateImageVariants < ActiveInteraction::Base
   private
 
   def filename(full)
-    full.split('.')[0..-2].join('.')
+    full.split(".")[0..-2].join(".")
   end
 
   def filename_with(full, suffix)
@@ -33,20 +33,20 @@ class GenerateImageVariants < ActiveInteraction::Base
   end
 
   def extension(full)
-    full.split('.')[-1]
+    full.split(".")[-1]
   end
 
   def image_must_be_persisted
-    errors.add(:image, 'must be persisted') unless image.persisted?
+    errors.add(:image, "must be persisted") unless image.persisted?
   end
 
   def image_has_attached_image
     return if image.attached_image.attached? && image.attached_image.image?
 
-    errors.add(:image, 'must have an attached image')
+    errors.add(:image, "must have an attached image")
   end
 
   def image_must_be_original
-    errors.add(:image, 'must be original') unless image.is_original?
+    errors.add(:image, "must be original") unless image.is_original?
   end
 end

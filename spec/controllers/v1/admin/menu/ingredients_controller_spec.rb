@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
@@ -9,39 +9,39 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
   let(:instance) { described_class.new }
 
-  describe '#index' do
+  describe "#index" do
     it { expect(instance).to respond_to(:index) }
 
-    it {
-      expect(subject).to route(:get, '/v1/admin/menu/ingredients').to(format: :json, action: :index,
-                                                                      controller: 'v1/admin/menu/ingredients')
-    }
+    it do
+      expect(subject).to route(:get, "/v1/admin/menu/ingredients").to(format: :json, action: :index,
+                                                                      controller: "v1/admin/menu/ingredients")
+    end
 
     def req(params = {})
       get :index, params:
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
 
       it { expect(req).to be_successful }
 
-      context 'when there are no ingredients' do
+      context "when there are no ingredients" do
         before { req }
 
         it { expect(parsed_response_body).to include(items: []) }
         it { expect(parsed_response_body).to include(metadata: Hash) }
       end
 
-      context 'when there are some ingredients' do
+      context "when there are some ingredients" do
         before do
           create_list(:menu_ingredient, 5)
           req
@@ -51,7 +51,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(parsed_response_body).to include(metadata: Hash) }
         it { expect(parsed_response_body[:items].size).to eq(5) }
 
-        context 'checking items structure' do
+        context "checking items structure" do
           subject { parsed_response_body[:items].sample }
 
           it { is_expected.to include(id: Integer) }
@@ -60,13 +60,13 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
       end
 
-      context 'when ingredients have image' do
+      context "when ingredients have image" do
         before do
           create(:menu_ingredient).image = create(:image, :with_attached_image)
           req
         end
 
-        context 'checking image structure' do
+        context "checking image structure" do
           subject { parsed_response_body[:items].sample[:image] }
 
           it { is_expected.to include(id: Integer) }
@@ -75,20 +75,20 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
       end
 
-      context 'when filtering by name' do
-        let(:name) { 'first' }
+      context "when filtering by name" do
+        let(:name) { "first" }
         let!(:menu_ingredient) { create(:menu_ingredient, name:, description: nil) }
 
         before do
-          create(:menu_ingredient, name: 'second', description: nil)
+          create(:menu_ingredient, name: "second", description: nil)
         end
 
-        context 'checking mock data' do
+        context "checking mock data" do
           it { expect(Menu::Ingredient.count).to eq(2) }
           it { expect(Menu::Ingredient.where_name(name).count).to eq(1) }
         end
 
-        context 'when filtering by name {query: <name>}' do
+        context "when filtering by name {query: <name>}" do
           subject { parsed_response_body[:items] }
 
           before { req(query: name) }
@@ -99,20 +99,20 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
       end
 
-      context 'when filtering by description' do
-        let(:description) { 'first' }
+      context "when filtering by description" do
+        let(:description) { "first" }
         let!(:menu_ingredient) { create(:menu_ingredient, name: nil, description:) }
 
         before do
-          create(:menu_ingredient, name: nil, description: 'second')
+          create(:menu_ingredient, name: nil, description: "second")
         end
 
-        context 'checking mock data' do
+        context "checking mock data" do
           it { expect(Menu::Ingredient.count).to eq(2) }
           it { expect(Menu::Ingredient.where_description(description).count).to eq(1) }
         end
 
-        context 'when filtering by description {query: <description>}' do
+        context "when filtering by description {query: <description>}" do
           subject { parsed_response_body[:items] }
 
           before { req(query: description) }
@@ -123,7 +123,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
       end
 
-      context 'when not filtering by status' do
+      context "when not filtering by status" do
         subject do
           req
           parsed_response_body[:items]
@@ -138,11 +138,11 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(Menu::Ingredient.count).to eq 2 }
         it { expect(Menu::Ingredient.visible.count).to eq 1 }
         it { expect(subject.size).to eq 1 }
-        it { expect(subject).to all(include(status: 'active')) }
+        it { expect(subject).to all(include(status: "active")) }
         it { expect(response).to be_successful }
       end
 
-      context 'when filtering by status {status: :active}' do
+      context "when filtering by status {status: :active}" do
         subject do
           req(status: :active)
           parsed_response_body[:items]
@@ -157,10 +157,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(Menu::Ingredient.count).to eq 2 }
         it { expect(Menu::Ingredient.visible.count).to eq 1 }
         it { expect(subject.size).to eq 1 }
-        it { expect(subject.first[:status]).to eq 'active' }
+        it { expect(subject.first[:status]).to eq "active" }
       end
 
-      context 'when filtering by status {status: :deleted}' do
+      context "when filtering by status {status: :deleted}" do
         subject do
           req(status: :deleted)
           parsed_response_body[:items]
@@ -176,37 +176,68 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(Menu::Ingredient.visible.count).to eq 1 }
         it { is_expected.to be_empty }
       end
+
+      context "when providing {avoid_associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_ingredient, 3)
+          dish.ingredients = [Menu::Ingredient.all.sample]
+          req(avoid_associated_dish_id: dish.id)
+          create(:menu_dish).ingredients = Menu::Ingredient.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 2 }
+      end
+
+      context "when providing {associated_dish_id: <DishId>}" do
+        let(:dish) { create(:menu_dish) }
+
+        before do
+          create_list(:menu_ingredient, 3)
+          dish.ingredients = [Menu::Ingredient.all.sample]
+          req(associated_dish_id: dish.id)
+          create(:menu_dish).ingredients = Menu::Ingredient.all
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(parsed_response_body).not_to include(message: String) }
+        it { expect(parsed_response_body[:items].count).to eq 1 }
+        it { expect(parsed_response_body.dig(:items, 0, :id)).to eq dish.ingredients.first.id }
+      end
     end
   end
 
-  describe '#show' do
+  describe "#show" do
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     it { expect(instance).to respond_to(:show) }
 
     it {
-      expect(subject).to route(:get, '/v1/admin/menu/ingredients/1').to(format: :json, action: :show,
-                                                                        controller: 'v1/admin/menu/ingredients', id: 1)
+      expect(subject).to route(:get, "/v1/admin/menu/ingredients/1").to(format: :json, action: :show,
+                                                                        controller: "v1/admin/menu/ingredients", id: 1)
     }
 
     def req(id, params = {})
       get :show, params: params.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req(menu_ingredient.id) }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
 
       it { expect(req(menu_ingredient.id)).to be_successful }
 
-      context 'when item does not exist' do
+      context "when item does not exist" do
         subject { response }
 
         before { req(999_999_999) }
@@ -214,7 +245,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context 'when item exists' do
+      context "when item exists" do
         subject { parsed_response_body[:item] }
 
         before { req(menu_ingredient.id) }
@@ -226,27 +257,27 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
     end
   end
 
-  describe '#update' do
+  describe "#update" do
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     it { expect(instance).to respond_to(:update) }
 
     it {
-      expect(subject).to route(:patch, '/v1/admin/menu/ingredients/22').to(format: :json, action: :update,
-                                                                           controller: 'v1/admin/menu/ingredients', id: 22)
+      expect(subject).to route(:patch, "/v1/admin/menu/ingredients/22").to(format: :json, action: :update,
+                                                                           controller: "v1/admin/menu/ingredients", id: 22)
     }
 
     def req(id, params = {})
       patch :update, params: params.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req(menu_ingredient.id, name: Faker::Lorem.sentence) }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
@@ -255,7 +286,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
       context 'can remove image with {image: "null"}' do
         subject do
-          req(ingredient.id, image: 'null')
+          req(ingredient.id, image: "null")
           parsed_response_body[:item]
         end
 
@@ -264,14 +295,14 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect { subject }.to change { ingredient.reload.image }.to(nil) }
         it { expect { subject }.not_to(change { Image.count }) }
 
-        it 'returns 200' do
+        it "returns 200" do
           subject
           expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
         end
       end
 
-      context 'can remove image with {image: nil}' do
+      context "can remove image with {image: nil}" do
         subject do
           req(ingredient.id, image: nil)
           parsed_response_body[:item]
@@ -282,16 +313,16 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect { subject }.to change { ingredient.reload.image }.to(nil) }
         it { expect { subject }.not_to(change { Image.count }) }
 
-        it 'returns 200' do
+        it "returns 200" do
           subject
           expect(parsed_response_body).not_to include(message: String)
           expect(response).to have_http_status(:ok)
         end
       end
 
-      context 'can update image with {image: File}' do
+      context "can update image with {image: File}" do
         subject do
-          req(ingredient.id, image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          req(ingredient.id, image: fixture_file_upload("cat.jpeg", "image/jpeg"))
           response
         end
 
@@ -301,7 +332,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect { subject }.to change { ingredient.reload.image }.to(an_instance_of(Image)) }
       end
 
-      context 'when item does not exist' do
+      context "when item does not exist" do
         subject { response }
 
         before { req(999_999_999) }
@@ -309,33 +340,33 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context 'when updating name {name: <string>}' do
+      context "when updating name {name: <string>}" do
         subject { parsed_response_body[:item] }
 
         let(:new_name) { Faker::Lorem.sentence }
 
-        before { req(menu_ingredient.id, name: new_name, description: 'desc') }
+        before { req(menu_ingredient.id, name: new_name, description: "desc") }
 
         it { is_expected.to include(id: menu_ingredient.id) }
         it { is_expected.to include(name: new_name) }
-        it { is_expected.to include(description: 'desc') }
+        it { is_expected.to include(description: "desc") }
         it { expect(response).to be_successful }
       end
 
-      context 'when updating description {description: <string>}' do
+      context "when updating description {description: <string>}" do
         subject { parsed_response_body[:item] }
 
         let(:new_description) { Faker::Lorem.sentence }
 
-        before { req(menu_ingredient.id, description: new_description, name: 'wassa') }
+        before { req(menu_ingredient.id, description: new_description, name: "wassa") }
 
         it { is_expected.to include(id: menu_ingredient.id) }
         it { is_expected.to include(description: new_description) }
-        it { is_expected.to include(name: 'wassa') }
+        it { is_expected.to include(name: "wassa") }
         it { expect(response).to be_successful }
       end
 
-      context 'when setting name to nil {name: nil}' do
+      context "when setting name to nil {name: nil}" do
         subject { parsed_response_body[:item] }
 
         before { req(menu_ingredient.id, name: nil) }
@@ -345,7 +376,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      context 'when setting description to nil {description: nil}' do
+      context "when setting description to nil {description: nil}" do
         subject { parsed_response_body[:item] }
 
         before { req(menu_ingredient.id, description: nil) }
@@ -355,7 +386,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      context 'when setting name with hash {name: {<locale>: <string>}}' do
+      context "when setting name with hash {name: {<locale>: <string>}}" do
         subject { parsed_response_body[:item] }
 
         let(:new_name) { Faker::Lorem.sentence }
@@ -367,7 +398,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      context 'when setting description with hash {description: {<locale>: <string>}}' do
+      context "when setting description with hash {description: {<locale>: <string>}}" do
         subject { parsed_response_body[:item] }
 
         let(:new_description) { Faker::Lorem.sentence }
@@ -379,10 +410,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      context 'when setting name to nil with hash {name: {<locale>: nil}}' do
+      context "when setting name to nil with hash {name: {<locale>: nil}}" do
         subject { parsed_response_body[:item] }
 
-        let(:menu_ingredient) { create(:menu_ingredient, name: 'Ingredient name before') }
+        let(:menu_ingredient) { create(:menu_ingredient, name: "Ingredient name before") }
 
         before { req(menu_ingredient.id, name: { en: nil }) }
 
@@ -391,10 +422,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      context 'when setting name to nil with {name: nil}' do
+      context "when setting name to nil with {name: nil}" do
         subject { parsed_response_body[:item] }
 
-        let(:menu_ingredient) { create(:menu_ingredient, name: 'Ingredient name before') }
+        let(:menu_ingredient) { create(:menu_ingredient, name: "Ingredient name before") }
 
         before { req(menu_ingredient.id, name: nil) }
 
@@ -405,69 +436,69 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
     end
   end
 
-  describe '#create' do
+  describe "#create" do
     it { expect(instance).to respond_to(:create) }
 
     it {
-      expect(subject).to route(:post, '/v1/admin/menu/ingredients').to(format: :json, action: :create,
-                                                                       controller: 'v1/admin/menu/ingredients')
+      expect(subject).to route(:post, "/v1/admin/menu/ingredients").to(format: :json, action: :create,
+                                                                       controller: "v1/admin/menu/ingredients")
     }
 
     def req(params = {})
       post :create, params:
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req(name: Faker::Lorem.sentence) }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
 
       it { expect(req).to be_successful }
 
-      context 'should include translations' do
+      context "should include translations" do
         subject { parsed_response_body[:item] }
 
-        before { req(name: 'test') }
+        before { req(name: "test") }
 
         it do
           expect(subject).to include(translations: Hash)
           expect(subject[:translations]).to include(name: Hash)
-          expect(subject.dig(:translations, :name)).to include(en: 'test')
+          expect(subject.dig(:translations, :name)).to include(en: "test")
         end
       end
 
-      context 'if providing name as JSON-encoded string in two languages' do
+      context "if providing name as JSON-encoded string in two languages" do
         subject do
-          req(name: { it: 'italian', en: 'english' }.to_json)
+          req(name: { it: "italian", en: "english" }.to_json)
           response
         end
 
-        it 'request should create a allergen' do
+        it "request should create a allergen" do
           expect { subject }.to change(Menu::Ingredient, :count).by(1)
           expect(Menu::Ingredient.count).to eq 1
         end
 
         it { is_expected.to have_http_status(:ok) }
 
-        context 'response[:item]' do
+        context "response[:item]" do
           subject do
-            req(name: { it: 'italian', en: 'english' }.to_json)
+            req(name: { it: "italian", en: "english" }.to_json)
             parsed_response_body[:item]
           end
 
-          it { is_expected.to include(name: 'english') }
+          it { is_expected.to include(name: "english") }
         end
       end
 
-      context 'passing {image: File}' do
+      context "passing {image: File}" do
         subject do
-          req(image: fixture_file_upload('cat.jpeg', 'image/jpeg'))
+          req(image: fixture_file_upload("cat.jpeg", "image/jpeg"))
           response
         end
 
@@ -484,33 +515,33 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
       end
 
-      it { expect { req(description: 'desc') }.to change(Menu::Ingredient, :count).by(1) }
+      it { expect { req(description: "desc") }.to change(Menu::Ingredient, :count).by(1) }
 
-      context 'when creating new ingredient with {description: <string>}' do
+      context "when creating new ingredient with {description: <string>}" do
         subject { parsed_response_body[:item] }
 
-        before { req(description: 'desc') }
+        before { req(description: "desc") }
 
         it { is_expected.to include(name: nil) }
-        it { is_expected.to include(description: 'desc') }
+        it { is_expected.to include(description: "desc") }
         it { expect(response).to be_successful }
       end
 
-      it { expect { req(name: 'wassa') }.to change(Menu::Ingredient, :count).by(1) }
+      it { expect { req(name: "wassa") }.to change(Menu::Ingredient, :count).by(1) }
 
-      context 'when creating new ingredient with {name: <string>}' do
+      context "when creating new ingredient with {name: <string>}" do
         subject { parsed_response_body[:item] }
 
-        before { req(name: 'wassa') }
+        before { req(name: "wassa") }
 
         it { is_expected.to include(description: nil) }
-        it { is_expected.to include(name: 'wassa') }
+        it { is_expected.to include(name: "wassa") }
         it { expect(response).to be_successful }
       end
 
       it { expect { req }.to change(Menu::Ingredient, :count).by(1) }
 
-      context 'when creating new ingredient with {}' do
+      context "when creating new ingredient with {}" do
         subject { parsed_response_body[:item] }
 
         before { req }
@@ -520,48 +551,48 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(response).to be_successful }
       end
 
-      it { expect { req(name: 'wassa', description: 'bratan') }.to change(Menu::Ingredient, :count).by(1) }
+      it { expect { req(name: "wassa", description: "bratan") }.to change(Menu::Ingredient, :count).by(1) }
 
-      context 'when creating new ingredient with {name: <name>, description: <description>}' do
+      context "when creating new ingredient with {name: <name>, description: <description>}" do
         subject { parsed_response_body[:item] }
 
-        before { req(name: 'wassa', description: 'bratan') }
+        before { req(name: "wassa", description: "bratan") }
 
-        it { is_expected.to include(name: 'wassa') }
-        it { is_expected.to include(description: 'bratan') }
+        it { is_expected.to include(name: "wassa") }
+        it { is_expected.to include(description: "bratan") }
         it { expect(response).to be_successful }
       end
     end
   end
 
-  describe '#destroy' do
+  describe "#destroy" do
     let(:menu_ingredient) { create(:menu_ingredient) }
 
     it { expect(instance).to respond_to(:destroy) }
 
     it {
-      expect(subject).to route(:delete, '/v1/admin/menu/ingredients/22').to(format: :json, action: :destroy,
-                                                                            controller: 'v1/admin/menu/ingredients', id: 22)
+      expect(subject).to route(:delete, "/v1/admin/menu/ingredients/22").to(format: :json, action: :destroy,
+                                                                            controller: "v1/admin/menu/ingredients", id: 22)
     }
 
     def req(id, params = {})
       delete :destroy, params: params.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req(menu_ingredient.id) }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
 
       it { expect(req(menu_ingredient.id)).to be_successful }
 
-      context 'when item does not exist' do
+      context "when item does not exist" do
         subject { response }
 
         before { req(999_999_999) }
@@ -569,11 +600,11 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      it 'does not delete item from database but update its status' do
+      it "does not delete item from database but update its status" do
         menu_ingredient
 
         expect { req(menu_ingredient.id) }.not_to(change { Menu::Ingredient.count })
-        expect(Menu::Ingredient.find(menu_ingredient.id).status).to eq('deleted')
+        expect(Menu::Ingredient.find(menu_ingredient.id).status).to eq("deleted")
       end
 
       it do
@@ -582,7 +613,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         expect { req(menu_ingredient.id) }.to change { Menu::Ingredient.visible.count }.by(-1)
       end
 
-      context 'when cannot delete record' do
+      context "when cannot delete record" do
         subject do
           req(menu_ingredient.id)
           response
@@ -598,7 +629,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { is_expected.not_to be_successful }
       end
 
-      context 'when record deletion raises error' do
+      context "when record deletion raises error" do
         subject do
           req(menu_ingredient.id)
           response
@@ -614,7 +645,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { is_expected.not_to be_successful }
       end
 
-      context 'when item exists' do
+      context "when item exists" do
         subject { parsed_response_body }
 
         before { req(menu_ingredient.id) }
@@ -625,7 +656,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
     end
   end
 
-  describe '#copy' do
+  describe "#copy" do
     subject { req(ingredient.id) }
 
     let!(:ingredient) { create(:menu_ingredient) }
@@ -633,21 +664,21 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
     it { expect(instance).to respond_to(:copy) }
 
     it {
-      expect(subject).to route(:post, '/v1/admin/menu/ingredients/22/copy').to(format: :json, action: :copy,
-                                                                               controller: 'v1/admin/menu/ingredients', id: 22)
+      expect(subject).to route(:post, "/v1/admin/menu/ingredients/22/copy").to(format: :json, action: :copy,
+                                                                               controller: "v1/admin/menu/ingredients", id: 22)
     }
 
     def req(id, params = {})
       post :copy, params: params.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req(ingredient.id, name: Faker::Lorem.sentence) }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context '[user is authenticated]' do
+    context "[user is authenticated]" do
       before do
         authenticate_request(user: create(:user))
       end
@@ -657,7 +688,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
 
       it { expect { subject }.to change { Menu::Ingredient.count }.by(1) }
 
-      context 'when item does not exist' do
+      context "when item does not exist" do
         subject { response }
 
         before { req(999_999_999) }
@@ -665,7 +696,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context 'if ingredient has image' do
+      context "if ingredient has image" do
         let!(:image) { create(:image, :with_attached_image) }
 
         before { ingredient.image = image }
@@ -674,7 +705,7 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         it { expect(ingredient.image&.id).to be_present }
 
         context 'and providing {copy_image: "full"}' do
-          subject { req(ingredient.id, { copy_image: 'full' }) }
+          subject { req(ingredient.id, { copy_image: "full" }) }
 
           it { is_expected.to be_successful }
           it { is_expected.to have_http_status(:ok) }
@@ -682,10 +713,10 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
           it { expect { subject }.to change { Image.count }.by(1) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
 
-          context '[after req]' do
+          context "[after req]" do
             before { subject }
 
-            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+            let(:result) { Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(parsed_response_body).to include(item: Hash) }
             it { expect(result.image).to be_present }
@@ -694,15 +725,15 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
 
         context 'and providing {copy_image: "link"}' do
-          subject { req(ingredient.id, { copy_image: 'link' }) }
+          subject { req(ingredient.id, { copy_image: "link" }) }
 
           it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.to change { ImageToRecord.count }.by(1) }
 
-          context '[after req]' do
+          context "[after req]" do
             before { subject }
 
-            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+            let(:result) { Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(result.image).to be_present }
             it { expect(result.image.id).to eq image.id }
@@ -711,15 +742,15 @@ RSpec.describe V1::Admin::Menu::IngredientsController, type: :controller do
         end
 
         context 'and providing {copy_image: "none"}' do
-          subject { req(ingredient.id, { copy_image: 'none' }) }
+          subject { req(ingredient.id, { copy_image: "none" }) }
 
           it { expect { subject }.not_to(change { Image.count }) }
           it { expect { subject }.not_to(change { ImageToRecord.count }) }
 
-          context '[after req]' do
+          context "[after req]" do
             before { subject }
 
-            let(:result) { ::Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
+            let(:result) { Menu::Ingredient.find(parsed_response_body.dig(:item, :id)) }
 
             it { expect(result.image).to be_nil }
             it { expect(ingredient.image).to be_present }

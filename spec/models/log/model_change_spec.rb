@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Log::ModelChange, type: :model do
-  context 'has valid factory' do
+  context "has valid factory" do
     it { expect(build(:model_change)).to be_valid }
     it { expect(create(:model_change)).to be_valid }
   end
 
-  context 'associations' do
+  context "associations" do
     it { is_expected.to belong_to(:record) }
     it { is_expected.to belong_to(:user).optional }
   end
 
-  context 'validations' do
+  context "validations" do
     before do
       create(:model_change)
       allow_any_instance_of(described_class).to receive(:assign_defaults).and_return(true)

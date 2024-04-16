@@ -5,7 +5,7 @@ module Menu
     # ##############################
     # Constants, settings, modules, et...
     # ##############################
-    DEFAULT_COLOR = '#000000'
+    DEFAULT_COLOR = "#000000"
     VALID_STATUSES = %w[active deleted].freeze
     include HasImageAttached
     include TrackModelChanges
@@ -19,8 +19,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    has_many :menu_tags_in_dishes, class_name: 'Menu::TagsInDish', foreign_key: :menu_tag_id, dependent: :destroy
-    has_many :menu_dishes, class_name: 'Menu::Dish', through: :menu_tags_in_dishes
+    has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_tag_id, dependent: :destroy
+    has_many :menu_dishes, class_name: "Menu::Dish", through: :menu_tags_in_dishes
     alias_attribute :dishes, :menu_dishes
 
     # ##############################
@@ -62,6 +62,13 @@ module Menu
 
         where(id: ransack(description_cont: query).result.select(:id))
       end
+
+      def adjust_indexes_for_dish(dish_id)
+        items = Menu::Tag.where(id: Menu::TagsInDish.where(menu_dish_id: dish_id).order(:index).select(:menu_tag_id).limit(1))
+        return if items.empty?
+
+        items.first.move!(to_index: 0, dish_id:)
+      end
     end
 
     # ##############################
@@ -69,7 +76,7 @@ module Menu
     # ##############################
     def assign_defaults
       self.other = {} if other.nil?
-      self.status = 'active' if status.blank?
+      self.status = "active" if status.blank?
       self.color = DEFAULT_COLOR if color.blank?
     end
 
@@ -88,7 +95,15 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value('status', value)
+      @attributes.write_cast_value("status", value)
+    end
+
+    def move!(to_index:, dish_id:)
+      MoveTag.run!(tag: self, params: { to_index:, dish_id: })
+    end
+
+    def move(to_index:, dish_id:)
+      MoveTag.run(tag: self, params: { to_index:, dish_id: })
     end
 
     private

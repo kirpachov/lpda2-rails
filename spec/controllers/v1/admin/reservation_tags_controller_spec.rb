@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
-RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE = 'RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE'
+RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE = "RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE"
 RSpec.shared_examples RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE do |options = {}|
-  it 'has valid structure' do
+  it "has valid structure" do
     expect(subject).to be_a(Hash)
     expect(subject).to include(id: Integer, title: String, bg_color: String, color: String, created_at: String,
                                updated_at: String)
@@ -30,29 +30,29 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
 
   let(:user) { create(:user) }
 
-  describe '#index' do
+  describe "#index" do
     let(:params) { {} }
     let(:reservation_tag) { create(:reservation_tag) }
 
     it { expect(instance).to respond_to(:index) }
-    it { expect(described_class).to route(:get, '/v1/admin/reservation_tags').to(action: :index, format: :json) }
+    it { expect(described_class).to route(:get, "/v1/admin/reservation_tags").to(action: :index, format: :json) }
 
     def req(data = params)
       get :index, params: data
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context 'when user is authenticated' do
+    context "when user is authenticated" do
       before do
         authenticate_request(user:)
       end
 
-      context 'should return a Hash with {items: Array, metadata: Hash}' do
+      context "should return a Hash with {items: Array, metadata: Hash}" do
         subject { parsed_response_body }
 
         before { req }
@@ -61,7 +61,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         it { is_expected.to include(items: Array, metadata: Hash) }
       end
 
-      context '[:items].sample' do
+      context "[:items].sample" do
         subject { parsed_response_body[:items].sample }
 
         before do
@@ -75,14 +75,14 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
     end
   end
 
-  describe '#update' do
+  describe "#update" do
     let(:params) { {} }
     let(:reservation_tag) { create(:reservation_tag) }
 
     it { expect(instance).to respond_to(:update) }
 
     it {
-      expect(described_class).to route(:patch, '/v1/admin/reservation_tags/21').to(id: '21', action: :update,
+      expect(described_class).to route(:patch, "/v1/admin/reservation_tags/21").to(id: "21", action: :update,
                                                                                    format: :json)
     }
 
@@ -90,22 +90,22 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
       patch :update, params: data.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context 'when user is authenticated' do
+    context "when user is authenticated" do
       before { authenticate_request(user:) }
 
-      context 'when no data is provided, nothing is changed.' do
+      context "when no data is provided, nothing is changed." do
         before { reservation_tag }
 
         it { expect { req }.not_to(change { reservation_tag.reload.as_json }) }
       end
 
-      context 'when :title is provided, will update title' do
+      context "when :title is provided, will update title" do
         before { reservation_tag }
 
         let(:title) { Faker::Lorem.sentence }
@@ -114,7 +114,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         it { expect { req }.to(change { reservation_tag.reload.title }) }
       end
 
-      context 'when :bg_color is provided, will update bg_color' do
+      context "when :bg_color is provided, will update bg_color" do
         before { reservation_tag }
 
         let(:bg_color) { Faker::Color.hex_color }
@@ -123,7 +123,7 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         it { expect { req }.to(change { reservation_tag.reload.bg_color }) }
       end
 
-      context 'when :color is provided, will update color' do
+      context "when :color is provided, will update color" do
         before { reservation_tag }
 
         let(:color) { Faker::Color.hex_color }
@@ -134,28 +134,28 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
     end
   end
 
-  describe '#create' do
+  describe "#create" do
     let(:params) { attributes_for(:reservation_tag) }
 
     it { expect(instance).to respond_to(:create) }
-    it { expect(described_class).to route(:post, '/v1/admin/reservation_tags').to(action: :create, format: :json) }
+    it { expect(described_class).to route(:post, "/v1/admin/reservation_tags").to(action: :create, format: :json) }
 
     def req(data = params)
       post :create, params: data
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context 'when user is authenticated' do
+    context "when user is authenticated" do
       before do
         authenticate_request(user:)
       end
 
-      context 'will return items json' do
+      context "will return items json" do
         subject { parsed_response_body[:item] }
 
         before { req }
@@ -165,12 +165,12 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         it_behaves_like RESERVATION_TAG_ADMIN_CONTROLLER_STRUCTURE
       end
 
-      context 'if name is missing should return 422' do
+      context "if name is missing should return 422" do
         let(:params) { { title: nil, color: Faker::Color.hex_color, bg_color: Faker::Color.hex_color } }
 
         it { expect { req(params) }.not_to change(ReservationTag, :count) }
 
-        context '[after req]' do
+        context "[after req]" do
           subject { response }
 
           before { req(params) }
@@ -180,12 +180,12 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         end
       end
 
-      context 'if color is missing should return 422' do
+      context "if color is missing should return 422" do
         let(:params) { { title: Faker::Lorem.paragraph, color: nil, bg_color: Faker::Color.hex_color } }
 
         it { expect { req(params) }.not_to change(ReservationTag, :count) }
 
-        context '[after req]' do
+        context "[after req]" do
           subject { response }
 
           before { req(params) }
@@ -195,12 +195,12 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         end
       end
 
-      context 'if bg_color is missing should return 422' do
+      context "if bg_color is missing should return 422" do
         let(:params) { { title: Faker::Lorem.paragraph, color: Faker::Color.hex_color, bg_color: nil } }
 
         it { expect { req(params) }.not_to change(ReservationTag, :count) }
 
-        context '[after req]' do
+        context "[after req]" do
           subject { response }
 
           before { req(params) }
@@ -210,14 +210,14 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
         end
       end
 
-      context 'if name, color and bg_color are provided, is ok.' do
+      context "if name, color and bg_color are provided, is ok." do
         let(:params) do
           { title: Faker::Lorem.paragraph, color: Faker::Color.hex_color, bg_color: Faker::Color.hex_color }
         end
 
         it { expect { req(params) }.to change(ReservationTag, :count).by(1) }
 
-        context '[after req]' do
+        context "[after req]" do
           subject { parsed_response_body[:item] }
 
           before { req(params) }
@@ -230,14 +230,14 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
     end
   end
 
-  describe '#destroy' do
+  describe "#destroy" do
     let(:reservation_tag) { create(:reservation_tag) }
     let(:params) { {} }
 
     it { expect(instance).to respond_to(:destroy) }
 
     it {
-      expect(described_class).to route(:delete, '/v1/admin/reservation_tags/77').to(id: '77', action: :destroy,
+      expect(described_class).to route(:delete, "/v1/admin/reservation_tags/77").to(id: "77", action: :destroy,
                                                                                     format: :json)
     }
 
@@ -245,23 +245,23 @@ RSpec.describe V1::Admin::ReservationTagsController, type: :controller do
       delete :destroy, params: data.merge(id:)
     end
 
-    context 'when user is not authenticated' do
+    context "when user is not authenticated" do
       before { req }
 
       it_behaves_like UNAUTHORIZED
     end
 
-    context 'when user is authenticated' do
+    context "when user is authenticated" do
       before do
         authenticate_request(user:)
       end
 
-      it 'deletes element from database' do
+      it "deletes element from database" do
         reservation_tag
         expect { req }.to change(ReservationTag, :count).by(-1)
       end
 
-      context 'if item could not be found' do
+      context "if item could not be found" do
         subject { response }
 
         before { req(999_999_999) }

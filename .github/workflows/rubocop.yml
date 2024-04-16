@@ -8,12 +8,6 @@ name: "Rubocop"
 
 on:
   push:
-    branches: [ "develop" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "develop" ]
-  schedule:
-    - cron: '30 1 * * 5'
 
 jobs:
   rubocop:

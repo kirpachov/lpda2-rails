@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-CANNOT_PUBLISH_CATEGORY = 'cannot publish category'
+CANNOT_PUBLISH_CATEGORY = "cannot publish category"
 RSpec.shared_examples CANNOT_PUBLISH_CATEGORY do |options = nil|
-  context 'checking mock data' do
-    it 'has a subject of type Menu::CanPublishCategory' do
+  context "checking mock data" do
+    it "has a subject of type Menu::CanPublishCategory" do
       expect(subject).to be_a(Menu::CanPublishCategory)
     end
 
-    it 'has a let(:category) of type Menu::Category' do
+    it "has a let(:category) of type Menu::Category" do
       expect(category).to eq category
       expect(category).to be_a(Menu::Category)
       expect { category }.not_to(change { Menu::Category.count })
@@ -25,7 +25,7 @@ RSpec.shared_examples CANNOT_PUBLISH_CATEGORY do |options = nil|
   end
 end
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Menu::CanPublishCategory, type: :interaction do
   subject { call }
@@ -34,14 +34,14 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
   let(:reasons_codes) { reasons.map { |er| er.options[:code].to_sym } }
   let(:call) { described_class.run(category:) }
 
-  context 'cannot publish category' do
-    context 'when category is not root' do
+  context "cannot publish category" do
+    context "when category is not root" do
       let(:category) { create(:menu_category, visibility: nil, parent: create(:menu_category)) }
 
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[category_not_root]
     end
 
-    context 'when category has 0 dishes' do
+    context "when category has 0 dishes" do
       let(:category) { create(:menu_category) }
 
       it { expect(category.dishes).to be_empty }
@@ -49,7 +49,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_dishes]
     end
 
-    context 'when category hasnt name' do
+    context "when category hasnt name" do
       let(:category) { create(:menu_category) }
 
       it { expect(category.name).to be_nil }
@@ -57,7 +57,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_name]
     end
 
-    context 'when dish hasnt name' do
+    context "when dish hasnt name" do
       let(:category) { create(:menu_category) }
       let(:dish) { create(:menu_dish) }
 
@@ -79,7 +79,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[dish_missing_name]
     end
 
-    context 'when category has only deleted dishes' do
+    context "when category has only deleted dishes" do
       let(:category) do
         cat = create(:menu_category)
         cat.dishes << create(:menu_dish, status: :deleted)
@@ -95,7 +95,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_dishes]
     end
 
-    context 'when category has no images' do
+    context "when category has no images" do
       let(:category) { create(:menu_category) }
 
       it { expect(category.images).to be_empty }
@@ -103,7 +103,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[category_has_no_images]
     end
 
-    context 'when category has no price' do
+    context "when category has no price" do
       let(:category) do
         create(:menu_category, price: nil).tap do |cat|
           cat.dishes = create_list(:menu_dish, 3, price: nil)
@@ -115,7 +115,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_price]
     end
 
-    context 'when has dishes without price' do
+    context "when has dishes without price" do
       let(:category) do
         cat = create(:menu_category, price: nil)
         cat.dishes << create(:menu_dish, price: nil)
@@ -131,7 +131,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[missing_price]
     end
 
-    context 'when has one dish and its without image' do
+    context "when has one dish and its without image" do
       let(:category) do
         cat = create(:menu_category)
         cat.dishes << create(:menu_dish)
@@ -146,7 +146,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[dish_has_no_images]
     end
 
-    context 'when has dishes without images' do
+    context "when has dishes without images" do
       let(:category) do
         cat = create(:menu_category)
         cat.dishes << create(:menu_dish)
@@ -163,7 +163,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[dish_has_no_images]
     end
 
-    context 'when has dishes without ingredients' do
+    context "when has dishes without ingredients" do
       let(:category) do
         cat = create(:menu_category)
         cat.dishes << create(:menu_dish)
@@ -178,7 +178,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[dish_missing_ingredients]
     end
 
-    context 'when has invalid dishes' do
+    context "when has invalid dishes" do
       let(:category) do
         cat = create(:menu_category)
         cat.dishes << create(:menu_dish)
@@ -199,7 +199,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       include_examples CANNOT_PUBLISH_CATEGORY, expected_reasons: %i[dish_invalid]
     end
 
-    context 'when category is invalid' do
+    context "when category is invalid" do
       let(:category) { create(:menu_category) }
 
       before do
@@ -215,7 +215,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
     end
   end
 
-  context 'can publish category if category and dishes are valid, have ingredients and images.' do
+  context "can publish category if category and dishes are valid, have ingredients and images." do
     let(:category) do
       create(:menu_category, images: [create(:image, :with_attached_image)])
     end
@@ -244,7 +244,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       dish.save!
     end
 
-    context 'checking mock data' do
+    context "checking mock data" do
       it { expect(dish).to be_valid }
       it { expect(dish).to be_persisted }
       it { expect(dish.images).not_to be_empty }

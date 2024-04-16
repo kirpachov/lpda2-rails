@@ -18,9 +18,9 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    has_many :menu_ingredients_in_dishes, class_name: 'Menu::IngredientsInDish', foreign_key: :menu_ingredient_id,
+    has_many :menu_ingredients_in_dishes, class_name: "Menu::IngredientsInDish", foreign_key: :menu_ingredient_id,
                                           dependent: :destroy
-    has_many :menu_dishes, class_name: 'Menu::Dish', through: :menu_ingredients_in_dishes
+    has_many :menu_dishes, class_name: "Menu::Dish", through: :menu_ingredients_in_dishes
     alias_attribute :dishes, :menu_dishes
 
     # ##############################
@@ -60,6 +60,13 @@ module Menu
 
         where(id: ransack(description_cont: query).result.select(:id))
       end
+
+      def adjust_indexes_for_dish(dish_id)
+        items = Menu::Ingredient.where(id: Menu::IngredientsInDish.where(menu_dish_id: dish_id).order(:index).select(:menu_ingredient_id).limit(1))
+        return if items.empty?
+
+        items.first.move!(to_index: 0, dish_id:)
+      end
     end
 
     # ##############################
@@ -67,7 +74,7 @@ module Menu
     # ##############################
     def assign_defaults
       self.other = {} if other.nil?
-      self.status = 'active' if status.blank?
+      self.status = "active" if status.blank?
     end
 
     # @param [Hash] options
@@ -85,7 +92,15 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value('status', value)
+      @attributes.write_cast_value("status", value)
+    end
+
+    def move!(to_index:, dish_id:)
+      MoveIngredient.run!(ingredient: self, params: { to_index:, dish_id: })
+    end
+
+    def move(to_index:, dish_id:)
+      MoveIngredient.run(ingredient: self, params: { to_index:, dish_id: })
     end
 
     private

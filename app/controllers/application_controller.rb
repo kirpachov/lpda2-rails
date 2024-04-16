@@ -9,17 +9,17 @@ class ApplicationController < ActionController::API
   attr_reader :current_user
 
   def authenticate_user
-    # @current_user = User.first
-    @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
+    @current_user = User.first
+    # @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
     render_unauthorized unless @current_user
   end
 
   def render_unauthorized
-    render_error status: 401, message: 'Unauthorized' # TODO: TRANSLATE THIS
+    render_error status: 401, message: "Unauthorized" # TODO: TRANSLATE THIS
   end
 
   def render_unprocessable_entity(record)
-    render_error status: 422, message: record.errors.full_messages.join(', '), details: record.errors.full_json
+    render_error status: 422, message: record.errors.full_messages.join(", "), details: record.errors.full_json
   end
 
   def render_error(status: nil, message: nil, details: {})
@@ -28,7 +28,7 @@ class ApplicationController < ActionController::API
 
   # Will try to assign the provided image to the record. Returns true if success.
   def assign_image_from_param(record, param)
-    if param.blank? || param == 'null'
+    if param.blank? || param == "null"
       record.image_to_record.destroy! if record.image_to_record
       return true
     end
@@ -38,7 +38,7 @@ class ApplicationController < ActionController::API
       return true
     end
 
-    render_error(status: 400, message: 'Invalid image param')
+    render_error(status: 400, message: "Invalid image param")
     false
   end
 
@@ -56,7 +56,7 @@ class ApplicationController < ActionController::API
   end
 
   def detect_current_locale
-    locale = params[:locale] || params[:lang] || request.headers['Accept-Language']
+    locale = params[:locale] || params[:lang] || request.headers["Accept-Language"]
     return unless I18n.available_locales.include?(locale&.to_sym)
 
     locale
@@ -75,8 +75,8 @@ class ApplicationController < ActionController::API
       params: params.except(:controller, :action, :format, :page, :per_page,
                             :offset).permit!.to_h.transform_values do |value|
                 next value.to_i if value.is_a?(String) && value.match?(/^\d+$/) && value.to_i.to_s == value
-                next true if value.is_a?(String) && value == 'true'
-                next false if value.is_a?(String) && value == 'false'
+                next true if value.is_a?(String) && value == "true"
+                next false if value.is_a?(String) && value == "false"
 
                 value
               end

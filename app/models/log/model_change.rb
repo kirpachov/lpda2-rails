@@ -42,12 +42,12 @@ module Log
     scope :has_no_user, -> { where(user_id: nil) }
     scope :hasnt_user, -> { has_no_user }
     scope :with_record, -> { includes(:record) }
-    scope :created, -> { where(change_type: 'create') }
-    scope :not_created, -> { where.not(change_type: 'create') }
-    scope :updated, -> { where(change_type: 'update') }
-    scope :not_updated, -> { where.not(change_type: 'update') }
-    scope :deleted, -> { where(change_type: 'delete') }
-    scope :not_deleted, -> { where.not(change_type: 'delete') }
+    scope :created, -> { where(change_type: "create") }
+    scope :not_created, -> { where.not(change_type: "create") }
+    scope :updated, -> { where(change_type: "update") }
+    scope :not_updated, -> { where.not(change_type: "update") }
+    scope :deleted, -> { where(change_type: "delete") }
+    scope :not_deleted, -> { where.not(change_type: "delete") }
 
     # ############################
     # Class Methods
@@ -112,15 +112,15 @@ module Log
     end
 
     def created?
-      change_type == 'create'
+      change_type == "create"
     end
 
     def updated?
-      change_type == 'update'
+      change_type == "update"
     end
 
     def deleted?
-      change_type == 'delete'
+      change_type == "delete"
     end
 
     def set_changed_fields
@@ -136,27 +136,27 @@ module Log
     def record_changes_cannot_be_empty
       return if record_changes.is_a?(Hash) && !record_changes.empty?
 
-      errors.add(:record_changes, 'cannot be empty')
+      errors.add(:record_changes, "cannot be empty")
     end
 
     def changed_fields_must_refer_to_record_attributes
       return if changed_fields.nil? || changed_fields.empty? || record.nil?
 
       changed_fields.each do |field|
-        errors.add(:changed_fields, 'must refer to record attributes') unless record.respond_to?(field)
+        errors.add(:changed_fields, "must refer to record attributes") unless record.respond_to?(field)
       end
     end
 
     def changed_fields_must_be_array_validator
       return if changed_fields.is_a?(Array)
 
-      errors.add(:changed_fields, 'must be an array')
+      errors.add(:changed_fields, "must be an array")
     end
 
     def record_changes_must_be_hash_validator
       return if record_changes.is_a?(Hash)
 
-      errors.add(:record_changes, 'must be a hash')
+      errors.add(:record_changes, "must be a hash")
     end
   end
 end

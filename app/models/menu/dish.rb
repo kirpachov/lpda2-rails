@@ -11,24 +11,27 @@ module Menu
     translates :name
     translates :description
 
-    VALID_STATUSES = %w[active deleted].freeze
+    VALID_STATUSES = %w[active inactive deleted].freeze
 
     enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
 
     # ##############################
     # Associations
     # ##############################
-    has_many :menu_dishes_in_categories, class_name: 'Menu::DishesInCategory', foreign_key: :menu_dish_id,
-                                         dependent: :destroy
-    has_many :menu_categories, class_name: 'Menu::Category', through: :menu_dishes_in_categories
-    has_many :menu_ingredients_in_dishes, class_name: 'Menu::IngredientsInDish', foreign_key: :menu_dish_id,
-                                          dependent: :destroy
-    has_many :menu_ingredients, class_name: 'Menu::Ingredient', through: :menu_ingredients_in_dishes
-    has_many :menu_allergens_in_dishes, class_name: 'Menu::AllergensInDish', foreign_key: :menu_dish_id,
-                                        dependent: :destroy
-    has_many :menu_allergens, class_name: 'Menu::Allergen', through: :menu_allergens_in_dishes
-    has_many :menu_tags_in_dishes, class_name: 'Menu::TagsInDish', foreign_key: :menu_dish_id, dependent: :destroy
-    has_many :menu_tags, class_name: 'Menu::Tag', through: :menu_tags_in_dishes
+    has_many :menu_dishes_in_categories, class_name: "Menu::DishesInCategory", foreign_key: :menu_dish_id,
+             dependent: :destroy
+    has_many :menu_categories, class_name: "Menu::Category", through: :menu_dishes_in_categories
+    has_many :menu_ingredients_in_dishes, class_name: "Menu::IngredientsInDish", foreign_key: :menu_dish_id,
+             dependent: :destroy
+    has_many :menu_ingredients, class_name: "Menu::Ingredient", through: :menu_ingredients_in_dishes, after_remove: :after_remove_ingredient
+    has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_dish_id,
+             dependent: :destroy
+    has_many :menu_allergens, class_name: "Menu::Allergen", through: :menu_allergens_in_dishes, after_remove: :after_remove_allergen
+    has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_dish_id, dependent: :destroy
+    has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes, after_remove: :after_remove_tag
+
+    has_many :dish_suggestions, class_name: "Menu::DishSuggestion", foreign_key: :dish_id, dependent: :destroy
+    has_many :suggestions, class_name: "Menu::Dish", through: :dish_suggestions, source: :suggestion
 
     alias_attribute :categories, :menu_categories
     alias_attribute :ingredients, :menu_ingredients
@@ -72,6 +75,13 @@ module Menu
 
         where(id: ransack(description_cont: query).result.select(:id))
       end
+
+      def adjust_indexes_for_category(category_id)
+        items = Menu::Dish.where(id: Menu::DishesInCategory.where(menu_category_id: category_id).order(:index).select(:menu_dish_id).limit(1))
+        return if items.empty?
+
+        items.first.move!(to_index: 0, category_id:)
+      end
     end
 
     # ##############################
@@ -80,7 +90,19 @@ module Menu
     def status=(value)
       super
     rescue ArgumentError
-      @attributes.write_cast_value('status', value)
+      @attributes.write_cast_value("status", value)
+    end
+
+    def after_remove_allergen(_allergen)
+      Menu::Allergen.adjust_indexes_for_dish(id)
+    end
+
+    def after_remove_tag(_tag)
+      Menu::Tag.adjust_indexes_for_dish(id)
+    end
+
+    def after_remove_ingredient(_ingredient)
+      Menu::Ingredient.adjust_indexes_for_dish(id)
     end
 
     # @param [Hash] options
@@ -96,8 +118,27 @@ module Menu
     end
 
     def assign_defaults
-      self.status = 'active' if status.blank?
+      self.status = "active" if status.blank?
       self.other = {} if other.nil?
+    end
+
+    def move!(to_index:, category_id:)
+      MoveDish.run!(dish: self, params: { to_index:, category_id: })
+    end
+
+    def move(to_index:, category_id:)
+      MoveDish.run(dish: self, params: { to_index:, category_id: })
+    end
+
+    def references_json
+      categories = []
+      menu_categories.each do |category|
+        categories << category.as_json(only: %i[id]).merge(name: category.name, breadcrumbs: category.breadcrumbs_json)
+      end
+
+      {
+        categories: categories
+      }
     end
   end
 end

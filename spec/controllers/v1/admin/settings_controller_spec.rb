@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe V1::Admin::SettingsController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
@@ -15,17 +15,17 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
     %w[default_language available_locales max_people_per_reservation email_contacts]
   end
 
-  describe '#index' do
+  describe "#index" do
     def req
       get :index
     end
 
-    context 'response' do
+    context "response" do
       subject { req }
 
       it { is_expected.to be_successful }
 
-      context 'body' do
+      context "body" do
         subject { json }
 
         before { req }
@@ -35,44 +35,44 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
         it { is_expected.to be_a(Hash) }
         it { is_expected.not_to be_empty }
 
-        it 'checking values' do
+        it "checking values" do
           expect(subject.keys).to include(*setting_keys)
-          expect(subject['default_language']).to eq Setting.default(:default_language).to_s
+          expect(subject["default_language"]).to eq Setting.default(:default_language).to_s
         end
       end
     end
   end
 
-  describe '#value' do
+  describe "#value" do
     def req(key = setting_keys.sample)
       get :value, params: { key: }
     end
 
-    it 'returns the value of the setting' do
+    it "returns the value of the setting" do
       req
 
       expect(response).to be_successful
     end
 
-    it 'returns just the value of the required setting' do
+    it "returns just the value of the required setting" do
       Setting.find_or_initialize_by(key: :default_language).update(value: I18n.available_locales.sample.to_s)
 
       req(:default_language)
 
       expect(parsed_response_body.keys).to match_array(%w[value])
-      expect(parsed_response_body['value']).to eq Setting.find_by(key: :default_language).value.to_s
+      expect(parsed_response_body["value"]).to eq Setting.find_by(key: :default_language).value.to_s
     end
 
-    it 'returns empty string instead of nil if value is nil' do
+    it "returns empty string instead of nil if value is nil" do
       Setting.find_or_initialize_by(key: :default_language).update(value: nil)
 
       req(:default_language)
 
       expect(parsed_response_body.keys).to match_array(%w[value])
-      expect(parsed_response_body['value']).to eq ''
+      expect(parsed_response_body["value"]).to eq ""
     end
 
-    it 'returns error if invalid key is required' do
+    it "returns error if invalid key is required" do
       req(:something_that_should_not_exist)
 
       expect(response).to have_http_status(:not_found)
@@ -83,26 +83,26 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
     end
   end
 
-  describe '#show' do
-    let(:key) { 'default_language' }
+  describe "#show" do
+    let(:key) { "default_language" }
 
     def req(mkey = key)
       get :show, params: { key: mkey }
     end
 
-    it 'is successful' do
+    it "is successful" do
       req
 
       expect(response).to be_successful
     end
 
-    context 'checking mock data' do
+    context "checking mock data" do
       it do
         expect(Setting.find_by(key:).value).not_to eq nil
       end
     end
 
-    context 'should return the full record' do
+    context "should return the full record" do
       subject { json }
 
       before { req }
@@ -121,23 +121,23 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
     end
   end
 
-  describe '#update' do
+  describe "#update" do
     it {
-      expect(subject).to route(:patch, '/v1/admin/settings/default_language').to(action: :update, key: 'default_language',
-                                                                                 'format': :json)
+      expect(subject).to route(:patch, "/v1/admin/settings/default_language").to(action: :update, key: "default_language",
+                                                                                 format: :json)
     }
 
     def req(key, value)
       patch :update, params: { key:, value: }
     end
 
-    it 'is successful' do
+    it "is successful" do
       req(:default_language, :en)
 
       expect(response).to be_successful
     end
 
-    it 'is able to update the value' do
+    it "is able to update the value" do
       languages = I18n.available_locales.map(&:to_s)
       5.times do
         language = languages.sample
@@ -148,7 +148,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
       end
     end
 
-    it 'returns 422 with error explanation if invalid value is provided' do
+    it "returns 422 with error explanation if invalid value is provided" do
       req(:default_language, :some_invalid_language)
 
       expect(response).not_to be_successful
@@ -158,7 +158,7 @@ RSpec.describe V1::Admin::SettingsController, type: :controller do
       expect(parsed_response_body).to include(:details)
     end
 
-    it 'returns an error if invalid key is provided' do
+    it "returns an error if invalid key is provided" do
       req(:some_strange_invalid_key, :en)
 
       expect(response).not_to be_successful

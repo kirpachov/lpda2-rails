@@ -24,8 +24,8 @@ module Dev
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
       request = Net::HTTP::Get.new(url)
-      request['Content-Type'] = 'application/json'
-      request['Authorization'] = "x-api-key #{api_key}"
+      request["Content-Type"] = "application/json"
+      request["Authorization"] = "x-api-key #{api_key}"
       # request.body = { limit: }.to_json
 
       response = http.request(request)
@@ -40,7 +40,7 @@ module Dev
     def api_key_present
       return if api_key.present?
 
-      errors.add(:api_key, 'is required')
+      errors.add(:api_key, "is required")
       errors.add(:base, <<~ERROR
         Api key is required to fetch cat images.
         You can get one from https://thecatapi.com/

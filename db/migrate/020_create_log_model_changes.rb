@@ -2,8 +2,8 @@
 
 # Creating ModelChange's table
 class CreateLogModelChanges < ActiveRecord::Migration[7.0]
-  def change # rubocop:disable Metrics/MethodLength
-    create_table :log_model_changes, id: 'bigserial' do |t| # rubocop:disable Metrics/BlockLength
+  def change
+    create_table :log_model_changes, id: "bigserial" do |t| # rubocop:disable Metrics/BlockLength
       t.references  :record,
                     polymorphic: true,
                     null: false,

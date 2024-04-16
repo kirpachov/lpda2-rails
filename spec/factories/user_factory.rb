@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :user do
     email { generate(:user_email) }
-    status { 'active' }
+    status { "active" }
   end
 
   trait :admin do
@@ -11,7 +11,7 @@ FactoryBot.define do
   end
 
   sequence :user_email do |n|
-    Faker::Internet.email.gsub('@', "#{n}@")
+    Faker::Internet.email.gsub("@", "#{n}@")
   end
 
   sequence :user_username do |n|

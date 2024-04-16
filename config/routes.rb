@@ -1,115 +1,134 @@
 # frozen_string_literal: true
 
-require 'sidekiq_admin_constraint'
-require 'sidekiq/web'
+require "sidekiq_admin_constraint"
+require "sidekiq/web"
 
 Rails.application.routes.draw do
-  mount Sidekiq::Web => '/sidekiq', :constraints => SidekiqAdminConstraint
-  require 'sidekiq/cron/web'
-  require 'sidekiq-status/web'
+  mount Sidekiq::Web => "/sidekiq", :constraints => SidekiqAdminConstraint
+  require "sidekiq/cron/web"
+  require "sidekiq-status/web"
 
   defaults format: :json do
-    scope module: :v1, path: 'v1' do
+    scope module: :v1, path: "v1" do
       resources :images, only: %w[index show create] do
         member do
-          get 'download', action: :download
-          get 'download/:variant', action: :download_variant
-          patch 'remove_from_record'
+          get "download", action: :download
+          get "download/:variant", action: :download_variant
+          patch "remove_from_record"
         end
 
         collection do
-          patch 'record', action: :update_record
-          get 'key/:key', action: :download_by_key, as: :download_by_key
-          get 'p/:secret', action: :download_by_pixel_secret, as: :download_by_pixel_secret
+          patch "record", action: :update_record
+          get "key/:key", action: :download_by_key, as: :download_by_key
+          get "p/:secret", action: :download_by_pixel_secret, as: :download_by_pixel_secret
         end
       end
 
       resources :reservations, only: %i[create] do
         collection do
-          get ':secret', action: :show
-          patch 'cancel', action: :cancel
+          get ":secret", action: :show
+          patch "cancel", action: :cancel
         end
       end
 
-      scope module: :admin, path: 'admin' do
+      scope module: :admin, path: "admin" do
         resources :reservation_turns
         resources :reservation_tags
         resources :reservations do
           collection do
-            get 'valid_times'
+            get "valid_times"
           end
 
           member do
-            patch 'status/:status', action: :update_status
-            post 'add_tag/:tag_id', action: :add_tag
-            delete 'remove_tag/:tag_id', action: :remove_tag
-            post 'deliver_confirmation_email'
+            patch "status/:status", action: :update_status
+            post "add_tag/:tag_id", action: :add_tag
+            delete "remove_tag/:tag_id", action: :remove_tag
+            post "deliver_confirmation_email"
           end
         end
 
         resources :preferences, only: %i[index] do
           collection do
-            get ':key', action: :show
-            get ':key/value', action: :value
-            patch ':key', action: :update
+            get ":key", action: :show
+            get ":key/value", action: :value
+            patch ":key", action: :update
           end
         end
 
         resources :settings, only: %i[index] do
           collection do
-            get ':key', action: :show
-            get ':key/value', action: :value
-            patch ':key', action: :update
+            get ":key", action: :show
+            get ":key/value", action: :value
+            patch ":key", action: :update
           end
         end
 
-        scope module: :menu, path: 'menu' do
+        scope module: :menu, path: "menu" do
+          get "export", action: :export, controller: :export
+
           resources :categories, only: %i[index show create update destroy] do
             member do
-              post 'copy'
-              patch 'visibility'
-              patch 'move/:to_index', action: :move
+              post "copy"
+              patch "visibility"
+              patch "move/:to_index", action: :move
+              patch "order_dishes"
 
-              post 'dishes/:dish_id', action: :add_dish
-              delete 'dishes/:dish_id', action: :remove_dish
-              post 'add_category/:category_child_id', action: :add_category
-              get 'dashboard_data'
+              post "dishes/:dish_id", action: :add_dish
+              delete "dishes/:dish_id", action: :remove_dish
+              post "add_category/:category_child_id", action: :add_category
+              get "dashboard_data"
             end
           end
 
           resources :ingredients, only: %i[index show create update destroy] do
             member do
-              post 'copy'
+              post "copy"
             end
           end
 
           resources :tags, only: %i[index show create update destroy] do
             member do
-              post 'copy'
+              post "copy"
             end
           end
 
           resources :allergens, only: %i[index show create update destroy] do
             member do
-              post 'copy'
+              post "copy"
             end
           end
 
           resources :dishes, only: %i[index show create update destroy] do
             member do
-              post 'copy'
+              post "copy"
 
-              post 'ingredients/:ingredient_id', action: :add_ingredient
-              delete 'ingredients/:ingredient_id', action: :remove_ingredient
+              get "references"
 
-              post 'tags/:tag_id', action: :add_tag
-              delete 'tags/:tag_id', action: :remove_tag
+              post "suggestions/:suggestion_id", action: :add_suggestion
+              delete "suggestions/:suggestion_id", action: :remove_suggestion
 
-              post 'allergens/:allergen_id', action: :add_allergen
-              delete 'allergens/:allergen_id', action: :remove_allergen
+              # Providing params for "move" in request body.
+              patch "move"
 
-              post 'images/:image_id', action: :add_image
-              delete 'images/:image_id', action: :remove_image
+              delete "remove_from_category/:category_id", action: :remove_from_category
+              delete "remove_from_category", action: :remove_from_category
+
+              patch "status/:status", action: :update_status
+
+              post "ingredients/:ingredient_id", action: :add_ingredient
+              patch "ingredients/:ingredient_id/move", action: :move_ingredient
+              delete "ingredients/:ingredient_id", action: :remove_ingredient
+
+              post "tags/:tag_id", action: :add_tag
+              patch "tags/:tag_id/move", action: :move_tag
+              delete "tags/:tag_id", action: :remove_tag
+
+              post "allergens/:allergen_id", action: :add_allergen
+              patch "allergens/:allergen_id/move", action: :move_allergen
+              delete "allergens/:allergen_id", action: :remove_allergen
+
+              post "images/:image_id", action: :add_image
+              delete "images/:image_id", action: :remove_image
             end
           end
         end

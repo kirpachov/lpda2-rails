@@ -5,7 +5,7 @@ module V1
     class CategoriesController < ApplicationController
       before_action :find_category, only: %i[
         show update destroy visibility add_dish remove_dish add_category dashboard_data copy
-        move
+        move order_dishes
       ]
 
       before_action :check_if_can_publish, only: %i[visibility]
@@ -14,7 +14,7 @@ module V1
         call = ::Menu::SearchCategories.run(params:)
         unless call.valid?
           return render_error(status: 400, details: call.errors.as_json,
-                              message: call.errors.full_messages.join(', '))
+                              message: call.errors.full_messages.join(", "))
         end
 
         items = call.result.paginate(pagination_params)
@@ -32,22 +32,15 @@ module V1
       end
 
       def dashboard_data
-        breadcrumb = [@item]
-        parent = @item.parent
-        while parent
-          breadcrumb << parent
-          parent = parent.parent
-        end
-        breadcrumb.reverse!
         render json: {
-          breadcrumbs: breadcrumb.map { |item| item.as_json(only: %i[id]).merge(name: item.name) }
+          breadcrumbs: @item.breadcrumbs_json
         }
       end
 
       def create
         @item = Menu::Category.new(create_params)
-        @item.assign_translation('name', params[:name]) if params[:name].present?
-        @item.assign_translation('description', params[:description]) if params[:description].present?
+        @item.assign_translation("name", params[:name]) if params[:name].present?
+        @item.assign_translation("description", params[:description]) if params[:description].present?
 
         return show if @item.errors.empty? && @item.valid? && @item.save
 
@@ -55,8 +48,8 @@ module V1
       end
 
       def update
-        @item.assign_translation('name', params[:name]) if params.key?(:name)
-        @item.assign_translation('description', params[:description]) if params.key?(:description)
+        @item.assign_translation("name", params[:name]) if params.key?(:name)
+        @item.assign_translation("description", params[:description]) if params.key?(:description)
 
         @item.assign_attributes(update_params)
 
@@ -88,7 +81,7 @@ module V1
       def add_dish
         Menu::Category.transaction do
           dish = Menu::Dish.visible.find(params[:dish_id])
-          dish = dish.copy!(current_user:) if params[:copy].to_s == 'true'
+          dish = dish.copy!(current_user:) if params[:copy].to_s == "true"
           @item.dishes << dish
         end
 
@@ -96,17 +89,27 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:dish_id].inspect))
       end
 
       def move
-        unless params.key?(:to_index) && params[:to_index].present?
-          return render_error(status: 400, message: 'to_index is required')
+        unless params.key?(:to_index) && params[:to_index].present? && params[:to_index].to_i >= 0
+          return render_error(status: 400, message: "to_index is required")
         end
 
         unless @item.move(params[:to_index].to_i) && @item.valid? && @item.errors.empty?
           return render_unprocessable_entity(@item)
         end
+
+        show
+      end
+
+      def order_dishes
+        return render_error(status: 400, message: "field is required") if params[:field].blank?
+
+        call = ::Menu::OrderDishesInCategory.run(category: @item, field: params[:field].to_s)
+
+        return render_unprocessable_entity(call) unless call.valid?
 
         show
       end
@@ -129,14 +132,14 @@ module V1
           return show
         end
 
-        render_error(status: 422, message: call.errors.full_messages.join(', '), details: call.errors.full_json)
+        render_error(status: 422, message: call.errors.full_messages.join(", "), details: call.errors.full_json)
       end
 
       def remove_dish
         @item.dishes.delete(Menu::Dish.find(params[:dish_id]))
         show
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t('record_not_found', model: Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:dish_id].inspect))
       end
 
       def add_category
@@ -151,7 +154,7 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t('record_not_found', model: Menu::Category,
+                     message: I18n.t("record_not_found", model: Menu::Category,
                                                          id: params[:category_child_id].inspect))
       end
 
@@ -160,7 +163,7 @@ module V1
       def check_if_can_publish
         return if force?
 
-        publishing_now = [true, 1, 'true', '1', :true].include?(params[:public_visible])
+        publishing_now = [true, 1, "true", "1", :true].include?(params[:public_visible])
         return unless publishing_now
 
         call = Menu::CanPublishCategory.run(category: @item)
@@ -168,13 +171,13 @@ module V1
 
         render_error(
           status: :unprocessable_entity,
-          message: "Cannot publish this category: #{call.reasons.full_messages.join(', ')}",
+          message: "Cannot publish this category: #{call.reasons.full_messages.join(", ")}",
           details: call.reasons.full_json.merge(error_code: :cannot_publish)
         )
       end
 
       def force?
-        [true, 1, 'true', '1', :true].include? params[:force]
+        [true, 1, "true", "1", :true].include? params[:force]
       end
 
       def visibility_params
@@ -187,7 +190,7 @@ module V1
       end
 
       def update_params
-        update_params = params.permit(:parent_id, :secret_desc)
+        update_params = params.permit(:parent_id, :secret_desc, :price)
         if update_params[:parent_id].is_a?(Integer) || update_params[:parent_id].is_a?(String)
           update_params.merge!(visibility_id: nil)
         end
@@ -200,7 +203,7 @@ module V1
         return unless @item.nil?
 
         render_error(status: 404,
-                     message: I18n.t('record_not_found', model: Menu::Category,
+                     message: I18n.t("record_not_found", model: Menu::Category,
                                                          id: params[:id].inspect))
       end
 

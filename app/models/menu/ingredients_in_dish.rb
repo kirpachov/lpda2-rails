@@ -5,8 +5,8 @@ module Menu
     # ##############################
     # Associations
     # ##############################
-    belongs_to :menu_dish, class_name: 'Menu::Dish', optional: false
-    belongs_to :menu_ingredient, class_name: 'Menu::Ingredient', optional: false
+    belongs_to :menu_dish, class_name: "Menu::Dish", optional: false
+    belongs_to :menu_ingredient, class_name: "Menu::Ingredient", optional: false
 
     alias_attribute :dish, :menu_dish
     alias_attribute :ingredient, :menu_ingredient
@@ -18,23 +18,20 @@ module Menu
     # Validations
     # ##############################
     validates :index, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false, uniqueness: { scope: :dish_id }
-    validates :menu_ingredient_id, uniqueness: { scope: :menu_dish_id }
+    validates :menu_ingredient_id, uniqueness: { scope: :menu_dish_id }, if: -> { menu_dish_id.present? }
 
     # ##############################
     # Callbacks
     # ##############################
-    before_validation :assign_defaults, on: :create
-    before_validation :assign_valid_index, on: :update
+    after_initialize :assign_valid_index, if: -> { new_record? }
 
     # ##############################
     # Instance methods
     # ##############################
-    def assign_defaults
-      assign_valid_index if index.to_i <= 0
-    end
-
     def assign_valid_index
-      self.index = self.class.where(dish:).order(index: :desc).first&.index.to_i + 1
+      return if index.present? && index.to_i >= 0
+
+      self.index = self.class.where(dish_id:).count
     end
   end
 end

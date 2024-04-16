@@ -13,7 +13,7 @@ class User < ApplicationRecord
   # ################################
   # Validations
   # ################################
-  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: 'is not a valid email' },
+  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: "is not a valid email" },
                     uniqueness: { case_sensitive: false }
   validates :username, presence: false, uniqueness: { case_sensitive: false, allow_blank: true }
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
@@ -35,13 +35,13 @@ class User < ApplicationRecord
   # Instance methods
   # ################################
   def assign_defaults
-    self.status = 'active' if status.blank?
+    self.status = "active" if status.blank?
   end
 
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value('status', value)
+    @attributes.write_cast_value("status", value)
   end
 
   def create_missing_preferences
@@ -62,7 +62,7 @@ class User < ApplicationRecord
   end
 
   def generate_refresh_token
-    return errors.add(:base, 'must be persisted') unless persisted?
+    return errors.add(:base, "must be persisted") unless persisted?
 
     RefreshToken.generate_for(id)
   end

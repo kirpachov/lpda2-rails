@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
 module Menu
+  # Deep copy for a Menu::Dish record.
   class CopyDish < ActiveInteraction::Base
     record :old, class: Dish
     record :current_user, class: User
 
-    string :copy_images, default: 'full'
-    string :copy_ingredients, default: 'full'
-    string :copy_tags, default: 'full'
-    string :copy_allergens, default: 'full'
+    # Category where to add the new dish.
+    record :category, class: Menu::Category, default: nil
+
+    string :copy_images, default: "full"
+    string :copy_ingredients, default: "full"
+    string :copy_tags, default: "full"
+    string :copy_allergens, default: "full"
 
     validates :copy_images, inclusion: { in: %w[full link none] }
     validates :copy_ingredients, inclusion: { in: %w[full link none] }
@@ -28,7 +32,8 @@ module Menu
                                               do_copy_images &&
                                               do_copy_ingredients &&
                                               do_copy_tags &&
-                                              do_copy_allergens
+                                              do_copy_allergens &&
+                                              do_add_to_category
         end
 
         @new
@@ -57,9 +62,9 @@ module Menu
       return true unless copy_images.in?(%w[full link]) && old.images.any?
 
       old.images.filter { |img| img.attached_image.attached? }.each do |old_image|
-        if copy_images == 'full'
+        if copy_images == "full"
           @new.images << old_image.copy!(current_user:)
-        elsif copy_images == 'link'
+        elsif copy_images == "link"
           @new.images << old_image
         end
       end
@@ -74,9 +79,9 @@ module Menu
       return true unless copy_ingredients.in?(%w[full link]) && old.ingredients.any?
 
       old.ingredients.each do |old_ingredient|
-        if copy_ingredients == 'full'
+        if copy_ingredients == "full"
           @new.ingredients << old_ingredient.copy!(current_user:)
-        elsif copy_ingredients == 'link'
+        elsif copy_ingredients == "link"
           @new.ingredients << old_ingredient
         end
       end
@@ -91,9 +96,9 @@ module Menu
       return true unless copy_tags.in?(%w[full link]) && old.tags.any?
 
       old.tags.each do |old_tag|
-        if copy_tags == 'full'
+        if copy_tags == "full"
           @new.tags << old_tag.copy!(current_user:)
-        elsif copy_tags == 'link'
+        elsif copy_tags == "link"
           @new.tags << old_tag
         end
       end
@@ -104,13 +109,19 @@ module Menu
       false
     end
 
+    def do_add_to_category
+      return true if category.nil?
+
+      category.dishes << @new
+    end
+
     def do_copy_allergens
       return true unless copy_allergens.in?(%w[full link]) && old.allergens.any?
 
       old.allergens.each do |old_allergen|
-        if copy_allergens == 'full'
+        if copy_allergens == "full"
           @new.allergens << old_allergen.copy!(current_user:)
-        elsif copy_allergens == 'link'
+        elsif copy_allergens == "link"
           @new.allergens << old_allergen
         end
       end

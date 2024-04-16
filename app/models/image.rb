@@ -22,8 +22,8 @@ class Image < ApplicationRecord
   # ################################
   has_many :image_to_records, dependent: :destroy
   has_one_attached :attached_image, dependent: :destroy
-  belongs_to :original, class_name: 'Image', optional: true
-  has_many :children, class_name: 'Image', foreign_key: :original_id, dependent: :destroy
+  belongs_to :original, class_name: "Image", optional: true
+  has_many :children, class_name: "Image", foreign_key: :original_id, dependent: :destroy
 
   # ################################
   # Validations
@@ -43,7 +43,7 @@ class Image < ApplicationRecord
   # ################################
   scope :original, -> { where(original_id: nil) }
   scope :not_original, -> { where.not(original_id: nil) }
-  scope :visible, -> { where(status: 'active') }
+  scope :visible, -> { where(status: "active") }
   scope :with_attached_image, -> { joins(:attached_image_attachment).where.not(attached_image_attachment: { id: nil }) }
 
   # ################################
@@ -52,12 +52,12 @@ class Image < ApplicationRecord
   class << self
     def create_from_url(data)
       data = data.with_indifferent_access
-      raise 'url is blank' if data['url'].blank?
+      raise "url is blank" if data["url"].blank?
 
-      data['filename'] = File.basename(data['url']) if data['filename'].blank? && File.basename(data['url']).present?
+      data["filename"] = File.basename(data["url"]) if data["filename"].blank? && File.basename(data["url"]).present?
 
-      record = create!(data.except('url', :url))
-      record.attached_image.attach(io: Down.open(data['url']), filename: record.filename)
+      record = create!(data.except("url", :url))
+      record.attached_image.attach(io: Down.open(data["url"]), filename: record.filename)
       record
     end
 
@@ -79,7 +79,7 @@ class Image < ApplicationRecord
   # Instance methods
   # ################################
   VALID_TAGS.each do |tag|
-    define_method "#{tag}_image" do
+    define_method :"#{tag}_image" do
       @image_variants ||= {}
 
       return @image_variants[tag] if @image_variants[tag].present?
@@ -132,7 +132,7 @@ class Image < ApplicationRecord
   end
 
   def assign_defaults
-    self.status ||= 'active'
+    self.status ||= "active"
   end
 
   def url
@@ -144,13 +144,13 @@ class Image < ApplicationRecord
   def status=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value('status', value)
+    @attributes.write_cast_value("status", value)
   end
 
   def tag=(value)
     super
   rescue ArgumentError
-    @attributes.write_cast_value('tag', value)
+    @attributes.write_cast_value("tag", value)
   end
 
   def is_original?
@@ -162,7 +162,7 @@ class Image < ApplicationRecord
   end
 
   def file
-    Tempfile.new([filename, ".#{filename.split('.').last}"]).tap do |file|
+    Tempfile.new([filename, ".#{filename.split(".").last}"]).tap do |file|
       file.binmode
       file.write(file_contents)
       file.rewind

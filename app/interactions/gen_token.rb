@@ -33,7 +33,7 @@ class GenToken < ActiveInteraction::Base
       token = new_token
       break token unless model.exists?(field => token)
 
-      break errors.add(:base, 'Too many attempts to generate a unique token.') if count > 10
+      break errors.add(:base, "Too many attempts to generate a unique token.") if count > 10
     end
   end
 
@@ -49,7 +49,7 @@ class GenToken < ActiveInteraction::Base
   private
 
   def validate_field
-    return errors.add(:field, 'Must be a string or a symbol.') if field.class != String && field.class != Symbol
+    return errors.add(:field, "Must be a string or a symbol.") if field.class != String && field.class != Symbol
 
     errors.add(:field, "Not in list of columns for #{model}.") unless model.column_names.include?(field.to_s)
   end

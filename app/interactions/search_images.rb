@@ -19,20 +19,20 @@ class SearchImages < ActiveInteraction::Base
       items = items.where(field => params[field]) if params[field].present?
     end
 
-    items = items.where('filename LIKE ?', "%#{params[:query]}%") if params[:query].present?
+    items = items.where("filename LIKE ?", "%#{params[:query]}%") if params[:query].present?
 
     if record_type.present? && params[:record_id].present?
       #   TODO order by ImageToRecord.position
       items = items.joins(:image_to_records).where(
-        'image_to_records.record_type = ? AND image_to_records.record_id = ?', record_type, params[:record_id].to_s
+        "image_to_records.record_type = ? AND image_to_records.record_id = ?", record_type, params[:record_id].to_s
       )
-                   .order('image_to_records.position')
+                   .order("image_to_records.position")
     end
 
     items
   end
 
   def record_type
-    params[:record_type].to_s.gsub(/\s+/, '').split('::').map(&:capitalize).join('::')
+    params[:record_type].to_s.gsub(/\s+/, "").split("::").map(&:capitalize).join("::")
   end
 end

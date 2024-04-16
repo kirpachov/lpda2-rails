@@ -38,7 +38,7 @@ class Preference
     end
 
     def validate_known_languages
-      array = record.value.to_s.split(',').map(&:strip).map(&:to_sym)
+      array = record.value.to_s.split(",").map(&:strip).map(&:to_sym)
       return if array.all? { |item| I18n.available_locales.include?(item) }
 
       record.errors.add(:value, "#{record.value.to_s.inspect} contains invalid languages")

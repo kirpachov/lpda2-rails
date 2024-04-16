@@ -41,13 +41,13 @@ class Setting < ApplicationRecord
   # ##############################
   def value
     val = super
-    val = parse_json(val).with_indifferent_access if parser.to_s == 'json'
+    val = parse_json(val).with_indifferent_access if parser.to_s == "json"
 
     val
   end
 
   def value=(val)
-    val = val.to_json if parser.to_s == 'json' && val.is_a?(Hash)
+    val = val.to_json if parser.to_s == "json" && val.is_a?(Hash)
 
     super(val)
   end

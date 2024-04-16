@@ -3,11 +3,11 @@
 FactoryBot.define do
   factory :image do
     filename { generate(:image_filename) }
-    status { 'active' }
+    status { "active" }
 
     trait :with_original do
       original { build(:image) }
-      tag { 'blur' }
+      tag { "blur" }
     end
 
     trait :with_key do
@@ -16,7 +16,7 @@ FactoryBot.define do
 
     trait :with_attached_image do
       after(:build) do |image|
-        image.attached_image.attach(io: File.open(Rails.root.join('spec/fixtures/files/cat.jpeg')),
+        image.attached_image.attach(io: File.open(Rails.root.join("spec/fixtures/files/cat.jpeg")),
                                     filename: image.filename)
       end
     end

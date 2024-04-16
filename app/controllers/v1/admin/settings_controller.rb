@@ -24,7 +24,7 @@ module V1
 
         unless updated
           return render json: {
-            message: "#{I18n.t('settings.update_failed')}:#{setting.errors.full_messages.join('; ')}",
+            message: "#{I18n.t("settings.update_failed")}:#{setting.errors.full_messages.join("; ")}",
             details: setting.errors.as_json
           }, status: :unprocessable_entity
         end
@@ -41,7 +41,7 @@ module V1
       def validate_key_exists
         return if (@setting = Setting.where(key: params[:key]).first).present?
 
-        render json: { message: I18n.t('preferences.key_not_found') },
+        render json: { message: I18n.t("preferences.key_not_found") },
                status: :not_found
       end
     end

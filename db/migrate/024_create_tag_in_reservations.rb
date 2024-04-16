@@ -7,7 +7,7 @@ class CreateTagInReservations < ActiveRecord::Migration[7.0]
       t.belongs_to :reservation_tag, null: false, foreign_key: true
 
       t.timestamps
-      t.index %w[reservation_id reservation_tag_id], unique: true, name: 'reservation_id_on_tags'
+      t.index %w[reservation_id reservation_tag_id], unique: true, name: "reservation_id_on_tags"
     end
   end
 end

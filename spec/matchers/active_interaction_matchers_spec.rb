@@ -2,10 +2,10 @@
 
 return
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
-  context 'just :have_input' do
+  context "just :have_input" do
     it do
       expect(subject).to have_input(:mandatory_string)
     end
@@ -15,7 +15,7 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
   end
 
-  context 'mandatory inputs' do
+  context "mandatory inputs" do
     it do
       expect(subject).to have_input(:mandatory_string).mandatory
     end
@@ -25,7 +25,7 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
   end
 
-  context 'with or without default values' do
+  context "with or without default values" do
     it do
       expect(subject).to have_input(:mandatory_string).without_default_value
     end
@@ -35,7 +35,7 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
   end
 
-  context 'optional inputs' do
+  context "optional inputs" do
     it do
       expect(subject).to have_input(:optional_string).optional
     end
@@ -45,9 +45,9 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
   end
 
-  context 'default values' do
+  context "default values" do
     it do
-      expect(subject).to have_input(:optional_string).with_default_value('default value')
+      expect(subject).to have_input(:optional_string).with_default_value("default value")
     end
 
     it do
@@ -59,13 +59,13 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
   end
 
-  context 'input types' do
+  context "input types" do
     it do
       expect(subject).to have_input(:optional_string).of_type(String)
     end
 
     it do
-      expect(subject).to have_input(:optional_string).of_type('string')
+      expect(subject).to have_input(:optional_string).of_type("string")
     end
 
     it do
@@ -77,11 +77,11 @@ RSpec.describe ActiveInteractionMatchersExample, type: :interaction do
     end
 
     it do
-      expect(subject).to have_input(:optional_string).of_type('String')
+      expect(subject).to have_input(:optional_string).of_type("String")
     end
 
     it do
-      expect(subject).not_to have_input(:optional_string).of_type('InvalidString')
+      expect(subject).not_to have_input(:optional_string).of_type("InvalidString")
     end
   end
 end

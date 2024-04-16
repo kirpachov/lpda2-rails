@@ -3,7 +3,7 @@
 # Class useful to test active_interaction_matchers
 class ActiveInteractionMatchersExample < ActiveInteraction::Base
   string :mandatory_string
-  string :optional_string, default: 'default value'
+  string :optional_string, default: "default value"
 
   integer :mandatory_integer
   integer :optional_integer, default: 1

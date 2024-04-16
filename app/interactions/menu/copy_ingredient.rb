@@ -5,7 +5,7 @@ module Menu
     record :old, class: Ingredient
     record :current_user, class: User
 
-    string :copy_image, default: 'full'
+    string :copy_image, default: "full"
 
     validates :copy_image, inclusion: { in: %w[full link none] }
 
@@ -43,9 +43,9 @@ module Menu
     def do_copy_image
       return true unless copy_image.in?(%w[full link]) && old.image.present? && old.image.attached_image.attached?
 
-      if copy_image == 'full'
+      if copy_image == "full"
         @new.image = old.image.copy!(current_user:)
-      elsif copy_image == 'link'
+      elsif copy_image == "link"
         @new.image = old.image
       end
 
