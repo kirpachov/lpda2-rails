@@ -356,7 +356,8 @@ ActiveRecord::Schema[7.0].define(version: 28) do
     t.text "email", null: false
     t.text "password_digest", null: false
     t.text "status", null: false
-    t.datetime "root_at", precision: nil
+    t.datetime "root_at", precision: nil, comment: "Datetime when user became root. Won't ask password for a while."
+    t.boolean "can_root", default: false, comment: "Can this user become root?"
     t.integer "failed_attempts", default: 0, null: false
     t.text "enc_otp_key"
     t.datetime "locked_at", precision: nil

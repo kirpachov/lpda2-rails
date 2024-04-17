@@ -4,10 +4,11 @@ FactoryBot.define do
   factory :user do
     email { generate(:user_email) }
     status { "active" }
-  end
+    can_root { true }
 
-  trait :admin do
-    roles { %w[admin] }
+    trait :with_fullname do
+      fullname { Faker::Name.name }
+    end
   end
 
   sequence :user_email do |n|

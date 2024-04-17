@@ -27,6 +27,7 @@ it:
         private_to_should_be_after_private_from: "La fine della visibilità privata %{private_to} deve essere dopo l'inzio %{private_from}"
         public_from_should_be_before_public_to: "Inizio visibilità privata %{public_from} deve essere prima del termine %{public_to}"
         public_to_should_be_after_public_from: "La fine della visibilità privata %{public_to} deve essere dopo l'inzio %{public_from}"
+        not_a_valid_email: "non è una email valida"
   date:
     abbr_day_names:
     - dom
@@ -251,6 +252,9 @@ it:
     verification_code_requested_for_this_email: "È stato richiesto l'invio di un codice di verifica a questo indirizzo email."
     your_verification_code_is: "Il tuo codice di verifica è:"
     need_to_reach: "Hai bisogno di contattarci?"
+    welcome_staffer_subject: "Benvenuto su %{app_name}"
+    welcome_staffer_body: "Ti abbiamo creato un account come componente dello staff."
+    set_your_password: "Imposta la tua password"
   set_password: "Imposta password"
   login: "Accedi"
   if_password_unknown_reset: "Se non conosci la password del tuo account, puoi impostarla all'interno della piattaforma!"

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       end
 
       scope module: :admin, path: "admin" do
+        resources :users, only: %i[index show create destroy]
         resources :reservation_turns
         resources :reservation_tags
         resources :reservations do

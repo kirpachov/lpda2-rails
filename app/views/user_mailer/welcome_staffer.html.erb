@@ -1,0 +1,9 @@
+<h1><%= @subject %></h1>
+
+<p><%= I18n.t("mail.welcome_staffer_body") %></p>
+
+<a href="<%= @set_password_url %>" > <%= I18n.t("mail.set_your_password") %> </a>
+
+<%= I18n.t("mail.if_button_does_not_work_copy_and_paste_above") %>
+
+<%= @set_password_url %>

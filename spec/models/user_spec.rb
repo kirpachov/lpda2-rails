@@ -152,6 +152,36 @@ RSpec.describe User, type: :model do
         it { expect { refresh_token.destroy }.not_to change(described_class, :count) }
       end
     end
+
+    context "when checking user's root" do
+      subject { user }
+
+      let!(:user) { create(:user, can_root: true) }
+
+      it { expect(user.root_at).to be_nil }
+      it { expect(user).not_to be_root }
+      it { expect { user.root! }.to(change { user.reload.root_at }.from(nil)) }
+      it { expect(User.root.pluck(:id)).not_to include(user.id) }
+
+      context "when setting user as root" do
+        before { user.root! }
+
+        it { expect(user).to be_root }
+        it { expect(User.root.pluck(:id)).to include(user.id) }
+
+        it "after time, should not be root anymore." do
+          travel_to(Time.current + Config.app[:root_duration] + 1) do
+            expect(user).not_to be_root
+          end
+        end
+
+        it "after some time should not be included in :root scope" do
+          travel_to(Time.current + Config.app[:root_duration] + 1) do
+            expect(User.root.pluck(:id)).not_to include(user.id)
+          end
+        end
+      end
+    end
   end
 
   it "is able to create a user with just { email }" do

@@ -40,6 +40,7 @@ Dir[Rails.root.join("spec/matchers/**/*.rb")].sort.each { |f| require f }
 # end
 RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
+  config.include RequestSpecHelper, type: :request
 
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)

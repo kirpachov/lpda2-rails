@@ -25,6 +25,7 @@ en:
         private_to_should_be_after_private_from: "The end of the private visibility %{private_to} should be AFTER the beginning %{private_from}"
         public_from_should_be_before_public_to: "Start of the public visibility %{public_from} must be before the ending %{public_to}"
         public_to_should_be_after_public_from: "The end of the public visibility %{public_to} should be AFTER the beginning %{public_from}"
+        not_a_valid_email: "is not a valid email"
   date:
     abbr_day_names:
     - sun
@@ -249,6 +250,9 @@ en:
     verification_code_requested_for_this_email: "A verification code has been requested for this email address."
     your_verification_code_is: "Your verification code is:"
     need_to_reach: "Need to reach us?"
+    welcome_staffer_subject: "Wecome to %{app_name}"
+    welcome_staffer_body: "We've created an account for you as staff member."
+    set_your_password: "Set your password"
   set_password: "Set Password"
   login: "Log In"
   if_password_unknown_reset: "If you don't know your account password, you can set it within the platform!"

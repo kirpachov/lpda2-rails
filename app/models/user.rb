@@ -6,14 +6,14 @@ class User < ApplicationRecord
   # Constants, settings, modules, et...
   # ################################
   has_secure_password
-  VALID_STATUSES = %w[active deleted].freeze
+  VALID_STATUSES = %w[active inactive deleted].freeze
 
-  enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
+  enum status: VALID_STATUSES.to_h { |s| [s, s] }
 
   # ################################
   # Validations
   # ################################
-  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: "is not a valid email" },
+  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: I18n.t("activerecord.errors.messages.not_a_valid_email") },
                     uniqueness: { case_sensitive: false }
   validates :username, presence: false, uniqueness: { case_sensitive: false, allow_blank: true }
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
@@ -32,10 +32,27 @@ class User < ApplicationRecord
   has_many :refresh_tokens, dependent: :destroy
 
   # ################################
+  # Scopes
+  # ################################
+  scope :visible, -> { where.not(status: "deleted") }
+  scope :root, -> { where(can_root: true).where.not(root_at: nil).where("root_at > ?", Time.current - Config.app[:root_duration]) }
+
+  # ################################
   # Instance methods
   # ################################
   def assign_defaults
     self.status = "active" if status.blank?
+  end
+
+  def root?
+    return false unless can_root?
+    return false if root_at.blank?
+
+    root_at + Config.app[:root_duration] > Time.current
+  end
+
+  def root!
+    can_root? && update!(root_at: Time.current)
   end
 
   def status=(value)
@@ -76,7 +93,11 @@ class User < ApplicationRecord
   end
 
   def preferences_hash
-    preferences.map { |p| [p.key, p.value || Preference.default(p.key)] }.to_h
+    preferences.to_h { |p| [p.key, p.value || Preference.default(p.key)] }
+  end
+
+  def as_json(options = {})
+    super(options.merge(except: %i[password_digest enc_otp_key]))
   end
 
   private
