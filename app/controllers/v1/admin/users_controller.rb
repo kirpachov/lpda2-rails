@@ -51,7 +51,7 @@ module V1::Admin
     private
 
     def create_params
-      params.permit(:email, :fullname)
+      params.permit(:email, :fullname, :can_root)
     end
 
     def find_item
@@ -73,7 +73,7 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json(only: %i[id email fullname status created_at updated_at])
+      item.as_json(only: %i[id email fullname status can_root created_at updated_at])
     end
   end
 end

@@ -2,9 +2,16 @@
 
 # Users of the application.
 class User < ApplicationRecord
+
   # ################################
-  # Constants, settings, modules, et...
+  # Modules
   # ################################
+  include TrackModelChanges
+
+  # ################################
+  # Constants, settings, modules, etc...
+  # ################################
+  DEFAULT_CAN_ROOT = false
   has_secure_password
   VALID_STATUSES = %w[active inactive deleted].freeze
 
@@ -14,7 +21,7 @@ class User < ApplicationRecord
   # Validations
   # ################################
   validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: I18n.t("activerecord.errors.messages.not_a_valid_email") },
-                    uniqueness: { case_sensitive: false }
+            uniqueness: { case_sensitive: false }
   validates :username, presence: false, uniqueness: { case_sensitive: false, allow_blank: true }
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
 
@@ -42,6 +49,7 @@ class User < ApplicationRecord
   # ################################
   def assign_defaults
     self.status = "active" if status.blank?
+    assign_default_can_root if can_root.nil?
   end
 
   def root?
@@ -104,5 +112,9 @@ class User < ApplicationRecord
 
   def assign_password_if_missing
     self.password = SecureRandom.hex(16) if password.blank?
+  end
+
+  def assign_default_can_root
+    self.can_root = DEFAULT_CAN_ROOT
   end
 end
