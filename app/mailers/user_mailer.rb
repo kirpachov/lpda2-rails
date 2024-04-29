@@ -29,6 +29,7 @@ class UserMailer < ApplicationMailer
 
   def set_user
     @user = params[:user]
+    @user = User.visible.where(id: params[:user_id]).first if @user.nil? && params[:user_id].present?
 
     raise ArgumentError, "User is required" unless @user.is_a?(User)
     raise ArgumentError, "User is not persisted" unless @user.persisted?

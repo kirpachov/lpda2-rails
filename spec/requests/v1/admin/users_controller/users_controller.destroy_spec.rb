@@ -3,12 +3,9 @@
 require "rails_helper"
 
 RSpec.describe "DELETE /v1/admin/users/2" do
-  before do
-    # TODO remove this and authenticate user
-    create(:user)
-  end
+  include_context REQUEST_AUTHENTICATION_CONTEXT
 
-  let(:headers) { {} }
+  let(:headers) { auth_headers }
   let(:params) { {} }
 
   let(:user) { create(:user) }
@@ -41,10 +38,26 @@ RSpec.describe "DELETE /v1/admin/users/2" do
   context "when user is not found" do
     subject { response }
 
-    let(:user) { build(:user, id: 9) }
+    let(:user) { build(:user, id: 999_999_999) }
 
     before { req }
 
     it { is_expected.to have_http_status(:not_found) }
+  end
+
+  context "when not authenticated" do
+    let(:headers) { {} }
+    before do
+      user
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it { expect { req }.not_to change(User, :count) }
+    it { expect { req }.not_to(change { User.order(:id).pluck(:status) }) }
+    it { expect { req }.not_to(change { User.order(:id).pluck(:updated_at) }) }
   end
 end

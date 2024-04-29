@@ -53,7 +53,11 @@ class User < ApplicationRecord
   end
 
   def send_reset_password_email
-    UserMailer.with(user: self, token: ResetPasswordSecret.create!(user: self).secret).reset_password.deliver_later
+    UserMailer.with(user_id: id, token: create_reset_password.secret).reset_password.deliver_later
+  end
+
+  def create_reset_password
+    ResetPasswordSecret.create!(user: self)
   end
 
   def root?

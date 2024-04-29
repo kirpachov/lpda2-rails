@@ -3,12 +3,9 @@
 require "rails_helper"
 
 RSpec.describe "GET /v1/admin/users/2" do
-  before do
-    # TODO remove this and authenticate user
-    create(:user)
-  end
+  include_context REQUEST_AUTHENTICATION_CONTEXT
 
-  let(:headers) { {} }
+  let(:headers) { auth_headers }
   let(:params) { {} }
 
   let(:user) { create(:user) }
@@ -56,5 +53,14 @@ RSpec.describe "GET /v1/admin/users/2" do
     before { req }
 
     it { is_expected.to have_http_status(:not_found) }
+  end
+
+  context "when not authenticated" do
+    let(:headers) { {} }
+
+    it do
+      req
+      expect(response).to have_http_status(:unauthorized)
+    end
   end
 end

@@ -3,9 +3,11 @@
 require "rails_helper"
 
 RSpec.describe "GET /v1/admin/users" do
+  include_context REQUEST_AUTHENTICATION_CONTEXT
+
   let(:users) { create_list(:user, 3, :with_fullname) }
 
-  let(:headers) { {} }
+  let(:headers) { auth_headers }
   let(:params) { {} }
 
   def req
@@ -102,6 +104,15 @@ RSpec.describe "GET /v1/admin/users" do
 
         expect(json[:items]).to be_empty
       end
+    end
+  end
+
+  context "when not authenticated" do
+    let(:headers) { {} }
+
+    it do
+      req
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end

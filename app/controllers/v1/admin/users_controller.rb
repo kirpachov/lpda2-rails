@@ -29,7 +29,10 @@ module V1::Admin
     def create
       @item = User.new(create_params)
 
-      return show if @item.valid? && @item.save && @item.persisted?
+      if @item.valid? && @item.save && @item.persisted?
+        UserMailer.with(user_id: @item.id, token: @item.create_reset_password.secret).welcome_staffer.deliver_later
+        return show
+      end
 
       render_unprocessable_entity(@item)
     end

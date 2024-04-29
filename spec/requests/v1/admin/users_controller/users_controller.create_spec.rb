@@ -3,19 +3,20 @@
 require "rails_helper"
 
 RSpec.describe "POST /v1/admin/users" do
-  before do
-    # TODO remove this and authenticate user
-    create(:user)
-  end
+  include_context REQUEST_AUTHENTICATION_CONTEXT
 
   let(:fullname) { Faker::Lorem.name }
   let(:email) { Faker::Internet.email }
 
-  let(:headers) { {} }
+  let(:headers) { auth_headers }
   let(:params) { { fullname:, email: } }
 
   def req
     post users_path, headers: headers, params: params
+  end
+
+  it do
+    expect { req }.to have_enqueued_mail(UserMailer, :welcome_staffer).once
   end
 
   describe "when making a basic request" do
@@ -71,5 +72,18 @@ RSpec.describe "POST /v1/admin/users" do
     it { is_expected.to have_http_status(:ok) }
 
     it { expect(json[:item]).to include(id: Integer, can_root: false) }
+  end
+
+  context "when not authenticated" do
+    let(:headers) { {} }
+
+    it do
+      req
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it do
+      expect { req }.not_to change(User, :count)
+    end
   end
 end

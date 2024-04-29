@@ -47,7 +47,7 @@ module V1
     #   @user = User.active.where(email: params[:email]).first
     #   return render_error status: 400, message: I18n.t("errors.messages.user_not_found") unless @user
     #
-    #   UserMailer.with(user: @user.email, otp: @user.generate_otp).otp.deliver_later
+    #   UserMailer.with(user_id: @user.id, otp: @user.generate_otp).otp.deliver_later
     #
     #   render json: { success: true }
     # end
@@ -73,7 +73,7 @@ module V1
 
       secret.expire!
 
-      UserMailer.with(user: secret.user).password_updated.deliver_later
+      UserMailer.with(user_id: secret.user&.id).password_updated.deliver_later
 
       render json: { success: true }
     end
