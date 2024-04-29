@@ -52,4 +52,4 @@ Reservation.delete_all
   Reservation.create! reservation_data
 end
 
-User.create!(email: "sasha@opinioni.net")
+User.create!(email: "sasha@opinioni.net", password: "admin")

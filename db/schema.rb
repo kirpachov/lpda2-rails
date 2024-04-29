@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 28) do
+ActiveRecord::Schema[7.0].define(version: 29) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -330,6 +330,15 @@ ActiveRecord::Schema[7.0].define(version: 28) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "reset_password_secrets", force: :cascade do |t|
+    t.text "secret", null: false
+    t.bigint "user_id", null: false
+    t.datetime "expires_at", precision: nil, default: -> { "(now() + 'PT15M'::interval)" }, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_reset_password_secrets_on_user_id"
+  end
+
   create_table "settings", force: :cascade do |t|
     t.text "key", null: false
     t.text "value"
@@ -387,6 +396,7 @@ ActiveRecord::Schema[7.0].define(version: 28) do
   add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
   add_foreign_key "refresh_tokens", "users"
+  add_foreign_key "reset_password_secrets", "users"
   add_foreign_key "tag_in_reservations", "reservation_tags"
   add_foreign_key "tag_in_reservations", "reservations"
 end

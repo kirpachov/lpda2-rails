@@ -52,6 +52,10 @@ class User < ApplicationRecord
     assign_default_can_root if can_root.nil?
   end
 
+  def send_reset_password_email
+    UserMailer.with(user: self, token: ResetPasswordSecret.create!(user: self).secret).reset_password.deliver_later
+  end
+
   def root?
     return false unless can_root?
     return false if root_at.blank?

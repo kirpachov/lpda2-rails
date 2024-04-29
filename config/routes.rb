@@ -31,6 +31,22 @@ Rails.application.routes.draw do
         end
       end
 
+      # v1/profile
+      # resource :profile, controller: "profile", only: %i[index]
+      get 'profile', to: 'profile#index'
+
+      # v1/auth
+      resource :auth, controller: "auth", only: [] do
+        post "login"
+        post "refresh_token"
+        post "logout"
+        # post "require_otp"
+        # post "verify_email"
+        # post "change_password"
+        post "reset_password"
+        post "require_reset_password"
+      end
+
       scope module: :admin, path: "admin" do
         resources :users, only: %i[index show create destroy]
         resources :reservation_turns
