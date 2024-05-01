@@ -37,6 +37,7 @@ class User < ApplicationRecord
   # ################################
   has_many :preferences, dependent: :destroy
   has_many :refresh_tokens, dependent: :destroy
+  has_many :reset_password_secrets, -> { not_expired }, dependent: :destroy, inverse_of: :user
 
   # ################################
   # Scopes

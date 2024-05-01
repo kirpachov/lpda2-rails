@@ -39,6 +39,27 @@ RSpec.describe User, type: :model do
   context "instance methods" do
     let(:instance) { described_class.new }
 
+    context "when calling #send_reset_password_email" do
+      subject(:user) { create(:user) }
+
+      let(:call) { user.send_reset_password_email }
+
+      it { expect(user).to be_valid.and(be_persisted) }
+      it { expect { call }.not_to raise_error }
+      it { expect { call }.to have_enqueued_mail(UserMailer, :reset_password).once }
+      it { expect { call }.to(change { ResetPasswordSecret.count }.by(1)) }
+
+      it do
+        3.times { call }
+        expect(user.reset_password_secrets.count).to eq 1
+      end
+
+      it do
+        3.times { call }
+        expect(ResetPasswordSecret.not_expired.count).to eq 1
+      end
+    end
+
     describe "#temporarily_block!" do
       subject { user }
 

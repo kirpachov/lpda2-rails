@@ -22,8 +22,8 @@ class ResetPasswordSecret < ApplicationRecord
   # ################################
   # Scopes
   # ################################
-  scope :not_expired, -> { where('expires_at > ?', Time.now) }
-  scope :expired, -> { where('expires_at < ?', Time.now) }
+  scope :not_expired, -> { where('expires_at > ?', Time.zone.now) }
+  scope :expired, -> { where('expires_at < ?', Time.zone.now) }
 
   # ################################
   # Class methods
@@ -50,7 +50,7 @@ class ResetPasswordSecret < ApplicationRecord
   end
 
   def expired?
-    expires_at < Time.now
+    expires_at < Time.zone.now
   end
 
   def delete_other_secrets_for_user
