@@ -8,6 +8,7 @@ it:
       body: "volevamo informarla che la password del suo account %{app_name} associata all'email %{email} è stata aggiornata"
     welcome_staffer:
       subject: "Benvenuto!"
+      body: "Ti abbiamo creato un account come componente dello staff."
     reset_password:
       subject: "Reimposta la tua password"
       body: "Salve, può resettare la password al link di seguito. Grazie."
@@ -267,8 +268,6 @@ it:
     verification_code_requested_for_this_email: "È stato richiesto l'invio di un codice di verifica a questo indirizzo email."
     your_verification_code_is: "Il tuo codice di verifica è:"
     need_to_reach: "Hai bisogno di contattarci?"
-    welcome_staffer_subject: "Benvenuto su %{app_name}"
-    welcome_staffer_body: "Ti abbiamo creato un account come componente dello staff."
     set_your_password: "Imposta la tua password"
     greetings: "Salve"
   set_password: "Imposta password"

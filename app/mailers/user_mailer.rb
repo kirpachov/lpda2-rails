@@ -3,6 +3,7 @@
 # Mailer for all notifications related to Users table.
 class UserMailer < ApplicationMailer
   before_action :set_user
+  before_action :set_subject
   before_action :set_password_url, only: %i[welcome_staffer reset_password]
 
   def welcome_staffer
@@ -19,9 +20,15 @@ class UserMailer < ApplicationMailer
 
   private
 
+  def set_subject
+    @subject = I18n.t("user_mailer.#{action_name}.subject")
+
+    raise "#{@subject.inspect} is not a valid subject" unless @subject.is_a?(String) && @subject.present?
+  end
+
   def set_password_url
     @token = params[:token]
-    raise ArgumentError, "token (string) is required" unless @token.is_a?(String) || @token.blank?
+    raise ArgumentError, "token (string) is required" unless @token.is_a?(String) && @token.present?
 
     @set_password_url = URI(reset_password_url(@token)).to_s
     raise "Invalid password reset URL" unless @set_password_url.is_a?(String) && @set_password_url.present?
@@ -38,7 +45,7 @@ class UserMailer < ApplicationMailer
 
   def reset_password_url(token)
     Mustache.render(
-      Config.app[:reset_password_url], Config.app.as_json.merge(token:)
+      Config.hash[:reset_password_url], Config.hash.merge(token:)
     )
   end
 end

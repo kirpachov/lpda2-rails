@@ -8,6 +8,7 @@ en:
       body: "we wanted to inform you that your account at %{app_name} linked to the email %{email} was updated."
     welcome_staffer:
       subject: "Welcome!"
+      body: "We've created an account for you as staff member."
     reset_password:
       subject: "Reset your password"
       body: "You can reset the password on the following link"
@@ -265,8 +266,6 @@ en:
     verification_code_requested_for_this_email: "A verification code has been requested for this email address."
     your_verification_code_is: "Your verification code is:"
     need_to_reach: "Need to reach us?"
-    welcome_staffer_subject: "Wecome to %{app_name}"
-    welcome_staffer_body: "We've created an account for you as staff member."
     set_your_password: "Set your password"
     greetings: "Hello"
   set_password: "Set Password"
