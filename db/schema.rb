@@ -336,6 +336,7 @@ ActiveRecord::Schema[7.0].define(version: 29) do
     t.datetime "expires_at", precision: nil, default: -> { "(now() + 'PT15M'::interval)" }, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["secret"], name: "index_reset_password_secrets_on_secret", unique: true
     t.index ["user_id"], name: "index_reset_password_secrets_on_user_id"
   end
 

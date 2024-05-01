@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Model that will hold tokens for reset password. Only one token per user is allowed.
 class ResetPasswordSecret < ApplicationRecord
 
   # ################################
@@ -10,7 +11,7 @@ class ResetPasswordSecret < ApplicationRecord
   # ################################
   # Validations
   # ################################
-  validates_presence_of :secret, :user_id
+  validates :secret, presence: true, uniqueness: true
 
   # ################################
   # Hooks / Callbacks
@@ -30,7 +31,7 @@ class ResetPasswordSecret < ApplicationRecord
   # ################################
   class << self
     def delete_expired_secrets
-      ResetPasswordSecret.expired.where.not(id:).delete_all
+      ResetPasswordSecret.expired.delete_all
     end
   end
 
@@ -48,6 +49,7 @@ class ResetPasswordSecret < ApplicationRecord
   def expire!
     update!(expires_at: 1.minute.ago)
   end
+  alias_method :expired!, :expire!
 
   def expired?
     expires_at < Time.zone.now
