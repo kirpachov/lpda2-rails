@@ -9,8 +9,12 @@ class ApplicationController < ActionController::API
   attr_reader :current_user
 
   def authenticate_user
-    @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
+    try_authenticate_user
     render_unauthorized unless @current_user
+  end
+
+  def try_authenticate_user
+    @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
   end
 
   def render_unauthorized

@@ -31,13 +31,13 @@ module Auth
 
     protected
 
-    # Find and authenticate user
+    # find and authenticate user
     def find_user
       return @user if @find_user_called
 
       @find_user_called = true
       result = nil
-      @user = User.find_by_email(email)
+      @user = User.find_by(email:)
 
       # Check if user exists
       if @user.nil?
