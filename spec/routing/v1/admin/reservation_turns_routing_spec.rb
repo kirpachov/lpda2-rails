@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe V1::Admin::ReservationTurnsController do
+RSpec.describe "Routing /v1/admin/reservation_turns" do
   it do
     expect(get: "/v1/admin/reservation_turns").to route_to("v1/admin/reservation_turns#index", format: :json)
   end

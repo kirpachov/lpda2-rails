@@ -27,7 +27,12 @@ Rails.application.routes.draw do
       resources :reservations, only: %i[create] do
         collection do
           get ":secret", action: :show
+
+          # Two alternative ways to cancel a reservation.
+          # First one is safer: secret is in the body of the request.
+          # Second one is "cleaner": secret is in the URL.
           patch "cancel", action: :cancel
+          patch ":secret/cancel", action: :cancel
         end
       end
 
@@ -97,25 +102,25 @@ Rails.application.routes.draw do
             end
           end
 
-          resources :ingredients, only: %i[index show create update destroy] do
+          resources :ingredients do
             member do
               post "copy"
             end
           end
 
-          resources :tags, only: %i[index show create update destroy] do
+          resources :tags do
             member do
               post "copy"
             end
           end
 
-          resources :allergens, only: %i[index show create update destroy] do
+          resources :allergens do
             member do
               post "copy"
             end
           end
 
-          resources :dishes, only: %i[index show create update destroy] do
+          resources :dishes do
             member do
               post "copy"
 
