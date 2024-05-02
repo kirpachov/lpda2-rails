@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe V1::ImagesController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
-  # include_context CONTROLLER_AUTHENTICATION_CONTEXT
+  include_context CONTROLLER_AUTHENTICATION_CONTEXT
   include_context TESTS_OPTIMIZATIONS_CONTEXT
 
   let(:instance) { described_class.new }
@@ -114,32 +114,46 @@ RSpec.describe V1::ImagesController, type: :controller do
       post :create, params: req_params
     end
 
-    it "returns 200" do
-      req
-      expect(response).to have_http_status(:ok)
-    end
-
-    it { expect { req }.not_to(change { ImageToRecord.count }) }
-
-    context "when providing {record_type: String, record_id: Integer}" do
-      subject do
+    context "when not authenticated" do
+      it "returns 401" do
         req
-        parsed_response_body
+        expect(response).to have_http_status(:unauthorized)
       end
 
-      let!(:category) { create(:menu_category) }
-      let!(:record_type) { "Menu::Category" }
-      let!(:record_id) { category.id }
+      it { expect { req }.not_to(change { Image.count }) }
+    end
 
-      it do
-        subject
+    context "when authenticated" do
+      before { authenticate_request }
+
+      it "returns 200" do
+        req
         expect(response).to have_http_status(:ok)
       end
 
-      it { expect { subject }.to change { Image.count }.by(1) }
-      it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-      it { expect { subject }.to change { category.reload.images.count }.by(1) }
+      it { expect { req }.not_to(change { ImageToRecord.count }) }
+
+      context "when providing {record_type: String, record_id: Integer}" do
+        subject do
+          req
+          parsed_response_body
+        end
+
+        let!(:category) { create(:menu_category) }
+        let!(:record_type) { "Menu::Category" }
+        let!(:record_id) { category.id }
+
+        it do
+          subject
+          expect(response).to have_http_status(:ok)
+        end
+
+        it { expect { subject }.to change { Image.count }.by(1) }
+        it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+        it { expect { subject }.to change { category.reload.images.count }.by(1) }
+      end
     end
+
   end
 
   context "GET #show" do
@@ -197,98 +211,111 @@ RSpec.describe V1::ImagesController, type: :controller do
       patch :update_record, params: req_params
     end
 
-    it "returns 200" do
-      req
-      expect(response).to have_http_status(:ok)
-    end
-
-    context "if record could not be found" do
-      let(:record_id) { 999_999_999 }
-
-      it { expect { req }.not_to(change { record.reload.images.count }) }
-
-      it do
+    context "when not authenticated" do
+      it "returns 401" do
         req
-        expect(parsed_response_body).to include(message: String, details: Hash)
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unauthorized)
       end
+
+      it { expect { req }.not_to change { record.reload.images.count } }
     end
 
-    context "if invaild record_type" do
-      let(:record_type) { "some-invalid-class" }
+    context "when authenticated" do
+      before { authenticate_request }
 
-      it { expect { req }.not_to(change { record.reload.images.count }) }
-
-      it do
-        req
-        expect(parsed_response_body).to include(message: String, details: Hash)
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-
-    it { expect { req }.to change { record.images.count }.from(0).to(1) }
-
-    context "should allow to re-order elements" do
-      before do
-        record.images = all_images
-        @order_before = record.images.reload.order(:id).pluck(:id)
-      end
-
-      let(:image_ids) { @order_before.reverse }
-
-      context "mock data" do
-        it { expect(record.reload.images.count).to be_positive }
-      end
-
-      it { expect { req }.not_to(change { record.reload.images.count }) }
-      it { expect { req }.not_to(change { ImageToRecord.count }) }
-      it { expect { req }.to(change { ImageToRecord.all.pluck(:id) }) }
-
-      it do
-        req
-        expect(record.reload.images.pluck(:id)).not_to eq @order_before
-        expect(record.reload.images.pluck(:id)).to match_array(@order_before)
-      end
-    end
-
-    context "should allow to remove all elements by providing {image_ids: nil}" do
-      before do
-        record.images = all_images
-        @order_before = record.images.pluck(:id)
-      end
-
-      let(:image_ids) { nil }
-
-      context "mock data" do
-        it { expect(record.reload.images.count).to be_positive }
-      end
-
-      it { expect { req }.to(change { record.reload.images.count }.to(0)) }
-      it { expect { req }.to(change { ImageToRecord.count }) }
-
-      it do
+      it "returns 200" do
         req
         expect(response).to have_http_status(:ok)
       end
-    end
 
-    context "should allow to remove one element" do
-      before do
-        record.images = all_images
-        @order_before = record.images.pluck(:id)
+      context "if record could not be found" do
+        let(:record_id) { 999_999_999 }
+
+        it { expect { req }.not_to(change { record.reload.images.count }) }
+
+        it do
+          req
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(response).to have_http_status(:not_found)
+        end
       end
 
-      let(:to_remove) { all_images.sample.id }
-      let(:image_ids) { all_images.filter { |img| img.id != to_remove } }
+      context "if invaild record_type" do
+        let(:record_type) { "some-invalid-class" }
 
-      context "mock data" do
-        it { expect(record.reload.images.count).to eq all_images.count }
-        it { expect(record.reload.images.count).to be_positive }
-        it { expect(image_ids.count).to eq(all_images.count - 1) }
-        it { expect(Image.where(id: to_remove).count).to eq 1 }
+        it { expect { req }.not_to(change { record.reload.images.count }) }
+
+        it do
+          req
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(response).to have_http_status(:not_found)
+        end
       end
 
-      it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
+      it { expect { req }.to change { record.images.count }.from(0).to(1) }
+
+      context "should allow to re-order elements" do
+        before do
+          record.images = all_images
+          @order_before = record.images.reload.order(:id).pluck(:id)
+        end
+
+        let(:image_ids) { @order_before.reverse }
+
+        context "mock data" do
+          it { expect(record.reload.images.count).to be_positive }
+        end
+
+        it { expect { req }.not_to(change { record.reload.images.count }) }
+        it { expect { req }.not_to(change { ImageToRecord.count }) }
+        it { expect { req }.to(change { ImageToRecord.all.pluck(:id) }) }
+
+        it do
+          req
+          expect(record.reload.images.pluck(:id)).not_to eq @order_before
+          expect(record.reload.images.pluck(:id)).to match_array(@order_before)
+        end
+      end
+
+      context "should allow to remove all elements by providing {image_ids: nil}" do
+        before do
+          record.images = all_images
+          @order_before = record.images.pluck(:id)
+        end
+
+        let(:image_ids) { nil }
+
+        context "mock data" do
+          it { expect(record.reload.images.count).to be_positive }
+        end
+
+        it { expect { req }.to(change { record.reload.images.count }.to(0)) }
+        it { expect { req }.to(change { ImageToRecord.count }) }
+
+        it do
+          req
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "should allow to remove one element" do
+        before do
+          record.images = all_images
+          @order_before = record.images.pluck(:id)
+        end
+
+        let(:to_remove) { all_images.sample.id }
+        let(:image_ids) { all_images.filter { |img| img.id != to_remove } }
+
+        context "mock data" do
+          it { expect(record.reload.images.count).to eq all_images.count }
+          it { expect(record.reload.images.count).to be_positive }
+          it { expect(image_ids.count).to eq(all_images.count - 1) }
+          it { expect(Image.where(id: to_remove).count).to eq 1 }
+        end
+
+        it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
+      end
     end
   end
 
@@ -313,41 +340,56 @@ RSpec.describe V1::ImagesController, type: :controller do
       patch :remove_from_record, params: req_params
     end
 
-    it "returns 200" do
-      req
-      expect(response).to have_http_status(:ok)
+    context "when not authenticated" do
+      it "returns 401" do
+        req
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it do
+        expect { req }.not_to change { record.reload.images.pluck(:id) }
+      end
     end
 
-    it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
+    context "when authenticated" do
+      before { authenticate_request }
 
-    it do
-      expect { req }.to change {
-                          record.reload.images.pluck(:id)
-                        }.from(record.reload.images.pluck(:id)).to(record.reload.images.pluck(:id) - [image_id])
-    end
+      it "returns 200" do
+        req
+        expect(response).to have_http_status(:ok)
+      end
 
-    context "should return 404 if cannot find image" do
-      let(:image_id) { 999_999_999 }
+      it { expect { req }.to(change { record.reload.images.count }.by(-1)) }
 
-      before { req }
+      it do
+        expect { req }.to change {
+          record.reload.images.pluck(:id)
+        }.from(record.reload.images.pluck(:id)).to(record.reload.images.pluck(:id) - [image_id])
+      end
 
-      it { expect(response).to have_http_status(:not_found) }
-    end
+      context "should return 404 if cannot find image" do
+        let(:image_id) { 999_999_999 }
 
-    context "should return 404 if cannot find record because of record type" do
-      let(:record_type) { "invalid-record-type" }
+        before { req }
 
-      before { req }
+        it { expect(response).to have_http_status(:not_found) }
+      end
 
-      it { expect(response).to have_http_status(:not_found) }
-    end
+      context "should return 404 if cannot find record because of record type" do
+        let(:record_type) { "invalid-record-type" }
 
-    context "should return 404 if cannot find record because of record id" do
-      let(:record_id) { 999_999_999 }
+        before { req }
 
-      before { req }
+        it { expect(response).to have_http_status(:not_found) }
+      end
 
-      it { expect(response).to have_http_status(:not_found) }
+      context "should return 404 if cannot find record because of record id" do
+        let(:record_id) { 999_999_999 }
+
+        before { req }
+
+        it { expect(response).to have_http_status(:not_found) }
+      end
     end
   end
 

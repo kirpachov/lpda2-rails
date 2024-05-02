@@ -7,7 +7,7 @@ module V1
     before_action :find_pixel_by_secret, only: %i[download_by_pixel_secret]
     before_action :find_variant, only: %i[download_variant]
     before_action :record, only: %i[update_record remove_from_record]
-    skip_before_action :authenticate_user
+    skip_before_action :authenticate_user, except: %i[create remove_from_record update_record]
 
     def index
       call = ::SearchImages.run(params:)
@@ -30,6 +30,7 @@ module V1
       }
     end
 
+    # PATCH /v1/images/:id/remove_from_record
     def remove_from_record
       if record.respond_to?(:images)
         record.images.delete(@image)
