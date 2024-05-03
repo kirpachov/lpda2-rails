@@ -25,8 +25,8 @@ class RefreshToken < ApplicationRecord
   # ################################
   # Scopes
   # ################################
-  scope :expired, -> { where("expires_at < ?", Time.now) }
-  scope :not_expired, -> { where("expires_at >= ?", Time.now) }
+  scope :expired, -> { where("expires_at < ?", Time.zone.now) }
+  scope :not_expired, -> { where("expires_at >= ?", Time.zone.now) }
 
   # ################################
   # Class methods
@@ -70,7 +70,7 @@ class RefreshToken < ApplicationRecord
   end
 
   def expired?
-    expires_at < Time.now
+    expires_at < Time.zone.now
   end
 
   def not_expired?
@@ -78,7 +78,7 @@ class RefreshToken < ApplicationRecord
   end
 
   def expire!
-    update(expires_at: Time.now)
+    update(expires_at: Time.zone.now)
   end
 
   alias expired! expire!

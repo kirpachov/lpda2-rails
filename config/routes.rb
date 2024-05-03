@@ -27,11 +27,33 @@ Rails.application.routes.draw do
       resources :reservations, only: %i[create] do
         collection do
           get ":secret", action: :show
+
+          # Two alternative ways to cancel a reservation.
+          # First one is safer: secret is in the body of the request.
+          # Second one is "cleaner": secret is in the URL.
           patch "cancel", action: :cancel
+          patch ":secret/cancel", action: :cancel
         end
       end
 
+      # v1/profile
+      # resource :profile, controller: "profile", only: %i[index]
+      get 'profile', to: 'profile#index'
+
+      # v1/auth
+      resource :auth, controller: "auth", only: [] do
+        post "login"
+        post "refresh_token"
+        post "logout"
+        # post "require_otp"
+        # post "verify_email"
+        # post "change_password"
+        post "reset_password"
+        post "require_reset_password"
+      end
+
       scope module: :admin, path: "admin" do
+        resources :users, only: %i[index show create destroy]
         resources :reservation_turns
         resources :reservation_tags
         resources :reservations do
@@ -49,8 +71,8 @@ Rails.application.routes.draw do
 
         resources :preferences, only: %i[index] do
           collection do
+            get "hash"
             get ":key", action: :show
-            get ":key/value", action: :value
             patch ":key", action: :update
           end
         end
@@ -80,25 +102,25 @@ Rails.application.routes.draw do
             end
           end
 
-          resources :ingredients, only: %i[index show create update destroy] do
+          resources :ingredients do
             member do
               post "copy"
             end
           end
 
-          resources :tags, only: %i[index show create update destroy] do
+          resources :tags do
             member do
               post "copy"
             end
           end
 
-          resources :allergens, only: %i[index show create update destroy] do
+          resources :allergens do
             member do
               post "copy"
             end
           end
 
-          resources :dishes, only: %i[index show create update destroy] do
+          resources :dishes do
             member do
               post "copy"
 

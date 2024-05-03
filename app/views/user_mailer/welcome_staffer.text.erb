@@ -1,0 +1,5 @@
+<%= I18n.t("mail.greetings") %> <%= @user.fullname.present? ? @user.fullname : @user.email %>,
+
+<%= I18n.t("user_mailer.welcome_staffer.body") %>
+
+<%= @set_password_url %>

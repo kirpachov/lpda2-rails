@@ -2,6 +2,16 @@ it:
   record_not_found: "Impossibile trovare \"%{model}\" con 'id'=%{id}"
   record_not_found_by: "Impossibile trovare \"%{model}\" con '%{attribute}'=\"%{value}\""
 
+  user_mailer:
+    password_updated:
+      subject: "La tua password è stata aggiornata"
+      body: "volevamo informarla che la password del suo account %{app_name} associata all'email %{email} è stata aggiornata"
+    welcome_staffer:
+      subject: "Benvenuto!"
+      body: "Ti abbiamo creato un account come componente dello staff."
+    reset_password:
+      subject: "Reimposta la tua password"
+      body: "Salve, può resettare la password al link di seguito. Grazie."
   activerecord:
     models:
       panel/invite_token:
@@ -27,6 +37,7 @@ it:
         private_to_should_be_after_private_from: "La fine della visibilità privata %{private_to} deve essere dopo l'inzio %{private_from}"
         public_from_should_be_before_public_to: "Inizio visibilità privata %{public_from} deve essere prima del termine %{public_to}"
         public_to_should_be_after_public_from: "La fine della visibilità privata %{public_to} deve essere dopo l'inzio %{public_from}"
+        not_a_valid_email: "non è una email valida"
   date:
     abbr_day_names:
     - dom
@@ -166,6 +177,12 @@ it:
       too_failed_attempts: "Il tuo account è stato temporaneamente bloccato causa troppi tentativi fallidi di accesso. Riprova più tardi."
       invalid_locale: 'La lingua "%{lang}" non è supportata.'
       endpoint_not_found: "Route non trovata."
+      secret_is_required: "Secret è obbligatorio"
+      password_is_required: "La password è obbligatoria"
+      expired_secret: "Il Secret è invalido o scaduto. Richiedi un nuovo link."
+      user_not_found: "Impossibile trovare l'utente"
+      invalid_refresh_token: "refresh_token invalido."
+      missing_refresh_token: "Refresh token è assente o vuoto"
     template:
       body: 'Ricontrolla i seguenti campi:'
       header:
@@ -251,6 +268,8 @@ it:
     verification_code_requested_for_this_email: "È stato richiesto l'invio di un codice di verifica a questo indirizzo email."
     your_verification_code_is: "Il tuo codice di verifica è:"
     need_to_reach: "Hai bisogno di contattarci?"
+    set_your_password: "Imposta la tua password"
+    greetings: "Salve"
   set_password: "Imposta password"
   login: "Accedi"
   if_password_unknown_reset: "Se non conosci la password del tuo account, puoi impostarla all'interno della piattaforma!"

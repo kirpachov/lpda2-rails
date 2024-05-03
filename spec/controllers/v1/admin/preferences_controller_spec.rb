@@ -36,38 +36,10 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
         it { is_expected.not_to be_empty }
 
         it "includes all user's preferences" do
-          expect(json.keys).to match_array user.preferences.pluck(:key)
+          keys = json[:items].map{ |item| item[:key].to_s }
+          expect(keys).to match_array user.preferences.pluck(:key).map(&:to_s)
         end
       end
-    end
-  end
-
-  describe "#value" do
-    before { authenticate_request(user:) }
-
-    def req(key = preference_keys.sample)
-      get :value, params: { key: }
-    end
-
-    it "returns the value of the setting of this user" do
-      req
-
-      expect(response).to be_successful
-    end
-
-    it "returns just the value of the required setting" do
-      req(:language)
-
-      expect(parsed_response_body).to eq user.preference_value(:language).to_s
-    end
-
-    it "returns error if invalid key is required" do
-      req(:something_that_should_not_exist)
-
-      expect(parsed_response_body).not_to eq nil
-      expect(parsed_response_body).to be_a(Hash)
-      expect(parsed_response_body).to include(:message)
-      expect(response).to have_http_status(:not_found)
     end
   end
 

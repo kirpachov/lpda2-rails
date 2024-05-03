@@ -2,6 +2,16 @@ en:
   record_not_found: "Unable to find \"%{model}\" with 'id'=%{id}"
   record_not_found_by: "Unable to find \"%{model}\" with '%{attribute}'=%{value}"
 
+  user_mailer:
+    password_updated:
+      subject: "Your password was updated"
+      body: "we wanted to inform you that your account at %{app_name} linked to the email %{email} was updated."
+    welcome_staffer:
+      subject: "Welcome!"
+      body: "We've created an account for you as staff member."
+    reset_password:
+      subject: "Reset your password"
+      body: "You can reset the password on the following link"
   activerecord:
     models:
       panel/invite_token:
@@ -25,6 +35,7 @@ en:
         private_to_should_be_after_private_from: "The end of the private visibility %{private_to} should be AFTER the beginning %{private_from}"
         public_from_should_be_before_public_to: "Start of the public visibility %{public_from} must be before the ending %{public_to}"
         public_to_should_be_after_public_from: "The end of the public visibility %{public_to} should be AFTER the beginning %{public_from}"
+        not_a_valid_email: "is not a valid email"
   date:
     abbr_day_names:
     - sun
@@ -164,6 +175,12 @@ en:
       too_failed_attempts: "Your account has been temporarily locked due to too many failed login attempts. Please try again later."
       invalid_locale: 'Language "%{lang}" is not supported.'
       endpoint_not_found: "Endpoint not found."
+      secret_is_required: "Secret is required"
+      password_is_required: "Password is required"
+      expired_secret: "Secret is invalid or expired. Please require a new link."
+      user_not_found: "User not found"
+      invalid_refresh_token: "Invalid refresh_token"
+      missing_refresh_token: "Refresh token is missing or blank"
     template:
       body: 'Please review the following fields:'
       header:
@@ -249,6 +266,8 @@ en:
     verification_code_requested_for_this_email: "A verification code has been requested for this email address."
     your_verification_code_is: "Your verification code is:"
     need_to_reach: "Need to reach us?"
+    set_your_password: "Set your password"
+    greetings: "Hello"
   set_password: "Set Password"
   login: "Log In"
   if_password_unknown_reset: "If you don't know your account password, you can set it within the platform!"

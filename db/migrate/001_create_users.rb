@@ -9,7 +9,8 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.text      :email,           null: false, index: { unique: true }
       t.text      :password_digest, null: false
       t.text      :status,          null: false
-      t.timestamp :root_at
+      t.timestamp :root_at,         comment: %(Datetime when user became root. Won't ask password for a while.)
+      t.boolean   :can_root,        default: false, comment: %(Can this user become root?)
       t.integer   :failed_attempts, default: 0, null: false
       t.text      :enc_otp_key
       t.timestamp :locked_at

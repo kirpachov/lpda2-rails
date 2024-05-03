@@ -39,6 +39,27 @@ RSpec.describe User, type: :model do
   context "instance methods" do
     let(:instance) { described_class.new }
 
+    context "when calling #send_reset_password_email" do
+      subject(:user) { create(:user) }
+
+      let(:call) { user.send_reset_password_email }
+
+      it { expect(user).to be_valid.and(be_persisted) }
+      it { expect { call }.not_to raise_error }
+      it { expect { call }.to have_enqueued_mail(UserMailer, :reset_password).once }
+      it { expect { call }.to(change { ResetPasswordSecret.count }.by(1)) }
+
+      it do
+        3.times { call }
+        expect(user.reset_password_secrets.count).to eq 1
+      end
+
+      it do
+        3.times { call }
+        expect(ResetPasswordSecret.not_expired.count).to eq 1
+      end
+    end
+
     describe "#temporarily_block!" do
       subject { user }
 
@@ -150,6 +171,36 @@ RSpec.describe User, type: :model do
         let!(:user) { refresh_token.user }
 
         it { expect { refresh_token.destroy }.not_to change(described_class, :count) }
+      end
+    end
+
+    context "when checking user's root" do
+      subject { user }
+
+      let!(:user) { create(:user, can_root: true) }
+
+      it { expect(user.root_at).to be_nil }
+      it { expect(user).not_to be_root }
+      it { expect { user.root! }.to(change { user.reload.root_at }.from(nil)) }
+      it { expect(User.root.pluck(:id)).not_to include(user.id) }
+
+      context "when setting user as root" do
+        before { user.root! }
+
+        it { expect(user).to be_root }
+        it { expect(User.root.pluck(:id)).to include(user.id) }
+
+        it "after time, should not be root anymore." do
+          travel_to(Time.current + Config.app[:root_duration] + 1) do
+            expect(user).not_to be_root
+          end
+        end
+
+        it "after some time should not be included in :root scope" do
+          travel_to(Time.current + Config.app[:root_duration] + 1) do
+            expect(User.root.pluck(:id)).not_to include(user.id)
+          end
+        end
       end
     end
   end

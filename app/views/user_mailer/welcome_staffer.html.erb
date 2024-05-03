@@ -1,0 +1,13 @@
+<p><%= I18n.t("mail.greetings") %> <%= @user.fullname.present? ? @user.fullname : @user.email %>,</p>
+
+<p><%= I18n.t("user_mailer.welcome_staffer.body") %></p>
+
+<p>
+  <a href="<%= @set_password_url %>"><%= I18n.t("mail.set_your_password") %></a>
+</p>
+
+<p>
+  <%= I18n.t("mail.if_button_does_not_work_copy_and_paste_above") %>
+</p>
+
+<%= @set_password_url %>
