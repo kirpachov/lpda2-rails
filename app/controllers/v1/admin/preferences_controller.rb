@@ -5,27 +5,29 @@ module V1
     class PreferencesController < ApplicationController
       before_action :validate_key_exists, only: %i[value show update]
 
+      # GET /v1/admin/preferences
       def index
+        render json: {
+          items: current_user.preferences.map { |preference| preference_json(preference) }
+        }
+      end
+
+      # GET /v1/admin/preferences/hash
+      def hash
         render json: current_user.preferences_hash
       end
 
+      # GET /v1/admin/preferences/:key
       def show
         render json: preference_json(current_user.preference(params[:key]))
         # render json: current_user.preference(params[:key]).as_json(except: %i[id created_at]).merge(value: current_user.preference_value(params[:key]))
       end
 
-      def value
-        render json: current_user.preference_value(params[:key])
-      end
-
+      # PATCH /v1/admin/preferences/:key
       def update
         preference = current_user.preference(params[:key])
-        updated = preference.update(value: params[:value])
 
-        unless updated
-          return render json: { message: "#{I18n.t("preferences.update_failed")}:#{preference.errors.full_messages.join("; ")}", details: preference.errors.as_json },
-                        status: :unprocessable_entity
-        end
+        return render_unprocessable_entity(preference) unless preference.update(value: params[:value])
 
         render json: preference_json(current_user.preference(params[:key]))
       end

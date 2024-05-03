@@ -71,8 +71,8 @@ Rails.application.routes.draw do
 
         resources :preferences, only: %i[index] do
           collection do
+            get "hash"
             get ":key", action: :show
-            get ":key/value", action: :value
             patch ":key", action: :update
           end
         end
