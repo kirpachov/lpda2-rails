@@ -37,7 +37,7 @@ gem "mustache", "~> 1.1.1"
 # gem 'rotp', '~> 6.2.2'
 # gem 'jwt', '~> 2.2.3'
 # gem 'mail', '~> 2.7.1'
-gem "sidekiq", "~> 7.2.2"
+gem "sidekiq", "~> 7.2.4"
 gem "sidekiq-cron", "~> 1.11.0"
 gem "sidekiq-status", "~> 3.0.3"
 
