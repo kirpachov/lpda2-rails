@@ -44,10 +44,6 @@ module V1
         render json: { message: I18n.t("preferences.key_not_found") },
                status: :not_found
       end
-
-      def all
-        current_user.preferences
-      end
     end
   end
 end

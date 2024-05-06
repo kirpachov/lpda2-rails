@@ -293,3 +293,5 @@ it:
     delete_reservation: "Cancella pranotazione"
     changed_mind: "Cambiato idea?"
   invalid_param: "Parametro %{name} non è valido."
+  settings:
+    key_not_found: "Chiave %{key} non trovata"

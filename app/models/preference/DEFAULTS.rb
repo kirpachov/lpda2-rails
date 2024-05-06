@@ -12,10 +12,11 @@ class Preference
       default: I18n.available_locales
     },
 
+    # NOTE: Server is always in UTC.
     timezone: {
       # value: nil,
       default: Rails.configuration.time_zone
-    }
+    },
 
   }.with_indifferent_access.freeze
 end

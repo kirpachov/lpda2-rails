@@ -291,3 +291,5 @@ en:
     delete_reservation: "Delete reservation"
     changed_mind: "Changed your mind?"
   invalid_param: "Param %{name} is invalid."
+  settings:
+    key_not_found: "Key %{key} was not found"
