@@ -131,5 +131,116 @@ RSpec.describe "PATCH /v1/admin/settings/:key" do
         expect(json).to include(message: String)
       end
     end
+
+    context "when updating email_contacts to a valid json: will update and return 200" do
+      let(:value) do
+        {
+          "address" => "Some addr",
+          "email" => "email@laportadacqua.com",
+          "phone" => "+39 041 241 2124",
+          "whatsapp_number" => "+39 041 241 2124",
+          "whatsapp_url" => "https://wa.me/+390412412124",
+          "facebook_url" => "https://www.facebook.com/Laportadacqua",
+          "instagram_url" => "https://www.instagram.com/laportadacqua",
+          "tripadvisor_url" => "https://www.tripadvisor.it/Restaurant_Review-g187870-d1735599-Reviews-La_Porta_D_Acqua-Venice_Veneto.html",
+          "homepage_url" => "https://laportadacqua.com",
+          "google_url" => "https://g.page/laportadacqua?share"
+        }
+      end
+
+      let(:key) { "email_contacts" }
+      let(:params) { { value: value.to_json } }
+
+      it do
+        req
+        expect(response).to be_successful
+      end
+
+      it do
+        req
+        expect(json["value"]).to eq(value)
+      end
+
+      it do
+        req
+        expect(json["key"]).to eq("email_contacts")
+      end
+
+      it do
+        expect { req }.to(change { Setting.find_by(key: :email_contacts).reload.value }.to(value))
+      end
+    end
+
+    context "when updating email_contacts to a valid json but some keys are missing: won't update and will return 422" do
+      let(:value) do
+        {
+          # address IS MISSING.
+          # "address" => "Some addr",
+          "email" => "email@laportadacqua.com",
+          "phone" => "+39 041 241 2124",
+          "whatsapp_number" => "+39 041 241 2124",
+          "whatsapp_url" => "https://wa.me/+390412412124",
+          "facebook_url" => "https://www.facebook.com/Laportadacqua",
+          "instagram_url" => "https://www.instagram.com/laportadacqua",
+          "tripadvisor_url" => "https://www.tripadvisor.it/Restaurant_Review-g187870-d1735599-Reviews-La_Porta_D_Acqua-Venice_Veneto.html",
+          "homepage_url" => "https://laportadacqua.com",
+          "google_url" => "https://g.page/laportadacqua?share"
+        }
+      end
+
+      let(:key) { "email_contacts" }
+      let(:params) { { value: value.to_json } }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it do
+        req
+        expect(json).to include(message: /address/)
+      end
+
+      it do
+        expect { req }.not_to(change { Setting.find_by(key: :email_contacts).reload.value })
+      end
+    end
+
+    context "when updating email_contacts to an empty json: won't update and will return 422" do
+      let(:value) { {} }
+
+      let(:key) { "email_contacts" }
+      let(:params) { { value: value.to_json } }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        expect { req }.not_to(change { Setting.find_by(key: :email_contacts).reload.value })
+      end
+    end
+
+    context "when updating email_contacts to nil: won't update and will return 422" do
+      let(:value) { nil }
+
+      let(:key) { "email_contacts" }
+      let(:params) { { value: } }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        expect { req }.not_to(change { Setting.find_by(key: :email_contacts).reload.value })
+      end
+    end
   end
 end

@@ -57,7 +57,7 @@ class Setting
     def validate_email_images
       return record.errors.add(:value, "should be a Hash, got #{record.value.class}") unless record.value.is_a?(Hash)
 
-      record.value.each do |_key, val|
+      record.value.each_value do |val|
         unless val.is_a?(String) && val.match?(URI::DEFAULT_PARSER.make_regexp)
           record.errors.add(:value,
                             "should be a url, got #{val.class}")
@@ -68,9 +68,16 @@ class Setting
     def validate_email_contacts
       return record.errors.add(:value, "should be a Hash, got #{record.value.class}") unless record.value.is_a?(Hash)
 
-      record.value.each do |_key, val|
+      record.value.each_value do |val|
         record.errors.add(:value, "should be a string, got #{val.class}") unless val.is_a?(String)
       end
+
+      mandatory_keys = %w[address email phone whatsapp_number whatsapp_url facebook_url instagram_url tripadvisor_url homepage_url google_url]
+      missing_keys = mandatory_keys - record.value.keys
+      record.errors.add(:value, "missing keys: #{missing_keys.join(", ")}") if missing_keys.present?
+
+      unknown_keys = record.value.keys - mandatory_keys
+      record.errors.add(:value, "unknown keys: #{unknown_keys.join(", ")}") if unknown_keys.present?
     end
   end
 end
