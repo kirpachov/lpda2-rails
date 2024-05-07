@@ -3,7 +3,6 @@
 module V1
   module Admin
     class SettingsController < ApplicationController
-      # before_action :validate_key_exists, only: %i[value show update]
       before_action :find_item, only: %i[show update]
 
       # GET /v1/admin/settings
@@ -38,19 +37,10 @@ module V1
         return if @item.present?
 
         render json: { message: I18n.t("settings.key_not_found", key: params[:key].inspect) }, status: :not_found
-      rescue ActiveRecord::RecordNotFound
-        render json: { message: I18n.t("settings.key_not_found", key: params[:key].inspect) }, status: :not_found
       end
 
       def setting_json(setting)
         setting.as_json(except: %i[id created_at])
-      end
-
-      def validate_key_exists
-        return if current_user.setting(params[:key])
-
-        render json: { message: I18n.t("settings.key_not_found") },
-               status: :not_found
       end
     end
   end
