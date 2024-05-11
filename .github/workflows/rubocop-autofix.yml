@@ -1,8 +1,8 @@
-name: "rubocop -a"
+name: "Rubocop autofix"
 
 on:
-  push:
-  pull_request:
+  schedule:
+    - cron: '30 15 * * 5'
 
 jobs:
   rubocop:
@@ -25,15 +25,11 @@ jobs:
       run: bundle install
 
     - name: Rubocop run
-      run: |
-        bash -c "
-          bundle exec rubocop -a
-          [[ $? -ne 2 ]]
-        "
+      run: bundle exec rubocop -a
 
     - name: Create pull request
       uses: peter-evans/create-pull-request@v6.0.5
       with:
-        commit-message: rubocop -a
+        commit-message: rubocop -a via ci-cd
         title: rubocop -a
         branch: fix/rubocop_autofix
