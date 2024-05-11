@@ -7,6 +7,7 @@
 name: "parallel rspec"
 on:
   push:
+  pull_request:
 
 jobs:
   parallel-test:
