@@ -4,7 +4,7 @@
 # documentation.
 
 # pulled from repo
-name: "Rubocop"
+name: "Rubocop lint"
 
 on:
   push:
