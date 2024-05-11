@@ -39,7 +39,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
     it do
       expect(subject).to route(:get, "/v1/admin/menu/dishes/22/references").to(format: :json, action: :references,
-                                                                                controller: "v1/admin/menu/dishes", id: 22)
+                                                                               controller: "v1/admin/menu/dishes", id: 22)
     end
 
     def req(dish_id = dish.id, params = {})
@@ -70,6 +70,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
           req
           response
         end
+
         before { subject }
 
         it do
@@ -78,6 +79,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
 
         it { expect(parsed_response_body).to include(categories: Array) }
+
         it do
           # { categories: [
           # { id: 1, name: "Pranzo1", breadcrumbs: [{ id: 1, name: "Pranzo1" }] },

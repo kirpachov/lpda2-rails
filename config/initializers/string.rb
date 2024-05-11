@@ -16,7 +16,7 @@ class String
   def to_duration
     call = StringToDuration.run(string: self)
 
-    Rails.logger.debug "StringToDuration: #{call.errors.full_messages}" unless call.valid?
+    Rails.logger.debug { "StringToDuration: #{call.errors.full_messages}" } unless call.valid?
 
     call.result
   end

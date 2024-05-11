@@ -19,7 +19,7 @@ module Menu
     # Associations
     # ##############################
     has_many :menu_allergens_in_dishes, class_name: "Menu::AllergensInDish", foreign_key: :menu_allergen_id,
-             dependent: :destroy
+                                        dependent: :destroy
     has_many :menu_dishes, class_name: "Menu::Dish", through: :menu_allergens_in_dishes
     alias_attribute :dishes, :menu_dishes
 

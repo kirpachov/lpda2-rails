@@ -11,7 +11,7 @@ RSpec.describe "GET /v1/admin/users" do
   let(:params) { {} }
 
   def req
-    get users_path, headers: headers, params: params
+    get users_path, headers:, params:
   end
 
   describe "when making basic request" do
@@ -26,7 +26,12 @@ RSpec.describe "GET /v1/admin/users" do
     it { is_expected.to have_http_status(:ok) }
     it { expect(json).to include(items: Array, metadata: Hash) }
     it { expect(json[:items]).not_to be_empty }
-    it { expect(json[:items]).to all(include(id: Integer, email: String, fullname: String, created_at: String, updated_at: String)) }
+
+    it {
+      expect(json[:items]).to all(include(id: Integer, email: String, fullname: String, created_at: String,
+                                          updated_at: String))
+    }
+
     it { expect(json[:items][0]).not_to include(:enc_otp_key) }
     it { expect(json[:items][0]).not_to include(:password) }
     it { expect(json[:items][0]).not_to include(:password_digest) }
@@ -45,7 +50,7 @@ RSpec.describe "GET /v1/admin/users" do
     let(:users) do
       [
         create(:user, email: "userEmailFirst@example.com", fullname: "User Fullname First"),
-        create(:user, email: "userEmailSecond@example.com", fullname: "User Fullname Second"),
+        create(:user, email: "userEmailSecond@example.com", fullname: "User Fullname Second")
       ]
     end
 
@@ -101,7 +106,6 @@ RSpec.describe "GET /v1/admin/users" do
       let(:params) { { id: 0 } }
 
       it "returns an empty array" do
-
         expect(json[:items]).to be_empty
       end
     end

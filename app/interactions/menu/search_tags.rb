@@ -24,7 +24,6 @@ module Menu
 
     private
 
-
     def filter_by_associated_dish_id(items)
       return items if params[:associated_dish_id].blank?
 

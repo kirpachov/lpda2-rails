@@ -72,7 +72,8 @@ class Setting
         record.errors.add(:value, "should be a string, got #{val.class}") unless val.is_a?(String)
       end
 
-      mandatory_keys = %w[address email phone whatsapp_number whatsapp_url facebook_url instagram_url tripadvisor_url homepage_url google_url]
+      mandatory_keys = %w[address email phone whatsapp_number whatsapp_url facebook_url instagram_url tripadvisor_url
+                          homepage_url google_url]
       missing_keys = mandatory_keys - record.value.keys
       record.errors.add(:value, "missing keys: #{missing_keys.join(", ")}") if missing_keys.present?
 

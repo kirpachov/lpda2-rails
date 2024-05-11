@@ -89,17 +89,20 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
 
         it do
-          expect { req(dish.id, allergen0.id) }.to change { Menu::AllergensInDish.order(:index).pluck(:menu_allergen_id) }.from([allergen0.id,
-                                                                                                                                 allergen1.id,
-                                                                                                                                 allergen2.id
-                                                                                                                                ]).to([
-                                                                                                                                        allergen1.id,
-                                                                                                                                        allergen2.id
-                                                                                                                                      ])
+          expect { req(dish.id, allergen0.id) }.to change {
+                                                     Menu::AllergensInDish.order(:index).pluck(:menu_allergen_id)
+                                                   }.from([allergen0.id,
+                                                           allergen1.id,
+                                                           allergen2.id]).to([
+                                                                               allergen1.id,
+                                                                               allergen2.id
+                                                                             ])
         end
 
         it do
-          expect { req(dish.id, allergen0.id) }.to change { Menu::AllergensInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+          expect { req(dish.id, allergen0.id) }.to change {
+                                                     Menu::AllergensInDish.order(:index).pluck(:index)
+                                                   }.from([0, 1, 2]).to([0, 1])
         end
       end
     end

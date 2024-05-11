@@ -38,7 +38,7 @@ Rails.application.routes.draw do
 
       # v1/profile
       # resource :profile, controller: "profile", only: %i[index]
-      get 'profile', to: 'profile#index'
+      get "profile", to: "profile#index"
 
       # v1/auth
       resource :auth, controller: "auth", only: [] do

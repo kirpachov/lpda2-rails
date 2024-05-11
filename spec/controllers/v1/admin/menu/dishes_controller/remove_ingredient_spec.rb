@@ -83,18 +83,22 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
 
         it do
-          expect { req(dish.id, ingredient0.id) }.to change { Menu::IngredientsInDish.order(:index).pluck(:menu_ingredient_id) }.from([
-                                                                                                                                        ingredient0.id,
-                                                                                                                                        ingredient1.id,
-                                                                                                                                        ingredient2.id
-                                                                                                                                      ]).to([
-                                                                                                                                              ingredient1.id,
-                                                                                                                                              ingredient2.id
-                                                                                                                                            ])
+          expect { req(dish.id, ingredient0.id) }.to change {
+                                                       Menu::IngredientsInDish.order(:index).pluck(:menu_ingredient_id)
+                                                     }.from([
+                                                              ingredient0.id,
+                                                              ingredient1.id,
+                                                              ingredient2.id
+                                                            ]).to([
+                                                                    ingredient1.id,
+                                                                    ingredient2.id
+                                                                  ])
         end
 
         it do
-          expect { req(dish.id, ingredient0.id) }.to change { Menu::IngredientsInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+          expect { req(dish.id, ingredient0.id) }.to change {
+                                                       Menu::IngredientsInDish.order(:index).pluck(:index)
+                                                     }.from([0, 1, 2]).to([0, 1])
         end
       end
     end

@@ -14,6 +14,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
     let!(:suggestion) { create(:menu_dish) }
     let!(:dish) { create(:menu_dish) }
+
     before do
       dish.suggestions = [suggestion]
     end
@@ -22,7 +23,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
     it do
       expect(subject).to route(:delete, "/v1/admin/menu/dishes/22/suggestions/55").to(format: :json, action: :remove_suggestion,
-                                                                                  controller: "v1/admin/menu/dishes", id: 22, suggestion_id: 55)
+                                                                                      controller: "v1/admin/menu/dishes", id: 22, suggestion_id: 55)
     end
 
     def req(dish_id = dish.id, suggestion_id = suggestion.id, params = {})

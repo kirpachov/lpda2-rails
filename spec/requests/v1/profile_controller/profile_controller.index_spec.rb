@@ -25,7 +25,11 @@ RSpec.describe "GET /v1/profile" do
     before { req }
 
     it { expect(json).to include(user: Hash) }
-    it { expect(json[:user]).to include(id: Integer, email: String, fullname: String, status: String, root_at: nil, can_root: current_user.can_root, created_at: String, updated_at: String) }
+
+    it {
+      expect(json[:user]).to include(id: Integer, email: String, fullname: String, status: String, root_at: nil,
+                                     can_root: current_user.can_root, created_at: String, updated_at: String)
+    }
 
     it { expect(json[:user]).not_to include(:password) }
     it { expect(json[:user]).not_to include(:password_digest) }

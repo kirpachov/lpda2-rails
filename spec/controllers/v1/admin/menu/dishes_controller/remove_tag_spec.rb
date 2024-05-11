@@ -83,17 +83,20 @@ RSpec.describe V1::Admin::Menu::DishesController do
         end
 
         it do
-          expect { req(dish.id, tag0.id) }.to change { Menu::TagsInDish.order(:index).pluck(:menu_tag_id) }.from([tag0.id,
-                                                                                                                  tag1.id,
-                                                                                                                  tag2.id
-                                                                                                                 ]).to([
-                                                                                                                         tag1.id,
-                                                                                                                         tag2.id
-                                                                                                                       ])
+          expect { req(dish.id, tag0.id) }.to change {
+                                                Menu::TagsInDish.order(:index).pluck(:menu_tag_id)
+                                              }.from([tag0.id,
+                                                      tag1.id,
+                                                      tag2.id]).to([
+                                                                     tag1.id,
+                                                                     tag2.id
+                                                                   ])
         end
 
         it do
-          expect { req(dish.id, tag0.id) }.to change { Menu::TagsInDish.order(:index).pluck(:index) }.from([0, 1, 2]).to([0, 1])
+          expect { req(dish.id, tag0.id) }.to change {
+                                                Menu::TagsInDish.order(:index).pluck(:index)
+                                              }.from([0, 1, 2]).to([0, 1])
         end
       end
     end

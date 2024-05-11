@@ -30,19 +30,24 @@ module Menu
     def write_all(sheet)
       write_row(sheet, 0, %w[element_type element_id name.it name.en description.it description.en status images])
       Menu::Category.all.each_with_index do |cat, cat_index|
-        write_row(sheet, cat_index + 1, ["Category", cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.images.map(&:url)].flatten)
+        write_row(sheet, cat_index + 1,
+                  ["Category", cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.images.map(&:url)].flatten)
         cat.dishes.each_with_index do |dish, index_dish|
-          write_row(sheet, cat_index + index_dish + 2, ["Dish", dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.images.map(&:url)].flatten)
+          write_row(sheet, cat_index + index_dish + 2,
+                    ["Dish", dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.images.map(&:url)].flatten)
           dish.tags.each_with_index do |tag, index_tag|
-            write_row(sheet, cat_index + index_dish + index_tag + 3, ["Tag", tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.image&.url])
+            write_row(sheet, cat_index + index_dish + index_tag + 3,
+                      ["Tag", tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.image&.url])
           end
 
           dish.allergens.each_with_index do |allergen, index_allergen|
-            write_row(sheet, cat_index + index_dish + index_allergen + dish.tags.count + 3, ["Allergen", allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url])
+            write_row(sheet, cat_index + index_dish + index_allergen + dish.tags.count + 3,
+                      ["Allergen", allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url])
           end
 
           dish.ingredients.each_with_index do |ingredient, index_ingredient|
-            write_row(sheet, cat_index + index_dish + index_ingredient + dish.tags.count + dish.allergens.count + 3, ["Ingredient", ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url])
+            write_row(sheet, cat_index + index_dish + index_ingredient + dish.tags.count + dish.allergens.count + 3,
+                      ["Ingredient", ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url])
           end
         end
       end
@@ -51,35 +56,40 @@ module Menu
     def write_menu(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status price images])
       Menu::Category.all.where(parent_id: nil).each_with_index do |cat, index|
-        write_row(sheet, index + 1, [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.images.map(&:url)].flatten)
+        write_row(sheet, index + 1,
+                  [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.images.map(&:url)].flatten)
       end
     end
 
     def write_dishes(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status price images])
       Menu::Dish.all.each_with_index do |dish, index|
-        write_row(sheet, index + 1, [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.images.map(&:url)].flatten)
+        write_row(sheet, index + 1,
+                  [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.images.map(&:url)].flatten)
       end
     end
 
     def write_allergens(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl])
       Menu::Allergen.all.visible.each_with_index do |allergen, index|
-        write_row(sheet, index + 1, [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url])
+        write_row(sheet, index + 1,
+                  [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url])
       end
     end
 
     def write_tags(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status color imageUrl])
       Menu::Tag.all.visible.each_with_index do |tag, index|
-        write_row(sheet, index + 1, [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, tag.image&.url])
+        write_row(sheet, index + 1,
+                  [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, tag.image&.url])
       end
     end
 
     def write_ingredients(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl])
       Menu::Ingredient.all.visible.each_with_index do |ingredient, index|
-        write_row(sheet, index + 1, [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url])
+        write_row(sheet, index + 1,
+                  [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url])
       end
     end
 

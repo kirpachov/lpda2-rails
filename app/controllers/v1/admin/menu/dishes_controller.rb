@@ -101,7 +101,9 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:suggestion_id].inspect))
+        render_error(status: 404,
+                     message: I18n.t("record_not_found", model: Menu::Dish,
+                                                         id: params[:suggestion_id].inspect))
       end
 
       def remove_suggestion
@@ -110,7 +112,9 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:suggestion_id].inspect))
+        render_error(status: 404,
+                     message: I18n.t("record_not_found", model: Menu::Dish,
+                                                         id: params[:suggestion_id].inspect))
       end
 
       def copy
@@ -146,7 +150,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                     id: params[:ingredient_id].inspect))
+                                                         id: params[:ingredient_id].inspect))
       end
 
       def remove_ingredient
@@ -155,7 +159,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                     id: params[:ingredient_id].inspect))
+                                                         id: params[:ingredient_id].inspect))
       end
 
       def move_ingredient
@@ -164,7 +168,7 @@ module V1
         if ingredient.nil?
           return render_error(status: 404,
                               message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                              id: params[:ingredient_id].inspect))
+                                                                  id: params[:ingredient_id].inspect))
         end
 
         call = ingredient.move(to_index: params[:to_index], dish_id: @item.id)
@@ -201,7 +205,7 @@ module V1
         if tag.nil?
           return render_error(status: 404,
                               message: I18n.t("record_not_found", model: Menu::Tag,
-                                              id: params[:tag_id].inspect))
+                                                                  id: params[:tag_id].inspect))
         end
 
         call = tag.move(to_index: params[:to_index], dish_id: @item.id)
@@ -224,7 +228,7 @@ module V1
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Allergen,
-                                     id: params[:allergen_id].inspect))
+                                                         id: params[:allergen_id].inspect))
       end
 
       def remove_allergen
@@ -233,7 +237,7 @@ module V1
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Allergen,
-                                     id: params[:allergen_id].inspect))
+                                                         id: params[:allergen_id].inspect))
       end
 
       def move_allergen
@@ -242,7 +246,7 @@ module V1
         if allergen.nil?
           return render_error(status: 404,
                               message: I18n.t("record_not_found", model: Menu::Tag,
-                                              id: params[:allergen_id].inspect))
+                                                                  id: params[:allergen_id].inspect))
         end
 
         call = allergen.move(to_index: params[:to_index], dish_id: @item.id)
@@ -290,7 +294,7 @@ module V1
           description: item.description,
           images: item.images.map { |image| image.as_json.merge(url: image.url) },
           translations: item.translations_json,
-          suggestions: item.suggestions.map { |suggestion| suggestion.as_json.merge(name: suggestion.name) },
+          suggestions: item.suggestions.map { |suggestion| suggestion.as_json.merge(name: suggestion.name) }
         )
       end
 
@@ -304,7 +308,7 @@ module V1
 
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: Menu::Dish,
-                                     id: params[:id].inspect))
+                                                         id: params[:id].inspect))
       end
     end
   end

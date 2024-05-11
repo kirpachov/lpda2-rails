@@ -22,8 +22,8 @@ module Menu
         Menu::AllergensInDish.where(dish_id:).update_all("index = index + 100000")
 
         items = Menu::AllergensInDish.where(dish_id:).where.not(id: association.id)
-                                       .order(:index).each_with_index
-                                       .map do |dic, index|
+                                     .order(:index).each_with_index
+                                     .map do |dic, index|
           dic.index = index >= to_index ? index + 1 : index
           dic
         end

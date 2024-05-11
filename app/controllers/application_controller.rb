@@ -55,7 +55,7 @@ class ApplicationController < ActionController::API
   end
 
   def set_locale
-    # TODO read current user preferences. (if current user is present)
+    # TODO: read current user preferences. (if current user is present)
     I18n.locale = detect_current_locale || I18n.default_locale
   end
 

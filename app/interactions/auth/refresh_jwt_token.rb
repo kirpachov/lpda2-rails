@@ -26,7 +26,8 @@ module Auth
 
         return user_not_found! if user.nil? || user.deleted?
 
-        jwt = JsonWebToken.encode(user_id: user.id, can_root: user.can_root, root_at: user.root_at, refresh_token_id: refresh_token.id)
+        jwt = JsonWebToken.encode(user_id: user.id, can_root: user.can_root, root_at: user.root_at,
+                                  refresh_token_id: refresh_token.id)
         refresh_token.secret = SecureRandom.urlsafe_base64(32)
         if refresh_token.save
           @result = { jwt:, new_secret: refresh_token.secret }
@@ -58,7 +59,7 @@ module Auth
     end
 
     def find_refresh_token
-      RefreshToken.not_expired.lock(true).find_by(secret: secret)
+      RefreshToken.not_expired.lock(true).find_by(secret:)
     end
 
     def secret

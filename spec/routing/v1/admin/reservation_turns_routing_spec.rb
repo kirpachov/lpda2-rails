@@ -17,16 +17,16 @@ RSpec.describe "Routing /v1/admin/reservation_turns" do
 
   it do
     expect(put: "/v1/admin/reservation_turns/1").to route_to("v1/admin/reservation_turns#update", id: "1",
-                                                             format: :json)
+                                                                                                  format: :json)
   end
 
   it do
     expect(patch: "/v1/admin/reservation_turns/1").to route_to("v1/admin/reservation_turns#update", id: "1",
-                                                               format: :json)
+                                                                                                    format: :json)
   end
 
   it do
     expect(delete: "/v1/admin/reservation_turns/1").to route_to("v1/admin/reservation_turns#destroy", id: "1",
-                                                                format: :json)
+                                                                                                      format: :json)
   end
 end

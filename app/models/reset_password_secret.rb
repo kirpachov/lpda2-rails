@@ -2,7 +2,6 @@
 
 # Model that will hold tokens for reset password. Only one token per user is allowed.
 class ResetPasswordSecret < ApplicationRecord
-
   # ################################
   # Associations
   # ################################
@@ -23,8 +22,8 @@ class ResetPasswordSecret < ApplicationRecord
   # ################################
   # Scopes
   # ################################
-  scope :not_expired, -> { where('expires_at > ?', Time.zone.now) }
-  scope :expired, -> { where('expires_at < ?', Time.zone.now) }
+  scope :not_expired, -> { where("expires_at > ?", Time.zone.now) }
+  scope :expired, -> { where("expires_at < ?", Time.zone.now) }
 
   # ################################
   # Class methods
@@ -41,7 +40,7 @@ class ResetPasswordSecret < ApplicationRecord
   def generate_secret
     self.secret ||= GenToken.for!(
       ResetPasswordSecret,
-      'secret',
+      "secret",
       token_generator: -> { SecureRandom.urlsafe_base64(32) }
     )
   end
@@ -49,7 +48,7 @@ class ResetPasswordSecret < ApplicationRecord
   def expire!
     update!(expires_at: 1.minute.ago)
   end
-  alias_method :expired!, :expire!
+  alias expired! expire!
 
   def expired?
     expires_at < Time.zone.now
