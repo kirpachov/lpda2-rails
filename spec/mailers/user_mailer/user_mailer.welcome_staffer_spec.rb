@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe UserMailer do
   subject { mail }
 
-  let(:default_params) { { user: user, token: token } }
+  let(:default_params) { { user:, token: } }
   let(:user) { create(:user, :with_fullname) }
   let(:token) { "some-super-secret-token" }
 

@@ -19,11 +19,11 @@ class StringToDuration < ActiveInteraction::Base
   end
 
   def unit
-    clean_string.split(' ').second&.gsub(/\d/, '')
+    clean_string.split(" ").second&.gsub(/\d/, "")
   end
 
   def number
-    clean_string.split(' ').first&.gsub(/\D/, '')
+    clean_string.split(" ").first&.gsub(/\D/, "")
   end
 
   private
@@ -31,11 +31,11 @@ class StringToDuration < ActiveInteraction::Base
   AVALIABLE_UNITS = %w[seconds second minutes minute hours hour days day weeks week months month years year].freeze
 
   def validate!
-    errors.add(:string, 'is not a string') unless string.is_a?(String)
-    errors.add(:number, 'is not a number') unless number.is_a?(String) && number.match?(/\d/)
-    errors.add(:unit, 'is not a unit') unless unit.is_a?(String) && AVALIABLE_UNITS.include?(unit)
-    errors.add(:string, 'should respect the format: 1 day') unless clean_string.match?(/\A\d+ [a-z]+\z/)
-    errors.add(:string, 'should respect the format: 1 day') if clean_string.split(' ').count != 2
+    errors.add(:string, "is not a string") unless string.is_a?(String)
+    errors.add(:number, "is not a number") unless number.is_a?(String) && number.match?(/\d/)
+    errors.add(:unit, "is not a unit") unless unit.is_a?(String) && AVALIABLE_UNITS.include?(unit)
+    errors.add(:string, "should respect the format: 1 day") unless clean_string.match?(/\A\d+ [a-z]+\z/)
+    errors.add(:string, "should respect the format: 1 day") if clean_string.split(" ").count != 2
   end
 
   def execute

@@ -453,7 +453,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 2
-          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish2.id])
+          expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish0.id, dish2.id)
         end
       end
 
@@ -474,7 +474,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 3
-          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish2.id, dish3.id, dish4.id])
+          expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish2.id, dish3.id, dish4.id)
         end
       end
 
@@ -537,7 +537,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 2
-          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish3.id])
+          expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish0.id, dish3.id)
         end
       end
 
@@ -559,7 +559,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
 
         it do
           expect(parsed_response_body[:items].count).to eq 3
-          expect(parsed_response_body[:items].pluck(:id)).to match_array([dish0.id, dish3.id, dish2.id])
+          expect(parsed_response_body[:items].pluck(:id)).to contain_exactly(dish0.id, dish3.id, dish2.id)
         end
       end
 

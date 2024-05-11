@@ -85,7 +85,10 @@ module V1
       code = params[:code] || params[:token] || params[:secret]
       return render_error status: 400, message: I18n.t("errors.messages.secret_is_required") if code.blank?
 
-      return render_error status: 400, message: I18n.t("errors.messages.password_is_required") if params[:password].blank?
+      if params[:password].blank?
+        return render_error status: 400,
+                            message: I18n.t("errors.messages.password_is_required")
+      end
 
       secret = ResetPasswordSecret.not_expired.where(secret: code).first
       return render_error status: 400, message: I18n.t("errors.messages.expired_secret") unless secret

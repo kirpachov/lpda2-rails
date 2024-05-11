@@ -4,7 +4,6 @@ module Menu
   # You may want to suggest your customers a pair of dishes that go well together.
   # This model allows you to do that.
   class DishSuggestion < ApplicationRecord
-
     # ##############################
     # Associations
     # ##############################

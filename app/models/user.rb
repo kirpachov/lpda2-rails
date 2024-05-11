@@ -2,7 +2,6 @@
 
 # Users of the application.
 class User < ApplicationRecord
-
   # ################################
   # Modules
   # ################################
@@ -21,7 +20,7 @@ class User < ApplicationRecord
   # Validations
   # ################################
   validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: I18n.t("activerecord.errors.messages.not_a_valid_email") },
-            uniqueness: { case_sensitive: false }
+                    uniqueness: { case_sensitive: false }
   validates :username, presence: false, uniqueness: { case_sensitive: false, allow_blank: true }
   validates :status, presence: true, inclusion: { in: VALID_STATUSES }
 
@@ -43,7 +42,9 @@ class User < ApplicationRecord
   # Scopes
   # ################################
   scope :visible, -> { where.not(status: "deleted") }
-  scope :root, -> { where(can_root: true).where.not(root_at: nil).where("root_at > ?", Time.current - Config.app[:root_duration]) }
+  scope :root, lambda {
+                 where(can_root: true).where.not(root_at: nil).where("root_at > ?", Time.current - Config.app[:root_duration])
+               }
 
   # ################################
   # Instance methods

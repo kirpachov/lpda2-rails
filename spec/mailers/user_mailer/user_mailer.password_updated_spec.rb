@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe UserMailer do
   subject { mail }
 
-  let(:default_params) { { user: user, token: token } }
+  let(:default_params) { { user:, token: } }
   let(:user) { create(:user, :with_fullname) }
   let(:token) { "some-super-secret-token" }
 
@@ -28,7 +28,8 @@ RSpec.describe UserMailer do
       end
 
       it do
-        expect(body).to include(I18n.t("user_mailer.password_updated.body", app_name: Config.hash[:app_name], email: user.email))
+        expect(body).to include(I18n.t("user_mailer.password_updated.body", app_name: Config.hash[:app_name],
+                                                                            email: user.email))
       end
 
       it do
@@ -48,12 +49,14 @@ RSpec.describe UserMailer do
       end
 
       it do
-        expect(body).to include(CGI.escapeHTML(I18n.t("user_mailer.password_updated.body", app_name: Config.hash[:app_name], email: user.email)))
+        expect(body).to include(CGI.escapeHTML(I18n.t("user_mailer.password_updated.body",
+                                                      app_name: Config.hash[:app_name], email: user.email)))
       end
     end
 
     %w[it en].each do |lang|
-      it "when language is #{lang.inspect}, subject should be #{I18n.t("user_mailer.password_updated.subject", locale: lang).inspect}" do
+      it "when language is #{lang.inspect}, subject should be #{I18n.t("user_mailer.password_updated.subject",
+                                                                       locale: lang).inspect}" do
         I18n.with_locale(lang) do
           expect(mail.subject).to eq I18n.t("user_mailer.password_updated.subject")
         end
@@ -62,13 +65,15 @@ RSpec.describe UserMailer do
       context "when language is #{lang}" do
         it do
           I18n.with_locale(lang) do
-            expect(mail.text_part.body.encoded).to include I18n.t("user_mailer.password_updated.body", app_name: Config.hash[:app_name], email: user.email)
+            expect(mail.text_part.body.encoded).to include I18n.t("user_mailer.password_updated.body",
+                                                                  app_name: Config.hash[:app_name], email: user.email)
           end
         end
 
         it do
           I18n.with_locale(lang) do
-            expect(mail.html_part.body.encoded).to include CGI.escapeHTML(I18n.t("user_mailer.password_updated.body", app_name: Config.hash[:app_name], email: user.email))
+            expect(mail.html_part.body.encoded).to include CGI.escapeHTML(I18n.t("user_mailer.password_updated.body",
+                                                                                 app_name: Config.hash[:app_name], email: user.email))
           end
         end
       end

@@ -11,7 +11,7 @@ RSpec.describe StringToDuration, type: :interaction do
     { string: "1 hour", expected: 1.hour },
     { string: "1 hours", expected: 1.hour },
     { string: "1 day", expected: 1.day },
-    { string: "1 days", expected: 1.days },
+    { string: "1 days", expected: 1.day },
     { string: "1 week", expected: 1.week },
     { string: "1 weeks", expected: 1.week },
     { string: "1 month", expected: 1.month },

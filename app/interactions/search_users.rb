@@ -9,7 +9,8 @@ class SearchUsers < ActiveInteraction::Base
     items = User.visible
 
     if params[:query].present?
-      items = items.where("email ILIKE :query OR fullname ILIKE :query OR username ILIKE :query", query: "%#{params[:query]}%")
+      items = items.where("email ILIKE :query OR fullname ILIKE :query OR username ILIKE :query",
+                          query: "%#{params[:query]}%")
     end
 
     # Filter by any of the following keys:

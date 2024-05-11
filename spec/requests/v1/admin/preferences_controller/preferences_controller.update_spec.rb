@@ -54,7 +54,11 @@ RSpec.describe "PATCH /v1/admin/preferences/:key" do
       it { expect { req }.to(change { current_user.preference(:language).value }.from("it").to("en")) }
       it { expect { req }.to(change { current_user.preference(:language).updated_at }) }
 
-      it { expect { req }.not_to(change { current_user.preferences.where.not(key: :language).order(:id).pluck(:updated_at) }) }
+      it {
+        expect { req }.not_to(change do
+                                current_user.preferences.where.not(key: :language).order(:id).pluck(:updated_at)
+                              end)
+      }
 
       it do
         req
@@ -83,7 +87,11 @@ RSpec.describe "PATCH /v1/admin/preferences/:key" do
       it { expect { req }.to(change { current_user.preference(:language).value }.from("en").to("it")) }
       it { expect { req }.to(change { current_user.preference(:language).updated_at }) }
 
-      it { expect { req }.not_to(change { current_user.preferences.where.not(key: :language).order(:id).pluck(:updated_at) }) }
+      it {
+        expect { req }.not_to(change do
+                                current_user.preferences.where.not(key: :language).order(:id).pluck(:updated_at)
+                              end)
+      }
 
       it do
         req

@@ -1,4 +1,3 @@
-
 def debug(message)
   Rails.logger.debug { message }
   puts message

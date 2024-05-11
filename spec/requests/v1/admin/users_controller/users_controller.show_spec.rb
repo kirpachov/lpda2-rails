@@ -11,11 +11,12 @@ RSpec.describe "GET /v1/admin/users/2" do
   let(:user) { create(:user) }
 
   def req
-    get user_path(user), headers: headers, params: params
+    get user_path(user), headers:, params:
   end
 
   describe "when making a basic request" do
     subject { json }
+
     before { req }
 
     it do
@@ -23,7 +24,7 @@ RSpec.describe "GET /v1/admin/users/2" do
     end
 
     it do
-      is_expected.to include(item: Hash)
+      expect(subject).to include(item: Hash)
     end
 
     it do

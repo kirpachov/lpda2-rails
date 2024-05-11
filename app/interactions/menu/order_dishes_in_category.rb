@@ -15,7 +15,7 @@ module Menu
       Menu::Dish.transaction do
         @dishes = category.dishes.to_ary.sort_by { |d| d.send(field) }
         # debugger
-        Menu::DishesInCategory.where(category: category).update_all("index = index + 100000")
+        Menu::DishesInCategory.where(category:).update_all("index = index + 100000")
         @dishes.each_with_index { |dish, index| Menu::DishesInCategory.where(dish:, category:).update!(index:) }
         # @dishes = @dishes.each_with_index.map do |dish, index|
         #   # dish.index = index

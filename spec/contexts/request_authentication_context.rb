@@ -14,10 +14,10 @@ RSpec.shared_context REQUEST_AUTHENTICATION_CONTEXT do
     last_refresh_token_id = RefreshToken.order(id: :desc).limit(1).pluck(:id).last.to_i
     post login_auth_path, headers:, params: { email: current_user.email, password: current_user_password }
 
-    if last_refresh_token_id.present?
-      @current_refresh_token = RefreshToken.where("id > ?", last_refresh_token_id).first
-    else
-      @current_refresh_token = RefreshToken.last
-    end
+    @current_refresh_token = if last_refresh_token_id.present?
+                               RefreshToken.where("id > ?", last_refresh_token_id).first
+                             else
+                               RefreshToken.last
+                             end
   end
 end

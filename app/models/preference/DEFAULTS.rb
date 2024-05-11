@@ -16,7 +16,7 @@ class Preference
     timezone: {
       # value: nil,
       default: Rails.configuration.time_zone
-    },
+    }
 
   }.with_indifferent_access.freeze
 end

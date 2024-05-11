@@ -56,6 +56,7 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect { subject }.to change(Menu::DishesInCategory, :count).by(1) }
         it { expect { subject }.to change(Menu::Dish, :count).by(1) }
         it { expect { subject }.to(change { category.reload.dishes.count }.by(1)) }
+
         it do
           subject
           expect(parsed_response_body).not_to include(message: String)

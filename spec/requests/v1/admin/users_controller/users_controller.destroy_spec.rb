@@ -11,7 +11,7 @@ RSpec.describe "DELETE /v1/admin/users/2" do
   let(:user) { create(:user) }
 
   def req
-    delete user_path(user), headers: headers, params: params
+    delete user_path(user), headers:, params:
   end
 
   describe "when making a basic request" do
@@ -47,6 +47,7 @@ RSpec.describe "DELETE /v1/admin/users/2" do
 
   context "when not authenticated" do
     let(:headers) { {} }
+
     before do
       user
     end

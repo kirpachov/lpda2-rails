@@ -153,7 +153,6 @@ RSpec.describe V1::ImagesController, type: :controller do
         it { expect { subject }.to change { category.reload.images.count }.by(1) }
       end
     end
-
   end
 
   context "GET #show" do
@@ -217,7 +216,7 @@ RSpec.describe V1::ImagesController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
 
-      it { expect { req }.not_to change { record.reload.images.count } }
+      it { expect { req }.not_to(change { record.reload.images.count }) }
     end
 
     context "when authenticated" do
@@ -347,7 +346,7 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
 
       it do
-        expect { req }.not_to change { record.reload.images.pluck(:id) }
+        expect { req }.not_to(change { record.reload.images.pluck(:id) })
       end
     end
 

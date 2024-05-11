@@ -76,7 +76,7 @@ RSpec.describe Menu::Dish, type: :model do
         s = dishes.first
         expect { dish.suggestions << s }.to change { dish.suggestions.count }.by(1)
         expect { dish.suggestions.delete(s) }.to change { dish.suggestions.count }.by(-1)
-        expect { dish.suggestions.delete(s) }.not_to( change { dish.suggestions.count })
+        expect { dish.suggestions.delete(s) }.not_to(change { dish.suggestions.count })
       end
 
       it do

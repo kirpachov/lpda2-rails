@@ -6,37 +6,37 @@ ADMIN_MENU_TAG_ITEM = "ADMIN_MENU_TAG_ITEM"
 RSpec.shared_context ADMIN_MENU_TAG_ITEM do |options = {}|
   it "includes all basic information" do
     expect(subject).to include(
-                         id: Integer,
-                         created_at: String,
-                         updated_at: String
-                       )
+      id: Integer,
+      created_at: String,
+      updated_at: String
+    )
   end
 
   if options[:has_name] == true
     it "has name" do
       expect(subject).to include(
-                           name: String
-                         )
+        name: String
+      )
     end
   elsif options[:has_name] == false
     it "does not have name" do
       expect(subject).to include(
-                           name: nil
-                         )
+        name: nil
+      )
     end
   end
 
   if options[:has_description] == true
     it "has description" do
       expect(subject).to include(
-                           description: String
-                         )
+        description: String
+      )
     end
   elsif options[:has_description] == false
     it "does not have description" do
       expect(subject).to include(
-                           description: nil
-                         )
+        description: nil
+      )
     end
   end
 

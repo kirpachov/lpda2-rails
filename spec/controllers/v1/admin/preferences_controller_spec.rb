@@ -36,7 +36,7 @@ RSpec.describe V1::Admin::PreferencesController, type: :controller do
         it { is_expected.not_to be_empty }
 
         it "includes all user's preferences" do
-          keys = json[:items].map{ |item| item[:key].to_s }
+          keys = json[:items].map { |item| item[:key].to_s }
           expect(keys).to match_array user.preferences.pluck(:key).map(&:to_s)
         end
       end

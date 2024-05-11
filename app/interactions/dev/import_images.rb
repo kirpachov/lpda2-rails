@@ -27,8 +27,9 @@ module Dev
 
     def all
       @all ||= Dir[Rails.root.join("migration/images/*")].map do |file|
-          { path: file, filename: File.basename(file), member_id: File.basename(file).split(".")[0..-2].join(".") }
-        end.filter do |file_data|
+                 { path: file, filename: File.basename(file),
+                   member_id: File.basename(file).split(".")[0..-2].join(".") }
+               end.filter do |file_data|
         File.file?(file_data[:path]) &&
           !file_data[:member_id].in?(existing) &&
           File.basename(file_data[:filename]).split(".").last.in?(SUPPORTED_FORMATS)

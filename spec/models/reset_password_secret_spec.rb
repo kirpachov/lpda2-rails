@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe ResetPasswordSecret do
+  let(:user) { create(:user) }
+
   context "when checking validation" do
     before do
       allow_any_instance_of(described_class).to receive(:generate_secret).and_return(true)
@@ -29,8 +31,6 @@ RSpec.describe ResetPasswordSecret do
     r = described_class.create!(user:)
     expect(r.reload.expires_at).to be > (5.minutes.from_now)
   end
-
-  let(:user) { create(:user) }
 
   context "when creating a new secret, all the other are deleted" do
     it do
