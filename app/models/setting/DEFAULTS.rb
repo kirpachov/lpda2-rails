@@ -8,7 +8,7 @@ class Setting
     },
 
     available_locales: {
-      default: I18n.available_locales
+      default: I18n.available_locales.join(",")
     },
 
     max_people_per_reservation: {

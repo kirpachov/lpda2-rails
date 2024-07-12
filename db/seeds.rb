@@ -23,6 +23,9 @@ Dev::Menu::ImportTags.run!
 debug "Importing allergens..."
 Dev::Menu::ImportAllergens.run!
 
+debug "Creating default settings..."
+Setting.create_missing
+
 ReservationTurn.delete_all
 
 debug "Creating reservation turns..."
@@ -37,7 +40,7 @@ Reservation.delete_all
 [
   {
     fullname: "Sasha",
-    datetime: "2024-02-17T21:51:06.145Z",
+    datetime: Time.zone.now.iso8601,
     status: "active",
     secret: "DEletEd",
     people: 2,
