@@ -14,7 +14,7 @@ RSpec.describe Setting::DEFAULTS do
 
   it "alls be valid Setting" do
     subject.each do |key, setting_data|
-      setting = Setting.new(setting_data.except(:default).merge(key:))
+      setting = Setting.new(setting_data.except(:default).merge(key:, value: setting_data[:default]))
       setting.validate
       expect(setting.errors).to be_empty
       expect(setting).to be_valid
