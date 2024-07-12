@@ -30,7 +30,7 @@ module Menu
     private
 
     def locales
-      @locales ||= available_locales || Setting[:available_locales]
+      @locales ||= (available_locales || Setting[:available_locales]).split(",")
     end
 
     def check_category_name

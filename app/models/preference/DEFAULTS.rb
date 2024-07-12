@@ -9,7 +9,7 @@ class Preference
 
     known_languages: {
       # value: [:en],
-      default: I18n.available_locales
+      default: I18n.available_locales.join(",")
     },
 
     # NOTE: Server is always in UTC.

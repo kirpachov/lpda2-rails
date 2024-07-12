@@ -65,7 +65,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
         category.dishes << dish
         category.reload
 
-        Setting[:available_locales].each do |locale|
+        (Setting[:available_locales]).split(",").each do |locale|
           Mobility.with_locale(locale) do
             category.name = Faker::Lorem.sentence
           end
@@ -233,7 +233,7 @@ RSpec.describe Menu::CanPublishCategory, type: :interaction do
       category.dishes << dish
       category.reload
 
-      Setting[:available_locales].each do |locale|
+      (Setting[:available_locales]).split(",").each do |locale|
         Mobility.with_locale(locale) do
           category.name = Faker::Lorem.sentence
           dish.name = Faker::Lorem.sentence
