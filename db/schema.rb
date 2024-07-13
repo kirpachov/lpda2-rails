@@ -320,7 +320,8 @@ ActiveRecord::Schema[7.0].define(version: 29) do
     t.datetime "datetime", precision: nil, null: false
     t.text "status", null: false
     t.text "secret", null: false
-    t.integer "people", null: false
+    t.integer "children", default: 0
+    t.integer "adults", default: 0
     t.text "table"
     t.text "notes"
     t.text "email"

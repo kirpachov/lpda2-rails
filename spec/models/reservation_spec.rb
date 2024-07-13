@@ -62,22 +62,22 @@ RSpec.describe Reservation, type: :model do
       it { is_expected.not_to allow_value("123Wassa").for(:secret) }
     end
 
-    context "people should be present" do
-      it { is_expected.to validate_presence_of(:people) }
-      it { is_expected.not_to allow_value(nil).for(:people) }
-      it { is_expected.to allow_value(1).for(:people) }
-      it { is_expected.not_to allow_value(0).for(:people) }
-      it { is_expected.not_to allow_value(-1).for(:people) }
-      it { is_expected.not_to allow_value(1.5).for(:people) }
+    context "adults should be present" do
+      it { is_expected.to validate_presence_of(:adults) }
+      it { is_expected.not_to allow_value(nil).for(:adults) }
+      it { is_expected.to allow_value(1).for(:adults) }
+      it { is_expected.not_to allow_value(-1).for(:adults) }
+      it { is_expected.not_to allow_value(1.5).for(:adults) }
 
-      context "when people is nil" do
-        subject { build(:reservation, people: nil) }
+      context "when adults and children is nil" do
+        subject { build(:reservation, adults: nil, children: nil) }
 
         before { subject.valid? }
 
         it { is_expected.not_to be_valid }
         it { expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid) }
-        it { expect(subject.errors[:people]).not_to be_empty }
+        it { expect(subject.errors[:adults]).not_to be_empty }
+        it { expect(subject.errors[:children]).not_to be_empty }
       end
     end
 

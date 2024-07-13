@@ -14,7 +14,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         first_name:,
         last_name:,
         datetime:,
-        people:,
+        adults:,
+        children:,
         email:,
         phone:,
         notes:
@@ -26,7 +27,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
        Faker::PhoneNumber.cell_phone_with_country_code].sample
     end
     let(:email) { Faker::Internet.email }
-    let(:people) { 2 }
+    let(:adults) { 2 }
+    let(:children) { 0 }
     let(:datetime) { "#{date.to_date} 19:00" }
     let(:date) { Time.now.beginning_of_week + 7.days }
     let(:last_name) { Faker::Name.last_name }
@@ -125,36 +127,54 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
       end
 
-      context "when people is null" do
-        let(:people) { nil }
+      context "when people is null (both adults and children)" do
+        let(:adults) { nil }
+        let(:children) { nil }
 
         it "returns 422" do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:unprocessable_entity)
-          expect(parsed_response_body[:details][:people]).to be_present
+          expect(parsed_response_body[:details][:adults]).to be_present
+          expect(parsed_response_body[:details][:children]).to be_present
         end
       end
 
-      context "when people is 0" do
-        let(:people) { 0 }
+      context "when people is 0 (both adults and children)" do
+        let(:adults) { 0 }
+        let(:children) { 0 }
 
         it "returns 422" do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:unprocessable_entity)
-          expect(parsed_response_body[:details][:people]).to be_present
+          expect(parsed_response_body[:details][:adults]).to be_present
+          expect(parsed_response_body[:details][:children]).to be_present
         end
       end
 
       context "when people is greater than max_people_per_reservation" do
-        let(:people) { Setting[:max_people_per_reservation].to_i + 1 }
+        let(:adults) { Setting[:max_people_per_reservation].to_i + 1 }
 
         it "returns 422" do
           req
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:unprocessable_entity)
-          expect(parsed_response_body[:details][:people]).to be_present
+          expect(parsed_response_body[:details][:adults]).to be_present
+          expect(parsed_response_body[:details][:children]).to be_present
+        end
+      end
+
+      context "when sum between children and adults is greater than max_people_per_reservation" do
+        let(:adults) { Setting[:max_people_per_reservation].to_i - 1 }
+        let(:children) { Setting[:max_people_per_reservation].to_i - 1 }
+
+        it "returns 422" do
+          req
+          expect(parsed_response_body).to include(message: String, details: Hash)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(parsed_response_body[:details][:adults]).to be_present
+          expect(parsed_response_body[:details][:children]).to be_present
         end
       end
 
@@ -600,14 +620,15 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           it {
             expect(subject).to include(
-              "id" => reservation.id,
-              "fullname" => reservation.fullname,
-              "datetime" => reservation.datetime,
-              "people" => reservation.people,
-              "email" => reservation.email,
-              "phone" => reservation.phone,
-              "notes" => reservation.notes
-            )
+                                 "id" => reservation.id,
+                                 "fullname" => reservation.fullname,
+                                 "datetime" => reservation.datetime,
+                                 "adults" => reservation.adults,
+                                 "children" => reservation.children,
+                                 "email" => reservation.email,
+                                 "phone" => reservation.phone,
+                                 "notes" => reservation.notes
+                               )
           }
 
           it { expect(subject.keys.map(&:to_s)).not_to include("secret") }

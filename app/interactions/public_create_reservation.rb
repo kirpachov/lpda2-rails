@@ -33,7 +33,8 @@ class PublicCreateReservation < ActiveInteraction::Base
     @reservation = Reservation.new(
       fullname: "#{first_name} #{last_name}",
       datetime:,
-      people:,
+      adults:,
+      children:,
       email:,
       phone:,
       notes: params[:notes].to_s.strip,
@@ -76,8 +77,16 @@ class PublicCreateReservation < ActiveInteraction::Base
     @phone ||= params[:phone].to_s.gsub(/[.\-()\s]+/, "")
   end
 
+  def adults
+    @adults ||= params[:adults].to_i
+  end
+
+  def children
+    @children ||= params[:children].to_i
+  end
+
   def people
-    @people ||= params[:people].to_i
+    @people ||= adults + children
   end
 
   def max_people_count
@@ -130,21 +139,22 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def people_count_is_valid
-    return if people.is_a?(Integer)
-
-    errors.add(:people, "is not a valid number")
+    errors.add(:adults, "is not a valid number") unless adults.is_a?(Integer)
+    errors.add(:children, "is not a valid number") unless children.is_a?(Integer)
   end
 
   def people_count_is_not_zero
-    return if people > 0
+    return if people.to_i.positive?
 
-    errors.add(:people, "is zero")
+    errors.add(:adults, "is not positive")
+    errors.add(:children, "is not positive")
   end
 
   def people_count_is_not_greater_than_max_people_count
     return if people <= max_people_count
 
-    errors.add(:people, "is greater than the maximum allowed")
+    errors.add(:adults, "is greater than the maximum allowed")
+    errors.add(:children, "is greater than the maximum allowed")
   end
 
   def datetime_is_valid

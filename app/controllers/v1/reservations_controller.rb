@@ -43,7 +43,7 @@ module V1
     end
 
     def full_json(item)
-      item.as_json(only: %i[id fullname datetime people email phone notes])
+      item.as_json(only: %i[id fullname datetime children adults email phone notes])
     end
   end
 end

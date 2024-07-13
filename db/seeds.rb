@@ -43,7 +43,7 @@ Reservation.delete_all
     datetime: Time.zone.now.iso8601,
     status: "active",
     secret: "DEletEd",
-    people: 2,
+    adults: 2,
     table: nil,
     notes: nil,
     email: "sasha@opinioni.net",

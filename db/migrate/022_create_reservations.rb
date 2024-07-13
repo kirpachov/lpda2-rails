@@ -8,7 +8,8 @@ class CreateReservations < ActiveRecord::Migration[7.0]
 
       t.text :status,         null: false
       t.text :secret,         null: false
-      t.integer :people,      null: false
+      t.integer :children,    null: true, default: 0
+      t.integer :adults,      null: true, default: 0
       t.text :table,          null: true, default: nil
       t.text :notes,          null: true, default: nil
 

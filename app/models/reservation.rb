@@ -43,8 +43,10 @@ class Reservation < ApplicationRecord
   validates :datetime, presence: true
   validates :status, presence: true, inclusion: { in: statuses.keys.map(&:to_s) + statuses.keys.map(&:to_sym) }
   validates :secret, presence: true
-  validates :people, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :children, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :adults, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validate :validate_people_count_is_valid
 
   validates :secret, uniqueness: { case_sensitive: false }
 
@@ -69,6 +71,10 @@ class Reservation < ApplicationRecord
     super
   rescue ArgumentError
     @attributes.write_cast_value("status", value)
+  end
+
+  def people
+    children.to_i + adults.to_i
   end
 
   def create_email_pixel(image:, delivered_email:)
@@ -98,5 +104,13 @@ class Reservation < ApplicationRecord
 
   def deliver_confirmation_email_later
     confirmation_email.deliver_later
+  end
+
+  def validate_people_count_is_valid
+    return if people.positive?
+
+    errors.add(:people, "should be a positive integer")
+    errors.add(:adults, "got 0 adults and 0 children")
+    errors.add(:children, "got 0 adults and 0 children")
   end
 end

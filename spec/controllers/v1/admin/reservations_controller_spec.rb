@@ -6,8 +6,8 @@ RESERVATION_TEST_STRUCTURE = "RESERVATION_TEST_STRUCTURE"
 RSpec.shared_context RESERVATION_TEST_STRUCTURE do |options = {}|
   it "has valid structure" do
     expect(subject).to be_a(Hash)
-    expect(subject).to include(id: Integer, created_at: String, updated_at: String, datetime: String, people: Integer,
-                               status: String)
+    expect(subject).to include(id: Integer, created_at: String, updated_at: String, datetime: String, adults: Integer,
+                               children: Integer, status: String)
   end
 
   # true => check presence
@@ -643,7 +643,8 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
             datetime: String,
             status: String,
             secret: String,
-            people: Integer,
+            adults: Integer,
+            children: Integer,
             table: String,
             notes: String,
             email: String,
@@ -657,19 +658,29 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
-      # MINIMUM REQUIRED INFO: fullname, datetime, people.
+      context "when people is greater than max_people_per_reservation" do
+        let(:adults) { Setting[:max_people_per_reservation].to_i + 1 }
+
+        it "returns 200" do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      # MINIMUM REQUIRED INFO: fullname, datetime, adults.
       ["Anne Marie", "Luigi"].each do |fullname|
         ["2024-10-12 19:00", "2024-12-25 21:00"].each do |datetime|
-          [1, 2, 3].each do |people|
-            context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, people: #{people}}" do
-              let(:params) { { fullname:, datetime:, people: } }
+          [1, 2, 3].each do |adults|
+            context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, adults: #{adults}}" do
+              let(:params) { { fullname:, datetime:, adults: } }
 
               it { expect { req }.to change(Reservation, :count).by(1) }
 
               it "returns provided info" do
                 req
                 expect(parsed_response_body).to include(item: Hash)
-                expect(parsed_response_body[:item]).to include(fullname:, people:)
+                expect(parsed_response_body[:item]).to include(fullname:, adults:)
                 expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").first)
                 expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").last)
                 expect(response).to have_http_status(:ok)
@@ -680,13 +691,13 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               ["bambini", "bella vita"].each do |notes|
                 ["sa@ba", "gi@gi"].each do |email|
                   ["123 333 333", "456 666 666"].each do |phone|
-                    context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, people: #{people}, table: #{table.inspect}, notes: #{notes.inspect}, email: #{email.inspect}, phone: #{phone.inspect}}" do
-                      let(:params) { { fullname:, datetime:, people:, table:, notes:, email:, phone: } }
+                    context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, adults: #{adults}, table: #{table.inspect}, notes: #{notes.inspect}, email: #{email.inspect}, phone: #{phone.inspect}}" do
+                      let(:params) { { fullname:, datetime:, adults:, table:, notes:, email:, phone: } }
 
                       it "returns provided info" do
                         expect { req }.to change(Reservation, :count).by(1)
                         expect(parsed_response_body).to include(item: Hash)
-                        expect(parsed_response_body[:item]).to include(fullname:, people:, email:, table: table.to_s,
+                        expect(parsed_response_body[:item]).to include(fullname:, adults:, email:, table: table.to_s,
                                                                        notes:)
                         expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").first)
                         expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").last)
@@ -739,11 +750,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context "when updating people" do
-        let(:params) { { people: 10 } }
+      context "when updating adults" do
+        let(:params) { { adults: 10 } }
 
         it do
-          expect { req }.to change { reservation.reload.people }.from(reservation.people).to(10)
+          expect { req }.to change { reservation.reload.adults }.from(reservation.adults).to(10)
         end
       end
 

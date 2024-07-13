@@ -94,11 +94,11 @@ module V1::Admin
     private
 
     def create_params
-      params.permit(:fullname, :datetime, :people, :table, :notes, :email, :phone)
+      params.permit(:fullname, :datetime, :children, :adults, :table, :notes, :email, :phone)
     end
 
     def update_params
-      params.permit(:fullname, :datetime, :people, :table, :notes, :email, :phone)
+      params.permit(:fullname, :datetime, :children, :adults, :table, :notes, :email, :phone)
     end
 
     def full_json(item_or_items)
