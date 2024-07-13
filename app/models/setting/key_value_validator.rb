@@ -14,6 +14,10 @@ class Setting
       when :max_people_per_reservation then validate_max_people_per_reservation
       when :email_images then validate_email_images
       when :email_contacts then validate_email_contacts
+      when :reservation_max_days_in_advance then validate_reservation_max_days_in_advance
+      when :reservation_min_hours_in_advance then validate_reservation_min_hours_in_advance
+      when :cover_price then validate_cover_price
+      when :instagram_landing_page_url then validate_instagram_landing_page_url
       else
         record.errors.add(:key, "Don't know how to validate key: #{record.key.to_s.inspect}")
       end
@@ -79,6 +83,34 @@ class Setting
 
       unknown_keys = record.value.keys - mandatory_keys
       record.errors.add(:value, "unknown keys: #{unknown_keys.join(", ")}") if unknown_keys.present?
+    end
+
+    def validate_reservation_max_days_in_advance
+      return if record.value.to_f.positive? || record.value.to_f.zero?
+
+      record.errors.add(:value, "should be a number >= 0")
+    end
+
+    def validate_reservation_min_hours_in_advance
+      return if record.value.to_f.positive? || record.value.to_f.zero?
+
+      record.errors.add(:value, "should be a number >= 0")
+    end
+
+    def validate_cover_price
+      return if record.value.to_f.positive? || record.value.to_f.zero?
+
+      record.errors.add(:value, "expected number >= 0")
+    end
+
+    def validate_instagram_landing_page_url
+      return if record.value.blank?
+      return if record.value.is_a?(String) &&
+                record.value.match?(URI::DEFAULT_PARSER.make_regexp) &&
+                record.value.include?("instagram.com") &&
+                record.value.starts_with?("http")
+
+      record.errors.add(:value, "should be an instagram url, like 'https://www.instagram.com/....', got #{record.value.inspect}")
     end
   end
 end
