@@ -34,4 +34,6 @@ RSpec.describe "Routing /v1/admin/reservations" do
       "v1/admin/reservations#deliver_confirmation_email", format: :json, id: "33"
     )
   }
+
+  it { expect(get: "v1/admin/reservations/tables_summary").to route_to("v1/admin/reservations#tables_summary", format: :json) }
 end

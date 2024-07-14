@@ -20,6 +20,20 @@ module V1::Admin
       }
     end
 
+    # GET /v1/admin/reservations/resume
+    # Will return a hash with the number of tables for people quantity.
+    # <table_size> => <number_of_tables>
+    def tables_summary
+      call = TablesSummary.run(params: params.permit!.to_h, current_user:)
+
+      unless call.valid?
+        return render_error(status: 400, details: call.errors.as_json,
+                            message: call.errors.full_messages.join(", "))
+      end
+
+      render json: call.result
+    end
+
     def show
       render json: { item: full_json(@item) }
     end
@@ -130,7 +144,7 @@ module V1::Admin
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                                       id: params[:id].inspect))
+                                   id: params[:id].inspect))
     end
 
     def find_tag
@@ -139,7 +153,7 @@ module V1::Admin
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: ReservationTag,
-                                                       id: params[:tag_id].inspect))
+                                   id: params[:tag_id].inspect))
     end
   end
 end

@@ -59,6 +59,7 @@ Rails.application.routes.draw do
         resources :reservations do
           collection do
             get "valid_times"
+            get "tables_summary"
           end
 
           member do
