@@ -4,7 +4,7 @@
 # Reservation turns are periodic. You just indicate the weekday and the time slot.
 class ReservationTurn < ApplicationRecord
   # ################################
-  # Constants, settings, modules, et...
+  # Constants, settings, modules, etc...
   # ################################
   WEEKDAYS = %w[sunday monday tuesday wednesday thursday friday saturday].freeze
 
