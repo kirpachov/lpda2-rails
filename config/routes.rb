@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
   defaults format: :json do
     scope module: :v1, path: "v1" do
+      get "public_data", to: "public_data#index", as: :public_data
+
       resources :images, only: %w[index show create] do
         member do
           get "download", action: :download

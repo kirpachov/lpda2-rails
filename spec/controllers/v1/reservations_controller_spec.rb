@@ -55,6 +55,12 @@ RSpec.describe V1::ReservationsController, type: :controller do
         expect(response).to have_http_status(:ok)
       end
 
+      context "sets a cookie to retrieve reservation informations" do
+        before { req }
+        it { expect(response.cookies).not_to be_empty }
+        it { expect(response.cookies[Reservation::PUBLIC_CREATE_COOKIE]).to eq(Reservation.last.secret) }
+      end
+
       context "when turn is not in that weekday" do
         let!(:turn) do
           create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: 1)
@@ -76,6 +82,40 @@ RSpec.describe V1::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(message: String, details: Hash)
           expect(response).to have_http_status(:unprocessable_entity)
           expect(parsed_response_body[:details][:datetime]).to be_present
+        end
+      end
+
+      context "when datetime has ISO format with 'Z' at the end." do
+        let(:datetime) { "#{date.to_date}T19:00:00.000Z" }
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { Reservation.where(datetime: DateTime.parse(datetime)).count }.by(1)) }
+
+        it "returns 200" do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+        end
+
+        it do
+          req
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when datetime has ISO format without 'Z' at the end." do
+        let(:datetime) { "#{date.to_date}T19:00:00.000" }
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { Reservation.where(datetime: DateTime.parse(datetime)).count }.by(1)) }
+
+        it "returns 200" do
+          req
+          expect(parsed_response_body).not_to include(message: String)
+        end
+
+        it do
+          req
+          expect(response).to have_http_status(:ok)
         end
       end
 

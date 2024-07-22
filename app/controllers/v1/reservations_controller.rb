@@ -21,6 +21,12 @@ module V1
 
       # TODO: send mail
 
+      cookies[Reservation::PUBLIC_CREATE_COOKIE] = {
+        value: call.result.secret,
+        expires: 90.day.from_now,
+        http_only: true
+      }
+
       @item = call.result
       show
     end

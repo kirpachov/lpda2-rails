@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Reservation < ApplicationRecord
+  # When some user creates a reservation in the public site, we attach to it a cookie.
+  PUBLIC_CREATE_COOKIE = "reservation_created"
+
   # ################################
   # Constants, settings, modules, et...
   # ################################
