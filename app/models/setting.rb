@@ -3,6 +3,8 @@
 # App-level settings are stored in the database.
 # Some of the settings may require root mode to change.
 class Setting < ApplicationRecord
+  PUBLIC_KEYS = DEFAULTS.keys.map(&:to_s) # for now, all settings are public.
+
   # ################################
   # Validations
   # ################################

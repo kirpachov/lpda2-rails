@@ -49,6 +49,21 @@ RSpec.describe V1::PublicDataController, type: :controller do
         it { expect(json["reservation"]).to be_nil }
       end
     end
+
+    context "when checking settings" do
+      before do
+        Setting.delete_all
+
+        create(:setting, key: :max_people_per_reservation, value: 5)
+        req
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+
+      it { expect(json).to include(settings: Hash) }
+      it { expect(json.dig("settings", "max_people_per_reservation").to_i).to eq 5 }
+    end
   end
 
 end

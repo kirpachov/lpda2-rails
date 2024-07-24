@@ -8,7 +8,8 @@ module V1
       reservation = Reservation.visible.where(secret: cookies[Reservation::PUBLIC_CREATE_COOKIE], datetime: Time.zone.now..).first
 
       render json: {
-        reservation: reservation.as_json
+        reservation: reservation.as_json,
+        settings: Setting.all.where(key: Setting::PUBLIC_KEYS).pluck(:key, :value).to_h
       }
     end
   end
