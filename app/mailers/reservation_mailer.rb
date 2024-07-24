@@ -5,11 +5,13 @@ class ReservationMailer < ApplicationMailer
 
   # reload!; ReservationMailer.confirmation(reservation: Reservation.last).deliver_now
   def confirmation
-    unless params[:reservation].is_a?(Reservation)
-      raise "Expected params[:reservation] to be a Reservation but got #{params[:reservation].class}"
+    @reservation = params[:reservation] if params[:reservation].is_a?(Reservation)
+    @reservation ||= Reservation.find_by(id: params[:reservation_id]) if params[:reservation_id].to_i.positive?
+
+    unless @reservation.is_a?(Reservation)
+      raise "Expected params[:reservation] to be a Reservation but got #{@reservation.class}"
     end
 
-    @reservation = params[:reservation]
     raise "Reservation does not have an email" if @reservation.email.blank?
 
     @cancel_url = URI.join(

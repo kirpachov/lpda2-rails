@@ -55,8 +55,24 @@ RSpec.describe V1::ReservationsController, type: :controller do
         expect(response).to have_http_status(:ok)
       end
 
+      it "does enqueue email to reservation email" do
+        req
+        expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "confirmation", "deliver_now", params: anything, args: anything)
+      end
+
+      it "can deliver email" do
+        Sidekiq::Testing.inline! do
+          allow(ReservationMailer).to receive(:with).and_call_original
+
+          req
+
+          expect(ReservationMailer).to have_received(:with).once
+        end
+      end
+
       context "sets a cookie to retrieve reservation informations" do
         before { req }
+
         it { expect(response.cookies).not_to be_empty }
         it { expect(response.cookies[Reservation::PUBLIC_CREATE_COOKIE]).to eq(Reservation.last.secret) }
       end

@@ -2,7 +2,8 @@
 
 module V1
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show cancel]
+    before_action :find_item, only: %i[show cancel ]
+    before_action :find_next_and_active_reservation, only: %i[resend_confirmation_email]
     skip_before_action :authenticate_user
 
     def show
@@ -19,7 +20,7 @@ module V1
                             message: call.errors.full_messages.join(", "))
       end
 
-      # TODO: send mail
+      call.result.deliver_confirmation_email_later
 
       cookies[Reservation::PUBLIC_CREATE_COOKIE] = {
         value: call.result.secret,
@@ -29,6 +30,12 @@ module V1
 
       @item = call.result
       show
+    end
+
+    def resend_confirmation_email
+      @item.deliver_confirmation_email_later
+
+      render json: { success: true }
     end
 
     def cancel
@@ -41,6 +48,15 @@ module V1
 
     def find_item
       @item = ::Reservation.visible.where(secret: params[:secret]).first
+      return unless @item.nil?
+
+      render_error(status: 404,
+                   message: I18n.t("record_not_found", model: Reservation,
+                                                       id: params[:secret].inspect))
+    end
+
+    def find_next_and_active_reservation
+      @item = ::Reservation.visible.where(secret: params[:secret]).active.next.first
       return unless @item.nil?
 
       render_error(status: 404,

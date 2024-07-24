@@ -26,7 +26,7 @@ class ApplicationMailer < ActionMailer::Base
   end
 
   after_action do
-    delivered_email = params[:delivered_email] || Log::DeliveredEmail.create!
+    delivered_email = params[:delivered_email] || Log::DeliveredEmail.find_by(id: params[:delivered_email_id]) || Log::DeliveredEmail.create!
 
     delivered_email.update!(
       text: mail.text_part&.body&.decoded,

@@ -29,3 +29,9 @@ Style/StringLiteralsInInterpolation:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false

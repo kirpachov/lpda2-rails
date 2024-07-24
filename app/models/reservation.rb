@@ -66,6 +66,7 @@ class Reservation < ApplicationRecord
   # Scopes
   # ################################
   scope :visible, -> { where.not(status: :deleted) }
+  scope :next, -> { where("datetime >= ?", Time.zone.now) }
 
   # ################################
   # Instance methods
@@ -89,24 +90,26 @@ class Reservation < ApplicationRecord
     )
   end
 
-  def confirmation_email
-    image = Image.where("key LIKE 'email_images_%'").first
+  def confirmation_email_params
+    raise "Must be persisted" unless persisted?
+
+    image = Image.visible.where("key LIKE 'email_images_%'").first
 
     delivered_email = Log::DeliveredEmail.create!(record: self)
 
-    ReservationMailer.with(
-      reservation: self,
-      pixel: image ? { image.key.gsub("email_images_", "") => create_email_pixel(image:, delivered_email:).url } : nil,
-      delivered_email:
-    ).confirmation
+    {
+      reservation_id: id,
+      pixel_id: image ? { image.key.gsub("email_images_", "") => create_email_pixel(image:, delivered_email:).id } : nil,
+      delivered_email_id: delivered_email.id
+    }
   end
 
   def deliver_confirmation_email
-    confirmation_email.deliver_now
+    ReservationMailer.with(confirmation_email_params).confirmation.deliver_now
   end
 
   def deliver_confirmation_email_later
-    confirmation_email.deliver_later
+    ReservationMailer.with(confirmation_email_params).confirmation.deliver_later
   end
 
   def validate_people_count_is_valid
