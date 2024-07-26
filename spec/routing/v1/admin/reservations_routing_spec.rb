@@ -11,10 +11,6 @@ RSpec.describe "Routing /v1/admin/reservations" do
   it { expect(delete: "v1/admin/reservations/1").to route_to("v1/admin/reservations#destroy", id: "1", format: :json) }
 
   it {
-    expect(get: "v1/admin/reservations/valid_times").to route_to("v1/admin/reservations#valid_times", format: :json)
-  }
-
-  it {
     expect(patch: "v1/admin/reservations/33/status/new-status").to route_to("v1/admin/reservations#update_status",
                                                                             format: :json, id: "33", status: "new-status")
   }

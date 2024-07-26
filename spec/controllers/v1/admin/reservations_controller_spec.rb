@@ -39,7 +39,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
   let(:user) { create(:user) }
 
-  describe "#index" do
+  describe "GET #index" do
     it { expect(instance).to respond_to(:index) }
     it { expect(described_class).to route(:get, "/v1/admin/reservations").to(action: :index, format: :json) }
 
@@ -542,7 +542,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#show" do
+  describe "GET #show" do
     let(:reservation) { create(:reservation) }
 
     it { expect(instance).to respond_to(:show) }
@@ -608,7 +608,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#create" do
+  describe "POST #create" do
     let(:params) { attributes_for(:reservation) }
 
     it { expect(instance).to respond_to(:create) }
@@ -710,7 +710,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#update" do
+  describe "PATCH #update" do
     let(:params) { {} }
     let(:reservation) { create(:reservation) }
 
@@ -820,7 +820,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#destroy" do
+  describe "DELETE #destroy" do
     let(:reservation) { create(:reservation) }
 
     it { expect(instance).to respond_to(:destroy) }
@@ -866,7 +866,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#update_status" do
+  describe "PATCH #update_status" do
     let(:status) { "arrived" }
     let(:reservation) { create(:reservation) }
 
@@ -1261,7 +1261,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     end
   end
 
-  describe "#tables_summary" do
+  describe "GET #tables_summary" do
     it { expect(instance).to respond_to(:tables_summary) }
     it { expect(described_class).to route(:get, "/v1/admin/reservations/tables_summary").to(action: :tables_summary, format: :json) }
 

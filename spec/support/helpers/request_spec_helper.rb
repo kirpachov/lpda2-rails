@@ -4,7 +4,8 @@ module RequestSpecHelper
   attr_accessor :refresh_token_cookie
 
   def json
-    JSON.parse(response.body).with_indifferent_access
+    json = response.body.to_s.valid_json? ? JSON.parse(response.body) : {}
+    json.is_a?(Hash) ? json.with_indifferent_access : json
   end
 
   def authenticate_user!(email, password)

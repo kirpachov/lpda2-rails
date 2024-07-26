@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
       resources :reservations, only: %i[create] do
         collection do
+          get "valid_times"
+
           get ":secret", action: :show
 
           # Two alternative ways to cancel a reservation.
@@ -62,7 +64,6 @@ Rails.application.routes.draw do
         resources :reservation_tags
         resources :reservations do
           collection do
-            get "valid_times"
             get "tables_summary"
           end
 

@@ -38,6 +38,18 @@ module V1
       render json: { success: true }
     end
 
+    def valid_times
+      return render_error(status: 400, message: "Param 'date' is required") if params[:date].blank?
+
+      items = ReservationTurn.all.where(weekday: Date.parse(params[:date].to_s).wday).map do |turn|
+        turn.as_json.merge(valid_times: turn.valid_times)
+      end
+
+      render json: items.flatten
+    rescue Date::Error => e
+      render_error(status: 400, message: e)
+    end
+
     def cancel
       return show if @item.cancelled!
 
@@ -52,7 +64,7 @@ module V1
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                                       id: params[:secret].inspect))
+                                   id: params[:secret].inspect))
     end
 
     def find_next_and_active_reservation
@@ -61,11 +73,11 @@ module V1
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                                       id: params[:secret].inspect))
+                                   id: params[:secret].inspect))
     end
 
     def full_json(item)
-      item.as_json(only: %i[id fullname datetime children adults email phone notes])
+      item.as_json(only: %i[id fullname datetime children adults email phone notes secret])
     end
   end
 end

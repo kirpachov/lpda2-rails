@@ -49,6 +49,15 @@ RSpec.describe V1::ReservationsController, type: :controller do
     end
 
     context "basic" do
+      context "checking response" do
+        before { req }
+
+        it { expect(json).to include(item: Hash) }
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(json[:item]).to include("datetime" => String, "email" => String, "fullname" => String) }
+        it { expect(json[:item]).to include("secret" => String) }
+      end
+
       it "creates a reservation" do
         req
         expect(parsed_response_body).to include(item: Hash)

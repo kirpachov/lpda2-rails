@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.context "POST /v1/reservations/:secret/resend_confirmation_email", type: :request do
   let(:reservation) { create(:reservation) }
   let(:default_secret) { reservation.secret }
