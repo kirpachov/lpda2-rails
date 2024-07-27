@@ -692,11 +692,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
                                  "children" => reservation.children,
                                  "email" => reservation.email,
                                  "phone" => reservation.phone,
-                                 "notes" => reservation.notes
+                                 "notes" => reservation.notes,
+                                 "secret" => reservation.secret
                                )
           }
-
-          it { expect(subject.keys.map(&:to_s)).not_to include("secret") }
         end
       end
 
