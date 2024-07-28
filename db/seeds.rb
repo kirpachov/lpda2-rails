@@ -55,3 +55,13 @@ Reservation.delete_all
 end
 
 User.create!(email: "sasha@opinioni.net", password: "admin")
+
+PublicMessage::KNOWN_KEYS.each do |key|
+  PublicMessage.find_or_create_by!(key:)
+end
+
+%w[monday tuesday wednesday thursday friday saturday sunday].each do |weekday|
+  m = PublicMessage.find_or_create_by!(key: "openings_#{weekday}")
+  m.assign_translation("text", { it: "12-22", en: "12-22" })
+  m.save!
+end

@@ -9,6 +9,23 @@ class PublicMessage < ApplicationRecord
   extend Mobility
   translates :text
 
+  KNOWN_KEYS = %w[
+    home-landing
+    home-about
+    home-menu
+    home-instagram
+    home-reserve
+    new-reservation-form
+    existing-reservation-form
+    openings_monday
+    openings_tuesday
+    openings_wednesday
+    openings_thursday
+    openings_friday
+    openings_saturday
+    openings_sunday
+  ].freeze
+
   enum status: {
     active: "active",
     inactive: "inactive"
