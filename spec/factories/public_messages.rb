@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :public_message do
     key { generate(:public_message_key) }
-    text { "MyText" }
+    text { Faker::Lorem.question }
     status { "active" }
   end
 

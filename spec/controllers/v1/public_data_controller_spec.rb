@@ -64,6 +64,53 @@ RSpec.describe V1::PublicDataController, type: :controller do
       it { expect(json).to include(settings: Hash) }
       it { expect(json.dig("settings", "max_people_per_reservation").to_i).to eq 5 }
     end
-  end
 
+    context "when checking public_messages" do
+      let(:sample_message) { PublicMessage.visible.sample }
+
+      subject(:messages) { json[:public_messages] }
+
+      before do
+        create_list(:public_message, 10)
+        create_list(:public_message, 10, status: :inactive)
+
+        req
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+      it { expect(json).to include(public_messages: Hash) }
+      it { expect(messages).to include(sample_message.key => sample_message.text) }
+      it { expect(messages.keys).to match_array(PublicMessage.visible.map(&:key)) }
+      it { expect(messages.values).to match_array(PublicMessage.visible.map(&:text)) }
+
+      context "gigi when making a request with a specific locale in the params" do
+        let(:locale) { (I18n.available_locales - [I18n.locale]).sample }
+        let(:hex) { SecureRandom.hex }
+
+        before do
+          PublicMessage.all.map do |msg|
+            Mobility.with_locale(locale) do
+              msg.update!(text: "Message #{locale}")
+            end
+          end
+
+          Mobility.with_locale(locale) do
+            PublicMessage.all.sample.update!(text: "Secret #{hex}")
+          end
+
+          req(params: { locale: })
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(json).not_to include(message: String) }
+        it { expect(json).to include(public_messages: Hash) }
+        it { expect(messages).to include(sample_message.key => sample_message.text) }
+        it { expect(messages.keys).to match_array(PublicMessage.visible.map(&:key)) }
+        it { expect(messages.values).to match_array(PublicMessage.visible.map(&:text)) }
+        it { expect(messages.values).to include("Message #{locale}") }
+        it { expect(messages.values).to include("Secret #{hex}") }
+      end
+    end
+  end
 end

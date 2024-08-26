@@ -10,16 +10,7 @@ module V1
       render json: {
         reservation: reservation.as_json,
         settings: Setting.all.where(key: Setting::PUBLIC_KEYS).pluck(:key, :value).to_h,
-        # public_messages: {
-        #   openings_monday: "Lunedì dalle 12 alle 22",
-        #   openings_tuesday: "Martedì dalle 12 alle 22",
-        #   openings_wednesday: "Mercoledì dalle 12 alle 22",
-        #   openings_thursday: "Giovedì dalle 12 alle 22",
-        #   openings_friday: "Venerdì dalle 12 alle 22",
-        #   openings_saturday: "Sabato dalle 12 alle 22",
-        #   openings_sunday: "Domenica dalle 12 alle 22",
-        # }
-        public_messages: PublicMessage.all.map { |m| [m.key, m.text] }.to_h
+        public_messages: PublicMessage.visible.i18n.pluck(:key, :text).to_h,
       }
     end
   end

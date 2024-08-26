@@ -36,4 +36,9 @@ class PublicMessage < ApplicationRecord
   # ################################
   validates :key, presence: true, uniqueness: true
   validates :status, presence: true, inclusion: { in: statuses.keys.map(&:to_s) + statuses.keys.map(&:to_sym) }
+
+  # ################################
+  # Scopes
+  # ################################
+  scope :visible, -> { where(status: :active) }
 end
