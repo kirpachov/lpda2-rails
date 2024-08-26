@@ -38,6 +38,9 @@ Rails.application.routes.draw do
           patch "cancel", action: :cancel
           patch ":secret/cancel", action: :cancel
 
+          post "cancel", action: :cancel
+          post ":secret/cancel", action: :cancel
+
           post ":secret/resend_confirmation_email", action: :resend_confirmation_email
         end
       end

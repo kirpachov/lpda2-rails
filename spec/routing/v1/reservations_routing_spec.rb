@@ -11,9 +11,15 @@ RSpec.describe "Routing /v1/reservations" do
   }
 
   it { expect(patch: "/v1/reservations/cancel").to route_to("v1/reservations#cancel", format: :json) }
+  it { expect(post: "/v1/reservations/cancel").to route_to("v1/reservations#cancel", format: :json) }
 
   it {
     expect(patch: "/v1/reservations/some-secret/cancel").to route_to("v1/reservations#cancel", format: :json,
+                                                                     secret: "some-secret")
+  }
+
+  it {
+    expect(post: "/v1/reservations/some-secret/cancel").to route_to("v1/reservations#cancel", format: :json,
                                                                      secret: "some-secret")
   }
 

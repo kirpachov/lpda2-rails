@@ -5,7 +5,7 @@ module V1
     skip_before_action :authenticate_user
 
     def index
-      reservation = Reservation.visible.where(secret: cookies[Reservation::PUBLIC_CREATE_COOKIE], datetime: Time.zone.now..).first
+      reservation = Reservation.public_visible.where(secret: cookies[Reservation::PUBLIC_CREATE_COOKIE], datetime: Time.zone.now..).first
 
       render json: {
         reservation: reservation.as_json,

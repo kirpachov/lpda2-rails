@@ -48,6 +48,19 @@ RSpec.describe V1::PublicDataController, type: :controller do
         it { expect(json).to be_present }
         it { expect(json["reservation"]).to be_nil }
       end
+
+      context "when reservation has status 'cancelled', should not be returned" do
+        before do
+          reservation.update!(status: :cancelled)
+          req
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(json).not_to include(message: String) }
+
+        it { expect(json).to be_present }
+        it { expect(json["reservation"]).to be_nil }
+      end
     end
 
     context "when checking settings" do

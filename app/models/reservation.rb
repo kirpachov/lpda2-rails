@@ -65,6 +65,7 @@ class Reservation < ApplicationRecord
   # ################################
   # Scopes
   # ################################
+  scope :public_visible, -> { visible.where.not(status: %w[cancelled]) }
   scope :visible, -> { where.not(status: :deleted) }
   scope :next, -> { where("datetime >= ?", Time.zone.now) }
 
