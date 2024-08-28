@@ -77,12 +77,14 @@ module V1
       private
 
       def full_json(item_or_items)
-        return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+        if item_or_items.is_a?(ActiveRecord::Relation)
+          return item_or_items.includes(:text_translations, image: :attached_image_blob).map { |item| full_json(item) }
+        end
 
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Ingredient)
 
         raise ArgumentError,
-              "Invalid params. Menu::Ingredient or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+              "Invalid params.::Menu::Ingredient or ActiveRecord::Relation expected, but #{item_or_items.class} given"
       end
 
       def single_item_full_json(item)
@@ -95,11 +97,11 @@ module V1
       end
 
       def find_item
-        @item = Menu::Ingredient.visible.where(id: params[:id]).first
+        @item = ::Menu::Ingredient.visible.where(id: params[:id]).first
         return unless @item.nil?
 
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Ingredient,
+                     message: I18n.t("record_not_found", model: ::Menu::Ingredient,
                                                          id: params[:id].inspect))
       end
     end

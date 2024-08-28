@@ -61,6 +61,14 @@ Rails.application.routes.draw do
         post "require_reset_password"
       end
 
+      scope module: :menu, path: "menu" do
+        resources :categories, only: %w[index show]
+        resources :ingredients, only: %w[index show]
+        resources :tags, only: %w[index show]
+        resources :allergens, only: %w[index show]
+        resources :dishes, only: %w[index show]
+      end
+
       scope module: :admin, path: "admin" do
         resources :users, only: %i[index show create destroy]
         resources :reservation_turns

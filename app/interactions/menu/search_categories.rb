@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 module Menu
-  class SearchCategories < ActiveInteraction::Base
-    interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
+  class SearchCategories < SearchRecords
 
     def execute
       categories = Category.visible
+
+      if param_true?(:root, :without_parent, :root_only)
+        categories = categories.without_parent
+      end
 
       if params[:except].present? && params[:except].is_a?(String)
         categories = categories.where.not(id: params[:except].split(",").map(&:to_i))

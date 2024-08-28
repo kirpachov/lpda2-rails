@@ -38,7 +38,7 @@ module V1
       end
 
       def create
-        @item = Menu::Category.new(create_params)
+        @item = ::Menu::Category.new(create_params)
         @item.assign_translation("name", params[:name]) if params[:name].present?
         @item.assign_translation("description", params[:description]) if params[:description].present?
 
@@ -79,8 +79,8 @@ module V1
       end
 
       def add_dish
-        Menu::Category.transaction do
-          dish = Menu::Dish.visible.find(params[:dish_id])
+       ::Menu::Category.transaction do
+          dish = ::Menu::Dish.visible.find(params[:dish_id])
           dish = dish.copy!(current_user:) if params[:copy].to_s == "true"
           @item.dishes << dish
         end
@@ -89,7 +89,7 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Dish, id: params[:dish_id].inspect))
       end
 
       def move
@@ -139,12 +139,12 @@ module V1
         @item.dishes.delete(Menu::Dish.find(params[:dish_id]))
         show
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Dish, id: params[:dish_id].inspect))
       end
 
       def add_category
-        Menu::Category.transaction do
-          category = Menu::Category.visible.find(params[:category_child_id])
+       ::Menu::Category.transaction do
+          category = ::Menu::Category.visible.find(params[:category_child_id])
           category = category.copy!(current_user:)
           category.update!(visibility: nil, parent: @item)
         end
@@ -154,7 +154,7 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Category,
+                     message: I18n.t("record_not_found", model: ::Menu::Category,
                                                          id: params[:category_child_id].inspect))
       end
 
@@ -166,7 +166,7 @@ module V1
         publishing_now = [true, 1, "true", "1", :true].include?(params[:public_visible])
         return unless publishing_now
 
-        call = Menu::CanPublishCategory.run(category: @item)
+        call = ::Menu::CanPublishCategory.run(category: @item)
         return if call.result
 
         render_error(
@@ -199,11 +199,11 @@ module V1
       end
 
       def find_category
-        @item = Menu::Category.visible.where(id: params[:id]).first
+        @item = ::Menu::Category.visible.where(id: params[:id]).first
         return unless @item.nil?
 
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Category,
+                     message: I18n.t("record_not_found", model: ::Menu::Category,
                                                          id: params[:id].inspect))
       end
 
@@ -213,7 +213,7 @@ module V1
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Category)
 
         raise ArgumentError,
-              "Invalid params. Menu::Category or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+              "Invalid params.::Menu::Category or ActiveRecord::Relation expected, but #{item_or_items.class} given"
       end
 
       def single_item_full_json(item)

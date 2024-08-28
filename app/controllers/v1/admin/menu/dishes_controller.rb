@@ -82,7 +82,7 @@ module V1
       end
 
       def remove_from_category
-        Menu::DishesInCategory.where(menu_dish_id: @item.id,
+        ::Menu::DishesInCategory.where(menu_dish_id: @item.id,
                                      menu_category_id: params[:category_id].blank? ? nil : params[:category_id].to_i).destroy_all
         show
       end
@@ -96,13 +96,13 @@ module V1
       end
 
       def add_suggestion
-        @item.suggestions << Menu::Dish.visible.find(params[:suggestion_id])
+        @item.suggestions << ::Menu::Dish.visible.find(params[:suggestion_id])
         show
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Dish,
+                     message: I18n.t("record_not_found", model: ::Menu::Dish,
                                                          id: params[:suggestion_id].inspect))
       end
 
@@ -113,7 +113,7 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Dish,
+                     message: I18n.t("record_not_found", model: ::Menu::Dish,
                                                          id: params[:suggestion_id].inspect))
       end
 
@@ -137,8 +137,8 @@ module V1
       end
 
       def add_ingredient
-        Menu::Dish.transaction do
-          ingredient = Menu::Ingredient.visible.find(params[:ingredient_id])
+        ::Menu::Dish.transaction do
+          ingredient = ::Menu::Ingredient.visible.find(params[:ingredient_id])
           # TODO: remove copy ingredient options, it's nonsense
           ingredient = ingredient.copy!(current_user:) if params[:copy].to_s == "true"
           @item.ingredients << ingredient
@@ -149,7 +149,7 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Ingredient,
+                     message: I18n.t("record_not_found", model: ::Menu::Ingredient,
                                                          id: params[:ingredient_id].inspect))
       end
 
@@ -158,7 +158,7 @@ module V1
         show
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Ingredient,
+                     message: I18n.t("record_not_found", model: ::Menu::Ingredient,
                                                          id: params[:ingredient_id].inspect))
       end
 
@@ -167,7 +167,7 @@ module V1
 
         if ingredient.nil?
           return render_error(status: 404,
-                              message: I18n.t("record_not_found", model: Menu::Ingredient,
+                              message: I18n.t("record_not_found", model: ::Menu::Ingredient,
                                                                   id: params[:ingredient_id].inspect))
         end
 
@@ -179,8 +179,8 @@ module V1
       end
 
       def add_tag
-        Menu::Dish.transaction do
-          tag = Menu::Tag.visible.find(params[:tag_id])
+        ::Menu::Dish.transaction do
+          tag = ::Menu::Tag.visible.find(params[:tag_id])
           tag = tag.copy!(current_user:) if params[:copy].to_s == "true"
           @item.tags << tag
         end
@@ -189,14 +189,14 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Tag, id: params[:tag_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Tag, id: params[:tag_id].inspect))
       end
 
       def remove_tag
         @item.tags.delete(Menu::Tag.find(params[:tag_id]))
         show
       rescue ActiveRecord::RecordNotFound => e
-        render_error(status: 404, message: I18n.t("record_not_found", model: Menu::Tag, id: params[:tag_id].inspect))
+        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Tag, id: params[:tag_id].inspect))
       end
 
       def move_tag
@@ -204,7 +204,7 @@ module V1
 
         if tag.nil?
           return render_error(status: 404,
-                              message: I18n.t("record_not_found", model: Menu::Tag,
+                              message: I18n.t("record_not_found", model: ::Menu::Tag,
                                                                   id: params[:tag_id].inspect))
         end
 
@@ -216,8 +216,8 @@ module V1
       end
 
       def add_allergen
-        Menu::Dish.transaction do
-          allergen = Menu::Allergen.visible.find(params[:allergen_id])
+        ::Menu::Dish.transaction do
+          allergen = ::Menu::Allergen.visible.find(params[:allergen_id])
           allergen = allergen.copy!(current_user:) if params[:copy].to_s == "true"
           @item.allergens << allergen
         end
@@ -227,7 +227,7 @@ module V1
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Allergen,
+                     message: I18n.t("record_not_found", model: ::Menu::Allergen,
                                                          id: params[:allergen_id].inspect))
       end
 
@@ -236,7 +236,7 @@ module V1
         show
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Allergen,
+                     message: I18n.t("record_not_found", model: ::Menu::Allergen,
                                                          id: params[:allergen_id].inspect))
       end
 
@@ -245,7 +245,7 @@ module V1
 
         if allergen.nil?
           return render_error(status: 404,
-                              message: I18n.t("record_not_found", model: Menu::Tag,
+                              message: I18n.t("record_not_found", model: ::Menu::Tag,
                                                                   id: params[:allergen_id].inspect))
         end
 
@@ -257,7 +257,7 @@ module V1
       end
 
       def add_image
-        Menu::Dish.transaction do
+        ::Menu::Dish.transaction do
           image = Image.visible.find(params[:image_id])
           image = image.copy!(current_user:) if params[:copy].to_s == "true"
           @item.images << image
@@ -285,7 +285,7 @@ module V1
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Dish)
 
         raise ArgumentError,
-              "Invalid params. Menu::Dish or ActiveRecord::Relation expected, but #{item_or_items.class} given"
+              "Invalid params.::Menu::Dish or ActiveRecord::Relation expected, but #{item_or_items.class} given"
       end
 
       def single_item_full_json(item)
@@ -299,15 +299,15 @@ module V1
       end
 
       def find_category
-        @category = Menu::Category.visible.where(id: params[:category_id]).first
+        @category = ::Menu::Category.visible.where(id: params[:category_id]).first
       end
 
       def find_item
-        @item = Menu::Dish.visible.where(id: params[:id]).first
+        @item = ::Menu::Dish.visible.find_by(id: params[:id])
         return unless @item.nil?
 
         render_error(status: 404,
-                     message: I18n.t("record_not_found", model: Menu::Dish,
+                     message: I18n.t("record_not_found", model: ::Menu::Dish,
                                                          id: params[:id].inspect))
       end
     end
