@@ -97,7 +97,7 @@ module V1
       end
 
       def find_item
-        @item = ::Menu::Ingredient.visible.where(id: params[:id]).first
+        @item = ::Menu::Ingredient.visible.find_by(id: params[:id])
         return unless @item.nil?
 
         render_error(status: 404,

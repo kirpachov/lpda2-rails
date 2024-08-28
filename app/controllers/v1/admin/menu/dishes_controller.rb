@@ -107,7 +107,7 @@ module V1
       end
 
       def remove_suggestion
-        @item.suggestions.delete(Menu::Dish.visible.find(params[:suggestion_id]))
+        @item.suggestions.delete(::Menu::Dish.visible.find(params[:suggestion_id]))
         show
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
@@ -154,7 +154,7 @@ module V1
       end
 
       def remove_ingredient
-        @item.ingredients.delete(Menu::Ingredient.find(params[:ingredient_id]))
+        @item.ingredients.delete(::Menu::Ingredient.find(params[:ingredient_id]))
         show
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
@@ -193,7 +193,7 @@ module V1
       end
 
       def remove_tag
-        @item.tags.delete(Menu::Tag.find(params[:tag_id]))
+        @item.tags.delete(::Menu::Tag.find(params[:tag_id]))
         show
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Tag, id: params[:tag_id].inspect))
@@ -232,7 +232,7 @@ module V1
       end
 
       def remove_allergen
-        @item.allergens.delete(Menu::Allergen.find(params[:allergen_id]))
+        @item.allergens.delete(::Menu::Allergen.find(params[:allergen_id]))
         show
       rescue ActiveRecord::RecordNotFound => e
         render_error(status: 404,

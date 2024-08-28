@@ -136,7 +136,7 @@ module V1
       end
 
       def remove_dish
-        @item.dishes.delete(Menu::Dish.find(params[:dish_id]))
+        @item.dishes.delete(::Menu::Dish.find(params[:dish_id]))
         show
       rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Dish, id: params[:dish_id].inspect))
@@ -199,7 +199,7 @@ module V1
       end
 
       def find_category
-        @item = ::Menu::Category.visible.where(id: params[:id]).first
+        @item = ::Menu::Category.visible.find_by(id: params[:id])
         return unless @item.nil?
 
         render_error(status: 404,

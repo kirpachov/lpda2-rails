@@ -74,7 +74,7 @@ module V1::Admin::Menu
     private
 
     def find_item
-      @item = ::Menu::Allergen.visible.where(id: params[:id]).first
+      @item = ::Menu::Allergen.visible.find_by(id: params[:id])
       return unless @item.nil?
 
       render_error(status: 404,

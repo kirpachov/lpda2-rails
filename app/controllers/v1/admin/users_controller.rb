@@ -58,7 +58,7 @@ module V1::Admin
     end
 
     def find_item
-      @item = User.visible.where(id: params[:id]).first
+      @item = User.visible.find_by(id: params[:id])
       return unless @item.nil?
 
       render_error(status: 404,
