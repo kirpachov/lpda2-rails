@@ -97,7 +97,7 @@ RSpec.describe V1::PublicDataController, type: :controller do
       it { expect(messages.keys).to match_array(PublicMessage.visible.map(&:key)) }
       it { expect(messages.values).to match_array(PublicMessage.visible.map(&:text)) }
 
-      context "gigi when making a request with a specific locale in the params" do
+      context "when making a request with a specific locale in the params" do
         let(:locale) { (I18n.available_locales - [I18n.locale]).sample }
         let(:hex) { SecureRandom.hex }
 
@@ -109,7 +109,7 @@ RSpec.describe V1::PublicDataController, type: :controller do
           end
 
           Mobility.with_locale(locale) do
-            PublicMessage.all.sample.update!(text: "Secret #{hex}")
+            PublicMessage.visible.sample.update!(text: "Secret #{hex}")
           end
 
           req(params: { locale: })
