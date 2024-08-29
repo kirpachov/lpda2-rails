@@ -36,3 +36,7 @@ spec/reports
 config/app.yml
 
 coverage/*
+
+.vscode
+.vscode/
+.vscode/**
