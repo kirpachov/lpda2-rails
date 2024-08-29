@@ -15,6 +15,8 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  scope :random_order, -> { order(Arel.sql("RANDOM()")) }
+
   def translations_json
     res = {}
     text_translations.map do |text_translation|
