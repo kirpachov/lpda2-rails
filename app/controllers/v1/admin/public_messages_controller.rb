@@ -23,7 +23,10 @@ module V1::Admin
     def show
       @item ||= PublicMessage.find_by(key: params[:key])
 
-      return render json: { message: I18n.t("record_not_found", model: PublicMessage, id: params[:key]) }, status: 404 unless @item
+      unless @item
+        return render json: { message: I18n.t("record_not_found", model: PublicMessage, id: params[:key]) },
+                      status: :not_found
+      end
 
       render json: { item: full_json(@item) }
     end

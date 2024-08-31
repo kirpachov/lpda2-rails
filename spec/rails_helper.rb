@@ -14,7 +14,7 @@ require "rails-controller-testing"
 require "webmock/rspec"
 
 # https://github.com/sidekiq/sidekiq/wiki/Testing
-require 'sidekiq/testing'
+require "sidekiq/testing"
 Sidekiq::Testing.fake!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

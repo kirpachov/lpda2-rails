@@ -166,7 +166,8 @@ class PublicCreateReservation < ActiveInteraction::Base
   def datetime_format_is_valid
     return if params[:datetime].to_s.blank?
     return if /\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}\z/.match?(params[:datetime].to_s) # YYYY-MM-DD HH:MM
-    return if /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?\z/.match?(params[:datetime].to_s) # YYYY-MM-DDTHH:MM:SS.000Z
+    # YYYY-MM-DDTHH:MM:SS.000Z
+    return if /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z?\z/.match?(params[:datetime].to_s)
 
     errors.add(:datetime,
                "has invalid format. Please use the format: YYYY-MM-DD HH:MM. Got: #{params[:datetime].inspect}")

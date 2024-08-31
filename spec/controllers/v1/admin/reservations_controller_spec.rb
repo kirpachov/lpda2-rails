@@ -265,10 +265,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         let!(:reservations) do
           [
             create(:reservation, status: :active, fullname: "Wassa Bratan", email: "giuly@presley",
-                   notes: "Please be kind"),
+                                 notes: "Please be kind"),
             create(:reservation, status: :active, fullname: "Gigi", email: "luis@sal", notes: "Dont worry"),
             create(:reservation, status: :active, fullname: "Orologio", email: "gianni@morandi",
-                   notes: "idk something else")
+                                 notes: "idk something else")
           ]
         end
 
@@ -635,21 +635,21 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(item: Hash)
 
           expect(parsed_response_body[:item]).to include(
-                                                   fullname: String,
-                                                   datetime: String,
-                                                   status: String,
-                                                   secret: String,
-                                                   adults: Integer,
-                                                   children: Integer,
-                                                   table: String,
-                                                   notes: String,
-                                                   email: String,
-                                                   phone: String,
-                                                   other: Hash,
-                                                   created_at: String,
-                                                   updated_at: String,
-                                                   id: Integer
-                                                 )
+            fullname: String,
+            datetime: String,
+            status: String,
+            secret: String,
+            adults: Integer,
+            children: Integer,
+            table: String,
+            notes: String,
+            email: String,
+            phone: String,
+            other: Hash,
+            created_at: String,
+            updated_at: String,
+            id: Integer
+          )
           expect(response).to have_http_status(:ok)
         end
       end
@@ -1263,7 +1263,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
   describe "GET #tables_summary" do
     it { expect(instance).to respond_to(:tables_summary) }
-    it { expect(described_class).to route(:get, "/v1/admin/reservations/tables_summary").to(action: :tables_summary, format: :json) }
+
+    it {
+      expect(described_class).to route(:get, "/v1/admin/reservations/tables_summary").to(action: :tables_summary,
+                                                                                         format: :json)
+    }
 
     def req(params = { date: Time.zone.now.to_date.to_s })
       get :tables_summary, params:
@@ -1336,7 +1340,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               # DINNER
               create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 3),
               create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 4),
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 4),
+              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 4)
             ]
           end
 
@@ -1373,7 +1377,6 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
             it { expect(parsed_response_body).not_to include(message: String) }
             it { expect(parsed_response_body.count).to eq 0 }
           end
-
         end
 
         context "when filtering by today with {date: Date.today.to_date}" do

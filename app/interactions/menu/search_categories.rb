@@ -2,13 +2,10 @@
 
 module Menu
   class SearchCategories < SearchRecords
-
     def execute
       categories = Category.visible
 
-      if param_true?(:root, :without_parent, :root_only)
-        categories = categories.without_parent
-      end
+      categories = categories.without_parent if param_true?(:root, :without_parent, :root_only)
 
       if params[:except].present? && params[:except].is_a?(String)
         categories = categories.where.not(id: params[:except].split(",").map(&:to_i))

@@ -110,7 +110,8 @@ class Setting
                 record.value.include?("instagram.com") &&
                 record.value.starts_with?("http")
 
-      record.errors.add(:value, "should be an instagram url, like 'https://www.instagram.com/....', got #{record.value.inspect}")
+      record.errors.add(:value,
+                        "should be an instagram url, like 'https://www.instagram.com/....', got #{record.value.inspect}")
     end
   end
 end

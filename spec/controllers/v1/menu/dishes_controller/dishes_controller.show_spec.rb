@@ -62,7 +62,6 @@ RSpec.describe V1::Menu::DishesController do
       it { expect(dish).to be_valid }
       it { expect(response).to have_http_status(:ok) }
       it { expect(subject).to include(images: Array) }
-
     end
 
     context "when dish has name" do

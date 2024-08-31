@@ -32,7 +32,7 @@ module Dev::Menu
           )
         end
 
-        add_children_to(menu, count: categories_per_menu, dishes_per_category: dishes_per_category)
+        add_children_to(menu, count: categories_per_menu, dishes_per_category:)
       end
 
       # Creating a fixed price menu
@@ -48,16 +48,19 @@ module Dev::Menu
 
       # Creating a menu that is private.
       private_menu = Menu::Category.without_parent.where(price: nil).sample
-      private_menu.visibility.update!(public_visible: false, private_visible: true, public_from: nil, public_to: nil, private_from: nil, private_to: nil, daily_from: nil, daily_to: nil)
+      private_menu.visibility.update!(public_visible: false, private_visible: true, public_from: nil, public_to: nil,
+                                      private_from: nil, private_to: nil, daily_from: nil, daily_to: nil)
       private_menu.assign_translation(:name, { it: "Menu privato", en: "Private menu" })
       private_menu.save!
       puts "Private menu: ##{private_menu.id} #{private_menu.name}"
 
       # Creating a menu that is public but visible only for lunch.
       public_daily_menu = Menu::Category.without_parent.where(price: nil).where.not(id: private_menu.id).sample
-      public_daily_menu.assign_translation(:name, { it: "Menu pubblico solo a pranzo", en: "Public menu only for lunch" })
+      public_daily_menu.assign_translation(:name,
+                                           { it: "Menu pubblico solo a pranzo", en: "Public menu only for lunch" })
       public_daily_menu.save!
-      public_daily_menu.visibility.update!(public_visible: true, private_visible: false, public_from: nil, public_to: nil, private_from: nil, private_to: nil, daily_from: "11:00", daily_to: "14:00")
+      public_daily_menu.visibility.update!(public_visible: true, private_visible: false, public_from: nil,
+                                           public_to: nil, private_from: nil, private_to: nil, daily_from: "11:00", daily_to: "14:00")
       puts "Public daily menu, only for lunch time: ##{public_daily_menu.id} #{public_daily_menu.name}"
 
       Menu::Dish.all.sample((Menu::Dish.count / 3).to_i).each do |dish|
@@ -87,7 +90,7 @@ module Dev::Menu
           )
         end
 
-        add_dishes_to(category: category, count: dishes_per_category)
+        add_dishes_to(category:, count: dishes_per_category)
       end
     end
 

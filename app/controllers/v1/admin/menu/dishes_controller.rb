@@ -83,7 +83,7 @@ module V1
 
       def remove_from_category
         ::Menu::DishesInCategory.where(menu_dish_id: @item.id,
-                                     menu_category_id: params[:category_id].blank? ? nil : params[:category_id].to_i).destroy_all
+                                       menu_category_id: params[:category_id].blank? ? nil : params[:category_id].to_i).destroy_all
         show
       end
 

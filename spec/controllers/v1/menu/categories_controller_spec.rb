@@ -190,7 +190,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       it { expect(subject.first[:id]).to eq Menu::Category.last.id }
     end
 
-    ["root", "root_only", "without_parent"].each do |param_name|
+    %w[root root_only without_parent].each do |param_name|
       ["true", "t", "1", true, 1].each do |param_value|
         context "when filtering by { #{param_name.inspect}: #{param_value.inspect} } should return only categories without parent" do
           subject { parsed_response_body[:items] }

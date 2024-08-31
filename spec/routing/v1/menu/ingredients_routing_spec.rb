@@ -12,5 +12,4 @@ RSpec.describe "Routing /v1/menu/ingredients" do
   it {
     expect(get: "/v1/menu/ingredients/22").to route_to("v1/menu/ingredients#show", format: :json, id: "22")
   }
-
 end

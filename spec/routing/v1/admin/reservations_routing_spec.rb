@@ -31,5 +31,8 @@ RSpec.describe "Routing /v1/admin/reservations" do
     )
   }
 
-  it { expect(get: "v1/admin/reservations/tables_summary").to route_to("v1/admin/reservations#tables_summary", format: :json) }
+  it {
+    expect(get: "v1/admin/reservations/tables_summary").to route_to("v1/admin/reservations#tables_summary",
+                                                                    format: :json)
+  }
 end

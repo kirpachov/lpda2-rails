@@ -131,7 +131,7 @@ module V1::Admin
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                   id: params[:id].inspect))
+                                                       id: params[:id].inspect))
     end
 
     def find_tag
@@ -140,7 +140,7 @@ module V1::Admin
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: ReservationTag,
-                                   id: params[:tag_id].inspect))
+                                                       id: params[:tag_id].inspect))
     end
   end
 end

@@ -79,7 +79,7 @@ module V1
       end
 
       def add_dish
-       ::Menu::Category.transaction do
+        ::Menu::Category.transaction do
           dish = ::Menu::Dish.visible.find(params[:dish_id])
           dish = dish.copy!(current_user:) if params[:copy].to_s == "true"
           @item.dishes << dish
@@ -89,7 +89,9 @@ module V1
       rescue ActiveRecord::RecordInvalid => e
         render_error(status: 422, message: e.message)
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404,
+                     message: I18n.t("record_not_found", model: ::Menu::Dish,
+                                                         id: params[:dish_id].inspect))
       end
 
       def move
@@ -139,11 +141,13 @@ module V1
         @item.dishes.delete(::Menu::Dish.find(params[:dish_id]))
         show
       rescue ActiveRecord::RecordNotFound
-        render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Dish, id: params[:dish_id].inspect))
+        render_error(status: 404,
+                     message: I18n.t("record_not_found", model: ::Menu::Dish,
+                                                         id: params[:dish_id].inspect))
       end
 
       def add_category
-       ::Menu::Category.transaction do
+        ::Menu::Category.transaction do
           category = ::Menu::Category.visible.find(params[:category_child_id])
           category = category.copy!(current_user:)
           category.update!(visibility: nil, parent: @item)

@@ -79,9 +79,9 @@ RSpec.describe V1::PublicDataController, type: :controller do
     end
 
     context "when checking public_messages" do
-      let(:sample_message) { PublicMessage.visible.sample }
-
       subject(:messages) { json[:public_messages] }
+
+      let(:sample_message) { PublicMessage.visible.sample }
 
       before do
         create_list(:public_message, 10)

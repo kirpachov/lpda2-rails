@@ -18,6 +18,7 @@ RSpec.describe "POST /v1/admin/public_messages" do
 
   context "when not authenticated" do
     let(:headers) {}
+
     before { req }
 
     it { expect(response).to have_http_status(:unauthorized) }
@@ -43,7 +44,7 @@ RSpec.describe "POST /v1/admin/public_messages" do
   end
 
   context "when same key already exists" do
-    let!(:message) { create(:public_message, key: key) }
+    let!(:message) { create(:public_message, key:) }
 
     it { expect { req }.not_to(change(PublicMessage, :count)) }
     it { expect { req }.to(change { message.reload.text }) }

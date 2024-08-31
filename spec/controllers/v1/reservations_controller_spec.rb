@@ -66,7 +66,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       it "does enqueue email to reservation email" do
         req
-        expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "confirmation", "deliver_now", params: anything, args: anything)
+        expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "confirmation",
+                                                                         "deliver_now", params: anything, args: anything)
       end
 
       it "can deliver email" do
@@ -685,16 +686,16 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           it {
             expect(subject).to include(
-                                 "id" => reservation.id,
-                                 "fullname" => reservation.fullname,
-                                 "datetime" => reservation.datetime,
-                                 "adults" => reservation.adults,
-                                 "children" => reservation.children,
-                                 "email" => reservation.email,
-                                 "phone" => reservation.phone,
-                                 "notes" => reservation.notes,
-                                 "secret" => reservation.secret
-                               )
+              "id" => reservation.id,
+              "fullname" => reservation.fullname,
+              "datetime" => reservation.datetime,
+              "adults" => reservation.adults,
+              "children" => reservation.children,
+              "email" => reservation.email,
+              "phone" => reservation.phone,
+              "notes" => reservation.notes,
+              "secret" => reservation.secret
+            )
           }
         end
       end

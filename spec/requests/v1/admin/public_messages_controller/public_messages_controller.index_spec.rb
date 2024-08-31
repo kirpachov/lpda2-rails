@@ -14,6 +14,7 @@ RSpec.describe "GET /v1/admin/public_messages" do
 
   context "when not authenticated" do
     let(:headers) {}
+
     before { req }
 
     it { expect(response).to have_http_status(:unauthorized) }
@@ -72,7 +73,7 @@ RSpec.describe "GET /v1/admin/public_messages" do
 
     before do
       messages
-      req(key: key)
+      req(key:)
     end
 
     it { expect(response).to be_successful }
@@ -81,6 +82,6 @@ RSpec.describe "GET /v1/admin/public_messages" do
     it { expect(json).to be_a(Hash) }
     it { expect(json).to include(items: Array) }
     it { expect(json[:items].size).to eq(1) }
-    it { expect(json[:items].first).to include(key: key) }
+    it { expect(json[:items].first).to include(key:) }
   end
 end

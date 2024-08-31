@@ -2,7 +2,7 @@
 
 module V1
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show cancel ]
+    before_action :find_item, only: %i[show cancel]
     before_action :find_next_and_active_reservation, only: %i[resend_confirmation_email]
     skip_before_action :authenticate_user
 
@@ -24,7 +24,7 @@ module V1
 
       cookies[Reservation::PUBLIC_CREATE_COOKIE] = {
         value: call.result.secret,
-        expires: 90.day.from_now,
+        expires: 90.days.from_now,
         http_only: true
       }
 
@@ -64,7 +64,7 @@ module V1
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                   id: params[:secret].inspect))
+                                                       id: params[:secret].inspect))
     end
 
     def find_next_and_active_reservation
@@ -73,7 +73,7 @@ module V1
 
       render_error(status: 404,
                    message: I18n.t("record_not_found", model: Reservation,
-                                   id: params[:secret].inspect))
+                                                       id: params[:secret].inspect))
     end
 
     def full_json(item)

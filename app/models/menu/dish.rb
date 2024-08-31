@@ -88,9 +88,18 @@ module Menu
       def public_json(options = {})
         to_include = [:text_translations, { images: :attached_image_blob }]
         to_include << { suggestions: to_include.dup } if options[:include_suggestions] || options[:include_all]
-        to_include << { menu_ingredients: [:text_translations, { image: :attached_image_blob }] } if options[:include_ingredients] || options[:include_all]
-        to_include << { menu_allergens: [:text_translations, { image: :attached_image_blob }] } if options[:include_allergens] || options[:include_all]
-        to_include << { menu_tags: [:text_translations, { image: :attached_image_blob }] } if options[:include_tags] || options[:include_all]
+        if options[:include_ingredients] || options[:include_all]
+          to_include << { menu_ingredients: [:text_translations,
+                                             { image: :attached_image_blob }] }
+        end
+        if options[:include_allergens] || options[:include_all]
+          to_include << { menu_allergens: [:text_translations,
+                                           { image: :attached_image_blob }] }
+        end
+        if options[:include_tags] || options[:include_all]
+          to_include << { menu_tags: [:text_translations,
+                                      { image: :attached_image_blob }] }
+        end
         includes(to_include).map { |item| item.public_json(options) }
       end
     end
@@ -147,9 +156,7 @@ module Menu
         optional_data[:ingredients] = ingredients.map { |ingredient| ingredient.public_json }
       end
 
-      if options[:include_tags] || options[:include_all]
-        optional_data[:tags] = tags.map { |tag| tag.public_json }
-      end
+      optional_data[:tags] = tags.map { |tag| tag.public_json } if options[:include_tags] || options[:include_all]
 
       if options[:include_allergens] || options[:include_all]
         optional_data[:allergens] = allergens.map { |allergen| allergen.public_json }

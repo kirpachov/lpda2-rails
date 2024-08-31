@@ -34,8 +34,8 @@ module V1::Menu
       return unless @item.nil?
 
       render_error(status: 404,
-                    message: I18n.t("record_not_found", model: Menu::Ingredient,
-                                                        id: params[:id].inspect))
+                   message: I18n.t("record_not_found", model: Menu::Ingredient,
+                                                       id: params[:id].inspect))
     end
   end
 end

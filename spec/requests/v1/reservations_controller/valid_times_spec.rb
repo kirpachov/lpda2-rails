@@ -34,7 +34,12 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
 
     it { is_expected.to have_http_status(:ok) }
     it { expect(json).not_to include(message: String) }
-    it { expect(json).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer, "step" => Integer)) }
+
+    it {
+      expect(json).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer,
+                                  "step" => Integer))
+    }
+
     it { expect(json).to all(include("valid_times" => %w[12:00 12:30 13:00 13:30 14:00])) }
     it { expect(json.count).to eq 1 }
   end
@@ -54,8 +59,17 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
     it { is_expected.to have_http_status(:ok) }
     it { expect(json).not_to include(message: String) }
 
-    it { expect(json).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer, "step" => Integer)) }
+    it {
+      expect(json).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer,
+                                  "step" => Integer))
+    }
+
     it { expect(json.count).to eq 2 }
-    it { expect(json.map { |j| j["valid_times"] }.flatten.sort).to eq(%w[12:00 12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00]) }
+
+    it {
+      expect(json.map do |j|
+               j["valid_times"]
+             end.flatten.sort).to eq(%w[12:00 12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00])
+    }
   end
 end

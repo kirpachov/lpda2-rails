@@ -25,12 +25,11 @@ RSpec.describe V1::Menu::DishesController do
     context "when requiring all informations with { include_all: true }" do
       let!(:dish) do
         create(:menu_dish, :with_name, :with_description, :with_images,
-                           :with_allergens, :with_tags, :with_ingredients, :with_suggestions
-                           ).tap do |d|
+               :with_allergens, :with_tags, :with_ingredients, :with_suggestions).tap do |d|
           image = create(:image, :with_attached_image)
-          d.allergens.map{ |a| a.image = image }
-          d.tags.map{ |a| a.image = image }
-          d.ingredients.map{ |a| a.image = image }
+          d.allergens.map { |a| a.image = image }
+          d.tags.map { |a| a.image = image }
+          d.ingredients.map { |a| a.image = image }
         end
       end
 
@@ -61,7 +60,12 @@ RSpec.describe V1::Menu::DishesController do
         it { expect(item).to include(images: Array) }
         it { expect(item[:images]).to be_present }
         it { expect(item[:images]).to all(be_a(Hash)) }
-        it { expect(item[:images].map(&:symbolize_keys)).to all(include(id: Integer, filename: String, status: String, tag: nil, original_id: nil, key: nil, url: String, updated_at: String, created_at: String)) }
+
+        it {
+          expect(item[:images].map(&:symbolize_keys)).to all(include(id: Integer, filename: String, status: String, tag: nil,
+                                                                     original_id: nil, key: nil, url: String, updated_at: String, created_at: String))
+        }
+
         it { expect(item[:images].sample.keys.map(&:to_s)).not_to include("member_id") }
         it { expect(item[:images].sample.keys.map(&:to_s)).not_to include("other") }
 
@@ -70,7 +74,12 @@ RSpec.describe V1::Menu::DishesController do
             it { expect(item).to include(field => Array) }
             it { expect(item[field]).to be_present }
             it { expect(item[field]).to all(be_a(Hash)) }
-            it { expect(item[field].map(&:symbolize_keys)).to all(include(id: Integer, name: String, description: String, created_at: String, updated_at: String)) }
+
+            it {
+              expect(item[field].map(&:symbolize_keys)).to all(include(id: Integer, name: String, description: String,
+                                                                       created_at: String, updated_at: String))
+            }
+
             it { expect(item[field].sample.keys.map(&:to_s)).not_to include("member_id") }
             it { expect(item[field].sample.keys.map(&:to_s)).not_to include("other") }
           end
@@ -79,7 +88,11 @@ RSpec.describe V1::Menu::DishesController do
         it { expect(item[:allergens].map(&:symbolize_keys)).to all(include(image: Hash)) }
         it { expect(item[:ingredients].map(&:symbolize_keys)).to all(include(image: Hash)) }
         it { expect(item[:tags].map(&:symbolize_keys)).to all(include(image: Hash, color: String)) }
-        it { expect(item[:suggestions].map(&:symbolize_keys)).to all(include(id: Integer, images: Array, name: String, description: String)) }
+
+        it {
+          expect(item[:suggestions].map(&:symbolize_keys)).to all(include(id: Integer, images: Array, name: String,
+                                                                          description: String))
+        }
       end
     end
 
@@ -704,7 +717,7 @@ RSpec.describe V1::Menu::DishesController do
       it { expect(response).to have_http_status(:ok) }
       it { expect(json).not_to include(message: String) }
       it { expect(json[:items].count).to eq 1 }
-      it { expect(json[:items].pluck(:id)).to match_array([dish.id]) }
+      it { expect(json[:items].pluck(:id)).to contain_exactly(dish.id) }
     end
   end
 end
