@@ -16,36 +16,18 @@ module V1::Menu
       items = call.result.paginate(pagination_params)
 
       render json: {
-        items: full_json(items),
+        items: items.public_json,
         metadata: json_metadata(items)
       }
     end
 
     def show
       render json: {
-        item: full_json(@item)
+        item: @item.public_json
       }
     end
 
     private
-
-    def full_json(item_or_items)
-      return item_or_items.includes(:text_translations, image: :attached_image_blob).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
-
-      return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Ingredient)
-
-      raise ArgumentError,
-            "Invalid params. Menu::Ingredient or ActiveRecord::Relation expected, but #{item_or_items.class} given"
-    end
-
-    def single_item_full_json(item)
-      item.as_json(only: %w[id status created_at updated_at]).merge(
-        name: item.name,
-        description: item.description,
-        image: item.image&.full_json,
-        translations: item.translations_json
-      )
-    end
 
     def find_item
       @item = Menu::Ingredient.visible.find_by(id: params[:id])

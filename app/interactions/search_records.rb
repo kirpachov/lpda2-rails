@@ -6,13 +6,13 @@ class SearchRecords < ActiveInteraction::Base
 
   def param_true?(*param_names)
     param_names.flatten.any? do |param_name|
-      params[param_name].to_s.downcase.in?(%w[true 1 yes t])
+      params[param_name].to_s.true?
     end
   end
 
   def param_false?(*param_names)
     param_names.flatten.any? do |param_name|
-      params[param_name].to_s.downcase.in?(%w[false 0 no f])
+      params[param_name].to_s.false?
     end
   end
 end

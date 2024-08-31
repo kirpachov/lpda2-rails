@@ -14,7 +14,9 @@ module Menu
                   filter_by_except_in_category(
                     filter_by_except(
                       filter_by_can_suggest(
-                        order(items)
+                        filter_by_allowed_fields(
+                          order(items)
+                        )
                       )
                     )
                   )
@@ -27,6 +29,10 @@ module Menu
     end
 
     private
+
+    def filter_by_allowed_fields(items)
+      items.where(params.slice(*%w[id member_id]).permit!)
+    end
 
     # "can_suggest" is the id of the dish where you want to add suggestions.
     # when this filter is provided, the returned dishes must be valid suggestions for the dish with "can_suggest".

@@ -69,11 +69,24 @@ module Menu
 
         items.first.move!(to_index: 0, dish_id:)
       end
+
+      def public_json(options = {})
+        includes(:text_translations, image: :attached_image_blob).map { |item| item.public_json(options) }
+      end
     end
 
     # ##############################
     # Instance methods
     # ##############################
+    def public_json(_options = {})
+      as_json(only: %w[id color status created_at updated_at]).merge(
+        name:,
+        description:,
+        image: image&.public_json,
+        translations: translations_json
+      )
+    end
+
     def assign_defaults
       self.other = {} if other.nil?
       self.status = "active" if status.blank?

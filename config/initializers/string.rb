@@ -9,6 +9,14 @@ class String
     false
   end
 
+  def true?
+    downcase.in?(%w[true 1 yes t])
+  end
+
+  def false?
+    downcase.in?(%w[false 0 no f])
+  end
+
   def valid_email?
     !!(self =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i)
   end

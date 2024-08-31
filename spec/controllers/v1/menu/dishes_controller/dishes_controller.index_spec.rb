@@ -22,6 +22,67 @@ RSpec.describe V1::Menu::DishesController do
 
     it { expect(req).to be_successful }
 
+    context "when requiring all informations with { include_all: true }" do
+      let!(:dish) do
+        create(:menu_dish, :with_name, :with_description, :with_images,
+                           :with_allergens, :with_tags, :with_ingredients, :with_suggestions
+                           ).tap do |d|
+          image = create(:image, :with_attached_image)
+          d.allergens.map{ |a| a.image = image }
+          d.tags.map{ |a| a.image = image }
+          d.ingredients.map{ |a| a.image = image }
+        end
+      end
+
+      before { req(id: dish.id, include_all: true) }
+
+      # Checking mock data
+      it { expect(Menu::Dish.count).to eq 1 + dish.suggestions.count }
+      # it { expect(Menu::Dish.first.id).to eq dish.id }
+      it { expect(dish.allergens.count).to be_positive }
+      it { expect(dish.ingredients.count).to be_positive }
+      it { expect(dish.tags.count).to be_positive }
+      it { expect(dish.images.count).to be_positive }
+      it { expect(dish.suggestions.count).to be_positive }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).to include(items: Array) }
+      it { expect(json).to include(metadata: Hash) }
+      it { expect(json[:items].count).to eq 1 }
+
+      context "when checking first element structure" do
+        subject(:item) { json["items"].first.symbolize_keys }
+
+        it { expect(item).to include(id: dish.id) }
+        it { expect(item).to include(price: dish.price) }
+        it { expect(item).to include(status: dish.status) }
+        it { expect(item).to include(translations: Hash) }
+
+        it { expect(item).to include(images: Array) }
+        it { expect(item[:images]).to be_present }
+        it { expect(item[:images]).to all(be_a(Hash)) }
+        it { expect(item[:images].map(&:symbolize_keys)).to all(include(id: Integer, filename: String, status: String, tag: nil, original_id: nil, key: nil, url: String, updated_at: String, created_at: String)) }
+        it { expect(item[:images].sample.keys.map(&:to_s)).not_to include("member_id") }
+        it { expect(item[:images].sample.keys.map(&:to_s)).not_to include("other") }
+
+        %i[allergens tags ingredients suggestions].each do |field|
+          context "should include #{field} field" do
+            it { expect(item).to include(field => Array) }
+            it { expect(item[field]).to be_present }
+            it { expect(item[field]).to all(be_a(Hash)) }
+            it { expect(item[field].map(&:symbolize_keys)).to all(include(id: Integer, name: String, description: String, created_at: String, updated_at: String)) }
+            it { expect(item[field].sample.keys.map(&:to_s)).not_to include("member_id") }
+            it { expect(item[field].sample.keys.map(&:to_s)).not_to include("other") }
+          end
+        end
+
+        it { expect(item[:allergens].map(&:symbolize_keys)).to all(include(image: Hash)) }
+        it { expect(item[:ingredients].map(&:symbolize_keys)).to all(include(image: Hash)) }
+        it { expect(item[:tags].map(&:symbolize_keys)).to all(include(image: Hash, color: String)) }
+        it { expect(item[:suggestions].map(&:symbolize_keys)).to all(include(id: Integer, images: Array, name: String, description: String)) }
+      end
+    end
+
     context "when there are no dishes" do
       before { req }
 
@@ -46,9 +107,6 @@ RSpec.describe V1::Menu::DishesController do
         it { is_expected.to include(name: String) }
         it { is_expected.to include(description: String) }
         it { is_expected.to include(images: Array) }
-        it { is_expected.to include(suggestions: Array) }
-        it { expect(subject[:suggestions]).to all(be_a(Hash)) }
-        it { expect(subject[:suggestions]).to all(include(id: Integer, name: String)) }
       end
     end
 
@@ -635,6 +693,18 @@ RSpec.describe V1::Menu::DishesController do
         expect(response).to have_http_status(:ok)
         expect(parsed_response_body.dig(:metadata, :total_count)).to eq 3
       end
+    end
+
+    context "when filtering for { id: <id> }" do
+      let!(:dish) { create(:menu_dish) }
+      let!(:dishes) { create_list(:menu_dish, 3) }
+
+      before { req(id: dish.id) }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+      it { expect(json[:items].count).to eq 1 }
+      it { expect(json[:items].pluck(:id)).to match_array([dish.id]) }
     end
   end
 end

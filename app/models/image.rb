@@ -115,6 +115,10 @@ class Image < ApplicationRecord
     as_json.merge(url:)
   end
 
+  def public_json(_options = {})
+    as_json(only: %w[id filename status tag original_id key created_at updated_at], methods: %i[url])
+  end
+
   def generate_image_variants!(options = {})
     GenerateImageVariants.run!(options.merge(image: self))
   end

@@ -84,6 +84,15 @@ module Menu
 
         items.first.move!(to_index: 0, category_id:)
       end
+
+      def public_json(options = {})
+        to_include = [:text_translations, { images: :attached_image_blob }]
+        to_include << { suggestions: to_include.dup } if options[:include_suggestions] || options[:include_all]
+        to_include << { menu_ingredients: [:text_translations, { image: :attached_image_blob }] } if options[:include_ingredients] || options[:include_all]
+        to_include << { menu_allergens: [:text_translations, { image: :attached_image_blob }] } if options[:include_allergens] || options[:include_all]
+        to_include << { menu_tags: [:text_translations, { image: :attached_image_blob }] } if options[:include_tags] || options[:include_all]
+        includes(to_include).map { |item| item.public_json(options) }
+      end
     end
 
     # ##############################
@@ -130,6 +139,32 @@ module Menu
 
     def move(to_index:, category_id:)
       MoveDish.run(dish: self, params: { to_index:, category_id: })
+    end
+
+    def public_json(options = {})
+      optional_data = {}
+      if options[:include_ingredients] || options[:include_all]
+        optional_data[:ingredients] = ingredients.map { |ingredient| ingredient.public_json }
+      end
+
+      if options[:include_tags] || options[:include_all]
+        optional_data[:tags] = tags.map { |tag| tag.public_json }
+      end
+
+      if options[:include_allergens] || options[:include_all]
+        optional_data[:allergens] = allergens.map { |allergen| allergen.public_json }
+      end
+
+      if options[:include_suggestions] || options[:include_all]
+        optional_data[:suggestions] = suggestions.map { |suggestion| suggestion.public_json }
+      end
+
+      as_json(only: %w[id status price created_at updated_at]).merge(
+        name:,
+        description:,
+        images: images.map { |image| image.public_json },
+        translations: translations_json
+      ).merge(optional_data)
     end
 
     def references_json
