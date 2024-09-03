@@ -1,6 +1,7 @@
 FROM ruby:3.1.3 AS lpda2-rails
 WORKDIR /app
 COPY . .
+RUN bundle install
 CMD bundle exec rails s
 
 # -- Stage 2 --
