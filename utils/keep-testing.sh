@@ -1,9 +1,9 @@
 #!/bin/bash
 
-bundle exec rspec
+bundle exec rake parallel:spec
 count=0
 while [ $? -eq 0 ]; do
-  bundle exec rspec
+  bundle exec rake parallel:spec
   count=$((count+1))
   if [ $count -eq 10 ]; then
     break
