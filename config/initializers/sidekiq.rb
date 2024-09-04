@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 redis_configs = {
-  url: ENV.fetch("REDIS_URL", Rails.env.test? ? "redis://localhost:6379/5" : "redis://127.0.0.1:6379/1"),
+  url: ENV.fetch("REDIS_URL", "redis://localhost:6379/5"),
   size: ActiveRecord::Base.connection_pool.size
 }
 
