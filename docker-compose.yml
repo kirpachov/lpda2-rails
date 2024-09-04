@@ -1,0 +1,43 @@
+services:
+  redis:
+    image: redis:6
+
+  postgres:
+    image: postgres:14
+    volumes:
+      - ./postgres14-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: somethingNooneWillGuess
+    ports:
+      - "5430:5432"
+
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/lpda2
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      LPDA2_DATABASE_HOST: postgres
+      LPDA2_DATABASE_PASSWORD: somethingNooneWillGuess
+      LPDA2_DATABASE_USERNAME: postgres
+      REDIS_URL: redis://redis:6379/1
+
+  rails:
+    build: .
+    volumes:
+      - .:/lpda2
+      - ~/.irb_history:/root/.irb_history # May be an issue? idk. Surely it's cool.
+    ports:
+      - "3050:3050"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      LPDA2_DATABASE_HOST: postgres
+      LPDA2_DATABASE_PASSWORD: somethingNooneWillGuess
+      LPDA2_DATABASE_USERNAME: postgres
+      REDIS_URL: redis://redis:6379/1
