@@ -2,6 +2,9 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("LPDA2_DATABASE_HOST", nil) %>
+  password: <%= ENV.fetch("LPDA2_DATABASE_PASSWORD", nil) %>
+  user: <%= ENV.fetch("LPDA2_DATABASE_USERNAME", nil) %>
 
 development:
   <<: *default
@@ -13,6 +16,4 @@ test:
 
 production:
   <<: *default
-  database: lpda2_production
-  username: lpda2
-  password: <%= ENV["LPDA2_DATABASE_PASSWORD"] %>
+  database: lpda2
