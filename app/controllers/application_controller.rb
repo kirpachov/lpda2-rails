@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::API
   include ActionController::Cookies
 
-  before_action :authenticate_user
+  before_action :authenticate_user, except: %i[render_endpoint_not_found]
   before_action :set_locale
 
   attr_reader :current_user
@@ -11,6 +11,12 @@ class ApplicationController < ActionController::API
   def authenticate_user
     try_authenticate_user
     render_unauthorized unless @current_user
+  end
+
+  def render_endpoint_not_found
+    render json: {
+      message: "Endpoint not found"
+    }, status: 404
   end
 
   def try_authenticate_user
