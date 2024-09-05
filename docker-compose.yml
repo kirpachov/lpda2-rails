@@ -49,7 +49,6 @@ services:
     restart: unless-stopped
     volumes:
       - .:/lpda2
-      - ~/.irb_history:/root/.irb_history # May be an issue? idk. Surely it's cool.
     ports:
       - "3050:3050"
     # https://docs.docker.com/reference/compose-file/services/#depends_on
