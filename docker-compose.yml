@@ -1,45 +1,72 @@
 services:
   redis:
     image: redis:6
+    restart: unless-stopped
+    volumes:
+      - lpda2-redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     image: postgres:14
+    restart: unless-stopped
     volumes:
-      - ./postgres14-data:/var/lib/postgresql/data
+      - lpda2-postgres14-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: somethingNooneWillGuess
-    ports:
-      - "5430:5432"
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # ports:
+    #   - "5430:5432"
 
   sidekiq:
     build: .
+    restart: unless-stopped
     command: bundle exec sidekiq
     volumes:
       - .:/lpda2
     depends_on:
-      - postgres
-      - redis
+      # one of the following: "service_started", "service_healthy", "service_completed_successfully"
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_healthy
     environment:
       LPDA2_DATABASE_HOST: postgres
-      LPDA2_DATABASE_PASSWORD: somethingNooneWillGuess
-      LPDA2_DATABASE_USERNAME: postgres
+      LPDA2_DATABASE_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
+      LPDA2_DATABASE_USERNAME: root
       REDIS_URL: redis://redis:6379/1
-      RAILS_ENV: $RAILS_ENV
+      RAILS_ENV: ${RAILS_ENV:-development}
 
   rails:
     build: .
+    restart: unless-stopped
     volumes:
       - .:/lpda2
       - ~/.irb_history:/root/.irb_history # May be an issue? idk. Surely it's cool.
     ports:
       - "3050:3050"
     depends_on:
-      - postgres
-      - redis
+      # one of the following: "service_started", "service_healthy", "service_completed_successfully"
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_healthy
     environment:
       LPDA2_DATABASE_HOST: postgres
-      LPDA2_DATABASE_PASSWORD: somethingNooneWillGuess
-      LPDA2_DATABASE_USERNAME: postgres
+      LPDA2_DATABASE_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
+      LPDA2_DATABASE_USERNAME: root
       REDIS_URL: redis://redis:6379/1
-      RAILS_ENV: $RAILS_ENV
+      RAILS_ENV: ${RAILS_ENV:-development}
+
+volumes:
+  lpda2-redis-data:
+  lpda2-postgres14-data:
+

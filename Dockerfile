@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM ruby:3.1.3 AS lpda2-rails
-RUN apt update -qq && apt install -y nodejs postgresql-client ruby-vips
+RUN apt update -qq && apt install -y postgresql-client ruby-vips
 WORKDIR /lpda2
 COPY Gemfile /lpda2/Gemfile
 COPY Gemfile.lock /lpda2/Gemfile.lock

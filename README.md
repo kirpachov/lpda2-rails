@@ -58,6 +58,6 @@ In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[.
 ```
 docker container rm $(docker container ls --all | awk '{print $1}') -f
 docker image rm $(docker image ls --all | awk '{print $3}')
-docker volume rm $(docker volume ls | awk '{print $2}')
+# docker volume rm $(docker volume ls | awk '{print $2}') # CAREFUL: YOU WILL LOOSE YOUR POSTGRES DATABASE AND REDIS QUEUE.
 docker compose up -d
 ```
