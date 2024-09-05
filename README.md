@@ -39,6 +39,8 @@ per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nascond
 Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 
 ## Docker
+Prima installazione: inizializzazione database. `docker compose run rails bundle exec rake db:create db:migrate db:seed`
+
 Per far partire `rails s` dentro docker:
 ```
 docker compose up --build --remove-orphans
@@ -62,9 +64,9 @@ In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[.
 
 ## Docker cleanup
 ```
-docker container rm $(docker container ls --all | awk '{print $1}') -f
-docker image rm $(docker image ls --all | awk '{print $3}')
-# docker volume rm $(docker volume ls | awk '{print $2}') # CAREFUL: YOU WILL LOOSE YOUR POSTGRES DATABASE AND REDIS QUEUE.
+docker container rm $(docker container ls --all | grep lpda | awk '{print $1}') -f
+docker image rm $(docker image ls --all | grep lpda | awk '{print $3}')
+# docker volume rm $(docker volume ls | grep lpda | awk '{print $2}') # CAREFUL: YOU WILL LOOSE YOUR POSTGRES DATABASE AND REDIS QUEUE.
 docker compose up -d
 ```
 

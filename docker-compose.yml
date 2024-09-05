@@ -26,24 +26,6 @@ services:
     # ports:
     #   - "5430:5432"
 
-  rails_db_migrate:
-    build: .
-    restart: no
-    command: "bundle exec rake db:migrate"
-    volumes:
-      - .:/lpda2
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      LPDA2_DATABASE_HOST: postgres
-      LPDA2_DATABASE_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
-      LPDA2_DATABASE_USERNAME: root
-      REDIS_URL: redis://redis:6379/1
-      RAILS_ENV: ${RAILS_ENV:-development}
-
   sidekiq:
     build: .
     restart: unless-stopped
@@ -55,8 +37,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rails_db_migrate:
-        condition: service_completed_successfully
     environment:
       LPDA2_DATABASE_HOST: postgres
       LPDA2_DATABASE_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
@@ -78,8 +58,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rails_db_migrate:
-        condition: service_completed_successfully
     healthcheck:
       test: "curl -f http://127.0.0.1:3050"
     environment:
