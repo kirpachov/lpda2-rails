@@ -41,8 +41,14 @@ Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 ## Docker
 Per far partire `rails s` dentro docker:
 ```
-docker compose up --build
+docker compose up --build --remove-orphans
 ```
+
+Seed: `docker compose run rails rails db:seed`
+
+Rspec: `docker compose run --env RAILS_ENV=test rails rspec`
+
+Parallel spec: `RAILS_ENV=test docker compose run rails bundle exec rake parallel:drop parallel:create parallel:migrate parallel:spec`
 
 Rails risponde alla porta 3050.
 
@@ -52,7 +58,7 @@ In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[.
 - Collegarsi a `rails console`: `docker compose run rails rails c`
 - Far girare rspec: `docker compose run --env RAILS_ENV=test rails rails db:drop db:create db:migrate spec`
 - Far girare parallel spec: `docker compose run --env RAILS_ENV=test rails rake parallel:drop parallel:create parallel:migrate parallel:spec`
-- Collegarsi al database: In base alle configurazioni presenti in docker-compose.yml, se la porta è condivisa ci si può collegare direttamente con `PGPASSWORD="somethingNooneWillGuess" psql -h localhost -p 5430 -U postgres`, alternativamente ci si collega passando per il servizio rails, in questo modo:`docker compose run rails bash -c "PGPASSWORD=somethingNooneWillGuess psql -U postgres -h postgres"`
+- Collegarsi al database: In base alle configurazioni presenti in docker-compose.yml, se la porta è condivisa ci si può collegare direttamente con `PGPASSWORD="somethingNooneWillGuess" psql -h localhost -p 5430 -U root`, alternativamente ci si collega passando per il servizio rails, in questo modo:`docker compose run rails bash -c "PGPASSWORD=somethingNooneWillGuess psql -U root -h postgres"`
 
 ## Docker cleanup
 ```
@@ -61,3 +67,8 @@ docker image rm $(docker image ls --all | awk '{print $3}')
 # docker volume rm $(docker volume ls | awk '{print $2}') # CAREFUL: YOU WILL LOOSE YOUR POSTGRES DATABASE AND REDIS QUEUE.
 docker compose up -d
 ```
+
+## Docker status
+Per cercare di capire cosa sta succedendo dentro docker:
+`watch --interval 0.5 docker ps` Mostrerà i container che stanno girando ed il loro `healthchecks`
+`watch --interval 0.5 docker compose top` Mostrerà i processi per ciascun container.
