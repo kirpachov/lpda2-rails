@@ -39,11 +39,13 @@ per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nascond
 Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 
 ## Docker
+> Docker Compose version v2.29.2
+> Docker version 27.2.0, build 3ab4256
 Prima installazione: inizializzazione database. `docker compose run rails bundle exec rake db:create db:migrate db:seed`
 
 Per far partire `rails s` dentro docker:
-```
-docker compose up --build --remove-orphans
+```bash
+docker compose up --build --remove-orphans -d
 ```
 
 Seed: `docker compose run rails rails db:seed`
