@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
   end
 
   def welcome
-    render json: { message: "Welcome to #{Config.app.long_name} API!" }
+    render json: { message: "Welcome to #{Config.app[:app_name]} API!" }
   end
 
   def try_authenticate_user
