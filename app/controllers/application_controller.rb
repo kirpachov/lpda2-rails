@@ -19,6 +19,10 @@ class ApplicationController < ActionController::API
     }, status: 404
   end
 
+  def welcome
+    render json: { message: "Welcome to #{Config.app.long_name} API!" }
+  end
+
   def try_authenticate_user
     @current_user = Auth::AuthorizeApiRequest.run(headers: request.headers).result
   end
