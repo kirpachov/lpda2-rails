@@ -64,6 +64,15 @@ In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[.
 - Far girare parallel spec: `docker compose run --env RAILS_ENV=test rails rake parallel:drop parallel:create parallel:migrate parallel:spec`
 - Collegarsi al database: In base alle configurazioni presenti in docker-compose.yml, se la porta è condivisa ci si può collegare direttamente con `PGPASSWORD="somethingNooneWillGuess" psql -h localhost -p 5430 -U root`, alternativamente ci si collega passando per il servizio rails, in questo modo:`docker compose run rails bash -c "PGPASSWORD=somethingNooneWillGuess psql -U root -h postgres"`
 
+## Update production code
+```bash
+cd /path/to/root
+git pull
+docker compose down
+docker compose run rails bundle exec rake db:migrate
+docker compose up
+```
+
 ## Docker cleanup
 ```
 docker container rm $(docker container ls --all | grep lpda | awk '{print $1}') -f
