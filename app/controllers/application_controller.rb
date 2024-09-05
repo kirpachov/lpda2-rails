@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::API
   include ActionController::Cookies
 
-  before_action :authenticate_user, except: %i[render_endpoint_not_found]
+  before_action :authenticate_user, except: %i[welcome render_endpoint_not_found]
   before_action :set_locale
 
   attr_reader :current_user
