@@ -6,8 +6,10 @@ end
 debug "Creating missing images..."
 CreateMissingImages.run!
 
-if Rails.env.production?
-  debug "You're in production. Exiting..."
+LPDA2_ALLOW_PRODUCTION_SEEDS = ENV["LPDA2_ALLOW_PRODUCTION_SEEDS"] == "true"
+
+if Rails.env.production? && !LPDA2_ALLOW_PRODUCTION_SEEDS
+  debug "You're in production. Exiting. To run seeds in production, set LPDA2_ALLOW_PRODUCTION_SEEDS=true"
   exit
 end
 

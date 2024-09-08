@@ -16,8 +16,6 @@ module Dev::Menu
     boolean :clean_before, default: false
 
     def execute
-      raise "You can't run this in production" if Rails.env.production?
-
       clean if clean_before
 
       require "faker"
