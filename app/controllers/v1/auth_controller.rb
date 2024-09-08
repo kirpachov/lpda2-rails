@@ -41,7 +41,9 @@ module V1
       cookies.encrypted["refresh_token"] = {
         value: refresh.result[:new_refresh_token],
         httponly: true,
-        expires: 1.week.from_now.utc
+        expires: 1.week.from_now.utc,
+        same_site: Config.all[:cookie_same_site],
+        secure: Config.all[:cookie_secure]
       }
 
       render json: refresh.result[:body]
@@ -126,7 +128,9 @@ module V1
       cookies.encrypted[:refresh_token] = {
         value: refresh_token.secret,
         httponly: true,
-        expires: 1.week.from_now.utc
+        expires: 1.week.from_now.utc,
+        same_site: Config.all[:cookie_same_site],
+        secure: Config.all[:cookie_secure]
       }
     end
   end

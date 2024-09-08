@@ -87,6 +87,13 @@ default: &default
   # https://thecatapi.com/signup
   cat_api_key: "<insert your cat api here>"
 
+  cors_origins:
+    - localhost
+    - laportadacqua.com
+
+  cookie_secure: true
+  cookie_same_site: None
+
 development:
   <<: *default
 
