@@ -10,7 +10,7 @@ default: &default
   # user_block_ttl: 600
   # base_url: "http://localhost:3050"
   frontend_base_url: "http://localhost:4250"
-  reset_password_url: "{{frontend_base_url}}/auth/reset-password/{{token}}"
+  reset_password_url: "{{frontend_base_url}}/#/auth/reset-password/{{token}}"
   # mail_attachment_max_size: 25 MB
 
   root_duration: 600 # 5 minutes
@@ -21,7 +21,7 @@ default: &default
     default_from: no-reply@example.com
 
   # 'cr' stands for 'cancel reservation'
-  cancel_reservation_path: "/cr/{{secret}}"
+  cancel_reservation_path: "/#/cr/{{secret}}"
 
   # ---------------------------------------------------------
   # SMTP CONFIGURATIONS
