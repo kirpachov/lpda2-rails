@@ -9,6 +9,8 @@ gem "rails", "~> 7.0.8"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 
+gem "health_check", "~> 3.1.0"
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.6"
 

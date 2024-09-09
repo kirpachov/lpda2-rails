@@ -178,6 +178,8 @@ Rails.application.routes.draw do
     end
   end
 
+  health_check_routes
+
   match "*unmatched", to: "application#render_endpoint_not_found", via: :all
 
   # Defines the root path route ("/")
