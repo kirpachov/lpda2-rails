@@ -1,0 +1,6 @@
+services:
+  sidekiq:
+    image: kirpachov/lpda2-rails:latest
+
+  rails:
+    image: kirpachov/lpda2-rails:latest

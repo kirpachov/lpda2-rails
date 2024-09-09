@@ -1,0 +1,6 @@
+services:
+  sidekiq:
+    build: .
+
+  rails:
+    build: .

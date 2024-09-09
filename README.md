@@ -71,20 +71,18 @@ In questo caso il nostro servizio si chiama "rails" (vedi docker-compose.yml), q
 - Far girare parallel spec: `docker compose run --env RAILS_ENV=test rails rake parallel:drop parallel:create parallel:migrate parallel:spec`
 - Collegarsi al database: In base alle configurazioni presenti in docker-compose.yml, se la porta è condivisa ci si può collegare direttamente con `PGPASSWORD="somethingNooneWillGuess" psql -h localhost -p 5430 -U root`, alternativamente ci si collega passando per il servizio rails, in questo modo:`docker compose run rails bash -c "PGPASSWORD=somethingNooneWillGuess psql -U root -h postgres"`
 
-## Update production code
+
+## Docker run production
+Build image will be pulled from registry instead of locally build in production mode.
+
 ```bash
-cd /path/to/root
-git pull
-docker compose down
-docker compose run rails bundle install
-docker compose run rails bundle exec rake db:migrate
-docker compose up
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
 ## Docker cleanup
 ```
 docker container rm $(docker container ls --all | grep lpda | awk '{print $1}') -f
-docker image rm $(docker image ls --all | grep lpda | awk '{print $3}')
+docker image rm $(docker image ls --all | grep lpda | awk '{print $3}') -f
 # docker volume rm $(docker volume ls | grep lpda | awk '{print $2}') # CAREFUL: YOU WILL LOOSE YOUR POSTGRES DATABASE AND REDIS QUEUE.
 docker compose up -d
 ```
@@ -94,6 +92,16 @@ Per cercare di capire cosa sta succedendo dentro docker:
 `watch --interval 0.5 docker ps` Mostrerà i container che stanno girando ed il loro `healthchecks`
 
 `watch --interval 0.5 docker compose top` Mostrerà i processi per ciascun container.
+
+## Building and pushing docker images
+
+> You can run script/build-docker.sh
+
+```bash
+docker build . -t lpda2-rails:latest
+docker tag lpda2-rails:latest kirpachov/lpda2-rails:latest
+docker push kirpachov/lpda2-rails:latest
+```
 
 ## CORS configuration for production
 Since frontend and backend will be hosted on different domains, we need to configure correclty CORS policies.

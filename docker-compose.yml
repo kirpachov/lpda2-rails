@@ -27,7 +27,6 @@ services:
     #   - "5430:5432"
 
   sidekiq:
-    build: .
     restart: unless-stopped
     command: bundle exec sidekiq
     volumes:
@@ -45,7 +44,6 @@ services:
       RAILS_ENV: ${RAILS_ENV:-development}
 
   rails:
-    build: .
     restart: unless-stopped
     volumes:
       - .:/lpda2
@@ -58,7 +56,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: "curl -f http://127.0.0.1:3050"
+      test: "curl -f http://127.0.0.1:3050/health_check/all"
     environment:
       LPDA2_DATABASE_HOST: postgres
       LPDA2_DATABASE_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
