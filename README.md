@@ -76,7 +76,19 @@ In questo caso il nostro servizio si chiama "rails" (vedi docker-compose.yml), q
 Build image will be pulled from registry instead of locally build in production mode.
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
+
+# Watch services going online:
+watch docker ps
+
+# Create production database:
+docker compose -f docker-compose.yml -f docker-compose.prod.yml run rails rails db:create
+
+# Migrate production database:
+docker compose -f docker-compose.yml -f docker-compose.prod.yml run rails rails db:migrate
+
+# Seed production database:
+docker compose -f docker-compose.yml -f docker-compose.prod.yml run --env LPDA2_ALLOW_PRODUCTION_SEEDS=true rails rails db:seed
 ```
 
 ## Docker cleanup
