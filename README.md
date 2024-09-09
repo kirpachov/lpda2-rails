@@ -4,6 +4,8 @@
 
 Backend in Ruby On Rails per la seconda versione del sito laportadacqua.com.
 
+Frontend disponibile [qui](https://github.com/kirpachov/lpda2-angular)
+
 ## Domande:
 - È obbligatoria la conferma via mail o messaggio per la creazione della prenotazione? Si potrebbe fare un sistema che non crea la prenotazione finché non si clicca sul link di conferma inviato via mail e messaggio.
 
@@ -40,8 +42,13 @@ Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 
 ## Docker
 > Docker Compose version v2.29.2
+
 > Docker version 27.2.0, build 3ab4256
-Prima installazione: inizializzazione database. `docker compose run rails bundle exec rake db:create db:migrate db:seed`
+
+Prima installazione: inizializzazione database. 
+```bash
+docker compose run rails bundle exec rake db:create db:migrate db:seed
+```
 
 Per far partire `rails s` dentro docker:
 ```bash
@@ -57,7 +64,7 @@ Parallel spec: `RAILS_ENV=test docker compose run rails bundle exec rake paralle
 Rails risponde alla porta 3050.
 
 In generale, rispetto al "solito" sviluppo, dove per intenderci per far partire rails server basta fare `rails s`, in questo caso bisogna anteporre `docker compose run <nome-servizio>` al comando da eseguire.
-In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[./docker-compose.yml]), quindi per accedere alla console basterà eseguire `docker compose run rails rails c`. Se si volessero includere variabili d'ambiente, lo si può fare con il parametro `--env` da mettere prima del nome del servizio.
+In questo caso il nostro servizio si chiama "rails" (vedi docker-compose.yml), quindi per accedere alla console basterà eseguire `docker compose run rails rails c`. Se si volessero includere variabili d'ambiente, lo si può fare con il parametro `--env` da mettere prima del nome del servizio.
 
 - Collegarsi a `rails console`: `docker compose run rails rails c`
 - Far girare rspec: `docker compose run --env RAILS_ENV=test rails rails db:drop db:create db:migrate spec`
@@ -69,6 +76,7 @@ In questo caso il nostro servizio si chiama "rails" (vedi (docker-compose.yml)[.
 cd /path/to/root
 git pull
 docker compose down
+docker compose run rails bundle install
 docker compose run rails bundle exec rake db:migrate
 docker compose up
 ```
@@ -84,4 +92,37 @@ docker compose up -d
 ## Docker status
 Per cercare di capire cosa sta succedendo dentro docker:
 `watch --interval 0.5 docker ps` Mostrerà i container che stanno girando ed il loro `healthchecks`
+
 `watch --interval 0.5 docker compose top` Mostrerà i processi per ciascun container.
+
+## CORS configuration for production
+Since frontend and backend will be hosted on different domains, we need to configure correclty CORS policies.
+
+1. In the cookies, include ` { secure: true, same_site: "None" } `, like so:
+```ruby
+cookies.encrypted[:refresh_token] = {
+  value: refresh_token.secret,
+  httponly: true,
+  expires: 1.week.from_now.utc
+  expires: 1.week.from_now.utc,
+  same_site: Config.all[:cookie_same_site], # !!
+  secure: Config.all[:cookie_secure] # !!
+}
+```
+2. Configure CORS gem to allow only the permitted origins:
+```ruby
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    # WARNING: Origins "*" IS NOT ALLOWED!!!
+    origins "localhost", "your-production-domain.com"
+
+    resource "*",
+             headers: :any,
+             methods: %i[get post put patch delete options head]
+             methods: :any,
+             credentials: true
+  end
+end
+```
+
+And... done! The rest of the work should be done on the [frontend site](https://github.com/kirpachov/lpda2-angular)
