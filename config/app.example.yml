@@ -94,9 +94,6 @@ default: &default
   cookie_secure: true
   cookie_same_site: None
 
-  health_check_username: "admin"
-  health_check_password: "Rememb3r..lpda2"
-
 development:
   <<: *default
 

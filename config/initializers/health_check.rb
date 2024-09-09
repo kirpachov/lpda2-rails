@@ -44,7 +44,7 @@ HealthCheck.setup do |config|
 
   # You can set what tests are run with the 'full' or 'all' parameter
   # config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', 'sidekiq-redis']
-  config.full_checks = ['database', 'migrations', 'email', 'cache', 'redis', 'sidekiq-redis']
+  config.full_checks = ['database', 'migrations', 'email', 'cache']
 
   # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
   # config.add_custom_check do
@@ -66,8 +66,8 @@ HealthCheck.setup do |config|
 
   # Protect health endpoints with basic auth
   # These default to nil and the endpoint is not protected
-  config.basic_auth_username = Config.all[:health_check_username]
-  config.basic_auth_password = Config.app[:health_check_password]
+  # config.basic_auth_username = Config.all[:health_check_username]
+  # config.basic_auth_password = Config.app[:health_check_password]
 
   # Whitelist requesting IPs by a list of IP and/or CIDR ranges, either IPv4 or IPv6 (uses IPAddr.include? method to check)
   # Defaults to blank which allows any IP
@@ -85,7 +85,7 @@ HealthCheck.setup do |config|
   # config.rabbitmq_config = {}
 
   # When redis url/password is non-standard
-  config.redis_url = ENV.fetch("REDIS_URL", "redis://localhost:6379/1") # default ENV['REDIS_URL']
+  # config.redis_url = ENV.fetch("REDIS_URL", "redis://localhost:6379/1") # default ENV['REDIS_URL']
   # Only included if set, as url can optionally include passwords as well
   # config.redis_password = '' # default ENV['REDIS_PASSWORD']
 
