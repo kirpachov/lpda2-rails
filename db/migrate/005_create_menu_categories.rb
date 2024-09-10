@@ -13,6 +13,7 @@ class CreateMenuCategories < ActiveRecord::Migration[7.0]
                               foreign_key: { to_table: :menu_categories, on_delete: :cascade }, class_name: "Menu::Category"
       t.belongs_to :menu_visibility, null: true, foreign_key: true, index: true, on_delete: :cascade,
                                      class_name: "Menu::Visibility"
+      t.string :member_id
 
       t.timestamps
       t.index %w[index parent_id], unique: true

@@ -153,6 +153,7 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.float "price"
     t.bigint "parent_id"
     t.bigint "menu_visibility_id"
+    t.string "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["index", "parent_id"], name: "index_menu_categories_on_index_and_parent_id", unique: true

@@ -28,6 +28,15 @@ Dev::Menu::ImportAllergens.run!
 debug "Creating default settings..."
 Setting.create_missing
 
+debug "Importing menus..."
+Dev::Menu::ImportMenus.run!
+
+debug "Importing categories..."
+Dev::Menu::ImportCategories.run!
+
+debug "Importing dishes..."
+Dev::Menu::ImportDishes.run!
+
 ReservationTurn.delete_all
 
 debug "Creating reservation turns..."
