@@ -41,6 +41,11 @@ per ora di pranzo il menù cena si nasconde; per cena il menù pranzo si nascond
 Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 
 ## Docker
+
+### First setup
+Before anything else, you need to define `docker-compose.override.yml`. If you don't define it, `docker compose` will fail.
+To define it, either copy `docker-compose.dev.yml` or `docker-compose.prod.yml`, depending on your need.
+
 > Docker Compose version v2.29.2
 
 > Docker version 27.2.0, build 3ab4256
@@ -75,6 +80,8 @@ In questo caso il nostro servizio si chiama "rails" (vedi docker-compose.yml), q
 ## Docker run production
 Build image will be pulled from registry instead of locally build in production mode.
 
+> Note: to avoid specifying "-f docker-compose.yml -f docker-compose.prod.yml", copy "docker-compose.prod.yml" into "docker-compose.override.yml" in the root directory.
+
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
 
@@ -106,10 +113,10 @@ Per cercare di capire cosa sta succedendo dentro docker:
 `watch --interval 0.5 docker compose top` Mostrerà i processi per ciascun container.
 
 ## Building and pushing docker images
-
-> You can run script/build-docker.sh
+It's important that the production server doesen't have to build the gems, since it can take long.
 
 ```bash
+# script/build-docker.sh
 docker build . -t lpda2-rails:latest
 docker tag lpda2-rails:latest kirpachov/lpda2-rails:latest
 docker push kirpachov/lpda2-rails:latest
