@@ -101,6 +101,8 @@ development:
 test:
   <<: *default
   # mail_attachment_max_size: 25 MB
+  cookie_secure: false
+  cookie_same_site: "Lax"
 
 production:
   <<: *default
