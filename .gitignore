@@ -42,3 +42,4 @@ coverage/*
 .vscode/**
 
 docker-compose.override.yml
+.env

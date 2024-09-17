@@ -11,15 +11,20 @@ services:
       retries: 5
 
   postgres:
-    image: postgres:14
+    build:
+      context: docker/postgres:14
     restart: unless-stopped
     volumes:
       - lpda2-postgres14-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: ${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}
+      AWS_ACCESS_KEY_ID: ${PITR_AWS_ACCESS_KEY_ID?is required}
+      AWS_REGION: ${PITR_AWS_REGION?is required}
+      AWS_SECRET_ACCESS_KEY: ${PITR_AWS_SECRET_ACCESS_KEY?is required}
+      WALG_S3_PREFIX: ${PITR_WALG_S3_PREFIX?is required}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 5

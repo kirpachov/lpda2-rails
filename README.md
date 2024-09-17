@@ -106,6 +106,16 @@ docker image rm $(docker image ls --all | grep lpda | awk '{print $3}') -f
 docker compose up -d
 ```
 
+## PITR
+You'll need s3 configurations to use postgresql docker image.
+Create them and add them to `.env` file.
+All walfiles will be pushed as required.
+
+### Push base backups
+```bash
+docker compose run postgres /push_base_backup.sh
+```
+
 ## Docker status
 Per cercare di capire cosa sta succedendo dentro docker:
 `watch --interval 0.5 docker ps` Mostrerà i container che stanno girando ed il loro `healthchecks`
