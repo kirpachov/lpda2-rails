@@ -18,7 +18,7 @@ COPY healthcheck.sh /usr/local/bin/healthcheck
 RUN chmod +x /usr/local/bin/healthcheck
 
 # Push base backup script
-COPY push_base_backup.sh /
-RUN chmod +x /push_base_backup.sh
+COPY push_base_backup.sh /usr/local/bin/push_base_backup
+RUN chmod +x /usr/local/bin/push_base_backup
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -113,7 +113,7 @@ All walfiles will be pushed as required.
 
 ### Push base backups
 ```bash
-docker compose run postgres /push_base_backup.sh
+docker compose run postgres push_base_backup
 ```
 
 ## Docker status
