@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 30) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_16_153001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -275,6 +275,18 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
+  create_table "nexi_http_requests", force: :cascade do |t|
+    t.jsonb "request_body", null: false
+    t.jsonb "response_body", null: false
+    t.text "url", null: false
+    t.integer "http_code", null: false
+    t.string "http_method", null: false
+    t.datetime "started_at", precision: nil, null: false
+    t.datetime "ended_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "preferences", force: :cascade do |t|
     t.text "key", null: false
     t.text "value"
@@ -383,6 +395,7 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.datetime "locked_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "mario"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true, where: "(username IS NOT NULL)"
   end

@@ -23,6 +23,20 @@ default: &default
   # 'cr' stands for 'cancel reservation'
   cancel_reservation_path: "/#/cr/{{secret}}"
 
+  # Basic page where you can see your reservations details.
+  # 'r' stands for 'reservation'
+  show_reservation_url: "{{frontend_base_url}}/#/r/{{secret}}"
+
+  # When user cancels reservation payment, will be sent here:
+  cancelled_payment_reservation_url: "{{frontend_base_url}}/#/r/{{secret}}/cancelled"
+
+  # After user completed payment, will be sent here:
+  processed_payment_reservation_url: "{{frontend_base_url}}/#/r/{{secret}}/processed"
+
+  nexi_hpp_payment_path: api/phoenix-0.0/psp/api/v1/orders/hpp
+
+  nexi_api_url: https://xpaysandbox.nexigroup.com
+
   # ---------------------------------------------------------
   # SMTP CONFIGURATIONS
   # ---------------------------------------------------------
