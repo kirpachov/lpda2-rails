@@ -19,6 +19,8 @@ module Nexi
         order_id: reservation.secret,
         result_url:,
         cancel_url:,
+        request_purpose: "reservation_payment",
+        request_record: reservation,
       )
 
       errors.merge!(call.errors)

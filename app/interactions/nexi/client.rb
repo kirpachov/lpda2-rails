@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 module Nexi
-  # Connect to nexi api, authenticate, and track http request and response
+  # Nexi::Client will:
+  # - send requests to Nexi API's
+  # - manage authentication
+  # - track http request and response
   class Client < ActiveInteraction::Base
     # Mandatory param
     object :params, class: Hash
     string :path
+    string :request_purpose # Why this request is being made?
 
     # Optional params - use them to customize behaviour
+    interface :request_record, methods: %w[id persisted? update], default: nil # Object to associate to http request
     string :http_verb, default: "post"
     object :headers, class: Hash, default: {}
     string :correlation_id, default: -> { SecureRandom.uuid }
@@ -21,8 +26,12 @@ module Nexi
       errors.add(:params, "must be hash. got #{params.class}") if params.present? && !params.is_a?(Hash)
     end
 
+    attr_reader :http_request
+
     def execute
       response
+      return if errors.any?
+
       create_http_request
 
       validate_response
@@ -56,6 +65,9 @@ module Nexi
       return connection.post(path) { |req| req.body = params.to_json } if http_verb == "post"
 
       raise "unknown http verb #{http_verb}"
+    rescue Faraday::ConnectionFailed => e
+      errors.add(:base, e.to_s)
+      nil
     end
 
     def json
@@ -96,7 +108,9 @@ module Nexi
         http_code: response.status,
         http_method: http_verb,
         started_at: @request_started_at,
-        ended_at: @request_ended_at
+        ended_at: @request_ended_at,
+        purpose: request_purpose,
+        record: request_record,
       )
     end
   end

@@ -11,6 +11,10 @@ module Nexi
     string :result_url
     string :cancel_url
 
+    # Why this order is being made?
+    string :request_purpose
+    interface :request_record, methods: %w[id persisted? update], default: nil # Object to associate to http request
+
     string :currency, default: "EUR"
 
     attr_reader :client
@@ -18,7 +22,9 @@ module Nexi
     def execute
       @client = Client.run(
         params:,
-        path: Config.nexi_hpp_payment_path
+        path: Config.nexi_hpp_payment_path,
+        request_purpose:,
+        request_record: request_record
       )
 
       errors.merge!(@client.errors)

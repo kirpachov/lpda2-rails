@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_09_16_153001) do
+ActiveRecord::Schema[7.0].define(version: 31) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -283,8 +283,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_16_153001) do
     t.string "http_method", null: false
     t.datetime "started_at", precision: nil, null: false
     t.datetime "ended_at", precision: nil, null: false
+    t.string "record_type"
+    t.bigint "record_id", comment: "Optionally specify a record this http request belongs to"
+    t.text "purpose", comment: "Specify the reason this request was made, optional"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id"], name: "index_nexi_http_requests_on_record"
   end
 
   create_table "preferences", force: :cascade do |t|
@@ -395,7 +399,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_09_16_153001) do
     t.datetime "locked_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "mario"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true, where: "(username IS NOT NULL)"
   end

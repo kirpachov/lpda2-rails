@@ -15,6 +15,11 @@ module Nexi
                           :ended_at
 
     # ###################################
+    # Associations
+    # ###################################
+    belongs_to :record, polymorphic: true, optional: true
+
+    # ###################################
     # Attachments
     # ###################################
     has_one_attached :cached_file
