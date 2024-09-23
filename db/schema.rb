@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 31) do
+ActiveRecord::Schema[7.0].define(version: 33) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -302,6 +302,28 @@ ActiveRecord::Schema[7.0].define(version: 31) do
     t.index ["user_id"], name: "index_preferences_on_user_id"
   end
 
+  create_table "preorder_reservation_dates", force: :cascade do |t|
+    t.date "date", null: false
+    t.bigint "reservation_turn_id", null: false
+    t.bigint "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date", "reservation_turn_id", "group_id"], name: "unique_date_in_group", unique: true
+    t.index ["group_id"], name: "index_preorder_reservation_dates_on_group_id"
+    t.index ["reservation_turn_id"], name: "index_preorder_reservation_dates_on_reservation_turn_id"
+  end
+
+  create_table "preorder_reservation_groups", force: :cascade do |t|
+    t.text "title", null: false, comment: "Comment for admins that define payment required cases"
+    t.text "status", null: false, comment: "Is this case enabled?"
+    t.datetime "active_from", comment: "From when this case is enabled. When nil, is enabled from its creation date."
+    t.datetime "active_to", comment: "Until when this case is enabled. when nil, is enable forever"
+    t.text "preorder_type", null: false, comment: "What should ask the user to do. Will include provider name. May be something like 'paypal_payment', or 'nexi_card_hold'..."
+    t.float "payment_value", comment: "How much should people be required to pay if it's a payment. Since may be card hold, this field can be nil."
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "public_messages", force: :cascade do |t|
     t.text "key", null: false, comment: "position id where the message should be shown"
     t.text "status", default: "active", null: false
@@ -422,6 +444,8 @@ ActiveRecord::Schema[7.0].define(version: 31) do
   add_foreign_key "menu_tags_in_dishes", "menu_dishes"
   add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
+  add_foreign_key "preorder_reservation_dates", "preorder_reservation_groups", column: "group_id"
+  add_foreign_key "preorder_reservation_dates", "reservation_turns"
   add_foreign_key "refresh_tokens", "users"
   add_foreign_key "reset_password_secrets", "users"
   add_foreign_key "tag_in_reservations", "reservation_tags"
