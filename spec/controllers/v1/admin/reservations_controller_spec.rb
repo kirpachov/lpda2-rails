@@ -81,6 +81,26 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      %w[todo paid].each do |payment_status|
+        context "when reservations have payment but with status #{payment_status.inspect}" do
+          before do
+            create(:reservation)
+            create(:reservation_payment, reservation: create(:reservation), status: payment_status)
+
+            req
+          end
+
+          it { expect(Reservation.count).to eq 2 }
+          it { expect(ReservationPayment.count).to eq 1 }
+
+          it { expect(response).to have_http_status(:ok) }
+          it { expect(json[:items].count).to eq 2 }
+          it { expect(json[:items].filter{|j| j.keys.include?("payment") }.filter(&:present?).count).to eq(1) }
+          it { expect(json[:items].filter{|j| j.keys.include?("payment") }.first).to be_present }
+          it { expect(json[:items].filter{|j| j.keys.include?("payment") }.first["payment"].symbolize_keys).to include(hpp_url: String, status: payment_status) }
+        end
+      end
+
       context "when filtering by status, should return all reservations with that status" do
         before do
           create(:reservation, status: :active)

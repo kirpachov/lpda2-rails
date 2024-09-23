@@ -9,7 +9,16 @@ module V1
                                                      datetime: Time.zone.now..).first
 
       render json: {
-        reservation: reservation.as_json,
+        reservation: reservation.as_json(
+          only: %w[id fullname datetime status secret children adults notes email phone],
+          include: [
+            {
+              payment: {
+                only: %i[hpp_url status value]
+              },
+            }
+          ]
+        ),
         settings: Setting.all.where(key: Setting::PUBLIC_KEYS).pluck(:key, :value).to_h,
         public_messages: PublicMessage.visible.i18n.pluck(:key, :text).to_h
       }

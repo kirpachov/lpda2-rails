@@ -115,6 +115,9 @@ module V1::Admin
       item.as_json(
         include: [
           {
+            payment: {
+              only: %i[id hpp_url status value]
+            },
             delivered_emails: {
               only: %i[id created_at updated_at],
               include: [{ image_pixels: { include: %i[events] } }]

@@ -36,6 +36,8 @@ class Reservation < ApplicationRecord
   has_many :image_pixels, class_name: "Log::ImagePixel", as: :record, dependent: :destroy
   has_many :pixel_events, class_name: "Log::ImagePixelEvent", through: :image_pixels, source: :events
   # , dependent: :nullify
+  # has_many :nexi_http_requests
+  has_one :payment, class_name: "ReservationPayment"
 
   alias_attribute :tags, :reservation_tags
 

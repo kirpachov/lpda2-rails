@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 module Nexi
+  # HPP stands for "Hosted Payment Page"
   # Call Nexi api's at "order_hpp" endpoint.
   # Nexi docs at:
   # https://developer.nexi.it/it/api/post-orders-hpp
   class OrderHpp < ActiveInteraction::Base
-    integer :amount
+    float :amount
     string :language
     string :order_id
     string :result_url
@@ -38,11 +39,11 @@ module Nexi
       @params ||= {
         order: {
           orderId: order_id,
-          amount: amount.to_s,
+          amount: (amount * 100).to_i.to_s,
           currency:
         },
         paymentSession: {
-          amount: amount.to_s,
+          amount: (amount * 100).to_i.to_s,
 
           # ISO 639-2.
           language:,

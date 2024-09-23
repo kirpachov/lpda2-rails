@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 33) do
+ActiveRecord::Schema[7.0].define(version: 34) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -342,6 +342,18 @@ ActiveRecord::Schema[7.0].define(version: 33) do
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
+  create_table "reservation_payments", force: :cascade do |t|
+    t.text "hpp_url", null: false, comment: "URL where user can complete the payment. HPP stands for \"Hosted Payment Page\""
+    t.float "value", null: false, comment: "EUR user is required to pay."
+    t.text "status", null: false, comment: "Will show if payment has been made."
+    t.bigint "reservation_id", null: false
+    t.text "preorder_type", null: false, comment: "What should ask the user to do. Will include provider name. May be something like 'paypal_payment', or 'nexi_card_hold'..."
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_id"], name: "index_reservation_payments_on_reservation_id", unique: true
+  end
+
   create_table "reservation_tags", force: :cascade do |t|
     t.text "title", null: false
     t.text "bg_color", null: false
@@ -447,6 +459,7 @@ ActiveRecord::Schema[7.0].define(version: 33) do
   add_foreign_key "preorder_reservation_dates", "preorder_reservation_groups", column: "group_id"
   add_foreign_key "preorder_reservation_dates", "reservation_turns"
   add_foreign_key "refresh_tokens", "users"
+  add_foreign_key "reservation_payments", "reservations"
   add_foreign_key "reset_password_secrets", "users"
   add_foreign_key "tag_in_reservations", "reservation_tags"
   add_foreign_key "tag_in_reservations", "reservations"

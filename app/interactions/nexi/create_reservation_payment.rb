@@ -8,7 +8,7 @@ module Nexi
   # {"hostedPage"=>"https://xpaysandbox.nexigroup.com/monetaweb/page/hosted/2/html?paymentid=193469235156442659", "securityToken"=>"35e06eae8cc241718478dfdd82eca9d8", "warnings"=>[]}
   class CreateReservationPayment < ActiveInteraction::Base
     record :reservation, class: Reservation
-    integer :amount
+    float :amount
 
     attr_reader :call
 
@@ -25,7 +25,16 @@ module Nexi
 
       errors.merge!(call.errors)
 
-      call.result
+      return if errors.any?
+
+      @payment = ::ReservationPayment.create!(
+        value: amount,
+        hpp_url: call.result["hostedPage"],
+        other: { order_hpp_call: call.result },
+        reservation: reservation,
+        status: :todo,
+        preorder_type: :nexi_payment
+      )
     end
 
     def cancel_url
