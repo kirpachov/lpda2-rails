@@ -10,6 +10,10 @@ module Nexi
     record :reservation, class: Reservation
     float :amount
 
+    validate do
+      errors.add(:reservation, "has already a payment") if reservation.payment.present? && @payment.blank?
+    end
+
     attr_reader :call
 
     def execute
