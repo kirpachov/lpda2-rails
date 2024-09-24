@@ -7,6 +7,12 @@ class PreorderReservationGroup < ApplicationRecord
   # They do not refer to reservation dates: for those, there will be records associated.
   # From active_from to active_to time window, theese settings will be applied. Outside of this window, they will not be applied.
 
+  # An issue that may occur is that a reservation matches multiple groups.
+  # To avoid this:
+  # - A turn can be assigned to only one group.
+  # - A turn,date pair can be assigned to only one group.
+  # - If a turn is associated to a group, cannot create dates with the same turn. In this way you can specify multiple dates for turns that you want to.
+
   # ################################
   # Constants, settings, modules, et...
   # ################################
@@ -52,6 +58,11 @@ class PreorderReservationGroup < ApplicationRecord
 
   # Dates for which selected turns will require payment.
   has_many :dates, class_name: "PreorderReservationDate", foreign_key: :group_id, dependent: :destroy
+
+  # ################################
+  # Scope
+  # ################################
+  scope :active_now, -> { active.where("active_from IS NULL or active_from < ?", Time.zone.now).where("active_to IS NULL or active_to > ?", Time.zone.now) }
 
   private
 

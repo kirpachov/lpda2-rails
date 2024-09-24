@@ -59,6 +59,8 @@ class CreatePreorderGroup < ActiveInteraction::Base
   end
 
   def create_dates
+    return @dates = [] if params[:dates].blank?
+
     call = CreatePreorderDates.run(group: @group, params: { dates: params.delete(:dates) })
     errors.merge!(call.errors)
     @dates = call.result
@@ -72,5 +74,7 @@ class CreatePreorderGroup < ActiveInteraction::Base
 
   def create_turns
     @group.turns = ReservationTurn.where(id: turn_ids)
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, "#{e.message} while creating turns for group")
   end
 end

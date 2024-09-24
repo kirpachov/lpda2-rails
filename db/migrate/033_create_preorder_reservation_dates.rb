@@ -9,8 +9,9 @@ class CreatePreorderReservationDates < ActiveRecord::Migration[7.0]
 
       t.timestamps
 
-      # It doesen't make any sense have two times the same date, turn belonging to the same group.
-      t.index %w[date reservation_turn_id group_id], unique: true, name: :unique_date_in_group
+      # Avoid having the same date and turn.
+      # This is necessary because otherwise, when creating a reservation, it may match many Groups.
+      t.index %w[date reservation_turn_id], unique: true, name: "index_date_reservation_turn_uniqueness"
     end
   end
 end

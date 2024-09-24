@@ -308,7 +308,7 @@ ActiveRecord::Schema[7.0].define(version: 35) do
     t.bigint "group_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["date", "reservation_turn_id", "group_id"], name: "unique_date_in_group", unique: true
+    t.index ["date", "reservation_turn_id"], name: "index_date_reservation_turn_uniqueness", unique: true
     t.index ["group_id"], name: "index_preorder_reservation_dates_on_group_id"
     t.index ["reservation_turn_id"], name: "index_preorder_reservation_dates_on_reservation_turn_id"
   end
@@ -330,8 +330,7 @@ ActiveRecord::Schema[7.0].define(version: 35) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["preorder_reservation_group_id"], name: "preorder_reservation_groups_to_turns_group_id"
-    t.index ["reservation_turn_id", "preorder_reservation_group_id"], name: "turn_id_to_group_id_unique", unique: true
-    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id"
+    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id", unique: true
   end
 
   create_table "public_messages", force: :cascade do |t|
@@ -361,6 +360,7 @@ ActiveRecord::Schema[7.0].define(version: 35) do
     t.jsonb "other", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["hpp_url"], name: "index_reservation_payments_on_hpp_url", unique: true
     t.index ["reservation_id"], name: "index_reservation_payments_on_reservation_id", unique: true
   end
 

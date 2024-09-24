@@ -85,6 +85,172 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
     end
   end
 
+  context "when another group exists with a turn" do
+    let(:turns) { [turn.id] }
+
+    before do
+      create(:preorder_reservation_group).tap do |group|
+        group.turns = [turn]
+      end
+    end
+
+    context "when trying to add same turn to a new group" do
+      let(:params) { super().merge(turns: turns, dates: nil) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: /turn has already been taken/)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+
+    context "when trying to add same turn to a new group" do
+      let(:params) { super().merge(turns: nil, dates: dates) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+  end
+
+  context "when another group exists with a DATE" do
+    let(:turns) { [turn.id] }
+
+    before do
+      # create(:preorder_reservation_group).tap do |group|
+      #   group.dates = [turn]
+      # end
+      req
+    end
+
+    it { expect(PreorderReservationGroup.count).to eq 1 }
+    it { expect(PreorderReservationDate.count).to eq 1 }
+    it { expect(PreorderReservationGroupsToTurn.count).to eq 0 }
+    it { expect(PreorderReservationGroup.all.last.dates.count).to eq 1 }
+    it { expect(PreorderReservationGroup.all.last.dates.first.reservation_turn).to eq(turn) }
+
+    context "when trying to add same turn to a new group" do
+      let(:params) { super().merge(turns: turns, dates: nil) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: /turn has already been taken/)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+
+    context "when trying to add same turn to a new group" do
+      let(:params) { super().merge(turns: nil, dates: dates) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+  end
+
+  context "when providing many dates for same turn - real-life scenario where on certain dates the reservations can be created only paying" do
+    let(:dates) do
+      [
+        { date: Date.current.next_occurring(:monday).to_s, turn_id: turn.id },
+        { date: (Date.current.next_occurring(:monday) + 7.days).to_s, turn_id: turn.id },
+        { date: (Date.current.next_occurring(:monday) + 14.days).to_s, turn_id: turn.id },
+        { date: (Date.current.next_occurring(:monday) + 28.days).to_s, turn_id: turn.id },
+      ]
+    end
+
+    it { expect { req }.to(change { PreorderReservationGroup.count }.by(1)) }
+    it { expect { req }.to(change { PreorderReservationDate.count }.by(4)) }
+    it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+
+    it do
+      req
+      expect(json).not_to include(message: String)
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json.dig(:item, :dates).length).to eq 4
+      expect(json.dig(:item, :dates).pluck(:reservation_turn_id)).to all(eq(turn.id))
+    end
+  end
+
+  context "when providing many dates for different turns" do
+    let(:turn2) { create(:reservation_turn, weekday: 1) }
+    let(:turn3) { create(:reservation_turn, weekday: 2) }
+    let(:turn4) { create(:reservation_turn, weekday: 2) }
+
+    let(:dates) do
+      [
+        { date: Date.current.next_occurring(:monday).to_s, turn_id: turn.id },
+        { date: (Date.current.next_occurring(:monday) + 7.days).to_s, turn_id: turn.id },
+        { date: (Date.current.next_occurring(:monday) + 77.days).to_s, turn_id: turn.id },
+
+        { date: Date.current.next_occurring(:monday).to_s, turn_id: turn2.id },
+        { date: (Date.current.next_occurring(:tuesday) + 28.days).to_s, turn_id: turn3.id },
+      ]
+    end
+
+    let(:params) { super().merge(dates: dates, turns: [turn4.id]) }
+
+    it { expect { req }.to(change { PreorderReservationGroup.count }.by(1)) }
+    it { expect { req }.to(change { PreorderReservationDate.count }.by(5)) }
+    it { expect { req }.to(change { PreorderReservationGroupsToTurn.count }.by(1)) }
+
+    it do
+      req
+      expect(json).not_to include(message: String)
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json.dig(:item, :dates).length).to eq 5
+      expect(json.dig(:item, :dates).pluck(:reservation_turn_id).uniq).to match_array([turn.id, turn2.id, turn3.id])
+      expect(json.dig(:item, :turns).pluck(:id)).to eq([turn4.id])
+    end
+  end
+
   context "when adding active_from and active_to" do
     let(:active_from) { "2024-09-23 12:00" }
     let(:active_to) { "2025-09-23 12:00" }
