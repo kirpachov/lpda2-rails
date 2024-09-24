@@ -10,14 +10,22 @@ class CreatePreorderGroup < ActiveInteraction::Base
   #   dates: [
   #     { turn_id: 2, date: "2024-02-14" },
   #     { turn_id: 1, date: "2024-02-14" },
-  #   ]
+  #   ],
+  #   turns: [<ReservationTurn#id>]
   # }
   interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
+
+  validate do
+    if params[:turns].present? && turn_ids.blank?
+      errors.add(:params, "turns are provided but blank: #{turn_ids}")
+    end
+  end
 
   def execute
     PreorderReservationGroup.transaction do
       create_group if valid?
       create_dates if errors.empty?
+      create_turns if errors.empty?
 
       raise ActiveRecord::Rollback if errors.any?
     end
@@ -51,15 +59,18 @@ class CreatePreorderGroup < ActiveInteraction::Base
   end
 
   def create_dates
-    # @dates = params.delete(:dates).map do |datum|
-    #   date = PreorderReservationDate.new(datum.symbolize_keys.slice(:turn_id, :date).merge(group_id: @group.id))
-
-    #   unless date.valid? && date.save
-    #     errors.add(:base, "date #{datum.inspect} is not valid: #{date.errors.full_messages.join(', ')}")
-    #   end
-    # end
     call = CreatePreorderDates.run(group: @group, params: { dates: params.delete(:dates) })
     errors.merge!(call.errors)
     @dates = call.result
+  end
+
+  def turn_ids
+    return @turn_ids if defined?(@turn_ids)
+
+    @turn_ids = [params.delete(:turns)].flatten.map { |s| s.to_s.split(",") }.flatten.map(&:to_i).filter(&:positive?)
+  end
+
+  def create_turns
+    @group.turns = ReservationTurn.where(id: turn_ids)
   end
 end

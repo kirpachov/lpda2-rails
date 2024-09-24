@@ -46,11 +46,12 @@ class PreorderReservationGroup < ApplicationRecord
   # Associations
   # ################################
 
-  # When reservations will be created for those turns, payment will be required.
-  # has_many :reservation_turns, through: :reservation_turns_in_preorder_reservation_group
+  # When reservations will be created for those turns payment will be required.
+  has_many :preorder_reservation_groups_to_turn, dependent: :destroy
+  has_many :turns, through: :preorder_reservation_groups_to_turn, source: :reservation_turn
 
   # Dates for which selected turns will require payment.
-  has_many :dates, class_name: "PreorderReservationDate", foreign_key: :group_id
+  has_many :dates, class_name: "PreorderReservationDate", foreign_key: :group_id, dependent: :destroy
 
   private
 

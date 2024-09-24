@@ -75,7 +75,7 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json(include: %w[dates])
+      item.as_json(include: %w[dates turns])
     end
   end
 end

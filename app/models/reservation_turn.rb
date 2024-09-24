@@ -9,6 +9,12 @@ class ReservationTurn < ApplicationRecord
   WEEKDAYS = %w[sunday monday tuesday wednesday thursday friday saturday].freeze
 
   # ################################
+  # Associations
+  # ################################
+  has_many :preorder_reservation_groups_to_turn, dependent: :destroy
+  has_many :preorder_reservation_groups, through: :preorder_reservation_groups_to_turn
+
+  # ################################
   # Validations
   # ################################
   validates :weekday, presence: true, inclusion: { in: (0..6).to_a }

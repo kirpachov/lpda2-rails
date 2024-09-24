@@ -14,7 +14,7 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       message: message,
       dates: dates,
       active_from: active_from,
-      active_to: active_to
+      active_to: active_to,
     }
   end
   let(:active_from) { nil }
@@ -70,9 +70,18 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
         )
       end
 
-      it do
-        expect(json.dig(:item, :dates).length).to eq 1
-      end
+      it { expect(json.dig(:item, :dates).length).to eq 1 }
+    end
+  end
+
+  context "when providing turns" do
+    before { req(params.merge(turns:)) }
+    let(:turns) { [create(:reservation_turn).id] }
+
+    it { expect(json.dig(:item, :turns).length).to eq 1 }
+    it { expect(json.dig(:item, :turns)).to all(include(id: turns.first, name: String, starts_at: String, ends_at: String, weekday: Integer)) }
+    it do
+      expect(PreorderReservationGroup.last.turns).to eq(ReservationTurn.where(id: turns))
     end
   end
 

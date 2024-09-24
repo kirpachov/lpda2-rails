@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 34) do
+ActiveRecord::Schema[7.0].define(version: 35) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -324,6 +324,16 @@ ActiveRecord::Schema[7.0].define(version: 34) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "preorder_reservation_groups_to_turns", force: :cascade do |t|
+    t.bigint "reservation_turn_id", null: false
+    t.bigint "preorder_reservation_group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["preorder_reservation_group_id"], name: "preorder_reservation_groups_to_turns_group_id"
+    t.index ["reservation_turn_id", "preorder_reservation_group_id"], name: "turn_id_to_group_id_unique", unique: true
+    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id"
+  end
+
   create_table "public_messages", force: :cascade do |t|
     t.text "key", null: false, comment: "position id where the message should be shown"
     t.text "status", default: "active", null: false
@@ -458,6 +468,8 @@ ActiveRecord::Schema[7.0].define(version: 34) do
   add_foreign_key "preferences", "users"
   add_foreign_key "preorder_reservation_dates", "preorder_reservation_groups", column: "group_id"
   add_foreign_key "preorder_reservation_dates", "reservation_turns"
+  add_foreign_key "preorder_reservation_groups_to_turns", "preorder_reservation_groups"
+  add_foreign_key "preorder_reservation_groups_to_turns", "reservation_turns"
   add_foreign_key "refresh_tokens", "users"
   add_foreign_key "reservation_payments", "reservations"
   add_foreign_key "reset_password_secrets", "users"
