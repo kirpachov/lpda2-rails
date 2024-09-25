@@ -94,8 +94,7 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def reservation_turn
-    @reservation_turn ||= ReservationTurn.where(weekday: (datetime.wday - 1) % 7)
-                                         .where("starts_at <= ? AND ends_at >= ?", datetime.strftime("%k:%M"), datetime.strftime("%k:%M")).first
+    @reservation_turn ||= ReservationTurn.for(datetime)
   end
 
   # ###################################

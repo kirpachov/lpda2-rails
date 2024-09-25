@@ -34,7 +34,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
     let(:last_name) { Faker::Name.last_name }
     let(:first_name) { Faker::Name.first_name }
     let!(:turn) do
-      create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: 0)
+      create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: Time.now.beginning_of_week.wday)
     end
 
     it { expect(instance).to respond_to(:create) }
@@ -47,6 +47,25 @@ RSpec.describe V1::ReservationsController, type: :controller do
     def req(data = params)
       post :create, params: data
     end
+
+    [
+      { name: :sunday, wday: 0 },
+      { name: :monday, wday: 1 },
+      { name: :tuesday, wday: 2 },
+      { name: :wednesday, wday: 3 },
+      { name: :friday, wday: 5 },
+      { name: :saturday, wday: 6 },
+    ].each do |scenario|
+      context "when providing a #{scenario[:name]} date, should create a reservation for turn with weekday=#{scenario[:wday]}" do
+        let(:date) { Date.current.next_occurring(scenario[:name]) }
+        let!(:turn) do
+          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: scenario[:wday])
+        end
+
+        it { expect { req }.to change { Reservation.all.filter{|r| r.turn.weekday == scenario[:wday] }.count }.by(1) }
+      end
+    end
+
 
     context "basic" do
       context "checking response" do
@@ -89,7 +108,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when turn is not in that weekday" do
         let!(:turn) do
-          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: 1)
+          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: Time.now.beginning_of_week.wday + 1)
         end
 
         it "returns 422" do

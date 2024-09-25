@@ -41,9 +41,9 @@ ReservationTurn.delete_all
 
 debug "Creating reservation turns..."
 (0..6).each do |weekday|
-  ReservationTurn.create!(name: "Pranzo", weekday:, starts_at: "12:00", ends_at: "14:00")
-  ReservationTurn.create!(name: "Cena 1", weekday:, starts_at: "18:00", ends_at: "19:59")
-  ReservationTurn.create!(name: "Cena 2", weekday:, starts_at: "20:00", ends_at: "21:30")
+  ReservationTurn.create!(name: "Pranzo (#{ReservationTurn::WEEKDAYS[weekday]})", weekday:, starts_at: "10:00", ends_at: "12:00")
+  ReservationTurn.create!(name: "Cena 1 (#{ReservationTurn::WEEKDAYS[weekday]})", weekday:, starts_at: "16:00", ends_at: "17:59")
+  ReservationTurn.create!(name: "Cena 2 (#{ReservationTurn::WEEKDAYS[weekday]})", weekday:, starts_at: "18:00", ends_at: "19:30")
 end
 
 Reservation.delete_all
@@ -76,3 +76,23 @@ end
   m.assign_translation("text", { it: "12-22", en: "12-22" })
   m.save!
 end
+
+debug "Creating default preorder group..."
+
+preorder_group = PreorderReservationGroup.create!(
+  title: "Default preorder",
+  payment_value: 15.2
+)
+
+2.times do
+  weekday = (0..6).to_a.sample
+
+  preorder_group.dates.create!(
+    date: Date.current.next_occurring(ReservationTurn::WEEKDAYS[weekday].to_sym),
+    reservation_turn: ReservationTurn.where(weekday: weekday).sample
+  )
+end
+
+free_turns = ReservationTurn.where.not(id: preorder_group.dates.pluck(:reservation_turn_id))
+
+preorder_group.turns = free_turns.sample(2)

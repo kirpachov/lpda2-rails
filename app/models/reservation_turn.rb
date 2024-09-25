@@ -28,6 +28,22 @@ class ReservationTurn < ApplicationRecord
   validate :name_should_be_unique_for_each_weekday
 
   # ################################
+  # Class methods
+  # ################################
+  class << self
+    # Find the reservation turn for a given datetime.
+    def for(datetime)
+      return nil if datetime.blank?
+
+      ReservationTurn.where(
+        weekday: datetime.wday
+      ).where(
+        "starts_at <= ? AND ends_at >= ?", datetime.strftime("%k:%M"), datetime.strftime("%k:%M")
+      ).first
+    end
+  end
+
+  # ################################
   # Instance methods
   # ################################
   def valid_times(options = {})

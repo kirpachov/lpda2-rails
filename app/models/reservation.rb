@@ -74,6 +74,11 @@ class Reservation < ApplicationRecord
   # ################################
   # Instance methods
   # ################################
+  def reservation_turn
+    ReservationTurn.for(datetime)
+  end
+  alias_method :turn, :reservation_turn
+
   def status=(value)
     super
   rescue ArgumentError
