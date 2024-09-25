@@ -251,6 +251,63 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
     end
   end
 
+  context "when some group has all turns" do
+    let(:turns) do
+      turn
+
+      (0..6).each do |n|
+        create_list(:reservation_turn, 3, weekday: n)
+      end
+
+      ReservationTurn.all
+    end
+
+    before do
+      # Anytime you want to create a reservation you'll have to pay in this case.
+      create(:preorder_reservation_group).tap do |group|
+        group.turns = turns
+      end
+    end
+
+    context "when adding some turn to the new group, should receive 422" do
+      let(:some_turn) { turns.sample }
+      let(:params) { super().merge(turns: [some_turn.id], dates: []) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationDate.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+
+    context "when adding some turn to the new group, should receive 422" do
+      let(:some_turn) { turn }
+      let(:params) { super().merge(turns: [], dates: [{ date: Date.current.next_occurring(:monday).to_s, turn_id: some_turn.id }]) }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+      it { expect { req }.not_to(change { PreorderReservationDate.count }) }
+      it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+    end
+  end
+
   context "when adding active_from and active_to" do
     let(:active_from) { "2024-09-23 12:00" }
     let(:active_to) { "2025-09-23 12:00" }
