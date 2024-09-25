@@ -5,6 +5,8 @@ module Nexi
   # Call Nexi api's at "order_hpp" endpoint.
   # Nexi docs at:
   # https://developer.nexi.it/it/api/post-orders-hpp
+  # Successful response will look like this:
+  # {"hostedPage"=>"https://xpaysandbox.nexigroup.com/monetaweb/page/hosted/2/html?paymentid=193469235156442659", "securityToken"=>"35e06eae8cc241718478dfdd82eca9d8", "warnings"=>[]}
   class OrderHpp < ActiveInteraction::Base
     float :amount
     string :language
@@ -30,6 +32,8 @@ module Nexi
 
       errors.merge!(@client.errors)
 
+      validate_response if errors.empty?
+
       return false if errors.any? || invalid?
 
       client.json
@@ -53,6 +57,16 @@ module Nexi
           cancelUrl: cancel_url
         }
       }
+    end
+
+    def validate_response
+      e = []
+      e << "is blank" if client.json.blank?
+      e << "is not a hash" if e.empty? && !client.json.is_a?(Hash)
+      e << "field 'hostedPage' is blank" if e.empty? && client.json["hostedPage"].blank?
+      e << "field 'securityToken' is blank" if e.empty? && client.json["securityToken"].blank?
+
+      errors.add(:client, "invalid response #{client.json.inspect}: #{e.join(", ")}") if e.any?
     end
   end
 end

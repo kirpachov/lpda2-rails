@@ -4,8 +4,6 @@ module Nexi
   # Require nexi a payment link where redirect user
   # Usage:
   # Nexi::CreateReservationPayment.run!(amount: 2000, reservation: Reservation.visible.last)
-  # Response will look like this:
-  # {"hostedPage"=>"https://xpaysandbox.nexigroup.com/monetaweb/page/hosted/2/html?paymentid=193469235156442659", "securityToken"=>"35e06eae8cc241718478dfdd82eca9d8", "warnings"=>[]}
   class CreateReservationPayment < ActiveInteraction::Base
     record :reservation, class: Reservation
     float :amount
@@ -20,7 +18,7 @@ module Nexi
       @call = OrderHpp.run(
         amount:,
         language: "ita",
-        order_id: reservation.secret,
+        order_id: "reservation_#{reservation.id}_#{Rails.env}",
         result_url:,
         cancel_url:,
         request_purpose: "reservation_payment",

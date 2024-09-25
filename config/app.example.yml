@@ -118,5 +118,8 @@ test:
   cookie_secure: false
   cookie_same_site: "Lax"
 
+  # Nexi sandbox api url
+  nexi_api_url: https://xpaysandbox.nexigroup.com
+
 production:
   <<: *default
