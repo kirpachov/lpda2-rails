@@ -34,7 +34,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
     let(:last_name) { Faker::Name.last_name }
     let(:first_name) { Faker::Name.first_name }
     let!(:turn) do
-      create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: 0)
+      create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: Time.now.beginning_of_week.wday)
     end
 
     it { expect(instance).to respond_to(:create) }
@@ -46,6 +46,161 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
     def req(data = params)
       post :create, params: data
+    end
+
+    [
+      { name: :sunday, wday: 0 },
+      { name: :monday, wday: 1 },
+      { name: :tuesday, wday: 2 },
+      { name: :wednesday, wday: 3 },
+      { name: :friday, wday: 5 },
+      { name: :saturday, wday: 6 },
+    ].each do |scenario|
+      context "when providing a #{scenario[:name]} date, should create a reservation for turn with weekday=#{scenario[:wday]}" do
+        let(:date) { Date.current.next_occurring(scenario[:name]) }
+        let!(:turn) do
+          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: scenario[:wday])
+        end
+
+        it { expect { req }.to change { Reservation.all.filter{|r| r.turn.weekday == scenario[:wday] }.count }.by(1) }
+      end
+    end
+
+    context "assuming nexi APIs are working and we're authorized" do
+      before do
+        stub_request(:post, "#{Config.nexi_api_url}/#{Config.nexi_hpp_payment_path}").to_return do |request|
+          {
+            body: {
+              hostedPage: "https://xpaysandbox.nexigroup.com/monetaweb/page/hosted/2/html?paymentid=#{Array.new(18) { (0..9).to_a.sample }.join()}",
+              securityToken: SecureRandom.hex,
+              warnings: []
+            }.to_json
+          }
+        end
+      end
+
+      context "when a payment is always required for that turn" do
+        let(:group) do
+          create(:preorder_reservation_group).tap do |grp|
+            grp.turns = [turn]
+          end
+        end
+
+        before do
+          group
+        end
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+        it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+
+        it do
+          req
+          expect(Nexi::HttpRequest.count).to eq 1
+          expect(Nexi::HttpRequest.last.http_code).to eq 200
+          expect(Nexi::HttpRequest.last.record_type).to eq("Reservation")
+          expect(Nexi::HttpRequest.last.record_id).to eq(Reservation.last.id)
+          expect(Nexi::HttpRequest.last.purpose).to eq("reservation_payment")
+          expect(Nexi::HttpRequest.last.request_body).to be_present
+          expect(Nexi::HttpRequest.last.response_body).to be_present
+        end
+
+        it do
+          req
+          expect(json).to include(item: Hash)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context "when a payment is required for that turn only for certain dates" do
+        let(:group) do
+          create(:preorder_reservation_group).tap do |grp|
+            grp.dates.create(reservation_turn: turn, date: Time.now.beginning_of_week + 7.days)
+            grp.dates.create(reservation_turn: turn, date: Time.now.beginning_of_week + 14.days)
+            grp.dates.create(reservation_turn: turn, date: Time.now.beginning_of_week + 70.days)
+          end
+        end
+
+        before do
+          (0..6).each do |wday|
+            next if ReservationTurn.where(weekday: wday).any?
+
+            create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: wday)
+          end
+
+          group
+        end
+
+        [
+          Time.now.beginning_of_week + 7.days,
+          Time.now.beginning_of_week + 14.days,
+          Time.now.beginning_of_week + 70.days,
+        ].each do |date0|
+          context "when date is in the list: #{date0.inspect}" do
+            let(:date) { date0 }
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+
+            it do
+              req
+              expect(Nexi::HttpRequest.count).to eq 1
+              expect(Nexi::HttpRequest.last.http_code).to eq 200
+              expect(Nexi::HttpRequest.last.record_type).to eq("Reservation")
+              expect(Nexi::HttpRequest.last.record_id).to eq(Reservation.last.id)
+              expect(Nexi::HttpRequest.last.purpose).to eq("reservation_payment")
+              expect(Nexi::HttpRequest.last.request_body).to be_present
+              expect(Nexi::HttpRequest.last.response_body).to be_present
+            end
+
+            it do
+              req
+              expect(json[:item].keys).to include("payment")
+              expect(json[:item]["payment"].keys).to include("hpp_url")
+              expect(json[:item]["payment"]["hpp_url"]).to be_present
+              expect(json[:item]["payment"].keys).to include("status")
+              expect(json[:item]["payment"]["status"]).to be_present
+            end
+
+            it do
+              req
+              expect(json).to include(item: Hash)
+              expect(response).to have_http_status(:ok)
+            end
+          end
+        end
+
+        [
+          Time.now.beginning_of_week + 6.days,
+          Time.now.beginning_of_week + 8.days,
+        ].each do |date0|
+          context "when date is NOT in the list: #{date0.inspect}" do
+            let(:date) { date0 }
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+            it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
+
+            it do
+              req
+              expect(Nexi::HttpRequest.count).to eq 0
+            end
+
+
+            it do
+              req
+              expect(json[:item]["payment"]).to be_nil
+            end
+
+            it do
+              req
+              expect(json).to include(item: Hash)
+              expect(response).to have_http_status(:ok)
+            end
+          end
+        end
+      end
     end
 
     context "basic" do
@@ -89,7 +244,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when turn is not in that weekday" do
         let!(:turn) do
-          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: 1)
+          create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: Time.now.beginning_of_week.wday + 1)
         end
 
         it "returns 422" do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 30) do
+ActiveRecord::Schema[7.0].define(version: 35) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -275,6 +275,22 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
   end
 
+  create_table "nexi_http_requests", force: :cascade do |t|
+    t.jsonb "request_body", null: false
+    t.jsonb "response_body", null: false
+    t.text "url", null: false
+    t.integer "http_code", null: false
+    t.string "http_method", null: false
+    t.datetime "started_at", precision: nil, null: false
+    t.datetime "ended_at", precision: nil, null: false
+    t.string "record_type"
+    t.bigint "record_id", comment: "Optionally specify a record this http request belongs to"
+    t.text "purpose", comment: "Specify the reason this request was made, optional"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id"], name: "index_nexi_http_requests_on_record"
+  end
+
   create_table "preferences", force: :cascade do |t|
     t.text "key", null: false
     t.text "value"
@@ -284,6 +300,37 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "key"], name: "index_preferences_on_user_id_and_key", unique: true
     t.index ["user_id"], name: "index_preferences_on_user_id"
+  end
+
+  create_table "preorder_reservation_dates", force: :cascade do |t|
+    t.date "date", null: false
+    t.bigint "reservation_turn_id", null: false
+    t.bigint "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date", "reservation_turn_id"], name: "index_date_reservation_turn_uniqueness", unique: true
+    t.index ["group_id"], name: "index_preorder_reservation_dates_on_group_id"
+    t.index ["reservation_turn_id"], name: "index_preorder_reservation_dates_on_reservation_turn_id"
+  end
+
+  create_table "preorder_reservation_groups", force: :cascade do |t|
+    t.text "title", null: false, comment: "Comment for admins that define payment required cases"
+    t.text "status", null: false, comment: "Is this case enabled?"
+    t.datetime "active_from", comment: "From when this case is enabled. When nil, is enabled from its creation date."
+    t.datetime "active_to", comment: "Until when this case is enabled. when nil, is enable forever"
+    t.text "preorder_type", null: false, comment: "What should ask the user to do. Will include provider name. May be something like 'paypal_payment', or 'nexi_card_hold'..."
+    t.float "payment_value", comment: "How much should people be required to pay if it's a payment. Since may be card hold, this field can be nil."
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "preorder_reservation_groups_to_turns", force: :cascade do |t|
+    t.bigint "reservation_turn_id", null: false
+    t.bigint "preorder_reservation_group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["preorder_reservation_group_id"], name: "preorder_reservation_groups_to_turns_group_id"
+    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id", unique: true
   end
 
   create_table "public_messages", force: :cascade do |t|
@@ -302,6 +349,19 @@ ActiveRecord::Schema[7.0].define(version: 30) do
     t.datetime "updated_at", null: false
     t.index ["secret"], name: "index_refresh_tokens_on_secret"
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
+
+  create_table "reservation_payments", force: :cascade do |t|
+    t.text "hpp_url", null: false, comment: "URL where user can complete the payment. HPP stands for \"Hosted Payment Page\""
+    t.float "value", null: false, comment: "EUR user is required to pay."
+    t.text "status", null: false, comment: "Will show if payment has been made."
+    t.bigint "reservation_id", null: false
+    t.text "preorder_type", null: false, comment: "What should ask the user to do. Will include provider name. May be something like 'paypal_payment', or 'nexi_card_hold'..."
+    t.jsonb "other", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["hpp_url"], name: "index_reservation_payments_on_hpp_url", unique: true
+    t.index ["reservation_id"], name: "index_reservation_payments_on_reservation_id", unique: true
   end
 
   create_table "reservation_tags", force: :cascade do |t|
@@ -406,7 +466,12 @@ ActiveRecord::Schema[7.0].define(version: 30) do
   add_foreign_key "menu_tags_in_dishes", "menu_dishes"
   add_foreign_key "menu_tags_in_dishes", "menu_tags"
   add_foreign_key "preferences", "users"
+  add_foreign_key "preorder_reservation_dates", "preorder_reservation_groups", column: "group_id"
+  add_foreign_key "preorder_reservation_dates", "reservation_turns"
+  add_foreign_key "preorder_reservation_groups_to_turns", "preorder_reservation_groups"
+  add_foreign_key "preorder_reservation_groups_to_turns", "reservation_turns"
   add_foreign_key "refresh_tokens", "users"
+  add_foreign_key "reservation_payments", "reservations"
   add_foreign_key "reset_password_secrets", "users"
   add_foreign_key "tag_in_reservations", "reservation_tags"
   add_foreign_key "tag_in_reservations", "reservations"

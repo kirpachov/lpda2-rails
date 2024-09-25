@@ -163,3 +163,25 @@ end
 ```
 
 And... done! The rest of the work should be done on the [frontend site](https://github.com/kirpachov/lpda2-angular)
+
+## Pagamento anticipato
+Il motivo #1 per cui è stato fatto questo sito è permettere un pagamento anticipato al momento della prenotazione. Di seguito alcuni appunti e riflessioni.
+
+preorder_reservation_group
+Avrà un titolo (utile all'amministratore), un messaggio tradotto da mostrare all'utente, e molti record che indicano le date in cui i pagamenti sono richiesti.
+Avrà associati record di tipo :reservation_turn: Per tutte le prenotazioni che appartengono a questi turni sarà richiesto il pagamento anticipato.
+Avrà associati record di tipo :preorder_reservation_dates: Ogni uno di quei record indicherà un giorno (giorno, mese, anno) in cui per il turno associato è richiesto il pagamento.
+Data di inizio e fine validità: Entrambi possono essere nulli; se al di fuori di questo range, il gruppo è come se non esistesse.
+Attivato o no: stato che indichi se il pagamento è necessario oppure no.
+preorder_type: Payment/CardHold - in un futuro potrebbe essere carino poter ammettere piuttosto che il pagamento, solo il "card hold": ovvero autorizzare una transazione senza farla avvenire, per poter far pagare solo i "no show".
+payment_value: < numerico >
+
+preorder_reservations_dates
+turn_id: Id del turno per cui è richiesto il pagamento anticipato
+date: Data (giorno, mese, anno) del giorno per cui è richiesto il pagamento anticipato.
+group_id: riferimento al PreorderReservationGroup
+
+Questo sistema permette:
+1. Impostare pagamenti anticipati ricorrenti. Basterà aggiungere i ReservationTurn al PreorderReservationGroup per cui si vogliono richiedere pagamenti anticipati ricorrenti.
+2. Impostare pagamenti per date specifiche: basterà creare un PreorderReservationDate specificando il turno e la data per cui il pagamento è necessario.
+3. Un domani in cui verranno definite le tipologie di tavolo, sarà possibile specificare per quali tipologie è richiesto il pagamento.

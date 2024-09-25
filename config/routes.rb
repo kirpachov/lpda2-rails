@@ -71,6 +71,7 @@ Rails.application.routes.draw do
 
       scope module: :admin, path: "admin" do
         resources :users, only: %i[index show create destroy]
+        resources :preorder_reservation_groups
         resources :reservation_turns
         resources :reservation_tags
         resources :public_messages, only: %i[index create update show], param: :key

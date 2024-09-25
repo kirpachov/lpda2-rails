@@ -9,6 +9,12 @@ class ReservationTurn < ApplicationRecord
   WEEKDAYS = %w[sunday monday tuesday wednesday thursday friday saturday].freeze
 
   # ################################
+  # Associations
+  # ################################
+  has_many :preorder_reservation_groups_to_turn, dependent: :destroy
+  has_many :preorder_reservation_groups, through: :preorder_reservation_groups_to_turn
+
+  # ################################
   # Validations
   # ################################
   validates :weekday, presence: true, inclusion: { in: (0..6).to_a }
@@ -20,6 +26,22 @@ class ReservationTurn < ApplicationRecord
   validate :starts_at_overlaps_other_turn
   validate :ends_at_overlaps_other_turn
   validate :name_should_be_unique_for_each_weekday
+
+  # ################################
+  # Class methods
+  # ################################
+  class << self
+    # Find the reservation turn for a given datetime.
+    def for(datetime)
+      return nil if datetime.blank?
+
+      ReservationTurn.where(
+        weekday: datetime.wday
+      ).where(
+        "starts_at <= ? AND ends_at >= ?", datetime.strftime("%k:%M"), datetime.strftime("%k:%M")
+      ).first
+    end
+  end
 
   # ################################
   # Instance methods

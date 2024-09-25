@@ -36,6 +36,8 @@ class Reservation < ApplicationRecord
   has_many :image_pixels, class_name: "Log::ImagePixel", as: :record, dependent: :destroy
   has_many :pixel_events, class_name: "Log::ImagePixelEvent", through: :image_pixels, source: :events
   # , dependent: :nullify
+  # has_many :nexi_http_requests
+  has_one :payment, class_name: "ReservationPayment"
 
   alias_attribute :tags, :reservation_tags
 
@@ -72,6 +74,36 @@ class Reservation < ApplicationRecord
   # ################################
   # Instance methods
   # ################################
+  def requires_payment?(options = {})
+    @requires_payment ||= required_payment_group(options).present?
+  end
+  alias_method :payment_required?, :requires_payment?
+
+  def required_payment_value(options = {})
+    @required_payment_value ||= required_payment_group(options)&.payment_value
+  end
+
+  def required_payment_group(options = {})
+    @required_payment_group ||= ReservationRequiresPayment.run!(
+      options.merge(reservation: self)
+    )
+  end
+
+  # Will generate and attach a URL user can open to pay the reservation.
+  def create_payment!(options = {})
+    Nexi::CreateReservationPayment.run!(
+      options.merge(
+        reservation: self,
+        amount: required_payment_value
+      )
+    )
+  end
+
+  def reservation_turn
+    ReservationTurn.for(datetime)
+  end
+  alias_method :turn, :reservation_turn
+
   def status=(value)
     super
   rescue ArgumentError

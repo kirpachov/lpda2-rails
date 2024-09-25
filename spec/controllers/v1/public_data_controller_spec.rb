@@ -36,6 +36,26 @@ RSpec.describe V1::PublicDataController, type: :controller do
       it { expect(json["reservation"]).to be_present }
       it { expect(json.dig("reservation", "secret")).to eq(secret) }
 
+      context "when ReservationPayment associated exists" do
+        before do
+          payment
+          req
+        end
+
+        let!(:payment) { create(:reservation_payment, reservation:, value: 10.2) }
+
+        it { expect(json.dig("reservation", "payment", "hpp_url")).to be_present }
+        it { expect(json.dig("reservation", "payment", "hpp_url")).to eq(payment.hpp_url) }
+
+        it { expect(json.dig("reservation", "payment", "status")).to be_present }
+        it { expect(json.dig("reservation", "payment", "status")).to eq(payment.status) }
+
+        %w[id created_at updated_at other secret].each do |field|
+          it { expect(json.dig("reservation", "payment", field)).to be_blank }
+          it { expect(json.dig("reservation", "payment").keys).not_to include(field) }
+        end
+      end
+
       context "when its datetime is passed" do
         before do
           reservation.update!(datetime: 1.day.ago)

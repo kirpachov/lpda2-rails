@@ -28,7 +28,8 @@ module V1
         http_only: true
       }
 
-      @item = call.result
+      @item = call.result.reload
+
       show
     end
 
@@ -77,7 +78,14 @@ module V1
     end
 
     def full_json(item)
-      item.as_json(only: %i[id fullname datetime children adults email phone notes secret])
+      item.as_json(
+        only: %i[id fullname datetime children adults email phone notes secret],
+        include: {
+          payment: {
+            only: %w[hpp_url status]
+          }
+        }
+      )
     end
   end
 end
