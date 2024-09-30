@@ -21,4 +21,8 @@ RUN chmod +x /usr/local/bin/healthcheck
 COPY push_base_backup.sh /usr/local/bin/push_base_backup
 RUN chmod +x /usr/local/bin/push_base_backup
 
+# Push console script
+COPY console.sh /usr/local/bin/console
+RUN chmod +x /usr/local/bin/console
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
