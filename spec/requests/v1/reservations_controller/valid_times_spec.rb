@@ -134,4 +134,27 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
       }
     end
   end
+
+  context "when turn required payment" do
+    let(:group) { create(:preorder_reservation_group) }
+    before do
+      group.turns = [
+        ReservationTurn.create!(name: "Day", weekday: Time.now.wday, starts_at: "12:00", ends_at: "14:00", step: 30)
+      ]
+
+      ReservationTurn.create!(name: "Night", weekday: Time.now.wday, starts_at: "19:00", ends_at: "21:00", step: 30)
+
+      travel_to Time.zone.now.beginning_of_day do
+        req(date: Time.zone.now.to_date.to_s)
+      end
+    end
+
+    it { expect(response).to have_http_status(:ok) }
+    it { expect(json).not_to include(message: String) }
+    it do
+      item = json.find { |j| j["starts_at"].include?("12:00") }
+      expect(item).to include("preorder_reservation_group" => Hash)
+      expect(item["preorder_reservation_group"]).to include("id" => group.id)
+    end
+  end
 end
