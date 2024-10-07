@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       resources :reservations, only: %i[create] do
         collection do
           get "valid_times"
+          get "valid_dates"
 
           get ":secret", action: :show
 
