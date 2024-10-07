@@ -29,7 +29,9 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
         ReservationTurn.create!(name: "Day", weekday:, starts_at: "12:00", ends_at: "14:00", step: 30)
       end
 
-      req(date: Time.zone.now.to_date.to_s)
+      travel_to Time.zone.now.beginning_of_day do
+        req(date: Time.zone.now.to_date.to_s)
+      end
     end
 
     it { is_expected.to have_http_status(:ok) }
@@ -53,7 +55,9 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
         ReservationTurn.create!(name: "Dinner1", weekday:, starts_at: "16:00", ends_at: "18:00", step: 30)
       end
 
-      req(date: Time.zone.now.to_date.to_s)
+      travel_to Time.zone.now.beginning_of_day do
+        req(date: Time.zone.now.to_date.to_s)
+      end
     end
 
     it { is_expected.to have_http_status(:ok) }
@@ -69,7 +73,65 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
     it {
       expect(json.map do |j|
                j["valid_times"]
-             end.flatten.sort).to eq(%w[12:00 12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00])
+             end.flatten).to match_array(%w[12:00 12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00])
     }
+  end
+
+  context "when date is today should return only turns from now on" do
+    before do
+      ReservationTurn.create!(name: "Lunch", weekday: 5, starts_at: "12:00", ends_at: "14:00", step: 30)
+      ReservationTurn.create!(name: "Dinner1", weekday: 5, starts_at: "16:00", ends_at: "18:00", step: 30)
+    end
+
+    context "when it's 11:00" do
+      before do
+        travel_to Time.zone.parse("2021-01-01 11:00") do
+          req(date: "2021-01-01")
+        end
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+
+      it {
+        expect(json.map do |j|
+                 j["valid_times"]
+               end.flatten).to match_array(%w[12:00 12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00])
+      }
+    end
+
+    context "when it's 12:00" do
+      before do
+        travel_to Time.zone.parse("2021-01-01 12:00") do
+          req(date: "2021-01-01")
+        end
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+
+      it {
+        expect(json.map do |j|
+                 j["valid_times"]
+               end.flatten).to match_array(%w[12:30 13:00 13:30 14:00 16:00 16:30 17:00 17:30 18:00])
+      }
+    end
+
+    context "when it's 15:00" do
+      before do
+        travel_to Time.zone.parse("2021-01-01 15:00") do
+          req(date: "2021-01-01")
+        end
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+
+      it {
+        expect(json.map do |j|
+                 j["valid_times"]
+               end.flatten).to match_array(%w[16:00 16:30 17:00 17:30 18:00])
+      }
+    end
   end
 end
