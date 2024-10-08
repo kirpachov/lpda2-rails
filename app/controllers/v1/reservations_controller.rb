@@ -7,6 +7,7 @@ module V1
     skip_before_action :authenticate_user
 
     def show
+      # TODO: if reservation has a payment, should check for payment status from the payment provider
       render json: {
         item: full_json(@item)
       }
@@ -113,7 +114,7 @@ module V1
 
     def full_json(item)
       item.as_json(
-        only: %i[id fullname datetime children adults email phone notes secret],
+        only: %i[id fullname datetime children adults email phone notes secret created_at updated_at],
         include: {
           payment: {
             only: %w[hpp_url status]

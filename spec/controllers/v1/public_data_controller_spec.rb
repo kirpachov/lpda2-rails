@@ -35,6 +35,7 @@ RSpec.describe V1::PublicDataController, type: :controller do
       it { expect(json).to be_present }
       it { expect(json["reservation"]).to be_present }
       it { expect(json.dig("reservation", "secret")).to eq(secret) }
+      it { expect(json.dig("reservation", "created_at")).to be_present }
 
       context "when ReservationPayment associated exists" do
         before do

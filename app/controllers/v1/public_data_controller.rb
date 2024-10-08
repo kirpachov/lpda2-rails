@@ -10,7 +10,7 @@ module V1
 
       render json: {
         reservation: reservation.as_json(
-          only: %w[id fullname datetime status secret children adults notes email phone],
+          only: %w[id fullname datetime status secret children adults notes email phone created_at updated_at],
           include: [
             {
               payment: {

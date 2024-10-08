@@ -849,7 +849,9 @@ RSpec.describe V1::ReservationsController, type: :controller do
               "email" => reservation.email,
               "phone" => reservation.phone,
               "notes" => reservation.notes,
-              "secret" => reservation.secret
+              "secret" => reservation.secret,
+              "updated_at" => String,
+              "created_at" => String,
             )
           }
         end
