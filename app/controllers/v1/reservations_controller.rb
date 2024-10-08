@@ -45,7 +45,7 @@ module V1
       items = ReservationTurn.all.where(weekday: Date.parse(params[:date].to_s).wday).includes(:preorder_reservation_groups).map do |turn|
         turn.as_json.merge(
           valid_times: turn.valid_times(date: params[:date]),
-          preorder_reservation_group: turn.preorder_reservation_groups.first
+          preorder_reservation_group: turn.preorder_reservation_groups.first&.as_json(methods: %i[message])
         )
       end
 

@@ -137,7 +137,14 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
 
   context "when turn required payment" do
     let(:group) { create(:preorder_reservation_group) }
+
     before do
+      I18n.available_locales.each do |loc|
+        Mobility.with_locale(loc) do
+          group.update!(message: "[#{loc}] Please, pay in advance")
+        end
+      end
+
       group.turns = [
         ReservationTurn.create!(name: "Day", weekday: Time.now.wday, starts_at: "12:00", ends_at: "14:00", step: 30)
       ]
@@ -154,7 +161,8 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
     it do
       item = json.find { |j| j["starts_at"].include?("12:00") }
       expect(item).to include("preorder_reservation_group" => Hash)
-      expect(item["preorder_reservation_group"]).to include("id" => group.id)
+      expect(item["preorder_reservation_group"]).to include("id" => group.id, "payment_value" => group.payment_value, "preorder_type" => group.preorder_type, "message" => String)
+      expect(item["preorder_reservation_group"]["message"]).to include("Please, pay in advance")
     end
   end
 end
