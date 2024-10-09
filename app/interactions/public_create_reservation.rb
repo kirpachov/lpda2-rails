@@ -51,7 +51,6 @@ class PublicCreateReservation < ActiveInteraction::Base
 
     @reservation.create_payment! if @reservation.requires_payment? && errors.empty?
 
-
     @reservation
   end
 

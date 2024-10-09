@@ -36,4 +36,16 @@ class String
       sum
     end
   end
+
+  # Convert a language code to a ISO 639-2 code.
+  def lang_to_iso639_2
+    {
+      "it" => "ita",
+      "en" => "eng",
+      "de" => "deu",
+      "fr" => "fra",
+      "es" => "spa",
+      "pt" => "por",
+    }[downcase]
+  end
 end

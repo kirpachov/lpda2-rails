@@ -172,6 +172,27 @@ RSpec.describe V1::ReservationsController, type: :controller do
           expect(json).to include(item: Hash)
           expect(response).to have_http_status(:ok)
         end
+
+        [
+          { lang: "it", code: "ita", },
+          { lang: "en", code: "eng", },
+        ].each do |scenario|
+          context "when lang is #{scenario[:lang].inspect}" do
+            let(:lang) { scenario[:lang] }
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.to(change { Reservation.where(lang: scenario[:lang]).count }.by(1)) }
+
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+
+            it do
+              req
+              expect(json).to include(item: Hash)
+              expect(response).to have_http_status(:ok)
+              expect(Nexi::HttpRequest.last.request_body.dig("paymentSession", "language")).to eq(scenario[:code])
+            end
+          end
+        end
       end
 
       context "when a payment is required for that turn only for certain dates" do

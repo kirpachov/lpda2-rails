@@ -17,7 +17,7 @@ module Nexi
     def execute
       @call = OrderHpp.run(
         amount:,
-        language: "ita",
+        language: reservation.lang.lang_to_iso639_2,
         order_id: "reservation_#{reservation.id}_#{Rails.env}",
         result_url:,
         cancel_url:,
