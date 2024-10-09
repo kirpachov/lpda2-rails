@@ -66,6 +66,26 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
+    [
+      "Nicolò",
+      "O'Reilly",
+      "Mc Donalds",
+      "Gigi Pippo"
+    ].each do |special_name|
+      context "when first_name is #{special_name.inspect}" do
+        let(:first_name) { special_name }
+
+        it { expect { req }.to change { Reservation.count }.by(1) }
+
+        it do
+          req
+          expect(json).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+          expect(Reservation.last.fullname).to include(special_name)
+        end
+      end
+    end
+
     context "assuming nexi APIs are working and we're authorized" do
       before do
         stub_request(:post, "#{Config.nexi_api_url}/#{Config.nexi_hpp_payment_path}").to_return do |request|

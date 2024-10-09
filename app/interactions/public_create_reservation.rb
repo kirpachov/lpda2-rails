@@ -65,11 +65,11 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def first_name
-    @first_name ||= params[:first_name].to_s.strip.split(" ").map(&:capitalize).join(" ")
+    @first_name ||= namify(params[:first_name])
   end
 
   def last_name
-    @last_name ||= params[:last_name].to_s.strip.split(" ").map(&:capitalize).join(" ")
+    @last_name ||= namify(params[:last_name])
   end
 
   def email
@@ -100,6 +100,21 @@ class PublicCreateReservation < ActiveInteraction::Base
     @reservation_turn ||= ReservationTurn.for(datetime)
   end
 
+  def namify(str)
+    str = str.to_s.strip
+
+    [
+      " ",
+      "'"
+    ].each do |char|
+      next if str.index(char).nil?
+
+      str = str.split(char).map(&:capitalize).join(char)
+    end
+
+    str
+  end
+
   # ###################################
   # Validation methods
   # ###################################
@@ -123,7 +138,7 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def first_name_is_valid
-    return if /\A[A-Za-z\s']{2,}\z/.match?(first_name)
+    return if /^[A-Za-zÀ-ÖØ-öø-ÿ'´\-\s]+$/.match?(first_name) && first_name.length >= 2
 
     errors.add(:first_name, "#{first_name.inspect} is not a valid first name")
   end
