@@ -134,7 +134,8 @@ class Reservation < ApplicationRecord
     {
       reservation_id: id,
       pixels: image ? { image.key.gsub("email_images_", "") => create_email_pixel(image:, delivered_email:).id } : nil,
-      delivered_email_id: delivered_email.id
+      delivered_email_id: delivered_email.id,
+      locale: lang
     }
   end
 

@@ -9,6 +9,14 @@ class ApplicationMailer < ActionMailer::Base
   before_action do
     headers "X-ApplicationSender" => "lpda2"
 
+    if params[:locale]
+      @locale_was = I18n.locale
+      I18n.locale = params[:locale]
+    else
+      @locale_was = nil
+    end
+
+
     @images = Image.where("key ILIKE 'email_images_%'").all.map do |image|
       [
         image.key.split("email_images_").last,
@@ -26,6 +34,10 @@ class ApplicationMailer < ActionMailer::Base
   end
 
   after_action do
+    if @locale_was
+      I18n.locale = @locale_was
+    end
+
     delivered_email = params[:delivered_email] || Log::DeliveredEmail.find_by(id: params[:delivered_email_id]) || Log::DeliveredEmail.create!
 
     delivered_email.update!(
