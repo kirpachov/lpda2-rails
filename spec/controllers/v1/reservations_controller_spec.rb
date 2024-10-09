@@ -18,7 +18,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         children:,
         email:,
         phone:,
-        notes:
+        notes:,
+        lang:,
       }
     end
     let(:notes) { Faker::Lorem.sentence }
@@ -33,6 +34,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
     let(:date) { Time.now.beginning_of_week + 7.days }
     let(:last_name) { Faker::Name.last_name }
     let(:first_name) { Faker::Name.first_name }
+    let(:lang) { :en }
     let!(:turn) do
       create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"), weekday: Time.now.beginning_of_week.wday)
     end
@@ -63,6 +65,46 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
 
         it { expect { req }.to change { Reservation.all.filter{|r| r.turn.weekday == scenario[:wday] }.count }.by(1) }
+      end
+    end
+
+    context "when lang is blank" do
+      let(:lang) { nil }
+
+      it { expect { req }.not_to(change { Reservation.count }) }
+      it do
+        req
+        expect(json).to include(message: /ang/) # lang may have 'l' capitalized
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    %w[it en].each do |mylang|
+      context "when lang is #{mylang.inspect}, should assign lang to reservation" do
+        let(:lang) { mylang }
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { Reservation.where(lang: mylang).count }.by(1)) }
+
+        it do
+          req
+          expect(json).not_to include(message: String)
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
+
+    %w[mario].each do |invalid_lang|
+      context "when lang is #{invalid_lang.inspect}, should not create reservation" do
+        let(:lang) { invalid_lang }
+
+        it { expect { req }.not_to(change { Reservation.count }) }
+
+        it do
+          req
+          expect(json).to include(message: /ang/)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
       end
     end
 

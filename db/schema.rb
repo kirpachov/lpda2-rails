@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 35) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_09_161438) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -398,6 +398,7 @@ ActiveRecord::Schema[7.0].define(version: 35) do
     t.jsonb "other", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "lang", default: "en", null: false
   end
 
   create_table "reset_password_secrets", force: :cascade do |t|

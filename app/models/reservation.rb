@@ -51,6 +51,7 @@ class Reservation < ApplicationRecord
   validates :children, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :adults, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates :lang, inclusion: (I18n.available_locales.map(&:to_s) + I18n.available_locales.map(&:to_sym))
   validate :validate_people_count_is_valid
 
   validates :secret, uniqueness: { case_sensitive: false }

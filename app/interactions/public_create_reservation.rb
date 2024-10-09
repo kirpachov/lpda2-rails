@@ -27,6 +27,8 @@ class PublicCreateReservation < ActiveInteraction::Base
   validate :phone_is_present
   validate :phone_is_valid
 
+  validate :lang_is_present
+
   attr_reader :reservation
 
   def execute
@@ -38,6 +40,7 @@ class PublicCreateReservation < ActiveInteraction::Base
       email:,
       phone:,
       notes: params[:notes].to_s.strip,
+      lang:,
       other: {
         first_name:,
         last_name:
@@ -100,8 +103,12 @@ class PublicCreateReservation < ActiveInteraction::Base
     @reservation_turn ||= ReservationTurn.for(datetime)
   end
 
+  def lang
+    @lang ||= params[:lang].to_s.strip
+  end
+
   def namify(str)
-    str = str.to_s.strip
+    str = str.to_s.strip.capitalize
 
     [
       " ",
@@ -227,5 +234,11 @@ class PublicCreateReservation < ActiveInteraction::Base
     return if datetime.to_i % reservation_turn.step == 0
 
     errors.add(:datetime, "is not in a valid reservation turn step")
+  end
+
+  def lang_is_present
+    return if lang.present?
+
+    errors.add(:lang, "is blank")
   end
 end
