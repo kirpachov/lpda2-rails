@@ -16,7 +16,7 @@ class ApplicationMailer < ActionMailer::Base
       ]
     end.to_h.with_indifferent_access
 
-    if params[:pixels].is_a?(Hash)
+    if params && params[:pixels].is_a?(Hash)
       params[:pixels].each do |key, id|
         @images[key] = Log::ImagePixel.find(id).url
       end
