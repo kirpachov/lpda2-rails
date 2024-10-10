@@ -127,6 +127,16 @@ module Log
       self.changed_fields = (record_changes || {}).keys
     end
 
+    # This method will restore the record to the state it was before the change.
+    # TODO test this method
+    def restore
+      return unless updated?
+
+      record.update!(
+        record_changes.transform_values(&:first)
+      )
+    end
+
     # ############################
     # Private methods
     # ############################

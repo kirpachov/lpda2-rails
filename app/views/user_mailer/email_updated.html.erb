@@ -1,0 +1,9 @@
+<p><%= I18n.t("mail.greetings") %> <%= @user.fullname.present? ? @user.fullname : @user.email %>,</p>
+
+<p>
+  <%= I18n.t("user_mailer.email_updated.body", app_name: Config.hash[:app_name], old_email: @old_email, new_email: @user.email) %>
+</p>
+
+<p>
+  <%= I18n.t("user_mailer.email_updated.closing") %>
+</p>

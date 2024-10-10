@@ -1,0 +1,7 @@
+<%= I18n.t("mail.greetings") %> <%= @user.fullname.present? ? @user.fullname : @user.email %>,
+
+<%= I18n.t("user_mailer.email_verification_otp.body", app_name: Config.hash[:app_name]) %>
+
+<%= @otp %>
+
+<%= I18n.t("user_mailer.email_verification_otp.closing", app_name: Config.hash[:app_name]) %>

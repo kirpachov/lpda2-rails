@@ -49,6 +49,11 @@ Rails.application.routes.draw do
       # v1/profile
       # resource :profile, controller: "profile", only: %i[index]
       get "profile", to: "profile#index"
+      patch "profile", to: "profile#update"
+      post "profile/send_email_verification_otp", to: "profile#send_email_verification_otp"
+      patch "profile/email", to: "profile#update_email"
+      patch "profile/password", to: "profile#update_password"
+      delete "profile", to: "profile#destroy"
 
       # v1/auth
       resource :auth, controller: "auth", only: [] do

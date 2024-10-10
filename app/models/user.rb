@@ -52,6 +52,22 @@ class User < ApplicationRecord
   def assign_defaults
     self.status = "active" if status.blank?
     assign_default_can_root if can_root.nil?
+    generate_otp_key if otp_key.blank?
+  end
+
+  def otp_generator(context: nil, issuer: nil)
+    key = ROTP::Base32.encode("#{otp_key}#{context ? ":#{context}" : ""}")
+    ROTP::TOTP.new(key, issuer: issuer || Config.app[:app_name])
+  end
+
+  def otp_key=(value)
+    self.enc_otp_key = crypt.encrypt_and_sign(value)
+  end
+
+  def otp_key
+    return nil if enc_otp_key.blank?
+
+    crypt.decrypt_and_verify(enc_otp_key)
   end
 
   def send_reset_password_email
@@ -120,11 +136,20 @@ class User < ApplicationRecord
 
   private
 
+  # TODO this should not be here.
+  def crypt
+    @crypt ||= ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base[0..31])
+  end
+
   def assign_password_if_missing
     self.password = SecureRandom.hex(16) if password.blank?
   end
 
   def assign_default_can_root
     self.can_root = DEFAULT_CAN_ROOT
+  end
+
+  def generate_otp_key
+    self.otp_key = SecureRandom.hex(16)
   end
 end

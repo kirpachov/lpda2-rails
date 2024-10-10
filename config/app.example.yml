@@ -15,6 +15,8 @@ default: &default
 
   root_duration: 600 # 5 minutes
 
+  min_password_length: 6
+
   max_login_attempts: 10
 
   emails:

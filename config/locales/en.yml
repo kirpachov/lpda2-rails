@@ -12,6 +12,14 @@ en:
     reset_password:
       subject: "Reset your password"
       body: "You can reset the password on the following link"
+    email_verification_otp:
+      subject: "Email verification"
+      body: "Your verification code is:"
+      closing: "If you didn't request this code, please ignore this email."
+    email_updated:
+      subject: "Email updated"
+      body: "Your email was updated from %{old_email} to %{new_email}"
+      closing: "If you didn't request this change, please contact us."
   activerecord:
     models:
       panel/invite_token:

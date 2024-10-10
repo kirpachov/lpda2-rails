@@ -10,6 +10,19 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email)
   end
 
+  def email_verification_otp
+    @otp = params[:otp]
+    @email = params[:email]
+
+    mail(to: @email)
+  end
+
+  def email_updated
+    @old_email = params[:old_email]
+
+    mail(to: @old_email)
+  end
+
   def password_updated
     mail(to: @user.email)
   end
