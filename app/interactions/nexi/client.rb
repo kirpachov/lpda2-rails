@@ -35,6 +35,9 @@ module Nexi
       create_http_request
 
       validate_response
+
+      @http_request.update(record: request_record) if request_record.present? && errors.empty?
+
       @response
     end
 
@@ -110,7 +113,7 @@ module Nexi
         started_at: @request_started_at,
         ended_at: @request_ended_at,
         purpose: request_purpose,
-        record: request_record,
+        record: request_record.persisted? ? request_record : nil
       )
     end
   end
