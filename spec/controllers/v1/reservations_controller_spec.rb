@@ -128,7 +128,51 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
-    context "assuming nexi APIs are working and we're authorized" do
+    context "when nexi APIs return some kind of error" do
+      before do
+        stub_request(:post, "#{Config.nexi_api_url}/#{Config.nexi_hpp_payment_path}").to_return do |request|
+          {
+            status: 400, # is it correct here?
+            body: {
+              # If you're asking yourself "what is this error? I don't provide trackId nor merchantTransactionCode...",
+              # well, I still don't know.
+              # This is some kind of error that Nexi APIs return when they're not working properly.
+              # But we need to handle it.
+              errors: [
+                {
+                  code: "PS0064",
+                  description: "Only one of trackId or merchantTransactionCode fields can be provided - 2941fe36-e1db-4797-a58f-8c8ca2364f69"
+                }
+              ]
+            }.to_json
+          }
+        end
+      end
+
+      context "when a payment is always required for that turn" do
+        let(:group) do
+          create(:preorder_reservation_group).tap do |grp|
+            grp.turns = [turn]
+          end
+        end
+
+        before do
+          group
+        end
+
+        it { expect { req }.not_to(change { Reservation.count }) }
+        it { expect { req }.not_to(change { ReservationPayment.count }) }
+        it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+        it { expect { req }.to(change { Nexi::HttpRequest.where(http_code: 400).count }.by(1)) }
+        it do
+          req
+          expect(json).to include(:message)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
+
+    context "when nexi APIs are working and we're authorized" do
       before do
         stub_request(:post, "#{Config.nexi_api_url}/#{Config.nexi_hpp_payment_path}").to_return do |request|
           {

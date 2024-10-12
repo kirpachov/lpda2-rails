@@ -47,9 +47,14 @@ class PublicCreateReservation < ActiveInteraction::Base
       }
     )
 
-    errors.merge!(@reservation.errors) unless @reservation.valid? && @reservation.save
-
-    @reservation.create_payment! if @reservation.requires_payment? && errors.empty?
+    if errors.empty?
+      if @reservation.requires_payment?
+        call = @reservation.create_payment
+        errors.merge!(call.errors) unless call.valid?
+      else
+        errors.merge!(@reservation.errors) unless @reservation.valid? && @reservation.save
+      end
+    end
 
     @reservation
   end

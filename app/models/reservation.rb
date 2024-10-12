@@ -91,8 +91,8 @@ class Reservation < ApplicationRecord
   end
 
   # Will generate and attach a URL user can open to pay the reservation.
-  def create_payment!(options = {})
-    Nexi::CreateReservationPayment.run!(
+  def create_payment(options = {})
+    Nexi::CreateReservationPayment.run(
       options.merge(
         reservation: self,
         amount: required_payment_value
