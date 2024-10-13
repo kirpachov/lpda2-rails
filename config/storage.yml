@@ -6,6 +6,28 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+# Docs at:
+# https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/Client.html#initialize-instance_method
+# https://guides.rubyonrails.org/active_storage_overview.html#s3-service-amazon-s3-and-s3-compatible-apis
+s3:
+  service: S3
+  access_key_id: <%= ENV.fetch("STORAGE_AWS_ACCESS_KEY_ID", Config.storage_aws_access_key_id) %>
+  secret_access_key: <%= ENV.fetch("STORAGE_AWS_SECRET_ACCESS_KEY", Config.storage_aws_secret_access_key) %>
+  region: <%= ENV.fetch("STORAGE_AWS_REGION", "eu-central-1") %>
+  bucket: <%= ENV.fetch("STORAGE_S3_BUCKET", Config.storage_s3_bucket) %>
+  http_open_timeout: 15 # default
+  http_read_timeout: 60 # default
+  retry_limit: 3 # default
+#  upload:
+#    server_side_encryption: "" # 'aws:kms' or 'AES256'
+#    cache_control: "private, max-age=<%#= 1.day.to_i %>"
+
+mirror:
+  service: Mirror
+  primary: local
+  mirrors:
+    - s3
+
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
 #   service: S3
