@@ -36,7 +36,7 @@ gem "will_paginate", "~> 3.3.0"
 gem "mustache", "~> 1.1.1"
 # gem 'pundit', '~> 2.3.1'
 
-gem "rotp", "~> 6.2.2"
+gem "rotp", "~> 6.3.0"
 
 # gem 'rotp', '~> 6.2.2'
 # gem 'jwt', '~> 2.2.3'
