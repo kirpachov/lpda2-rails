@@ -44,7 +44,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          labels: latest
+          tags: latest
+          # labels: latest
           # tags: ${{ steps.meta.outputs.tags }}
           # labels: ${{ steps.meta.outputs.labels }}
 
