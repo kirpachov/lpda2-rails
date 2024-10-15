@@ -41,13 +41,16 @@ jobs:
         id: push
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
+          push: true
+          tags: kirpachov/lpda2:latest
+          cache-from: type=registry,ref=kirpachov/lpda2:buildcache
+          cache-to: type=registry,ref=kirpachov/lpda2:buildcache,mode=max
           context: .
           file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=user/app:latest
-          cache-to: type=inline
+          # tags: ${{ steps.meta.outputs.tags }}
+          # labels: ${{ steps.meta.outputs.labels }}
+          # cache-from: type=registry,ref=user/app:latest
+          # cache-to: type=inline
 
       # - name: Generate artifact attestation
       #   uses: actions/attest-build-provenance@v1
