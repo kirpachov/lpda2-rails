@@ -32,6 +32,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: kirpachov/lpda2:latest
-          cache-from: type=registry,ref=kirpachov/lpda2:buildcache
-          cache-to: type=registry,ref=kirpachov/lpda2:buildcache,mode=max
+          tags: kirpachov/lpda2-rails:latest
+          cache-from: type=registry,ref=kirpachov/lpda2-rails:buildcache
+          cache-to: type=registry,ref=kirpachov/lpda2-rails:buildcache,mode=max
