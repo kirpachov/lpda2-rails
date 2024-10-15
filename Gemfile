@@ -40,9 +40,6 @@ gem "aws-sdk-s3", "~> 1.167.0"
 
 gem "rotp", "~> 6.3.0"
 
-# gem 'rotp', '~> 6.2.2'
-# gem 'jwt', '~> 2.2.3'
-# gem 'mail' # ADDING FOR TEST PURPOSES ONLY
 gem "sidekiq", "~> 7.2.4"
 gem "sidekiq-cron", "~> 1.11.0"
 gem "sidekiq-status", "~> 3.0.3"
@@ -58,9 +55,6 @@ gem "oj", "~> 3.14.3"
 
 # https://activerecord-hackery.github.io/ransack/
 gem "mobility-ransack", "~> 1.2.2"
-
-# gem "image_processing", "~> 1.12.2"
-# gem "ruby-vips"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
