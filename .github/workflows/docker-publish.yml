@@ -49,9 +49,9 @@ jobs:
           cache-from: type=registry,ref=user/app:latest
           cache-to: type=inline
 
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: kirpachov/lpda2-rails
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+      # - name: Generate artifact attestation
+      #   uses: actions/attest-build-provenance@v1
+      #   with:
+      #     subject-name: kirpachov/lpda2-rails
+      #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     push-to-registry: true
