@@ -65,7 +65,7 @@ Reservation.delete_all
   Reservation.create! reservation_data
 end
 
-User.create!(email: "sasha@opinioni.net", password: "admin")
+User.create!(email: "sasha@opinioni.net", password: "admin!", username: "sasha")
 
 PublicMessage::KNOWN_KEYS.each do |key|
   PublicMessage.find_or_create_by!(key:)
