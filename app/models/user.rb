@@ -138,7 +138,7 @@ class User < ApplicationRecord
 
   # TODO this should not be here.
   def crypt
-    @crypt ||= ActiveSupport::MessageEncryptor.new(Config.hash[:secret_key_base].to_s[0..31])
+    @crypt ||= ActiveSupport::MessageEncryptor.new(Rails.application.secrets.secret_key_base.to_s[0..31])
   end
 
   def assign_password_if_missing
