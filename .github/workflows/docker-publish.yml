@@ -31,11 +31,11 @@ jobs:
           username: kirpachov
           password: ${{ secrets.DOCKER_REGISTRY_KEY }}
 
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-      #   with:
-      #     images: kirpachov/lpda2-rails
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: kirpachov/lpda2-rails
 
       - name: Build and push Docker image
         id: push
@@ -44,14 +44,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: latest
-          # labels: latest
-          # tags: ${{ steps.meta.outputs.tags }}
-          # labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-      # - name: Generate artifact attestation
-      #   uses: actions/attest-build-provenance@v1
-      #   with:
-      #     subject-name: kirpachov/lpda2-rails
-      #     subject-digest: ${{ steps.push.outputs.digest }}
-      #     push-to-registry: true
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: kirpachov/lpda2-rails
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
