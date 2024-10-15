@@ -69,32 +69,8 @@ default: &default
   #   open_timeout: 60
   #   read_timeout: 60
 
-  # Email addresses where to send final email (when projects are closed)
-  # final_project_emails:
-  #  - sasha@opinioni.net
-
-  # emails:
-  #   default_from: no-reply@example.com
-  #   default_reply_to: assistenza@opinioni.net
-
-  # exceptions:
-  #   enabled: false
-  #   subject_prefix: "Quotations"
-  #   sender: '"Exception" <exception@opinioni.net>'
-  #   recipients:
-  #     - "developers@opinioni.net"
-
-  # finale_zip_password: password
-
-  # developers_emails:
-  #  - sasha@opinioni.net
-
-  # send_developers_emails: true
-
-  # async_actions_timeout: 10 minutes
-
-  # # Seconds you can restore object after
-  # restore_object_timeout: 3600
+  exceptions_recipients:
+    - "sasha@opinioni.net"
 
   smtp: null
   # origins:

@@ -53,6 +53,8 @@ gem "text-table", "~> 1.2.4"
 
 gem "oj", "~> 3.14.3"
 
+gem "exception_notification", "~> 4.5.0"
+
 # https://activerecord-hackery.github.io/ransack/
 gem "mobility-ransack", "~> 1.2.2"
 
