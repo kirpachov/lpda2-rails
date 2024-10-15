@@ -3,7 +3,7 @@
 module Auth
   # A SimpleCommand class for user authentication and JWT token generation
   class AuthenticateUser < ActiveInteraction::Base
-    string :email, :password
+    string :username, :password
 
     def execute
       {
@@ -37,7 +37,7 @@ module Auth
 
       @find_user_called = true
       result = nil
-      @user = User.find_by(email:)
+      @user = User.find_by(username: username) || User.find_by(email: username)
 
       # Check if user exists
       if @user.nil?

@@ -5,6 +5,7 @@ require "rails_helper"
 RSpec.describe "POST /v1/auth/login" do
   let(:password) { SecureRandom.hex }
   let(:email) { Faker::Internet.email }
+  let(:username) { "user#{SecureRandom.hex}" }
   let(:user) { create(:user, password:, email:) }
 
   let(:default_headers) { {} }
@@ -16,6 +17,63 @@ RSpec.describe "POST /v1/auth/login" do
 
   context "when providing correct email and password" do
     before { user }
+
+    it do
+      expect { req }.to(change { RefreshToken.count }.by(1))
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json).to include(jwt: String)
+    end
+  end
+
+  context "when providing correct username and password" do
+    before { user.update!(username:) }
+    let(:default_params) { { password:, username: } }
+
+    it do
+      expect { req }.to(change { RefreshToken.count }.by(1))
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json).to include(jwt: String)
+    end
+  end
+
+  context "when providing correct username but calling param as email ({ email: <username> })" do
+    before { user.update!(username:) }
+    let(:default_params) { { password:, email: username } }
+
+    it do
+      expect { req }.to(change { RefreshToken.count }.by(1))
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json).to include(jwt: String)
+    end
+  end
+
+  context "when providing correct email but calling param as username ({ username: <email> })" do
+    before { user.update!(username:) }
+    let(:default_params) { { password:, username: email } }
 
     it do
       expect { req }.to(change { RefreshToken.count }.by(1))
