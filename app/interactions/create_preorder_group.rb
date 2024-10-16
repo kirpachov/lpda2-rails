@@ -15,6 +15,8 @@ class CreatePreorderGroup < ActiveInteraction::Base
   # }
   interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
+  interface :group, methods: %i[persisted?], default: -> { PreorderReservationGroup.new }
+
   validate do
     if params[:turns].present? && turn_ids.blank?
       errors.add(:params, "turns are provided but blank: #{turn_ids}")
@@ -23,6 +25,7 @@ class CreatePreorderGroup < ActiveInteraction::Base
 
   def execute
     PreorderReservationGroup.transaction do
+      @group = group
       create_group if valid?
       create_dates if errors.empty?
       create_turns if errors.empty?
@@ -38,12 +41,15 @@ class CreatePreorderGroup < ActiveInteraction::Base
   end
 
   def create_group
-    @group = PreorderReservationGroup.new(
-      title: params.delete(:title),
-      preorder_type: params.delete(:preorder_type),
-      payment_value: params.delete(:payment_value),
-      active_from: params.delete(:active_from),
-      active_to: params.delete(:active_to),
+    @group.assign_attributes(
+      {
+        title: params.delete(:title),
+        preorder_type: params.delete(:preorder_type),
+        payment_value: params.delete(:payment_value),
+        active_from: params.delete(:active_from),
+        active_to: params.delete(:active_to),
+        status: params.delete(:status)
+      }.compact
     )
 
     if @group.valid? && @group.save

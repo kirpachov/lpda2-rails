@@ -34,11 +34,11 @@ module V1::Admin
     end
 
     def update
-      raise "not implemented"
-      # TODO update group and dates
-      # return show if @item.update(update_params)
+      @call = CreatePreorderGroup.run(params: params.permit!.to_h, group: @item)
 
-      # render_unprocessable_entity(@item)
+      return render_unprocessable_entity(@call) if @call.invalid?
+
+      show
     end
 
     def destroy
