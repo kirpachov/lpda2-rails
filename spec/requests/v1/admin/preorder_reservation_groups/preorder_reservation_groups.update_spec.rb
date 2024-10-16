@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
+RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
   let(:headers) { auth_headers }

@@ -42,23 +42,12 @@ module V1::Admin
     end
 
     def destroy
-      raise "not implemented"
-      # nil if @item.destroy!
+      return if @item.destroy!
 
-      #   render_unprocessable_entity(@item)
-      # rescue ActiveRecord::RecordInvalid
-      #   render_unprocessable_entity(@item)
+      render_unprocessable_entity(@item)
     end
 
     private
-
-    # def create_params
-    #   params.permit(:weekday, :starts_at, :ends_at, :name)
-    # end
-
-    # def update_params
-    #   params.permit(:weekday, :starts_at, :ends_at, :name)
-    # end
 
     def find_item
       @item = PreorderReservationGroup.find_by(id: params[:id])
