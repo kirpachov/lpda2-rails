@@ -7,6 +7,10 @@ module V1::Admin
     def index
       items = PreorderReservationGroup.visible.order(id: :desc)
 
+      items = items.active_now if params[:active_now].to_s.in?(%w[true 1])
+
+      items = items.where("title ILIKE ?", "%#{params[:query]}%") if params[:query].present?
+
       items = items.paginate(pagination_params)
 
       render json: {
@@ -75,7 +79,16 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json(include: %w[dates turns])
+      item.as_json(
+        include: [
+          :turns,
+          {
+            dates: {
+              include: [:reservation_turn]
+            }
+          }
+        ]
+      )
     end
   end
 end

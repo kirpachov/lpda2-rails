@@ -16,6 +16,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   scope :random_order, -> { order(Arel.sql("RANDOM()")) }
+  scope :visible, -> { all } # default
 
   def translations_json
     res = {}
