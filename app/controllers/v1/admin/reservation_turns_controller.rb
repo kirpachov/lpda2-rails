@@ -74,10 +74,7 @@ module V1::Admin
     end
 
     def single_item_full_json(item)
-      item.as_json.merge(
-        starts_at: item.starts_at.strftime("%k:%M"),
-        ends_at: item.ends_at.strftime("%k:%M")
-      )
+      item.formatted_json
     end
   end
 end

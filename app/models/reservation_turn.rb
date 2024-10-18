@@ -50,6 +50,13 @@ class ReservationTurn < ApplicationRecord
     ReservationTurnValidTimes.run!(options.merge(turn: self))
   end
 
+  def formatted_json
+    as_json.merge(
+      starts_at: starts_at.strftime("%k:%M"),
+      ends_at: ends_at.strftime("%k:%M")
+    )
+  end
+
   private
 
   # ################################
