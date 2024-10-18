@@ -31,7 +31,7 @@ ExceptionNotification.configure do |config|
 
   # Email notifier sends notifications by email.
   config.add_notifier :email, {
-    email_prefix: "[ERROR ON #{Config.hash[:app_name]}] ",
+    email_prefix: "[ERROR ON #{Config.hash[:app_name]} #{Rails.env}] ",
     sender_address: Config.app.dig(:emails, :default_from),
     exception_recipients: recipients
   }
