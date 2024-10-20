@@ -26,9 +26,8 @@ module V1::Admin
     def create
       @call = CreatePreorderGroup.run(params: params.permit!.to_h)
 
-      
       return render_unprocessable_entity(@call) if @call.invalid?
-      
+
       @item = @call.result
 
       @item.reload
