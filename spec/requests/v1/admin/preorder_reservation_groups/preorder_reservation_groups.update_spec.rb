@@ -17,6 +17,7 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       active_to:
     }
   end
+
   let(:active_from) { nil }
   let(:active_to) { nil }
   let(:title) { "#{Faker::Lorem.sentence} #{SecureRandom.hex}" }
@@ -74,6 +75,7 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
 
     it do
       req
+      expect(json.dig(:item)).to include(:active_from)
       expect(json.dig(:item, :active_from)).to include(active_from)
     end
 
@@ -88,7 +90,13 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
     let(:active_to) { "2024-09-10" }
     let(:params) { { active_to: } }
 
+    before do
+      group.turns = [create(:reservation_turn)]
+    end
+
     it { expect { req }.to(change { group.reload.active_to }.from(nil)) }
+    it { expect { req }.not_to(change { group.reload.turns.count }) }
+    it { expect { req }.not_to(change { group.reload.dates.count }) }
 
     it do
       req
@@ -99,6 +107,78 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       req
       expect(json).not_to include(:message)
       expect(response).to have_http_status(:ok)
+    end
+  end
+
+  context "when updating dates but providing already associated turns and dates" do
+    let(:params) { { dates: dates } }
+    let(:dates) { group.dates.map { |d| { date: d.date.to_s, turn_id: d.reservation_turn_id } } }
+
+    before do
+      group
+    end
+
+    it { expect { req }.not_to(change { group.reload.dates.count }) }
+    # it { expect { req }.not_to(change { group.reload.dates.as_json }) }
+
+    it do
+      req
+      expect(json).not_to include(:message)
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  [
+    nil,
+    [],
+  ].each do |blank_val|
+    context "when updating dates to #{blank_val.inspect}" do
+      let(:params) { { dates: blank_val } }
+
+      before { group }
+
+      it { expect { req }.to(change { group.reload.dates.count }.from(1).to(0)) }
+
+      it do
+        req
+        expect(json).not_to include(:message)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
+  context "when updating turns to already associated turns" do
+    let(:params) { { turns: group.turns.pluck(:id) } }
+
+    before { group }
+
+    it { expect { req }.not_to(change { group.reload.turns.count }) }
+
+    it do
+      req
+      expect(json).not_to include(:message)
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  [
+    nil,
+    [],
+  ].each do |blank_val|
+    context "when updating turns to #{blank_val.inspect}" do
+      let(:params) { { turns: blank_val } }
+
+      before do
+        group.turns = [create(:reservation_turn)]
+      end
+
+      it { expect { req }.to(change { group.reload.turns.count }.from(1).to(0)) }
+
+      it do
+        req
+        expect(json).not_to include(:message)
+        expect(response).to have_http_status(:ok)
+      end
     end
   end
 

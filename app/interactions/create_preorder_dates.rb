@@ -15,19 +15,23 @@ class CreatePreorderDates < ActiveInteraction::Base
   validates :group, presence: true
 
   validate do
-    unless params.present? && params[:dates].is_a?(Array) && params[:dates].all?{|i| i.is_a?(Hash)}
+    unless params.present? && params[:dates].is_a?(Array) && params[:dates].all? { |i| i.is_a?(Hash) }
       errors.add(:base, "expected params[:dates] to be a array of hashes but params is #{params.inspect}")
     end
   end
 
   def execute
-    params.delete(:dates).map do |datum|
-      date = PreorderReservationDate.new(
-        datum.symbolize_keys.slice(:date).merge(group_id: group.id, reservation_turn_id: datum[:turn_id] || datum[:reservation_turn_id])
-      )
+    PreorderReservationDate.transaction do
+      group.dates.destroy_all
+      params.delete(:dates).map do |datum|
+        date = PreorderReservationDate.new(
+          datum.symbolize_keys.slice(:date).merge(group_id: group.id,
+                                                  reservation_turn_id: datum[:turn_id] || datum[:reservation_turn_id])
+        )
 
-      unless date.valid? && date.save
-        errors.add(:base, "date #{datum.inspect} is not valid: #{date.errors.full_messages.join(', ')}")
+        unless date.valid? && date.save
+          errors.add(:base, "date #{datum.inspect} is not valid: #{date.errors.full_messages.join(", ")}")
+        end
       end
     end
   end

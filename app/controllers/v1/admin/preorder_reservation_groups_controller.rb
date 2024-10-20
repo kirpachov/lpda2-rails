@@ -34,7 +34,9 @@ module V1::Admin
     end
 
     def update
-      @call = CreatePreorderGroup.run(params: params.permit!.to_h, group: @item)
+      @call = UpdatePreorderGroup.run(params: params.permit!.to_h.merge(id: @item.id))
+
+      @item.reload
 
       return render_unprocessable_entity(@call) if @call.invalid?
 
