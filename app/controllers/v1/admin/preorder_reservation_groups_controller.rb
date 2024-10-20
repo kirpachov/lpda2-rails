@@ -69,7 +69,7 @@ module V1::Admin
 
     def single_item_full_json(item)
       item.as_json.merge(
-        turns: item.turns.map(&:as_json),
+        turns: item.turns.map(&:formatted_json),
         dates: item.dates.map { |d| d.as_json.merge(reservation_turn: d.reservation_turn.formatted_json) }
       )
     end

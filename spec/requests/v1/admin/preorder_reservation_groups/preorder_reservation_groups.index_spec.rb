@@ -63,6 +63,14 @@ RSpec.describe "GET /v1/admin/preorder_reservation_groups" do
       it "should either have dates or turns" do
         expect(item[:turns].length + item[:dates].length).to be_positive
       end
+
+      it "starts_at should not include date nor seconds" do
+        expect(item[:turns].map { |t| t[:starts_at] }).to all(match(/\A\d{1,2}:\d{1,2}\z/))
+      end
+      
+      it do
+        expect(item[:dates].map{|j| j[:reservation_turn]}.flatten.map { |t| t[:starts_at] }).to all(match(/\A\d{1,2}:\d{1,2}\z/))
+      end
     end
   end
 

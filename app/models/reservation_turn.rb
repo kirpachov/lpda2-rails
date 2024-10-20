@@ -52,8 +52,8 @@ class ReservationTurn < ApplicationRecord
 
   def formatted_json
     as_json.merge(
-      starts_at: starts_at.strftime("%k:%M"),
-      ends_at: ends_at.strftime("%k:%M")
+      starts_at: starts_at.strftime("%k:%M").strip,
+      ends_at: ends_at.strftime("%k:%M").strip
     )
   end
 
