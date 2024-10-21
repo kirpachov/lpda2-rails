@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_09_161438) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_20_145928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_09_161438) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "holidays", force: :cascade do |t|
+    t.datetime "from_timestamp", precision: nil, null: false, comment: "From this moment on, the holiday is considered active"
+    t.datetime "to_timestamp", precision: nil, comment: "If present, the holiday is considered active until this moment"
+    t.time "weekly_from", comment: "If present, the holiday is considered active until 'weekly_to', but only after from_timestamp."
+    t.time "weekly_to"
+    t.integer "weekday", comment: "If present, the holiday is considered active only on this weekday."
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "image_to_records", force: :cascade do |t|

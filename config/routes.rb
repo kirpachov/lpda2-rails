@@ -80,6 +80,7 @@ Rails.application.routes.draw do
         resources :preorder_reservation_groups
         resources :reservation_turns
         resources :reservation_tags
+        resources :holidays
         resources :public_messages, only: %i[index create update show], param: :key
 
         resources :reservations do
