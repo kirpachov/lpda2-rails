@@ -67,7 +67,7 @@ module V1::Admin
     end
 
     def full_json(item_or_items)
-      return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+      return item_or_items.includes(:text_translations).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(Holiday)
 
@@ -76,10 +76,12 @@ module V1::Admin
 
     def single_item_full_json(item)
       item.as_json.merge(
-        "from_timestamp" => item.from_timestamp&.strftime("%Y-%m-%d %H:%M"),
-        "to_timestamp" => item.to_timestamp&.strftime("%Y-%m-%d %H:%M"),
-        "weekly_from" => item.weekly_from&.strftime("%H:%M"),
-        "weekly_to" => item.weekly_to&.strftime("%H:%M")
+        from_timestamp: item.from_timestamp&.strftime("%Y-%m-%d %H:%M"),
+        to_timestamp: item.to_timestamp&.strftime("%Y-%m-%d %H:%M"),
+        weekly_from: item.weekly_from&.strftime("%H:%M"),
+        weekly_to: item.weekly_to&.strftime("%H:%M"),
+        message: item.message,
+        translations: item.translations_json
       )
     end
 
