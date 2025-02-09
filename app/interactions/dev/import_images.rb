@@ -4,12 +4,13 @@ require "csv"
 
 module Dev
   # Import images from the old application.
-  # Images will be located in the migration/images folder.
-  # the name of the image will be the member_id of the Image.
+  # In development, test this lib in console:
+  # Dev::ImportImages.run!
   class ImportImages < ActiveInteraction::Base
     SUPPORTED_FORMATS = %w[jpg jpeg png svg].freeze
 
     string :csv_location, default: Rails.root.join("migration", "records", "media.csv").to_s
+    string :images_location, default: Rails.root.join("migration", "images").to_s
     boolean :verbose, default: false
 
     def execute
@@ -17,8 +18,7 @@ module Dev
       Rails.logger.silence(verbose ? Logger::DEBUG : Logger::ERROR) do
         CSV.foreach(csv_location, headers: true, col_sep: ";", liberal_parsing: true) do |row|
           image = Image.find_or_initialize_by(member_id: row["id"])
-          file_path = Dir[Rails.root.join("migration/images/#{row["id"]}.#{row["extension"]}")]
-          # puts "Processing row #{row_index} with id #{row["id"]} and extension #{row["extension"]}. file_path: #{file_path.inspect}"
+          file_path = Dir["#{images_location}/#{row["id"]}.#{row["extension"]}"]
 
           if file_path.any? && File.file?(file_path[0])
             image.filename = "#{row["id"]}.#{row["extension"]}"
