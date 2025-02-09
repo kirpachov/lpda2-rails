@@ -1,5 +1,7 @@
 # Run this on old lpda server.
 
+set -e
+
 rm -rf /tmp/lpda-export
 
 mkdir /tmp/lpda-export
