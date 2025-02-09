@@ -45,7 +45,7 @@ RSpec.describe "POST /v1/admin/reservation_turn_messages" do
 
   let(:from_date) { nil }
   let(:to_date) { nil }
-  let(:message) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence, } }
+  let(:message) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence } }
 
   let!(:reservation_turn) do
     create(:reservation_turn)
@@ -98,7 +98,7 @@ RSpec.describe "POST /v1/admin/reservation_turn_messages" do
 
     it_behaves_like "successful request /v1/admin/reservation_turn_messages"
 
-    it { expect { req }.to(change { ReservationTurnMessage.where(from_date: from_date).count }.by(1)) }
+    it { expect { req }.to(change { ReservationTurnMessage.where(from_date:).count }.by(1)) }
   end
 
   context "checking to_date" do
@@ -106,7 +106,7 @@ RSpec.describe "POST /v1/admin/reservation_turn_messages" do
 
     it_behaves_like "successful request /v1/admin/reservation_turn_messages"
 
-    it { expect { req }.to(change { ReservationTurnMessage.where(to_date: to_date).count }.by(1)) }
+    it { expect { req }.to(change { ReservationTurnMessage.where(to_date:).count }.by(1)) }
   end
 
   context "when providing both from_date and to_date" do

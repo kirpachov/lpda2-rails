@@ -149,7 +149,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
       end
 
-      [2,3].each do |days|
+      [2, 3].each do |days|
         context "when reserving for #{days} days in advance, is allowed" do
           let(:date) { Time.zone.now + days.days }
 

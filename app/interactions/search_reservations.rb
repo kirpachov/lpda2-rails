@@ -4,8 +4,14 @@ class SearchReservations < ActiveInteraction::Base
   interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
   validate do
-    errors.add(:params, ":time_from should have format HH:MM when present") if params[:time_from].present? && !params[:time_from].match?(/\A\d{1,2}:\d{1,2}\z/)
-    errors.add(:params, ":time_to should have format HH:MM when present") if params[:time_to].present? && !params[:time_to].match?(/\A\d{1,2}:\d{1,2}\z/)
+    if params[:time_from].present? && !params[:time_from].match?(/\A\d{1,2}:\d{1,2}\z/)
+      errors.add(:params,
+                 ":time_from should have format HH:MM when present")
+    end
+    if params[:time_to].present? && !params[:time_to].match?(/\A\d{1,2}:\d{1,2}\z/)
+      errors.add(:params,
+                 ":time_to should have format HH:MM when present")
+    end
   end
 
   def execute

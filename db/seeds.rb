@@ -102,4 +102,9 @@ free_turns = ReservationTurn.where.not(id: preorder_group.dates.pluck(:reservati
 
 preorder_group.turns = free_turns.sample(2)
 
-(-10..10).to_a.each { |day_ago| 5.times { Reservation.create!(adults: [2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10].sample, fullname: Faker::Name.first_name, email: "sasha+#{SecureRandom.hex}@opinioni.net", datetime: day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours) } }
+(-10..10).to_a.each do |day_ago|
+  5.times do
+    Reservation.create!(adults: [2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10].sample, fullname: Faker::Name.first_name,
+                        email: "sasha+#{SecureRandom.hex}@opinioni.net", datetime: day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours)
+  end
+end

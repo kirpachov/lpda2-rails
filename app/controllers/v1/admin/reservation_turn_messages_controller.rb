@@ -30,9 +30,7 @@ module V1::Admin
         @item.turns = ReservationTurn.where(id: params[:turn_ids]) if @item.valid? && @item.save
       end
 
-      if @item.valid? && @item.persisted?
-        return show
-      end
+      return show if @item.valid? && @item.persisted?
 
       render_unprocessable_entity(@item)
     end
@@ -76,7 +74,7 @@ module V1::Admin
     def single_item_full_json(item)
       item.as_json(methods: %i[message]).merge(
         translations: item.translations_json,
-        turns: item.turns.map{|t| t.as_json(only: %w[id name weekday]) }
+        turns: item.turns.map { |t| t.as_json(only: %w[id name weekday]) }
       )
     end
   end

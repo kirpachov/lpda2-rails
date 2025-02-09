@@ -46,7 +46,7 @@ RSpec.describe "PATCH /v1/admin/reservation_turn_messages/<message-id>" do
 
   let(:from_date) { nil }
   let(:to_date) { nil }
-  let(:message) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence, } }
+  let(:message) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence } }
 
   let!(:turn_message) do
     create(:reservation_turn_message)
@@ -144,7 +144,7 @@ RSpec.describe "PATCH /v1/admin/reservation_turn_messages/<message-id>" do
   end
 
   context "when providing non-existent turn message id" do
-    let(:turn_message_id) { 99999999 }
+    let(:turn_message_id) { 99_999_999 }
 
     it_behaves_like "failed request PATCH /v1/admin/reservation_turn_messages/<message-id>"
 

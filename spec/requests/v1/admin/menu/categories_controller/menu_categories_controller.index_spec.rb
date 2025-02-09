@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_examples "successul request" do |additions|
+RSpec.shared_examples "successul request" do |_additions|
   it { expect { req }.not_to raise_error }
 
   it do
@@ -75,7 +75,7 @@ RSpec.describe "GET /v1/admin/menu/categories" do
       expect(json.dig(:items, 0, :stats)).to eq(
         "dishes" => { "active" => 1, "inactive" => 2 },
         "children" => { "active" => 1 }
-        )
+      )
     end
   end
 end

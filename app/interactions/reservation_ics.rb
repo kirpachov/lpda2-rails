@@ -11,14 +11,17 @@ class ReservationIcs < ActiveInteraction::Base
 
     tzid = Config.app[:restaurant_location_time_zone]
     cal.event do |e|
-      e.dtstart = Icalendar::Values::DateTime.new event_start, 'tzid' => tzid
-      e.dtend   = Icalendar::Values::DateTime.new event_end, 'tzid' => tzid
+      e.dtstart = Icalendar::Values::DateTime.new event_start, "tzid" => tzid
+      e.dtend   = Icalendar::Values::DateTime.new event_end, "tzid" => tzid
 
       e.attendee = ["mailto:#{organization_email}", "mailto:#{reservation.email}"] # one or more email recipients (required)
       e.summary = I18n.t("reservation_mailer.confirmation.subject", fullname: reservation.fullname)
       e.location = address if address.present?
       e.status = "CONFIRMED"
-      e.organizer = Icalendar::Values::CalAddress.new("mailto:#{organization_email}", cn: %(La Porta d'Acqua)) if organization_email.present?
+      if organization_email.present?
+        e.organizer = Icalendar::Values::CalAddress.new("mailto:#{organization_email}",
+                                                        cn: %(La Porta d'Acqua))
+      end
     end
 
     cal.to_ical

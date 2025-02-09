@@ -17,7 +17,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
     [
       create(:menu_dish, price: 1),
       create(:menu_dish, price: 2.5),
-      create(:menu_dish, price: 3.99),
+      create(:menu_dish, price: 3.99)
     ]
   end
 
@@ -40,6 +40,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
 
     it { expect { req }.to change { dishes.first.reload.price.to_f }.from(1.0).to(2.01) }
     it { expect { req }.to change { dishes.last.reload.price.to_f }.from(3.99).to(5.00) }
+
     it do
       req
       expect(response).to have_http_status(:ok)
@@ -53,10 +54,10 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
     it do
       req
       expect(json[:details]).to eq([
-        { "id" => dishes.first.id, "price" => 2.01 },
-        { "id" => dishes.second.id, "price" => 3.51 },
-        { "id" => dishes.last.id, "price" => 5.00 },
-      ])
+                                     { "id" => dishes.first.id, "price" => 2.01 },
+                                     { "id" => dishes.second.id, "price" => 3.51 },
+                                     { "id" => dishes.last.id, "price" => 5.00 }
+                                   ])
     end
 
     context "when some dish has price nil" do
@@ -78,11 +79,8 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
 
       it do
         req
-        expect(json[:details]).to match_array([
-          { "id" => dishes.first.id, "price" => 1.01 },
-          { "id" => dishes.second.id, "price" => 3.51 },
-          { "id" => dishes.last.id, "price" => 5.00 },
-        ])
+        expect(json[:details]).to contain_exactly({ "id" => dishes.first.id, "price" => 1.01 },
+                                                  { "id" => dishes.second.id, "price" => 3.51 }, { "id" => dishes.last.id, "price" => 5.00 })
       end
     end
 
@@ -105,10 +103,10 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
       it do
         req
         expect(json[:details]).to eq([
-          { "id" => dishes.first.id, "price" => 2.01 },
-          { "id" => dishes.second.id, "price" => 3.51 },
-          { "id" => dishes.last.id, "price" => 5.00 },
-        ])
+                                       { "id" => dishes.first.id, "price" => 2.01 },
+                                       { "id" => dishes.second.id, "price" => 3.51 },
+                                       { "id" => dishes.last.id, "price" => 5.00 }
+                                     ])
       end
     end
   end
@@ -119,6 +117,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
 
     it { expect { req }.to change { dishes.first.reload.price.to_f }.from(1.0).to(1.15) }
     it { expect { req }.to change { dishes.last.reload.price.to_f }.from(3.99).to(4.59) }
+
     it do
       req
       expect(response).to have_http_status(:ok)
@@ -151,8 +150,8 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/update_prices" do
     it do
       req
       expect(json[:details]).to eq([
-        { "id" => dishes.first.id, "price" => 2.01 },
-      ])
+                                     { "id" => dishes.first.id, "price" => 2.01 }
+                                   ])
     end
   end
 

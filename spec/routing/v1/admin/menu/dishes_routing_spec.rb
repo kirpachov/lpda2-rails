@@ -11,7 +11,11 @@ RSpec.describe "Routing /v1/admin/menu/dishes" do
   it { expect(delete: "/v1/admin/menu/dishes/77").to route_to("v1/admin/menu/dishes#destroy", format: :json, id: "77") }
   it { expect(post: "/v1/admin/menu/dishes/77/copy").to route_to("v1/admin/menu/dishes#copy", format: :json, id: "77") }
   it { expect(post: "/v1/admin/menu/dishes/52/copy").to route_to("v1/admin/menu/dishes#copy", format: :json, id: "52") }
-  it { expect(patch: "/v1/admin/menu/dishes/update_prices").to route_to("v1/admin/menu/dishes#update_prices", format: :json) }
+
+  it {
+    expect(patch: "/v1/admin/menu/dishes/update_prices").to route_to("v1/admin/menu/dishes#update_prices",
+                                                                     format: :json)
+  }
 
   it {
     expect(get: "/v1/admin/menu/dishes/52/references").to route_to("v1/admin/menu/dishes#references", format: :json,

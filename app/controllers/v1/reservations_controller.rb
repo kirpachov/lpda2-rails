@@ -59,7 +59,10 @@ module V1
 
     def valid_times
       call = ValidTimesGroupByTurn.run(params:)
-      return render_error(status: 400, message: call.errors.full_messages.join(", ")) if call.errors.any? || call.invalid?
+      if call.errors.any? || call.invalid?
+        return render_error(status: 400,
+                            message: call.errors.full_messages.join(", "))
+      end
 
       render json: call.result
     end

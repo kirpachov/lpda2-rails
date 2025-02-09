@@ -28,7 +28,7 @@ class ReservationTurnMessage < ApplicationRecord
   # ################################
   # Scopes
   # ################################
-  scope :active_at, ->(date) {
+  scope :active_at, lambda { |date|
     where("(from_date IS NULL OR from_date <= ?) AND (to_date IS NULL OR to_date >= ?)", date, date)
   }
   scope :active_now, -> { active_at(Time.zone.now.to_date) }

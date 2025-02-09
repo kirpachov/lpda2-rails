@@ -10,7 +10,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
   let(:headers) { default_headers }
 
   def req(provided_params = params)
-    get "/v2/reservations/valid_times", params: provided_params, headers: headers
+    get "/v2/reservations/valid_times", params: provided_params, headers:
   end
 
   context "when there are no turns" do
@@ -99,7 +99,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
       it { expect(json.dig(:holidays, 0, :message)).to eq("overlapping with only the turn") }
 
       [
-        "it",
+        "it"
       ].each do |v|
         context "if making request with header accept-language: #{v.inspect}" do
           let(:headers) { default_headers.merge("Accept-Language" => v) }
@@ -176,7 +176,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
     it {
       expect(json[:turns]).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer,
-                                  "step" => Integer))
+                                          "step" => Integer))
     }
 
     it { expect(json[:turns]).to all(include("valid_times" => %w[12:00 12:30 13:00 13:30 14:00])) }
@@ -202,7 +202,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
     it {
       expect(json[:turns]).to all(include("id" => Integer, "starts_at" => String, "ends_at" => String, "weekday" => Integer,
-                                  "step" => Integer))
+                                          "step" => Integer))
     }
 
     it { expect(json[:turns].count).to eq 2 }
@@ -422,12 +422,11 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     before do
       create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30, weekday: Time.zone.now.wday)
       create(:holiday,
-                 from_timestamp: 2.days.ago,
-                 to_timestamp: 2.day.from_now,
-                 weekday: Time.zone.now.wday,
-                 weekly_from: "10:00",
-                 weekly_to: "13:00"
-          )
+             from_timestamp: 2.days.ago,
+             to_timestamp: 2.days.from_now,
+             weekday: Time.zone.now.wday,
+             weekly_from: "10:00",
+             weekly_to: "13:00")
 
       travel_to(Time.zone.now.beginning_of_day) do
         req(date: Time.zone.now.to_date.to_s)
@@ -454,7 +453,8 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     ].each do |days|
       context "when requested date is #{days} days from now, should return valid times." do
         before do
-          create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30, weekday: (Time.zone.now + days.days).wday)
+          create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30,
+                                    weekday: (Time.zone.now + days.days).wday)
 
           travel_to(Time.zone.now.beginning_of_day) do
             req(date: (Time.zone.now + days.days).to_date.to_s)
@@ -480,7 +480,8 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     ].each do |days|
       context "when requested date is #{days} days from now, should not return any time." do
         before do
-          create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30, weekday: (Time.zone.now + days.days).wday)
+          create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30,
+                                    weekday: (Time.zone.now + days.days).wday)
 
           travel_to(Time.zone.now.beginning_of_day) do
             req(date: (Time.zone.now + days.days).to_date.to_s)
@@ -506,12 +507,14 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     before do
       t = create(:reservation_turn, starts_at: "12:00", ends_at: "14:00", step: 30, weekday: Time.zone.now.wday)
 
-      t.reservation_turn_messages << create(:reservation_turn_message, from_date: Time.zone.now.to_date, to_date: Time.zone.now.to_date).tap do |m|
+      t.reservation_turn_messages << create(:reservation_turn_message, from_date: Time.zone.now.to_date,
+                                                                       to_date: Time.zone.now.to_date).tap do |m|
         m.assign_translation("message", it: "primo messaggio", en: "first message")
         m.save!
       end
 
-      t.reservation_turn_messages << create(:reservation_turn_message, from_date: 2.days.from_now, to_date: nil).tap do |m|
+      t.reservation_turn_messages << create(:reservation_turn_message, from_date: 2.days.from_now,
+                                                                       to_date: nil).tap do |m|
         m.assign_translation("message", it: "messaggio futuro", en: "future message")
         m.save!
       end
@@ -538,9 +541,10 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     it { expect(json.dig(:turns, 0, :messages)).to all(be_a(Hash)) }
     it { expect(json.dig(:turns, 0, :messages)).to all(include(message: String)) }
     it { expect(json.dig(:turns, 0, :messages)).to all(include(message: String)) }
-    it { expect(json.dig(:turns, 0, :messages).pluck(:message)).to match_array([
-      "first message",
-      "always present message"
-    ]) }
+
+    it {
+      expect(json.dig(:turns, 0,
+                      :messages).pluck(:message)).to contain_exactly("first message", "always present message")
+    }
   end
 end

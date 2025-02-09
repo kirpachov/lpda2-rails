@@ -36,10 +36,10 @@ RSpec.describe "POST /v1/admin/reservation_turn_messages" do
 
   let(:default_headers) { auth_headers }
   let(:default_params) do
-    { }
+    {}
   end
 
-  let(:translations) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence, } }
+  let(:translations) { { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence } }
 
   let!(:message) do
     create(:reservation_turn_message).tap do |t|
