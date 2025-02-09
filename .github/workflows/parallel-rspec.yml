@@ -34,7 +34,7 @@ jobs:
       - name: Install useful packages
         run: sudo apt update && sudo apt install libglib2.0-0 libglib2.0-dev libpoppler-glib8 libvips libvips-dev
       - name: Install Ruby and gems
-        uses: ruby/setup-ruby
+        uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
       - name: Set up databases

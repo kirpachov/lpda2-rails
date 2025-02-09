@@ -32,7 +32,7 @@ jobs:
 
     # Customize the ruby version depending on your needs
     - name: Setup Ruby
-      uses: ruby/setup-ruby
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.1.3'
 
