@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "csv"
+
 module Dev
   # Import images from the old application.
   # Images will be located in the migration/images folder.
@@ -7,32 +9,27 @@ module Dev
   class ImportImages < ActiveInteraction::Base
     SUPPORTED_FORMATS = %w[jpg jpeg png svg].freeze
 
+    string :csv_location, default: Rails.root.join("migration", "records", "media.csv").to_s
     boolean :verbose, default: false
 
     def execute
+      row_index = 0
       Rails.logger.silence(verbose ? Logger::DEBUG : Logger::ERROR) do
-        all.each_with_index do |file, index|
-          Rails.logger.error "Importing image #{index + 1}/#{all.size}: #{file}" if ((index + 1) % 100).zero?
+        CSV.foreach(csv_location, headers: true, col_sep: ";", liberal_parsing: true) do |row|
+          image = Image.find_or_initialize_by(member_id: row["id"])
+          file_path = Dir[Rails.root.join("migration/images/#{row["id"]}.#{row["extension"]}")]
+          # puts "Processing row #{row_index} with id #{row["id"]} and extension #{row["extension"]}. file_path: #{file_path.inspect}"
 
-          Image.create!(filename: file[:filename], member_id: file[:member_id]).tap do |image|
-            image.attached_image.attach(io: File.open(file[:path]), filename: file[:filename])
+          if file_path.any? && File.file?(file_path[0])
+            image.filename = "#{row["id"]}.#{row["extension"]}"
+            image.attached_image.attach(io: File.open(file_path[0]), filename: "#{row["id"]}.#{row["extension"]}")
+            image.save!
+          else
+            Rails.logger.error "Image file not found: #{file_path[0]} for row #{row_index}"
           end
+
+          row_index += 1
         end
-      end
-    end
-
-    def existing
-      @existing ||= Image.pluck(:member_id)
-    end
-
-    def all
-      @all ||= Dir[Rails.root.join("migration/images/*")].map do |file|
-                 { path: file, filename: File.basename(file),
-                   member_id: File.basename(file).split(".")[0..-2].join(".") }
-               end.filter do |file_data|
-        File.file?(file_data[:path]) &&
-          !file_data[:member_id].in?(existing) &&
-          File.basename(file_data[:filename]).split(".").last.in?(SUPPORTED_FORMATS)
       end
     end
   end
