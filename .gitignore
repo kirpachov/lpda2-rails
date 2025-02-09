@@ -45,3 +45,5 @@ docker-compose.override.yml
 .env
 config/credentials/production.yml.enc
 config/credentials/production.key
+migration/records
+migration/images
