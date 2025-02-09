@@ -8,6 +8,24 @@ mkdir /tmp/lpda-export
 
 sudo chmod a+rwx /tmp/lpda-export -R
 
+
+# #####################
+# EXPORT
+# #####################
+
+mysql laportadacqua -e "SELECT * FROM (select 'id', 'token', 'service', 'date', 'expire' UNION ALL (SELECT \`id\`, \`token\`, \`service\`, \`date\`, \`expire\` FROM tokens)) m INTO OUTFILE '/tmp/lpda-export/tokens.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
+  echo "Exported tokens to /tmp/lpda-export/tokens.csv"
+
+mysql laportadacqua -e "SELECT * FROM (select 'id', 'name', 'surname', 'email', 'telephone', 'reservationDate', 'isOutside', 'table', 'people', 'ip', 'token', 'status', 'registrationDate', 'modificationDate', 'eliminationDate', 'notes', 'isViewed', 'color', 'lang' UNION ALL (SELECT id, name, surname, email, telephone, reservationDate, isOutside, \`table\`, people, ip, token, status, registrationDate, modificationDate, eliminationDate, notes, isViewed, color, lang FROM reservations)) m INTO OUTFILE '/tmp/lpda-export/reservations.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
+  echo "Exported reservations to /tmp/lpda-export/reservations.csv"
+
+mysql laportadacqua -e "SELECT * FROM (SELECT 'id', 'extension' UNION ALL (SELECT id, extension FROM media)) m INTO OUTFILE '/tmp/lpda-export/media.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
+  echo "Exported media to /tmp/lpda-export/media.csv"
+
+# #####################
+# Exporting menu components and associations
+# #####################
+
 mysql laportadacqua -e "SELECT * FROM (SELECT 'id', 'name.it', 'name.en', 'imageId' UNION ALL (SELECT foodAllergens.id, t.it, t.en, imageId FROM foodAllergens INNER JOIN translations t ON foodAllergens.nameTranslationId = t.id)) as a INTO OUTFILE '/tmp/lpda-export/allergens.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
   echo "Exported allergens to /tmp/lpda-export/allergens.csv"
 
@@ -16,11 +34,6 @@ mysql laportadacqua -e "SELECT * FROM (SELECT 'id', 'name.it', 'name.en', 'descr
 
 mysql laportadacqua -e "SELECT * FROM (SELECT 'id', 'name.it', 'name.en', 'imageId', 'color' UNION ALL (SELECT foodTags.id, t.it, t.en, imageId, color FROM foodTags INNER JOIN translations t ON foodTags.nameTranslationId = t.id)) as a INTO OUTFILE '/tmp/lpda-export/tags.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
   echo "Exported tags to /tmp/lpda-export/tags.csv"
-
-# mysql laportadacqua -e "SELECT * FROM media INTO OUTFILE '/tmp/lpda-export/media.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
-#   echo "Exported media to /tmp/lpda-export/media.csv"
-
-# Exporting menu
 
 mysql laportadacqua -e "SELECT * FROM (SELECT 'id', 'name.it', 'name.en', 'description.it', 'description.en', 'enabled', 'price', 'isSpecial', 'imageId', 'registrationDate', 'endDate', 'priority' UNION ALL (SELECT menu.id, tn.it, tn.en, td.it, td.en, enabled, price, isSpecial, imageId, registrationDate, endDate, priority FROM menu INNER JOIN translations tn ON menu.nameTranslationId = tn.id INNER JOIN translations td ON menu.descriptionTranslationId = td.id)) as a INTO OUTFILE '/tmp/lpda-export/menu.csv' FIELDS TERMINATED BY ';' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" &&
   echo "Exported menu to /tmp/lpda-export/menu.csv"
