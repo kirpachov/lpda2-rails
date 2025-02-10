@@ -24,8 +24,8 @@ module Dev::Menu
             menu.description = row["description.en"]
           end
 
-          if row["imageId"].to_i.positive? && (image = Image.find_by(member_id: row["imageId"])) && !menu.images.include?(image)
-            menu.images << image
+          if row["imageId"].to_i.positive? && (image = Image.find_by(member_id: row["imageId"]))
+            menu.images << image unless menu.images.include?(image)
           else
             Rails.logger.warn "Image not found for menu #{menu.member_id}. Old image id: #{row["imageId"].inspect}"
           end

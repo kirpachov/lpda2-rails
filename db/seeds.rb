@@ -47,29 +47,30 @@ if Rails.env.production? && ENV["LPDA2_ALLOW_PRODUCTION_SEEDS"].to_s != "true"
 end
 
 if ENV["LPDA2_IMPORT_OLD_DATA"].to_s == "true"
-  debug "Importing images from old website..."
-  Dev::ImportImages.run!
+  # debug "Importing images from old website..."
+  # Dev::ImportImages.run!
 
-  debug "Importing ingredients from old website..."
-  Dev::Menu::ImportIngredients.run!
+  # debug "Importing ingredients from old website..."
+  # Dev::Menu::ImportIngredients.run!
 
-  debug "Importing tags from old website..."
-  Dev::Menu::ImportTags.run!
+  # debug "Importing tags from old website..."
+  # Dev::Menu::ImportTags.run!
 
-  debug "Importing allergens from old website..."
-  Dev::Menu::ImportAllergens.run!
+  # debug "Importing allergens from old website..."
+  # Dev::Menu::ImportAllergens.run!
 
-  debug "Creating default settings..."
-  Setting.create_missing
+  # debug "Creating default settings..."
+  # Setting.create_missing
 
-  debug "Importing menus..."
-  Dev::Menu::ImportMenus.run!
+  # debug "Importing menus..."
+  # Dev::Menu::ImportMenus.run!
 
-  debug "Importing categories..."
-  Dev::Menu::ImportCategories.run!
+  # debug "Importing categories..."
+  # Dev::Menu::ImportCategories.run!
 
-  debug "Importing dishes..."
-  Dev::Menu::ImportDishes.run!
+  # debug "Importing dishes..."
+  # Dev::Menu::ImportDishes.run!
+  Dev::ImportAll.run!
   Menu::Dish.all.update(status: :active)
 end
 

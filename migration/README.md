@@ -15,3 +15,6 @@ to the new version.
 # From migration folder
 ./export-old-images.sh
 ```
+
+## Troubleshooting
+When having issues with .csv files, try to open it with libre office calc and save it again. Sometimes mysql exports some rows with `"` and `;`

@@ -30,8 +30,8 @@ module Dev::Menu
             Rails.logger.warn "Parent not found for category #{category.member_id}. Old parent id: #{categories[row["id"]].inspect}"
           end
 
-          if row["imageId"].to_i.positive? && (image = Image.find_by(member_id: row["imageId"])) && !category.images.include?(image)
-            category.images << image
+          if row["imageId"].to_i.positive? && (image = Image.find_by(member_id: row["imageId"]))
+            category.images << image unless category.images.include?(image)
           else
             Rails.logger.warn "Image not found for category #{category.member_id}. Old image id: #{row["imageId"].inspect}"
           end
