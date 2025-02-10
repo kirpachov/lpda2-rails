@@ -25,7 +25,7 @@ module Dev::Menu
 
           image_id = row["imageId"].to_i.zero? ? nil : row["imageId"].to_i
 
-          ingredient.image = Image.where(member_id: image_id).first if image_id.to_i.positive?.present?
+          ingredient.image = Image.where(member_id: image_id).first if image_id.present?
 
           if ingredient.image.nil? && image_id.present?
             Rails.logger.warn "Image not found for ingredient #{ingredient.member_id}. Old image id: #{image_id.inspect}"
