@@ -26,15 +26,17 @@ module Dev::Menu
 
           dish.save!
 
-          if (category = Menu::Category.find_by(member_id: "lpda-category-#{menu_ids[row["id"]]}"))
-            dish.categories << category unless dish.categories.include?(category)
-          else
-            Rails.logger.warn "Category not found for dish #{dish.member_id}. Old category id: #{menu_ids[row["id"]].inspect}"
+          (menu_ids[row["id"]] || []).each do |category_id|
+            if (category = Menu::Category.find_by(member_id: "lpda-category-#{category_id}"))
+              dish.categories << category unless dish.categories.include?(category)
+            else
+              Rails.logger.warn "Category not found for dish #{dish.member_id}. Old category id: #{menu_ids[row["id"]].inspect}"
+            end
           end
 
           if row["imageId"].present? && (image = Image.find_by(member_id: row["imageId"]))
             dish.images << image unless dish.images.include?(image)
-          else
+          elsif row["imageId"].to_i.positive?
             Rails.logger.warn "Image not found for dish #{dish.member_id}. Old image id: #{row["imageId"].inspect}"
           end
 
@@ -55,14 +57,19 @@ module Dev::Menu
       end
     end
 
-    # Returns a hash of { foodItemId => categoryId } where foodItem is the dish
+    # Returns a hash of { foodItemId => [category1Id, category2Id] } where foodItem is the dish
     def menu_ids
       return @menu_ids if @menu_ids
 
-      data = CSV.open(Rails.root.join("migration/records/categoryItemAssociation.csv"), headers: true, col_sep: ";",
-                                                                                     liberal_parsing: true).to_a.map(&:to_h)
+      @menu_ids = {}
 
-      @menu_ids = data.map { |j| [j["foodItemId"], j["categoryId"]] }.to_h
+      CSV.open(Rails.root.join("migration/records/categoryItemAssociation.csv"), headers: true, col_sep: ";",
+                                                                                     liberal_parsing: true).to_a.each do |row|
+        @menu_ids[row["foodItemId"]] ||= []
+        @menu_ids[row["foodItemId"]] << row["categoryId"]
+      end
+
+      @menu_ids
     end
 
     # Returns a hash of { foodItemId => tagsId[] }
