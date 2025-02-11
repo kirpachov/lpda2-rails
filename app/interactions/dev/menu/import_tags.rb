@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Dev::Menu
   class ImportTags < ActiveInteraction::Base
     DEFAULT_FILE = Rails.root.join("migration/records/tags.csv").to_s

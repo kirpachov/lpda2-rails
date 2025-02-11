@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Dev::Menu
   class ImportCategories < ActiveInteraction::Base
     DEFAULT_FILE = Rails.root.join("migration/records/categories.csv").to_s

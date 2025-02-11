@@ -9,6 +9,8 @@ gem "rails", "~> 7.0.8"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 
+gem "csv", "~> 3.2.5"
+
 gem "health_check", "~> 3.1.0"
 
 gem "icalendar", "~> 2.10.3"

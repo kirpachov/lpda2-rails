@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Dev
   # Import images from the old application.
   # In development, test this lib in console:
