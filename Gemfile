@@ -67,6 +67,8 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
 gem "bootsnap", require: false
 
+gem "parallel", "~> 1.24.0"
+
 group :development, :test do
   gem "parallel_tests", "~> 4.5.1"
 
