@@ -33,7 +33,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-unzip "$ARCHIVE_NAME"
+unzip -q "$ARCHIVE_NAME"
 if [ $? -ne 0 ]; then
     echo "Errore nello scompattare l'archivio."
     exit 1
