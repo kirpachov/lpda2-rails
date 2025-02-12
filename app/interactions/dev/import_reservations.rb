@@ -18,7 +18,7 @@ module Dev
             fullname: "#{row["name"]} #{row["surname"]}",
             email: row["email"].to_s.gsub(/\s+/, ""),
             phone: row["telephone"].to_s.gsub(/\s+/, ""),
-            datetime: row["reservationDate"], # TODO check time zone
+            datetime: DateTime.parse(row["reservationDate"]) - 1.hour, # removing one hour to have UTC time.
             table: row["table"].to_s.present? && row["table"] != "\\N" ? row["table"] : nil,
             adults: row["people"].to_i,
             children: 0,
