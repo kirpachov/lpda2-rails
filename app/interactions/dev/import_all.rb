@@ -8,6 +8,7 @@ module Dev
     def execute
       ImportImages.run!(verbose:)
       Menu::ImportAll.run!(verbose:)
+      SplitAndImportReservations.run!(verbose:)
     end
   end
 end

@@ -47,9 +47,14 @@ if Rails.env.production? && ENV["LPDA2_ALLOW_PRODUCTION_SEEDS"].to_s != "true"
 end
 
 if ENV["LPDA2_IMPORT_OLD_DATA"].to_s == "true" || Rails.env.development?
-  debug "Importing all data from old website..."
-  Dev::ImportAll.run!
-  Menu::Dish.all.update(status: :active)
+  debug <<-LOG
+  To import data from old website, you can run:
+
+  bundle exec rake import:[all|images|menu|reservations]
+
+  Note that reservations may take a while to import.
+
+LOG
 end
 
 # #######################
