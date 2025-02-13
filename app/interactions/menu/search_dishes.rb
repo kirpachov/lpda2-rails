@@ -76,7 +76,14 @@ module Menu
         menu_dishes_in_categories: {
           category_id: params[:category_id].present? ? params[:category_id].to_i : nil
         }
-      ).order("#{Menu::DishesInCategory.table_name}.index ASC")
+      ).order(
+        Arel.sql(
+          <<~SQL.squish
+            CASE WHEN status = 'active' THEN 0 ELSE 1 END,
+            #{Menu::DishesInCategory.table_name}.index ASC
+          SQL
+        )
+      )
     end
 
     def filter_by_category(items)

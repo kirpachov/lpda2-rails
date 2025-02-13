@@ -65,9 +65,10 @@ RSpec.describe V1::Admin::Menu::DishesController do
       end
 
       context "when filtering by category_id" do
+        let(:very_first_dish) { create(:menu_dish) }
         let!(:category) do
           create(:menu_category).tap do |cat|
-            cat.dishes << create(:menu_dish)
+            cat.dishes << very_first_dish
           end
         end
 
@@ -93,6 +94,29 @@ RSpec.describe V1::Admin::Menu::DishesController do
             expect(subject).to include(items: Array)
             expect(subject[:items].count).to eq 1
           end
+        end
+
+        context "will order active dishes first, then inactive ones ordered by index" do
+          let!(:dishes) do
+            inactive_one = create(:menu_dish, status: :inactive)
+            first_active = create(:menu_dish, status: :active)
+            active_one = create(:menu_dish, status: :active)
+            Menu::DishesInCategory.create!(menu_dish: inactive_one, menu_category: category, index: 1)
+            Menu::DishesInCategory.create!(menu_dish: active_one, menu_category: category, index: 2)
+            Menu::DishesInCategory.create!(menu_dish: first_active, menu_category: category, index: 3)
+
+            [
+              very_first_dish,
+              active_one,
+              first_active,
+              inactive_one
+            ]
+          end
+
+          before { req(category_id: category.id) }
+
+          # it { expect(json.pluck("id")).to eq(dishes.map(&:id)) }
+          it { expect(json[:items].pluck("id")).to eq(dishes.map(&:id)) }
         end
       end
 
