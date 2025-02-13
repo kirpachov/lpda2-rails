@@ -26,12 +26,16 @@ module Menu
     belongs_to :parent, class_name: "Menu::Category", optional: true
     belongs_to :root, class_name: "Menu::Category", optional: true
     has_many :children, class_name: "Menu::Category", foreign_key: :parent_id # , dependent: :destroy
+    has_many :visible_children, -> { visible }, class_name: "Menu::Category", foreign_key: :parent_id
 
     has_many :menu_dishes_in_categories, class_name: "Menu::DishesInCategory", foreign_key: :menu_category_id
 
     has_many :menu_dishes, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy,
                            after_remove: :after_remove_dish
     alias_attribute :dishes, :menu_dishes
+
+    has_many :visible_menu_dishes, -> { visible }, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy,
+                           after_remove: :after_remove_dish, source: :menu_dish
 
     # ##############################
     # Validations

@@ -212,7 +212,7 @@ module V1
       end
 
       def full_json(item_or_items)
-        return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+        return item_or_items.includes(:menu_visibility, :parent, :visible_children, :visible_menu_dishes, :text_translations, images: [:attached_image_blob]).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
 
         return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Category)
 
@@ -226,12 +226,11 @@ module V1
           description: item.description,
           visibility: item.visibility.as_json,
           images: item.images.map(&:full_json),
-          # parent: item.parent ? full_json(item.parent) : nil
           parent: item.parent&.as_json,
           translations: item.translations_json,
           stats: {
-            dishes: item.dishes.visible.group(:status).count,
-            children: item.children.visible.group(:status).count
+            dishes: item.visible_menu_dishes.pluck(:status).group_by(&:itself).transform_values(&:count),
+            children: item.visible_children.pluck(:status).group_by(&:itself).transform_values(&:count),
           }
         )
       end
