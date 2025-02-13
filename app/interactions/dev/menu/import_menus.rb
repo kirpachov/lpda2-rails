@@ -24,11 +24,15 @@ module Dev::Menu
 
           if row["imageId"].to_i.positive? && (image = Image.find_by(member_id: row["imageId"]))
             menu.images << image unless menu.images.include?(image)
-          else
+          elsif row["imageId"].to_i.positive?
             Rails.logger.warn "Image not found for menu #{menu.member_id}. Old image id: #{row["imageId"].inspect}"
           end
 
           menu.save!
+
+          if row["enabled"].to_i == 1
+            menu.visibility.update!(public_visible: true, private_visible: true)
+          end
         end
       end
     end
