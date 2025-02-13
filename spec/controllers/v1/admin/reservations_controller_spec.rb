@@ -503,20 +503,25 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601("2024-10-12 14:00") }
       end
 
-      context 'when ordering with {order_by_attribute: "datetime", order_by_order: "DESC"}' do
-        before do
-          create(:reservation, datetime: "2024-10-12 19:00")
-          create(:reservation, datetime: "2024-10-12 20:00")
-          create(:reservation, datetime: "2024-10-12 14:00")
-          req(order_by_attribute: "datetime", order_by_order: "DESC")
-        end
+      %w[order_by_attribute order_by_field].each do |order_by_field_name|
+        %w[order_by_direction order_by_order].each do |order_by_order_name|
+          context "when ordering with {#{order_by_field_name}: 'datetime', #{order_by_order_name}: 'DESC'}" do
+            before do
+              create(:reservation, datetime: "2024-10-12 19:00")
+              create(:reservation, datetime: "2024-10-12 20:00")
+              create(:reservation, datetime: "2024-10-12 14:00")
+              req(order_by_field_name => "datetime", order_by_order_name.to_sym => "DESC")
+            end
 
-        it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
-        it { expect(parsed_response_body[:items].length).to eq 3 }
-        it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601("2024-10-12 20:00") }
-        it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601("2024-10-12 19:00") }
-        it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601("2024-10-12 14:00") }
+            it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+            it { expect(parsed_response_body[:items].length).to eq 3 }
+            it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601("2024-10-12 20:00") }
+            it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601("2024-10-12 19:00") }
+            it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601("2024-10-12 14:00") }
+          end
+        end
       end
+
 
       %w[dir order sort direction].each do |direction_alias|
         %w[attribute column field by].each do |attribute_alias|
