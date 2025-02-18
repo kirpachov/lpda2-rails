@@ -54,6 +54,10 @@ RSpec.describe "GET /v1/admin/preorder_reservation_groups" do
 
       before { record }
 
+      it { expect(item.keys).to include("message") }
+      it { expect(item.keys).to include("translations") }
+      it { expect(item[:translations]).to be_a(Hash) }
+
       it {
         expect(item).to include(id: record.id, status: record.status, active_from: nil, active_to: nil,
                                 payment_value: record.payment_value, created_at: String, updated_at: String)
