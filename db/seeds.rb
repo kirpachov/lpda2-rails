@@ -34,6 +34,7 @@ end
 if User.count.zero?
   password = Rails.env.production? ? SecureRandom.hex : "admin!"
   User.create!(
+    can_root: true,
     email: "sasha@opinioni.net",
     password:,
     username: "sasha"
