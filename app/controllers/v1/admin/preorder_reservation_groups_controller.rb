@@ -64,7 +64,7 @@ module V1::Admin
     end
 
     def full_json(item_or_items)
-      return item_or_items.map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+      return item_or_items.includes(:text_translations, dates: [:reservation_turn], turns: []).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::PreorderReservationGroup)
 
@@ -75,7 +75,7 @@ module V1::Admin
     def single_item_full_json(item)
       item.as_json.merge(
         turns: item.turns.map(&:formatted_json),
-        dates: item.dates.map { |d| d.as_json.merge(reservation_turn: d.reservation_turn.formatted_json) },
+        dates: item.dates.includes(:reservation_turn).map { |d| d.as_json.merge(reservation_turn: d.reservation_turn.formatted_json) },
         message: item.message,
         translations: item.translations_json,
       )

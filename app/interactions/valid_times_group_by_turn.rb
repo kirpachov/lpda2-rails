@@ -8,7 +8,7 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
   end
 
   def execute
-    ReservationTurn.visible.where(weekday: date.wday).map do |turn|
+    ReservationTurn.visible.where(weekday: date.wday).includes(reservation_turn_messages: [:text_translations]).map do |turn|
       process_turn(turn)
     end.flatten
   end

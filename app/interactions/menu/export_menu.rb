@@ -29,7 +29,7 @@ module Menu
 
     def write_all(sheet)
       write_row(sheet, 0, %w[element_type element_id name.it name.en description.it description.en status images])
-      Menu::Category.all.each_with_index do |cat, cat_index|
+      Menu::Category.all.includes(categories_includes).each_with_index do |cat, cat_index|
         write_row(sheet, cat_index + 1,
                   ["Category", cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.images.map(&:url)].flatten)
         cat.dishes.each_with_index do |dish, index_dish|
@@ -56,7 +56,7 @@ module Menu
     def write_menu(sheet)
       write_row(sheet, 0,
                 %w[id name.it name.en description.it description.en status price updated_at created_at images])
-      Menu::Category.visible.where(parent_id: nil).each_with_index do |cat, index|
+      Menu::Category.visible.includes(categories_includes).where(parent_id: nil).each_with_index do |cat, index|
         write_row(sheet, index + 1,
                   [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.updated_at, cat.created_at, cat.images.map(&:url)].flatten)
       end
@@ -65,7 +65,7 @@ module Menu
     def write_dishes(sheet)
       write_row(sheet, 0,
                 %w[id name.it name.en description.it description.en status price updated_at created_at images])
-      Menu::Dish.visible.each_with_index do |dish, index|
+      Menu::Dish.visible.includes(dishes_includes).each_with_index do |dish, index|
         write_row(sheet, index + 1,
                   [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.updated_at, dish.created_at, dish.images.map(&:url)].flatten)
       end
@@ -73,7 +73,7 @@ module Menu
 
     def write_allergens(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
-      Menu::Allergen.visible.each_with_index do |allergen, index|
+      Menu::Allergen.visible.includes(allergen_includes).each_with_index do |allergen, index|
         write_row(sheet, index + 1,
                   [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url, allergen.updated_at, allergen.created_at])
       end
@@ -82,7 +82,7 @@ module Menu
     def write_tags(sheet)
       write_row(sheet, 0,
                 %w[id name.it name.en description.it description.en status color imageUrl updated_at created_at])
-      Menu::Tag.visible.each_with_index do |tag, index|
+      Menu::Tag.visible.includes(tags_includes).each_with_index do |tag, index|
         write_row(sheet, index + 1,
                   [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, tag.image&.url, tag.updated_at, tag.created_at])
       end
@@ -90,7 +90,7 @@ module Menu
 
     def write_ingredients(sheet)
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
-      Menu::Ingredient.visible.each_with_index do |ingredient, index|
+      Menu::Ingredient.visible.includes(ingredient_includes).each_with_index do |ingredient, index|
         write_row(sheet, index + 1,
                   [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url, ingredient.updated_at, ingredient.created_at])
       end
@@ -117,6 +117,31 @@ module Menu
     def write_row(sheet, x_start, data)
       data = data.map { |d| d.is_a?(Time) ? d.strftime("%Y-%m-%d %H:%M") : d }
       write(sheet, x_start, 0, data)
+    end
+
+    def tags_includes
+      %i[text_translations image]
+    end
+
+    def allergen_includes
+      %i[text_translations image]
+    end
+
+    def ingredient_includes
+      %i[text_translations image]
+    end
+
+    def dishes_includes
+      [
+        :text_translations, :images,
+        { menu_tags: tags_includes, menu_allergens: allergen_includes, menu_ingredients: ingredient_includes }
+      ]
+    end
+
+    def categories_includes
+      [:text_translations,
+       :images,
+       { menu_dishes: dishes_includes }]
     end
   end
 end
