@@ -40,7 +40,7 @@ module Menu
     private
 
     def items
-      @items ||= SearchDishes.run!(params: params[:filters] || {})
+      @items ||= SearchDishes.run!(params: params[:filters] || {}).includes(:text_translations)
     end
 
     def new_price(price)
