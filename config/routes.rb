@@ -177,6 +177,8 @@ Rails.application.routes.draw do
           resources :dishes do
             collection do
               patch "update_prices"
+              patch "relocate"
+              patch "bulk_status/:status", action: :bulk_update_status
             end
 
             member do

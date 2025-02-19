@@ -80,6 +80,15 @@ module V1
         render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
       end
 
+      # PATCH /v1/admin/menu/dishes/bulk_status/:status
+      def bulk_update_status
+        call = ::Menu::BulkUpdateDishesStatus.run(params:)
+
+        return render_unprocessable_entity(call) unless call.valid?
+
+        render json: { ok: true }
+      end
+
       def destroy
         return if @item.deleted!
 
@@ -100,6 +109,16 @@ module V1
         return render_unprocessable_entity(call) unless call.valid?
 
         show
+      end
+
+      # PATCH /v1/admin/menu/dishes/relocate
+      # Will allow user to bulk relocate dishes to another category.
+      def relocate
+        call = ::Menu::RelocateDishes.run(params:)
+
+        return render_unprocessable_entity(call) unless call.valid?
+
+        render json: { ok: true, details: call.result }
       end
 
       def add_suggestion
