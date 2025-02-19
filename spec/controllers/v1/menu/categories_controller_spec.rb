@@ -589,6 +589,96 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       end
     end
 
+    %i[id ids].each do |id_param_name|
+      context "when querying for {#{id_param_name}: <integer>}" do
+        let(:categories) { create_menu_categories(5) }
+        before do
+          req(id_param_name => categories[0].id)
+        end
+
+        context "items" do
+          subject { parsed_response_body[:items] }
+
+          it { expect(subject.count).to eq 1 }
+          it { expect(subject.pluck(:id)).to match_array([categories[0].id]) }
+        end
+
+        context "metadata" do
+          subject { parsed_response_body[:metadata] }
+
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(params: { id_param_name.to_s => categories[0].id }) }
+        end
+      end
+
+      context "when querying for {#{id_param_name}: <comma-separated-ids>}" do
+        let(:categories) { create_menu_categories(5) }
+        let(:ids) { [categories[0].id, categories[1].secret] }
+
+        before do
+          req(id_param_name => ids.join(','))
+        end
+
+        context "items" do
+          subject { parsed_response_body[:items] }
+
+          it { expect(subject.count).to eq 2 }
+          it { expect(subject.pluck(:id)).to match_array(categories[0..1].map(&:id)) }
+        end
+
+        context "metadata" do
+          subject { parsed_response_body[:metadata] }
+
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(params: { id_param_name.to_s => ids.join(',') }) }
+        end
+      end
+
+      context "when querying for {#{id_param_name}: <one-secret>}" do
+        let(:categories) { create_menu_categories(5) }
+
+        before do
+          req(id_param_name => categories[0].secret)
+        end
+
+        context "items" do
+          subject { parsed_response_body[:items] }
+
+          it { expect(subject.count).to eq 1 }
+          it { expect(subject.pluck(:id)).to match_array(categories[0].id) }
+        end
+
+        context "metadata" do
+          subject { parsed_response_body[:metadata] }
+
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(params: { id_param_name.to_s => categories[0].secret }) }
+        end
+      end
+
+      context "when querying for {#{id_param_name}: <comma-separated-secrets>}" do
+        let(:categories) { create_menu_categories(5) }
+
+        before do
+          req(id_param_name => categories[0..1].map(&:secret).join(','))
+        end
+
+        context "items" do
+          subject { parsed_response_body[:items] }
+
+          it { expect(subject.count).to eq 2 }
+          it { expect(subject.pluck(:id)).to match_array(categories[0..1].map(&:id)) }
+        end
+
+        context "metadata" do
+          subject { parsed_response_body[:metadata] }
+
+          it { is_expected.to be_a(Hash) }
+          it { is_expected.to include(params: { id_param_name.to_s => categories[0..1].map(&:secret).join(',') }) }
+        end
+      end
+    end
+
     context "should return only non-deleted items" do
       subject do
         req

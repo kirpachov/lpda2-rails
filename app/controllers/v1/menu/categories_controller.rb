@@ -48,7 +48,7 @@ module V1::Menu
     end
 
     def single_item_full_json(item)
-      item.as_json(only: %w[id status index price parent_id created_at updated_at]).merge(
+      item.as_json(only: %w[id status index price secret parent_id created_at updated_at]).merge(
         name: item.name,
         description: item.description,
         images: item.images.map(&:full_json),

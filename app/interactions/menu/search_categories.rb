@@ -13,6 +13,14 @@ module Menu
 
       categories = categories.having_public_dishes if param_true?(:skip_categories_without_dishes)
 
+      if (ids = params[:id].presence || params[:ids]).present?
+        ids = ids.split(",") if ids.is_a?(String)
+
+        categories = categories.where(id: ids.map(&:to_i)).or(
+          categories.where(secret: ids)
+        )
+      end
+
       if params[:except].present? && params[:except].is_a?(String)
         categories = categories.where.not(id: params[:except].split(",").map(&:to_i))
       end
