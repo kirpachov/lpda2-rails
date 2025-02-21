@@ -44,7 +44,7 @@ module Dev::Menu
       return @categories if @categories
 
       data = CSV.open(Rails.root.join("migration/records/menuCategoryAssociation.csv"), headers: true, col_sep: ";",
-                                                                                     liberal_parsing: true).to_a.map(&:to_h)
+                                                                                        liberal_parsing: true).to_a.map(&:to_h)
 
       @categories = data.map { |j| [j["categoryId"], j["menuId"]] }.to_h
     end

@@ -3,7 +3,6 @@
 module Dev
   module Menu
     class ImportAll < ActiveInteraction::Base
-
       boolean :verbose, default: false
 
       def execute

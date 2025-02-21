@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_context "PATCH /v1/admin/menu/dishes/bulk_status/:status FAILURE" do
+RSpec.shared_examples "PATCH /v1/admin/menu/dishes/bulk_status/:status FAILURE" do
   it { expect { req }.not_to(change { Menu::DishesInCategory.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Dish.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Category.all.as_json }) }
@@ -18,7 +18,7 @@ RSpec.shared_context "PATCH /v1/admin/menu/dishes/bulk_status/:status FAILURE" d
   end
 end
 
-RSpec.shared_context "PATCH /v1/admin/menu/dishes/bulk_status/:status SUCCESS" do
+RSpec.shared_examples "PATCH /v1/admin/menu/dishes/bulk_status/:status SUCCESS" do
   it { expect { req }.not_to(change { Menu::DishesInCategory.all.as_json }) }
   # it { expect { req }.not_to(change { Menu::Dish.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Category.all.as_json }) }
@@ -47,7 +47,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/bulk_status/:status" do
     [
       create(:menu_dish, status: :active),
       create(:menu_dish, status: :inactive),
-      create(:menu_dish, status: :active),
+      create(:menu_dish, status: :active)
     ]
   end
 
@@ -129,7 +129,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/bulk_status/:status" do
   end
 
   [
-    { default: :dish_ids, variants: [:dish_ids, :dish_id, :dish_ids, :dishes, :dish] }
+    { default: :dish_ids, variants: %i[dish_ids dish_id dish_ids dishes dish] }
   ].each do |params_options|
     params_options[:variants].each do |variant|
       context "when #{params_options[:default]} is called #{variant}" do

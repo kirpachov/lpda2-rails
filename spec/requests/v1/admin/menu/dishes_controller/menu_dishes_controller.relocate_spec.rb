@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_context "PATCH /v1/admin/menu/dishes/relocate FAILURE" do
+RSpec.shared_examples "PATCH /v1/admin/menu/dishes/relocate FAILURE" do
   it { expect { req }.not_to(change { Menu::DishesInCategory.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Dish.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Category.all.as_json }) }
@@ -18,7 +18,7 @@ RSpec.shared_context "PATCH /v1/admin/menu/dishes/relocate FAILURE" do
   end
 end
 
-RSpec.shared_context "PATCH /v1/admin/menu/dishes/relocate SUCCESS" do
+RSpec.shared_examples "PATCH /v1/admin/menu/dishes/relocate SUCCESS" do
   it { expect { req }.to(change { Menu::DishesInCategory.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Dish.all.as_json }) }
   it { expect { req }.not_to(change { Menu::Category.all.as_json }) }
@@ -110,7 +110,7 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/relocate" do
     end
 
     it do
-      expect(dishes.first.categories.map(&:id)).to match_array([from_category.id, to_category.id])
+      expect(dishes.first.categories.map(&:id)).to contain_exactly(from_category.id, to_category.id)
     end
 
     it { expect { req }.to(change { Menu::DishesInCategory.where(dish: dishes.first).count }.by(-1)) }
@@ -144,13 +144,18 @@ RSpec.describe "PATCH /v1/admin/menu/dishes/relocate" do
     let!(:default_params) { super().merge(dish_ids: dishes.first.id) }
 
     it { expect { req }.not_to(change { Menu::DishesInCategory.count }) }
-    it { expect { req }.to(change { Menu::DishesInCategory.all.where(menu_dish: dishes.first).pluck(:menu_category_id) }.from([from_category.id]).to([to_category.id])) }
+
+    it {
+      expect { req }.to(change do
+                          Menu::DishesInCategory.all.where(menu_dish: dishes.first).pluck(:menu_category_id)
+                        end.from([from_category.id]).to([to_category.id]))
+    }
 
     include_context "PATCH /v1/admin/menu/dishes/relocate SUCCESS"
   end
 
   [
-    { default: :dish_ids, variants: [:dish_ids, :dish_id, :dish_ids, :dishes, :dish] }
+    { default: :dish_ids, variants: %i[dish_ids dish_id dish_ids dishes dish] }
   ].each do |params_options|
     params_options[:variants].each do |variant|
       context "when #{params_options[:default]} is called #{variant}" do

@@ -9,7 +9,8 @@ module Dev::Menu
 
     def execute
       Rails.logger.silence(verbose ? Logger::DEBUG : Logger::WARN) do
-        CSV.foreach(file, headers: true, col_sep: ";", quote_char: '"', force_quotes: true, liberal_parsing: {double_quote_outside_quote: true}) do |row|
+        CSV.foreach(file, headers: true, col_sep: ";", quote_char: '"', force_quotes: true,
+                          liberal_parsing: { double_quote_outside_quote: true }) do |row|
           dish = Menu::Dish.find_or_initialize_by(member_id: row["id"])
           Mobility.with_locale(:it) do
             dish.name = row["name.it"]
@@ -64,7 +65,7 @@ module Dev::Menu
       @menu_ids = {}
 
       CSV.open(Rails.root.join("migration/records/categoryItemAssociation.csv"), headers: true, col_sep: ";",
-                                                                                     liberal_parsing: true).to_a.each do |row|
+                                                                                 liberal_parsing: true).to_a.each do |row|
         @menu_ids[row["foodItemId"]] ||= []
         @menu_ids[row["foodItemId"]] << row["categoryId"]
       end
@@ -77,7 +78,7 @@ module Dev::Menu
       return @tag_ids if @tag_ids
 
       data = CSV.open(Rails.root.join("migration/records/foodTagsAssociation.csv"), headers: true, col_sep: ";",
-                                                                                 liberal_parsing: true).to_a.map(&:to_h)
+                                                                                    liberal_parsing: true).to_a.map(&:to_h)
 
       @tag_ids = data.group_by { |j| j["foodItemId"] }.map { |k, v| [k, v.map { |j| j["tagId"] }] }.to_h
     end
@@ -86,7 +87,7 @@ module Dev::Menu
       return @allergen_ids if @allergen_ids
 
       data = CSV.open(Rails.root.join("migration/records/foodAllergensAssociation.csv"), headers: true, col_sep: ";",
-                                                                                      liberal_parsing: true).to_a.map(&:to_h)
+                                                                                         liberal_parsing: true).to_a.map(&:to_h)
 
       @allergen_ids = data.group_by { |j| j["foodItemId"] }.map { |k, v| [k, v.map { |j| j["allergenId"] }] }.to_h
     end
@@ -95,7 +96,7 @@ module Dev::Menu
       return @ingredient_ids if @ingredient_ids
 
       data = CSV.open(Rails.root.join("migration/records/foodIngredientsAssociation.csv"), headers: true, col_sep: ";",
-                                                                                        liberal_parsing: true).to_a.map(&:to_h)
+                                                                                           liberal_parsing: true).to_a.map(&:to_h)
 
       @ingredient_ids = data.group_by { |j| j["foodItemId"] }.map { |k, v| [k, v.map { |j| j["ingredientId"] }] }.to_h
     end
