@@ -592,6 +592,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
     %i[id ids].each do |id_param_name|
       context "when querying for {#{id_param_name}: <integer>}" do
         let(:categories) { create_menu_categories(5) }
+
         before do
           req(id_param_name => categories[0].id)
         end
@@ -600,7 +601,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
           subject { parsed_response_body[:items] }
 
           it { expect(subject.count).to eq 1 }
-          it { expect(subject.pluck(:id)).to match_array([categories[0].id]) }
+          it { expect(subject.pluck(:id)).to contain_exactly(categories[0].id) }
         end
 
         context "metadata" do
@@ -616,7 +617,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
         let(:ids) { [categories[0].id, categories[1].secret] }
 
         before do
-          req(id_param_name => ids.join(','))
+          req(id_param_name => ids.join(","))
         end
 
         context "items" do
@@ -630,7 +631,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
           subject { parsed_response_body[:metadata] }
 
           it { is_expected.to be_a(Hash) }
-          it { is_expected.to include(params: { id_param_name.to_s => ids.join(',') }) }
+          it { is_expected.to include(params: { id_param_name.to_s => ids.join(",") }) }
         end
       end
 
@@ -660,7 +661,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
         let(:categories) { create_menu_categories(5) }
 
         before do
-          req(id_param_name => categories[0..1].map(&:secret).join(','))
+          req(id_param_name => categories[0..1].map(&:secret).join(","))
         end
 
         context "items" do
@@ -674,7 +675,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
           subject { parsed_response_body[:metadata] }
 
           it { is_expected.to be_a(Hash) }
-          it { is_expected.to include(params: { id_param_name.to_s => categories[0..1].map(&:secret).join(',') }) }
+          it { is_expected.to include(params: { id_param_name.to_s => categories[0..1].map(&:secret).join(",") }) }
         end
       end
     end

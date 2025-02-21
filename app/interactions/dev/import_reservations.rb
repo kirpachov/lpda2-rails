@@ -25,11 +25,11 @@ module Dev
             other: {
               imported_at: Time.current,
               imported_from: csv_location,
-              original_row: row.to_h,
+              original_row: row.to_h
             },
             secret: row["token"].to_s.present? && row["token"] != "\\N" ? tokens[row["token"]] : nil,
             notes: row["notes"],
-            lang: row["lang"].to_s.downcase.in?(%w[en it]) ? row["lang"].to_s.downcase : "en",
+            lang: row["lang"].to_s.downcase.in?(%w[en it]) ? row["lang"].to_s.downcase : "en"
           )
 
           reservation.status = remap_status(row["status"], row)
@@ -51,7 +51,7 @@ module Dev
     end
 
     def persisted_reservations
-      @persisted_reservations ||= Reservation.all.where("member_id IS NOT NULL").pluck(:member_id)
+      @persisted_reservations ||= Reservation.all.where.not(member_id: nil).pluck(:member_id)
     end
 
     def notify(message)

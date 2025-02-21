@@ -55,7 +55,7 @@ if ENV["LPDA2_IMPORT_OLD_DATA"].to_s == "true" || Rails.env.development?
 
   Note that reservations may take a while to import.
 
-LOG
+  LOG
 end
 
 # #######################

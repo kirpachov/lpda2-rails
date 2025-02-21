@@ -46,7 +46,9 @@ module Menu
 
       return if invalid_dishes.empty?
 
-      errors.add(:dish_ids, "some dishes cannot be updated: #{invalid_dishes.map{|j| "#{j.id}: #{j.errors.full_messages.join(',')}" }.join("; ")}")
+      errors.add(:dish_ids, "some dishes cannot be updated: #{invalid_dishes.map do |j|
+                                                                "#{j.id}: #{j.errors.full_messages.join(",")}"
+                                                              end.join("; ")}")
     end
   end
 end

@@ -160,7 +160,11 @@ module V1::Admin
     end
 
     def full_json(item_or_items)
-      return item_or_items.includes(:reservation_tags, :delivered_emails, :payment).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+      if item_or_items.is_a?(ActiveRecord::Relation)
+        return item_or_items.includes(:reservation_tags, :delivered_emails, :payment).map do |item|
+                 full_json(item)
+               end
+      end
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::Reservation)
 
