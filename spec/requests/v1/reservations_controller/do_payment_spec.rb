@@ -110,4 +110,16 @@ RSpec.context "GET /v1/reservations/:secret/do_payment", type: :request do
       it { expect(response.body).to include("Unable to find") }
     end
   end
+
+  %w[html_nexi_payment html_nexi_authorization].each do |preorder_type|
+    context "when reservation has preorder_type #{preorder_type}" do
+      before do
+        payment.update!(preorder_type:)
+        req
+      end
+
+      it { expect(reservation.payment).to be_present }
+      it { expect(response).to have_http_status(:ok) }
+    end
+  end
 end

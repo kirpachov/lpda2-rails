@@ -344,4 +344,38 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       it { expect(json.dig("item", "active_to")).to be_present }
     end
   end
+
+  context "when preorder_type is nexi_authorization" do
+    let(:preorder_type) { "nexi_authorization" }
+
+    it { expect { req }.to change { PreorderReservationGroup.where(preorder_type: preorder_type).count }.by(1) }
+    it { expect { req }.to change { PreorderReservationGroup.deferred.count }.by(1) }
+
+    context "when checking response" do
+      before { req }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json.dig("item", "preorder_type")).to eq "nexi_authorization" }
+      it { expect(PreorderReservationGroup.last.deferred?).to be_truthy }
+    end
+  end
+
+  context "when preorder_type is missing" do
+    let(:params) { super().except(:preorder_type) }
+
+    it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+
+    it do
+      req
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it do
+      req
+      expect(json).to include(message: /Preorder type/)
+    end
+
+    it { expect { req }.not_to(change { PreorderReservationGroup.count }) }
+    it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
+  end
 end

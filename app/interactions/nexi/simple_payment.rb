@@ -7,6 +7,10 @@ module Nexi
     string :result_url
     string :cancel_url
 
+    # When true, the payment is not executed immediately.
+    # Restaurant will have to manually confirm the payment, in case people don't show up.
+    boolean :deferred
+
     # Why this order is being made?
     string :request_purpose
     interface :request_record, methods: %w[id persisted? update], default: nil # Object to associate to http request
@@ -21,7 +25,7 @@ module Nexi
         path: Config.nexi_simple_payment_path,
         request_purpose:,
         request_record:,
-        mac_part: "codTrans=#{params.dig!(:codTrans)}divisa=#{params.dig!(:divisa)}importo=#{params.dig!(:importo)}"
+        mac_part:
       )
 
       errors.merge!(@client.errors)
@@ -45,7 +49,16 @@ module Nexi
         url: result_url,
         url_back: cancel_url,
         languageId: language
+      ).merge(
+        deferred ? { TCONTAB: "D" } : {}
       )
+    end
+
+    def mac_part
+      base = "codTrans=#{params.dig!(:codTrans)}divisa=#{params.dig!(:divisa)}importo=#{params.dig!(:importo)}"
+      return base unless deferred
+
+      "#{base}TCONTAB=D"
     end
 
     def validate_response

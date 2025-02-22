@@ -7,6 +7,7 @@ module Nexi
   class CreateReservationPayment < ActiveInteraction::Base
     record :reservation, class: Reservation
     float :amount
+    boolean :deferred
 
     validate do
       errors.add(:reservation, "has already a payment") if reservation.payment.present? && @payment.blank?
@@ -20,6 +21,7 @@ module Nexi
         amount:,
         result_url:,
         cancel_url:,
+        deferred:,
         request_purpose: "reservation_payment",
         request_record: reservation,
         additional_params: {
@@ -57,7 +59,7 @@ module Nexi
         reservation:,
         status: :todo,
         external_id: call.cod_trans,
-        preorder_type: :html_nexi_payment,
+        preorder_type: deferred ? :html_nexi_payment : :html_nexi_authorization,
         success_url: result_url,
         failure_url: cancel_url
       )

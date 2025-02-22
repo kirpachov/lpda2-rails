@@ -91,10 +91,14 @@ class Reservation < ApplicationRecord
 
   # Will generate and attach a URL user can open to pay the reservation.
   def create_payment(options = {})
+    grp = required_payment_group(options)
     Nexi::CreateReservationPayment.run(
       options.merge(
-        reservation: self,
-        amount: required_payment_value
+        {
+          reservation: self,
+          amount: grp.payment_value,
+          deferred: grp.deferred?
+        }.compact
       )
     )
   end
