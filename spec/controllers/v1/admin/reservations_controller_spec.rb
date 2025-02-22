@@ -1304,7 +1304,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
                                                                                          format: :json)
     }
 
-    def req(params = { date: Time.zone.now.to_date.to_s })
+    def req(params = { date: Time.zone.yesterday.to_date.to_s })
       get :tables_summary, params:
     end
 
@@ -1369,20 +1369,26 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           let!(:reservations) do
             [
               # LUNCH
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 9.hours, adults: 1),
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 13.hours, adults: 2),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
 
               # DINNER
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 3),
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 4),
-              create(:reservation, status: :active, datetime: Time.zone.now.beginning_of_day + 20.hours, adults: 4)
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4)
             ]
           end
 
           context "when filtering by today for lunch time" do
             subject { response }
 
-            before { req(date: Time.zone.now.to_date.to_s, time: "10:00") }
+            before { req(date: Time.zone.yesterday.to_date.to_s, time: "10:00") }
 
             it { is_expected.to have_http_status(:ok) }
             it { expect(parsed_response_body).not_to include(message: String) }
@@ -1394,7 +1400,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           context "when filtering by today for dinner time" do
             subject { response }
 
-            before { req(date: Time.zone.now.to_date.to_s, time: "21:00") }
+            before { req(date: Time.zone.yesterday.to_date.to_s, time: "21:00") }
 
             it { is_expected.to have_http_status(:ok) }
             it { expect(parsed_response_body).not_to include(message: String) }
@@ -1406,7 +1412,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           context "when filtering for today but when there are no turns" do
             subject { response }
 
-            before { req(date: Time.zone.now.to_date.to_s, time: "1:00") }
+            before { req(date: Time.zone.yesterday.to_date.to_s, time: "1:00") }
 
             it { is_expected.to have_http_status(:ok) }
             it { expect(parsed_response_body).not_to include(message: String) }
