@@ -25,7 +25,7 @@ module Nexi
         path: Config.nexi_simple_payment_path,
         request_purpose:,
         request_record:,
-        mac_part:
+        mac_part: "codTrans=#{params.dig!(:codTrans)}divisa=#{params.dig!(:divisa)}importo=#{params.dig!(:importo)}"
       )
 
       errors.merge!(@client.errors)
@@ -52,13 +52,6 @@ module Nexi
       ).merge(
         deferred ? { TCONTAB: "D" } : {}
       )
-    end
-
-    def mac_part
-      base = "codTrans=#{params.dig!(:codTrans)}divisa=#{params.dig!(:divisa)}importo=#{params.dig!(:importo)}"
-      return base unless deferred
-
-      "#{base}TCONTAB=D"
     end
 
     def validate_response

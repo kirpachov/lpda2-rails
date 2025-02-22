@@ -121,6 +121,7 @@ module Nexi
       end
 
       if @response.body.include?("<title>Errore</title>")
+        Rails.logger.error("Nexi error: #{@response.inspect}\n\nBody: #{@response.body}")
         errors.add(:base, "something went wrong during the request, got html error")
       end
 
