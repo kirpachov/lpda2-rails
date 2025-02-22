@@ -4,9 +4,15 @@ require "sidekiq_admin_constraint"
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  mount Sidekiq::Web => "/sidekiq", :constraints => SidekiqAdminConstraint
+  # mount Sidekiq::Web => "/sidekiq", :constraints => SidekiqAdminConstraint
   require "sidekiq/cron/web"
   require "sidekiq-status/web"
+
+  mount RoutesBasicAuth.call(
+    Sidekiq::Web,
+    username: ENV["BASIC_AUTH_USERNAME"],
+    password: ENV["BASIC_AUTH_PASSWORD"]
+  ) => '/sidekiq'
 
   defaults format: :json do
     scope module: :v2, path: "v2" do
