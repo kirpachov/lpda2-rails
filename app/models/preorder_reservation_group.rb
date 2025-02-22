@@ -22,12 +22,16 @@ class PreorderReservationGroup < ApplicationRecord
 
   PAYMENT_VALUE_MANDATORY_PREORDER_TYPES = %w[
     nexi_payment
+    nexi_authorization
   ].freeze
 
   enum preorder_type: {
     # Will require a payment with nexi before reservation can be created.
     # Will use Nexi HPP service.
-    nexi_payment: "nexi_payment"
+    nexi_payment: "nexi_payment",
+
+    # Authorize a payment with nexi before reservation can be created, but don't charge it yet.
+    nexi_authorization: "nexi_authorization"
   }
 
   enum status: {
@@ -68,10 +72,18 @@ class PreorderReservationGroup < ApplicationRecord
                        active.where("active_from IS NULL or active_from < ?", Time.zone.now).where("active_to IS NULL or active_to > ?", Time.zone.now)
                      }
 
+  scope :deferred, lambda {
+                     where(preorder_type: %w[nexi_authorization])
+  }
+
+  def deferred?
+    preorder_type.to_s.in?(%w[nexi_authorization])
+  end
+
   private
 
   def assign_defaults
     self.status ||= :active
-    self.preorder_type ||= :nexi_payment
+    # self.preorder_type ||= :nexi_payment  # no default, mandatory value
   end
 end

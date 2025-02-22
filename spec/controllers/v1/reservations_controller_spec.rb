@@ -472,7 +472,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when a payment is always required for that turn" do
         let(:group) do
-          create(:preorder_reservation_group).tap do |grp|
+          create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.turns = [turn]
           end
         end
@@ -513,7 +513,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when a payment is always required for that turn" do
         let(:group) do
-          create(:preorder_reservation_group).tap do |grp|
+          create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.turns = [turn]
           end
         end
@@ -557,7 +557,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when a payment is always required for that turn" do
         let(:group) do
-          create(:preorder_reservation_group).tap do |grp|
+          create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.turns = [turn]
           end
         end
@@ -602,9 +602,47 @@ RSpec.describe V1::ReservationsController, type: :controller do
         File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
       end
 
+      context "when preorder_type is :nexi_authorization, http request should include TCONTAB option" do
+        let(:group) do
+          create(:preorder_reservation_group, preorder_type: :nexi_authorization).tap do |grp|
+            grp.turns = [turn]
+          end
+        end
+
+        before { group }
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+        it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+
+        it do
+          req
+          expect(Nexi::HttpRequest.last.request_body.dig!("TCONTAB")).to eq("D")
+        end
+      end
+
+      context "when preorder_type is :nexi_payment, http request should NOT include TCONTAB option" do
+        let(:group) do
+          create(:preorder_reservation_group, preorder_type: :nexi_payment).tap do |grp|
+            grp.turns = [turn]
+          end
+        end
+
+        before { group }
+
+        it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+        it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+
+        it do
+          req
+          expect(Nexi::HttpRequest.last.request_body.keys.map(&:to_s).map(&:upcase)).not_to include("TCONTAB")
+        end
+      end
+
       context "when a payment is always required for that turn" do
         let(:group) do
-          create(:preorder_reservation_group).tap do |grp|
+          create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.turns = [turn]
           end
         end
@@ -691,7 +729,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when a payment is required for that turn only for certain dates" do
         let(:group) do
-          create(:preorder_reservation_group).tap do |grp|
+          create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.dates.create(reservation_turn: turn, date: Time.zone.now.beginning_of_week + 7.days)
             grp.dates.create(reservation_turn: turn, date: Time.zone.now.beginning_of_week + 14.days)
             grp.dates.create(reservation_turn: turn, date: Time.zone.now.beginning_of_week + 70.days)

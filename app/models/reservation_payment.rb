@@ -21,7 +21,11 @@ class ReservationPayment < ApplicationRecord
     # NEXI will give us an HTML form to be rendered in our page.
     # The form will basically be a POST request to NEXI.
     # We'll just serve the form to the user as NEXI gave it to us.
-    html_nexi_payment: "html_nexi_payment"
+    html_nexi_payment: "html_nexi_payment",
+
+    # Will require a preauthorization with nexi before reservation can be created.
+    # Restaurant will have to confirm the payment manually, in case customer doesn't show up.
+    html_nexi_authorization: "html_nexi_authorization"
   }
 
   # ################################
