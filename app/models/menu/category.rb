@@ -34,8 +34,10 @@ module Menu
                            after_remove: :after_remove_dish
     alias_attribute :dishes, :menu_dishes
 
-    has_many :visible_menu_dishes, -> { visible }, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy,
-                           after_remove: :after_remove_dish, source: :menu_dish
+    has_many :visible_menu_dishes, lambda {
+                                     visible
+                                   }, through: :menu_dishes_in_categories, class_name: "Menu::Dish", dependent: :destroy,
+                                      after_remove: :after_remove_dish, source: :menu_dish
 
     # ##############################
     # Validations

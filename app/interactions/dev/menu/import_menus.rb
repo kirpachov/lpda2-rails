@@ -30,9 +30,7 @@ module Dev::Menu
 
           menu.save!
 
-          if row["enabled"].to_i == 1
-            menu.visibility.update!(public_visible: true, private_visible: true)
-          end
+          menu.visibility.update!(public_visible: true, private_visible: true) if row["enabled"].to_i == 1
         end
       end
     end

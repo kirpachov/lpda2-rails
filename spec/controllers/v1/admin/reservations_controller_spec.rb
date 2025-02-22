@@ -522,7 +522,6 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
-
       %w[dir order sort direction].each do |direction_alias|
         %w[attribute column field by].each do |attribute_alias|
           context "when ordering with {order_by: { #{attribute_alias.inspect}: 'datetime', #{direction_alias.inspect}: 'DESC' }}" do

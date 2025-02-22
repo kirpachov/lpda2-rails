@@ -48,7 +48,11 @@ module V1::Admin
     private
 
     def full_json(item_or_items)
-      return item_or_items.includes(:text_translations).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+      if item_or_items.is_a?(ActiveRecord::Relation)
+        return item_or_items.includes(:text_translations).map do |item|
+                 full_json(item)
+               end
+      end
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::PublicMessage)
 

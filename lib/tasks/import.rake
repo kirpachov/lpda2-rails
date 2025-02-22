@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../config/environment.rb"
+require_relative "../../config/environment"
 
 namespace :import do
   task :all do
