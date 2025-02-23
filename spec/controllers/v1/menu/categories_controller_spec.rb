@@ -53,6 +53,30 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       it { expect(json[:items]).to be_empty }
     end
 
+    context "filtering for { skip_empty_categories: true } and categories have only inactive dishes and empty categories, should be empty cuz children categories are empty as well." do
+      before do
+        create_menu_categories(3)
+        Menu::Category.first.dishes = create_list(:menu_dish, 2, status: :deleted)
+        Menu::Category.second.dishes = create_list(:menu_dish, 3, status: :inactive)
+        granny = Menu::Category.last
+        create_menu_categories(2, visibility: nil, parent: granny)
+
+        # Recursive check:
+        create_menu_categories(1, visibility: nil, parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, status: :deleted)
+
+        # Recursive check #2:
+        create_menu_categories(1, visibility: nil, parent: granny.children.sample.children.sample).first.dishes = create_list(:menu_dish, 2, status: :inactive)
+
+        req(skip_empty_categories: true)
+      end
+
+      it { expect(Menu::Category.count).to eq 7 }
+      it { expect(Menu::Dish.count).to eq 9 }
+
+      it { expect(response).to be_successful }
+      it { expect(json[:items]).to be_empty }
+    end
+
     context "filtering for { skip_empty_categories: true } and categories are actually empty (no dishes, no categories)" do
       before do
         create_menu_categories(3)

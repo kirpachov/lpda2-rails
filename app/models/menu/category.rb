@@ -109,6 +109,14 @@ module Menu
     }
 
     scope :having_children, -> { where(id: Category.select(:parent_id)) }
+    scope :having_non_empty_children, lambda {
+      where(
+        id: SearchCategories.run!(
+          all: Category.where(parent_id: select(:id)),
+          params: { skip_empty_categories: true }
+        ).select(:parent_id)
+      )
+    }
 
     scope :public_or_private_visible, -> { public_visible.or(private_visible) }
 

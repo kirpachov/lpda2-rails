@@ -7,9 +7,11 @@ module Menu
     def execute
       categories = all.visible
 
+      return categories if categories.empty?
+
       categories = categories.without_parent.public_visible if param_true?(:root, :without_parent, :root_only)
 
-      categories = categories.having_public_dishes.or(categories.having_children) if param_true?(:skip_empty_categories)
+      categories = categories.having_public_dishes.or(categories.having_non_empty_children) if param_true?(:skip_empty_categories)
 
       categories = categories.having_public_dishes if param_true?(:skip_categories_without_dishes)
 
