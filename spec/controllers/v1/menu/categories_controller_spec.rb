@@ -93,18 +93,19 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
     context "filtering for { skip_empty_categories: true } and some categories have dishes, other have children categories" do
       before do
         categories = create_menu_categories(2)
-        create_menu_categories(2, parent: categories.first, visibility: nil)
+        create_menu_categories(2, parent: categories.first, visibility: nil).each do |sub_category|
+          sub_category.dishes = create_list(:menu_dish, 2)
+        end
 
         categories.last.dishes = create_list(:menu_dish, 2)
-        req(skip_empty_categories: true)
+        req(skip_empty_categories: true, root_only: true)
       end
 
       it { expect(Menu::Category.count).to eq 4 }
-      it { expect(Menu::Dish.count).to eq 2 }
+      it { expect(Menu::Dish.count).to eq 6 }
 
       it { expect(response).to be_successful }
       it { expect(json[:items]).not_to be_empty }
-      it { expect(json[:items].count).to eq(2) }
       it { expect(json[:items].pluck(:id)).to match_array(Menu::Category.root.pluck(:id)) }
     end
 
