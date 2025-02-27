@@ -142,7 +142,8 @@ module Nexi
     end
 
     def response_json?
-      response.headers.transform_keys { |k| k.to_s.downcase }["content-type"].to_s.include?("application/json")
+      response.body.valid_json?
+      # || response.headers.transform_keys { |k| k.to_s.downcase }["content-type"].to_s.include?("application/json")
     end
 
     def response_html?

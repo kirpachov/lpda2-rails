@@ -15,6 +15,7 @@ class FetchReservationPaymentStatus < ActiveInteraction::Base
   def execute
     case reservation_payment.preorder_type
     when "html_nexi_payment" then fetch_nexi_status
+    when "html_nexi_authorization" then fetch_nexi_status
     else
       errors.add(:reservation, "payment type #{reservation_payment.preorder_type.inspect} not supported")
     end

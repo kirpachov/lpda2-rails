@@ -1,0 +1,10 @@
+{
+  "esito": "KO",
+  "idOperazione": "3216929671",
+  "timeStamp": "1733213212583",
+  "mac": "someacc221068eab6c869d4cf8a77181d2219fce8161dc0",
+  "errore": {
+    "codice": 2,
+    "messaggio": "Nessun ordine trovato"
+  }
+}

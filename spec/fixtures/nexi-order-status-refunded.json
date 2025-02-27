@@ -1,0 +1,51 @@
+{
+  "mac": "somemacc8a10bcce5c6529f5a5de539c3dde53c7db66c3e",
+  "esito": "OK",
+  "report": [
+    {
+      "pan": "********1234",
+      "mail": null,
+      "brand": "MASTERCARD",
+      "stato": "Annullato",
+      "divisa": "EUR",
+      "importo": "150",
+      "nazione": "ITA",
+      "scadenza": "202707",
+      "dettaglio": [
+        {
+          "mail": "",
+          "nome": "",
+          "stato": "Chiuso da backoffice",
+          "divisa": "EUR",
+          "cognome": "",
+          "datiApm": null,
+          "flagISP": false,
+          "importo": "0",
+          "flagValuta": "00",
+          "operazioni": [],
+          "motivoEsito": "0313AUT. N.325823",
+          "tassoCambio": "",
+          "codiceValuta": "",
+          "decimaliValuta": 0,
+          "importoRifiutato": "0",
+          "codiceTransazione": "CODICE_TRANSAZIONE",
+          "controvaloreValuta": "",
+          "parametriAggiuntivi": ""
+        }
+      ],
+      "parametri": " ",
+      "numOrdinePm": "21",
+      "tipoProdotto": "DEBIT MASTERCARD - DEBIT - N",
+      "tipoPagamento": "ISO",
+      "numeroMerchant": "3877998",
+      "dataTransazione": "2025-02-25 11:15:37.0",
+      "tipoTransazione": "NO_3DSECURE",
+      "tokenRequestorId": null,
+      "codiceTransazione": "CODICE_TRANSAZIONE",
+      "walletProgramData": null,
+      "codiceAutorizzazione": "325823"
+    }
+  ],
+  "timeStamp": "1740549604889",
+  "idOperazione": "1639499126"
+}

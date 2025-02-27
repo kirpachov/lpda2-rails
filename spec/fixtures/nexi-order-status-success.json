@@ -1,0 +1,51 @@
+{
+  "mac": "abd17004dd2cccc38d116da17b4989d3ed21f9e1",
+  "esito": "OK",
+  "report": [
+    {
+      "pan": "********9423",
+      "mail": null,
+      "brand": "MASTERCARD",
+      "stato": "Autorizzato",
+      "divisa": "EUR",
+      "importo": "150",
+      "nazione": "ITA",
+      "scadenza": "202707",
+      "dettaglio": [
+        {
+          "mail": "",
+          "nome": "",
+          "stato": "Autorizzato",
+          "divisa": "EUR",
+          "cognome": "",
+          "datiApm": null,
+          "flagISP": false,
+          "importo": "150",
+          "flagValuta": "00",
+          "operazioni": [],
+          "motivoEsito": "0383AUT. N.926827",
+          "tassoCambio": "",
+          "codiceValuta": "",
+          "decimaliValuta": 0,
+          "importoRifiutato": "0",
+          "codiceTransazione": "CODICE_TRANSAZIONE",
+          "controvaloreValuta": "",
+          "parametriAggiuntivi": ""
+        }
+      ],
+      "parametri": " ",
+      "numOrdinePm": "21",
+      "tipoProdotto": "DEBIT MASTERCARD - DEBIT - N",
+      "tipoPagamento": "ISO",
+      "numeroMerchant": "1233218",
+      "dataTransazione": "2025-02-25 11:15:37.0",
+      "tipoTransazione": "NO_3DSECURE",
+      "tokenRequestorId": null,
+      "codiceTransazione": "CODICE_TRANSAZIONE",
+      "walletProgramData": null,
+      "codiceAutorizzazione": "456827"
+    }
+  ],
+  "timeStamp": "1741481225274",
+  "idOperazione": "1638942321"
+}
