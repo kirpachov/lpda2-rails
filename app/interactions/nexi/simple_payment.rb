@@ -48,9 +48,14 @@ module Nexi
         codTrans: cod_trans,
         url: result_url,
         url_back: cancel_url,
-        languageId: language
-      ).merge(
-        deferred ? { TCONTAB: "D" } : {}
+        languageId: language,
+
+        # https://ecommerce.nexi.it/specifiche-tecniche/codicebase.html
+        # Il campo identifica la modalità di incasso che l'esercente vuole applicare alla singola transazione, se valorizzato con:
+        # - C (immediata) la transazione se autorizzata viene anche incassata senza altri interventi da parte dell'esercente e senza considerare il profilo di default impostato sul terminale.
+        # - D (differita) o non viene inserito il campo, la transazione se autorizzata viene gestita secondo quanto definito dal profilo del terminale.
+        # L'incasso immediato è quello stabilito come standard da Nexi. Se vuoi gestire incassi differiti richiedi al supporto tecnico l'abilitazione. Una volta abilitato, in caso di incasso differito la riscossione è in carico all'esercente che può gestirla da back office, tramite API o a scadenza automatica comunicata in fase di configurazione del profilo.
+        TCONTAB: deferred ? "D" : "C"
       )
     end
 

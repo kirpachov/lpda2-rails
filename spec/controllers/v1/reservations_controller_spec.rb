@@ -602,7 +602,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
       end
 
-      context "when preorder_type is :nexi_authorization, http request should include TCONTAB option" do
+      context "when preorder_type is :nexi_authorization, http request should include TCONTAB = 'D' option" do
         let(:group) do
           create(:preorder_reservation_group, preorder_type: :nexi_authorization).tap do |grp|
             grp.turns = [turn]
@@ -621,7 +621,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
       end
 
-      context "when preorder_type is :nexi_payment, http request should NOT include TCONTAB option" do
+      context "when preorder_type is :nexi_payment, http request should include TCONTAB = 'C' option" do
         let(:group) do
           create(:preorder_reservation_group, preorder_type: :nexi_payment).tap do |grp|
             grp.turns = [turn]
@@ -636,7 +636,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         it do
           req
-          expect(Nexi::HttpRequest.last.request_body.keys.map(&:to_s).map(&:upcase)).not_to include("TCONTAB")
+          expect(Nexi::HttpRequest.last.request_body.dig!("TCONTAB")).to eq("C")
         end
       end
 
