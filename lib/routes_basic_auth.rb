@@ -3,7 +3,7 @@
 class RoutesBasicAuth
   class << self
     def call(klass, username:, password:)
-      raise ArgumentError, 'klass must be a class' unless klass.is_a?(Class)
+      raise ArgumentError, "klass must be a class" unless klass.is_a?(Class)
 
       Rack::Builder.new do
         if username.is_a?(String) && username.present? && password.is_a?(String) && password.present?
@@ -16,7 +16,7 @@ class RoutesBasicAuth
           Rails.logger.warn "No username or password provided. Basic auth is disabled for #{klass}."
         end
 
-        map '/' do
+        map "/" do
           run klass
         end
       end

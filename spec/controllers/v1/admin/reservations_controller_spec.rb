@@ -1369,19 +1369,30 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           let!(:reservations) do
             [
               # LUNCH
-              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
-              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
-              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 9.hours,
+                                   adults: 1),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 9.hours,
+                                   adults: 1),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 9.hours,
+                                   adults: 1),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
 
               # DINNER
-              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
-              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
-              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
-              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
-              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4)
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 3),
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 3),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4),
+              create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4)
             ]
           end
 
