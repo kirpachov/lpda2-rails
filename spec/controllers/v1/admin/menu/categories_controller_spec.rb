@@ -487,7 +487,6 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
       end
 
-
       context "should return only non-deleted items" do
         subject do
           req
@@ -504,6 +503,82 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it { expect(Menu::Category.visible.count).to eq 2 }
         it { expect(subject.pluck(:status)).to match_array(%w[active inactive]) }
         it { expect(subject.size).to eq 2 }
+      end
+
+      context "when checking public_visible value for each item" do
+        # show
+        let!(:root_visible) do
+          create(:menu_category, status: :active).tap do |cat|
+            cat.visibility.update!(public_visible: true)
+            cat.dishes = [create(:menu_dish, status: :active)]
+          end
+        end
+
+        # don't show
+        let!(:root_inactive) do
+          create(:menu_category, status: :inactive).tap do |cat|
+            cat.visibility.update!(public_visible: true)
+            cat.dishes = [create(:menu_dish, status: :active)]
+          end
+        end
+
+        # don't show
+        let!(:root_not_public) do
+          create(:menu_category, status: :active).tap do |cat|
+            cat.visibility.update!(public_visible: false)
+            cat.dishes = [create(:menu_dish, status: :active)]
+          end
+        end
+
+        # don't show
+        let!(:root_empty) do
+          create(:menu_category, status: :active).tap do |cat|
+            cat.visibility.update!(public_visible: true)
+          end
+        end
+
+        # don't show
+        let!(:not_root_inactive) do
+          create(:menu_category, status: :inactive, parent: root_visible, visibility: nil).tap do |cat|
+            cat.dishes = [create(:menu_dish, status: :active)]
+          end
+        end
+
+        # show
+        let!(:not_root_active) do
+          create(:menu_category, status: :active, parent: root_visible, visibility: nil).tap do |cat|
+            cat.dishes = [create(:menu_dish, status: :active)]
+          end
+        end
+
+        # dont show
+        let!(:not_root_empty) do
+          create(:menu_category, status: :active, parent: root_visible, visibility: nil).tap do |cat|
+            cat.dishes = []
+          end
+        end
+
+        before do
+          req
+        end
+
+        let(:public_visible_by_id) do
+          json[:items].map do |item|
+            [item[:id], item[:public_visible]]
+          end.to_h
+        end
+
+        it { expect(Menu::Category.count).to eq 7 }
+        it { expect(Menu::Category.visible.count).to eq 7 }
+
+        it { expect(json[:items].count).to eq(7) }
+        it { expect(public_visible_by_id[root_visible.id]).to eq true }
+        it { expect(public_visible_by_id[root_inactive.id]).to eq nil }
+        it { expect(public_visible_by_id[root_not_public.id]).to eq nil }
+        it { expect(public_visible_by_id[root_empty.id]).to eq nil }
+        it { expect(public_visible_by_id[not_root_inactive.id]).to eq nil }
+        it { expect(public_visible_by_id[not_root_active.id]).to eq true }
+        it { expect(public_visible_by_id[not_root_empty.id]).to eq nil }
       end
     end
   end

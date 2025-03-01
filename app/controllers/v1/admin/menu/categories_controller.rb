@@ -213,7 +213,7 @@ module V1
 
       def full_json(item_or_items)
         if item_or_items.is_a?(ActiveRecord::Relation)
-          return item_or_items.includes(:menu_visibility, :parent, :visible_children, :visible_menu_dishes,
+          return item_or_items.with_actual_public_visibility.includes(:menu_visibility, :parent, :visible_children, :visible_menu_dishes,
                                         :text_translations, menu_dishes_in_categories: [:menu_dish], images: [:attached_image_blob]).map do |item|
                    full_json(item)
                  end

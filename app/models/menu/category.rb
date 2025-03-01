@@ -118,6 +118,18 @@ module Menu
       )
     }
 
+    scope :with_actual_public_visibility, lambda {
+      joins(
+        "NATURAL LEFT JOIN (#{public_visible_having_either_public_dishes_or_children.to_sql}) g"
+      ).select("menu_categories.*, g.public_visible")
+    }
+
+    scope :public_visible_having_either_public_dishes_or_children, lambda {
+      visible.public_visible.having_public_dishes.or(
+        visible.public_visible.having_non_empty_children
+      ).select("id, true as public_visible")
+    }
+
     scope :public_or_private_visible, -> { public_visible.or(private_visible) }
 
     # ##############################
