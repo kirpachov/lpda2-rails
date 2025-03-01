@@ -37,6 +37,19 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       end
     end
 
+    context "when inactive categories, should not be found" do
+      before do
+        create(:menu_category, status: :inactive)
+        req
+      end
+
+      it { expect(Menu::Category.count).to eq 1 }
+      it { expect(Menu::Category.all.pluck(:status)).to all(eq "inactive") }
+
+      it { expect(response).to be_successful }
+      it { expect(json[:items]).to be_empty }
+    end
+
     context "when category hasnt any dish and providing { skip_categories_without_dishes: true }" do
       before do
         create(:menu_category, parent: create_menu_categories(2).first, visibility: nil)
@@ -839,6 +852,17 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
         expect(subject.dig(:translations, :name)).to include(en: "test-en")
         expect(subject.dig(:translations, :name)).to include(it: "test-it")
       end
+    end
+
+    context "when category is inactive" do
+      before do
+        category.update!(status: :inactive)
+        req(id: category.id)
+      end
+
+      subject { response }
+
+      it_behaves_like NOT_FOUND
     end
 
     context "when passing a invalid id" do

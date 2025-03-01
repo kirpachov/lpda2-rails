@@ -55,11 +55,12 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     context "should return all categories, paginated" do
       before do
         authenticate_request
-        create_menu_categories(10)
+        create_menu_categories(5, status: :active)
+        create_menu_categories(5, status: :inactive)
       end
 
       it { expect(Menu::Category.count).to eq 10 }
-      it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
+      it { expect(Menu::Category.all.pluck(:status).uniq).to match_array(%w[active inactive]) }
 
       context "without pagination params" do
         subject { parsed_response_body }
@@ -70,7 +71,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
 
         it { expect(Menu::Category.count).to eq 30 }
-        it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
+        it { expect(Menu::Category.all.pluck(:status).uniq).to match_array(%w[active inactive]) }
 
         it { expect(subject[:items].size).to eq 10 }
         it { expect(subject[:metadata][:total_count]).to eq 30 }
@@ -311,8 +312,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context "when filtering by query" do
         before do
           # visibility = create(:menu_visibility)
-          items = 5.times.map do |i|
-            create(:menu_category, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
+          5.times.each do |i|
+            create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
           end
 
           # Menu::Category.import! items, validate: false
@@ -468,6 +469,25 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         end
       end
 
+      %w[inactive inactive].each do |filter_status|
+        context "when filtering for {status: #{filter_status.inspect}" do
+          before do
+            create_list(:menu_category, 1, status: :active)
+            create_list(:menu_category, 1, status: :inactive)
+            create_list(:menu_category, 1, status: :deleted)
+            req(status: filter_status)
+          end
+
+          context "items" do
+            subject { parsed_response_body[:items] }
+
+            it { expect(subject.count).to eq 1 }
+            it { expect(subject.pluck(:status)).to match_array([filter_status]) }
+          end
+        end
+      end
+
+
       context "should return only non-deleted items" do
         subject do
           req
@@ -476,13 +496,14 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         before do
           create(:menu_category, status: :active)
+          create(:menu_category, status: :inactive)
           create(:menu_category, status: :deleted)
         end
 
-        it { expect(Menu::Category.count).to eq 2 }
-        it { expect(Menu::Category.visible.count).to eq 1 }
-        it { expect(subject).to all(include(status: "active")) }
-        it { expect(subject.size).to eq 1 }
+        it { expect(Menu::Category.count).to eq 3 }
+        it { expect(Menu::Category.visible.count).to eq 2 }
+        it { expect(subject.pluck(:status)).to match_array(%w[active inactive]) }
+        it { expect(subject.size).to eq 2 }
       end
     end
   end
@@ -492,7 +513,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       get :show, params:
     end
 
-    let(:category) { create(:menu_category) }
+    let(:category_status) { %w[active inactive].sample }
+    let(:category) { create(:menu_category, status: category_status) }
 
     it { expect(instance).to respond_to(:show) }
     it { expect(described_class).to route(:get, "/v1/admin/menu/categories/2").to(action: :show, format: :json, id: 2) }
@@ -523,6 +545,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           expect(subject).to include(
             parent_id: NilClass,
             name: NilClass,
+            status: category_status,
             description: NilClass,
             secret_desc: NilClass
           )
@@ -765,6 +788,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           expect(subject).to include(
             parent_id: NilClass,
             name: NilClass,
+            status: "active",
             description: NilClass,
             secret_desc: NilClass
           )
@@ -810,6 +834,28 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           }
 
           it { expect(subject[:images].count).to eq 0 }
+        end
+      end
+
+      %w[active inactive].each do |param_status|
+        context "when providing {status: #{param_status.inspect}}" do
+          subject do
+            req(status: param_status)
+            parsed_response_body[:item]
+          end
+
+          it { subject; expect(response).to have_http_status(:ok) }
+          it { subject; expect(response).to be_successful }
+          it { expect { subject }.to change { Menu::Category.visible.count }.by(1) }
+          it { expect { subject }.to change { Menu::Category.where(status: param_status).count }.by(1) }
+
+          it_behaves_like ADMIN_MENU_CATEGORY, skip_visibility: true
+
+          it {
+            expect(subject).to include(
+              status: param_status,
+            )
+          }
         end
       end
 
@@ -1146,6 +1192,40 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         before { req(id: "invalid") }
 
         it_behaves_like NOT_FOUND
+      end
+
+      context 'with {status: inactive} to active category' do
+        let(:do_req) { req(id: category.id, status: "inactive") }
+
+        subject do
+          do_req
+          parsed_response_body[:item]
+        end
+
+        let!(:category) { create(:menu_category, status: :active) }
+
+        it { expect { do_req }.to(change { Menu::Category.where(status: :inactive).count }.by(1)) }
+        it { expect { do_req }.to(change { category.reload.status }.to("inactive")) }
+
+        it { do_req; expect(response).to have_http_status(:ok) }
+        it { do_req; expect(response).to be_successful }
+      end
+
+      context 'with {status: active} to inactive category' do
+        let(:do_req) { req(id: category.id, status: "active") }
+
+        subject do
+          do_req
+          parsed_response_body[:item]
+        end
+
+        let!(:category) { create(:menu_category, status: :inactive) }
+
+        it { expect { do_req }.to(change { Menu::Category.where(status: :active).count }.by(1)) }
+        it { expect { do_req }.to(change { category.reload.status }.to("active")) }
+
+        it { do_req; expect(response).to have_http_status(:ok) }
+        it { do_req; expect(response).to be_successful }
       end
 
       context 'with {name: "Hello"}' do
@@ -1652,7 +1732,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        let!(:category) { create(:menu_category) }
+        let!(:category) { create(:menu_category, status: %w[active inactive]) }
 
         it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
         it { is_expected.to have_http_status(:no_content) }

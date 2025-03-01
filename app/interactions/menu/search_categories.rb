@@ -4,8 +4,12 @@ module Menu
   class SearchCategories < SearchRecords
     interface :all, methods: %i[visible without_parent], default: -> { Category.all }
 
+    # when true, only public categories will be returned
+    boolean :public, default: false
+
     def execute
       categories = all.visible
+      categories = categories.public_visible if public
 
       return categories if categories.empty?
 
@@ -21,6 +25,16 @@ module Menu
         categories = categories.where(id: ids.map(&:to_i)).or(
           categories.where(secret: ids)
         )
+      end
+
+      # Want to accept:
+      # "status"
+      # "status1,status2" => will produce status1 OR status2
+      # ["status1", "status2"] => will produce status1 OR status2
+      # ["status1"] => will produce status1
+      if params[:status].present?
+        statuses = params[:status].is_a?(String) ? params[:status].split(",") : params[:status]
+        categories = categories.where(status: statuses)
       end
 
       if params[:except].present? && params[:except].is_a?(String)

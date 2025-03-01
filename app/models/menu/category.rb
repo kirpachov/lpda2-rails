@@ -11,7 +11,7 @@ module Menu
     translates :name
     translates :description
 
-    VALID_STATUSES = %w[active deleted].freeze
+    VALID_STATUSES = %w[active inactive deleted].freeze
     SECRET_MIN_LENGTH = 8
 
     enum status: VALID_STATUSES.map { |s| [s, s] }.to_h
@@ -67,7 +67,7 @@ module Menu
     # ##############################
     # Scopes
     # ##############################
-    scope :visible, -> { where(status: %w[active]) }
+    scope :visible, -> { where(status: %w[active inactive]) }
     scope :with_fixed_price, -> { where.not(price: nil) }
     scope :with_price, -> { with_fixed_price }
     scope :without_fixed_price, -> { where(price: nil) }
@@ -85,7 +85,7 @@ module Menu
               (v.public_to IS NULL OR v.public_to >= :time)
             SQL
 
-      where(id: ids).or(where(root_id: ids))
+      where(id: ids, status: :active).or(where(root_id: ids, status: :active))
     }
 
     scope :private_visible, lambda {
@@ -96,7 +96,7 @@ module Menu
               (v.private_to IS NULL OR v.private_to >= :time)
             SQL
 
-      where(id: ids).or(where(root_id: ids))
+      where(id: ids, status: :active).or(where(root_id: ids, status: :active))
     }
 
     # scope :having_dishes, -> { joins(:menu_dishes).distinct }
@@ -162,18 +162,22 @@ module Menu
     end
 
     def public_visible?
-      visibility&.public_visible?
+      active? && visibility&.public_visible?
     end
 
     def public_visible!
+      active!
+
       visibility&.public_visible!
     end
 
     def private_visible?
-      visibility&.private_visible?
+      active? && visibility&.private_visible?
     end
 
     def private_visible!
+      active!
+
       visibility&.private_visible!
     end
 
