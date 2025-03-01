@@ -1807,7 +1807,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
           response
         end
 
-        let!(:category) { create(:menu_category, status: %w[active inactive]) }
+        let!(:category) { create(:menu_category, status: %w[active inactive].sample) }
 
         it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
         it { is_expected.to have_http_status(:no_content) }
