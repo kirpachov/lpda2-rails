@@ -5,7 +5,7 @@ FactoryBot.define do
     html do
       File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
     end
-    hpp_url { "https://my.example.com/hpp" }
+    # hpp_url { "https://my.example.com/hpp" }
     success_url { "https://my.example.com/success" }
     failure_url { "https://my.example.com/failure" }
     value { 30 }
