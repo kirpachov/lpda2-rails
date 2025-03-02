@@ -28,7 +28,7 @@ class RefundReservationPayment < ActiveInteraction::Base
 
   def do_refund
     case reservation.payment.preorder_type
-    when "html_nexi_payment"
+    when "html_nexi_payment", "html_nexi_authorization"
       call = Nexi::RefundPayment.run(
         value: reservation.payment.value * 100,
         order_id: reservation.payment.external_id,
