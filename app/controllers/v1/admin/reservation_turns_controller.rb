@@ -3,6 +3,7 @@
 module V1::Admin
   class ReservationTurnsController < ApplicationController
     before_action :find_item, only: %i[show update destroy]
+    after_action :clear_cache, only: %i[create update destroy]
 
     def index
       call = ::SearchReservationTurns.run(params:)

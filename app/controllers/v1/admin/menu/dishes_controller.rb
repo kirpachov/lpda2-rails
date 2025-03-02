@@ -15,6 +15,8 @@ module V1
 
       before_action :find_category, only: %i[copy]
 
+      after_action :clear_cache, except: %i[index show references]
+
       def index
         call = ::Menu::SearchDishes.run(params:)
         unless call.valid?

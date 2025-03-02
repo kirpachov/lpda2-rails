@@ -4,6 +4,7 @@ module V1
   module Admin
     class PreferencesController < ApplicationController
       before_action :validate_key_exists, only: %i[value show update]
+      after_action :clear_cache, only: %i[update]
 
       # GET /v1/admin/preferences
       def index

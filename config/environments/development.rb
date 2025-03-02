@@ -28,8 +28,9 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
+  # https://api.rubyonrails.org/v8.0/classes/ActiveSupport/Cache/FileStore.html
   if Rails.root.join("tmp/caching-dev.txt").exist?
-    config.cache_store = :memory_store
+    config.cache_store = :file_store, "tmp/file-store-cache-#{Rails.env}"
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }

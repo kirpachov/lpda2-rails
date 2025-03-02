@@ -4,6 +4,7 @@ module V1::Admin
   # Will manage /v1/admin/holidays requests
   class HolidaysController < ApplicationController
     before_action :find_item, only: %i[show update destroy]
+    after_action :clear_cache, only: %i[create update destroy]
 
     def index
       call = ::SearchHolidays.run(params:)

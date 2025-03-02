@@ -70,9 +70,11 @@ module V1
     # GET
     # /v1/reservations/valid_dates?from_date=2025-03-01&to_date=2025-03-31
     def valid_dates
-      render json: ValidDatesForReservation.run!(params: params.permit!.to_h)
-    rescue StandardError => e
-      render_error(status: 400, message: e)
+      dates = cache_action_response do
+        ValidDatesForReservation.run!(params: params.permit!.to_h)
+      end
+
+      render json: dates
     end
 
     def cancel

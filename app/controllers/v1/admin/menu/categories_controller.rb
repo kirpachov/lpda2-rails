@@ -9,6 +9,7 @@ module V1
       ]
 
       before_action :check_if_can_publish, only: %i[visibility]
+      after_action :clear_cache, except: %i[index show dashboard_data]
 
       def index
         call = ::Menu::SearchCategories.run(params:)

@@ -4,6 +4,7 @@ module V1
   module Admin::Menu
     class IngredientsController < ApplicationController
       before_action :find_item, only: %i[show update destroy copy]
+      after_action :clear_cache, except: %i[index show]
 
       def index
         call = ::Menu::SearchIngredients.run(params:)

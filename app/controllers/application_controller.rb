@@ -13,6 +13,27 @@ class ApplicationController < ActionController::API
     render_unauthorized unless @current_user
   end
 
+  def clear_cache
+    Rails.cache.clear
+  end
+
+  def cache_action_response(cache_params: nil, &block)
+    # Something like: "GET:v1/reservations#valid_dates"
+    key = "#{request.method}:#{request.params["controller"]}##{request.params["action"]}"
+    cache_params ||= params.permit!.to_h
+
+    cache_params_key = Digest::SHA1.hexdigest("#{cache_params.merge(
+      invalidate: Time.zone.now.strftime("%Y-%m-%d %k:%M")
+    ).to_hash}")
+
+    Rails.cache.fetch("#{cache_params_key}#{key}") do
+      Rails.logger.info("Calculating cache for #{key}: #{cache_params_key}, #{cache_params.inspect}")
+      Rails.cache.delete_matched(key)
+      yield
+      # block.call
+    end
+  end
+
   def require_root
     return if current_user.blank? || current_user.root?
 

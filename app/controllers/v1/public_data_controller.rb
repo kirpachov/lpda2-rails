@@ -5,10 +5,18 @@ module V1
     skip_before_action :authenticate_user
 
     def index
+      data = cache_action_response do
+        calc_public_data
+      end
+
+      render json: data
+    end
+
+    def calc_public_data
       reservation = Reservation.public_visible.where(secret: cookies[Reservation::PUBLIC_CREATE_COOKIE],
                                                      datetime: Time.zone.now..).first
 
-      render json: {
+      {
         reservation: reservation.as_json(
           only: %w[id fullname datetime status secret children adults notes email phone created_at updated_at],
           include: [

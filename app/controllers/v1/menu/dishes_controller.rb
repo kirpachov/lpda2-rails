@@ -7,18 +7,20 @@ module V1::Menu
     skip_before_action :authenticate_user
 
     def index
-      call = ::Menu::SearchDishes.run(params:, items: ::Menu::Dish.public_visible)
-      unless call.valid?
-        return render_error(status: 400, details: call.errors.as_json,
-                            message: call.errors.full_messages.join(", "))
+      data = cache_action_response do
+        call = ::Menu::SearchDishes.run!(params:, items: ::Menu::Dish.public_visible)
+
+        items = call.paginate(pagination_params)
+
+        {
+          items: full_json(items),
+          metadata: json_metadata(items)
+        }
       end
 
-      items = call.result.paginate(pagination_params)
-
-      render json: {
-        items: full_json(items),
-        metadata: json_metadata(items)
-      }
+      render json: data
+    rescue ActiveInteraction::InvalidInteractionError => e
+      render_error(status: 400, details: e)
     end
 
     def show

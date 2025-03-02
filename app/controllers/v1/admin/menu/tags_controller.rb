@@ -3,6 +3,7 @@
 module V1::Admin::Menu
   class TagsController < ApplicationController
     before_action :find_item, only: %i[show update destroy copy]
+    after_action :clear_cache, except: %i[index show]
 
     def index
       call = ::Menu::SearchTags.run(params:)

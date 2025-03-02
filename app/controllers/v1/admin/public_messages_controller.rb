@@ -3,7 +3,7 @@
 module V1::Admin
   # CRUD PublicMessage
   class PublicMessagesController < ApplicationController
-    # before_action :find_item, only: %i[show update destroy]
+    after_action :clear_cache, only: %i[create update]
 
     def index
       items = PublicMessage.all.order(:key)

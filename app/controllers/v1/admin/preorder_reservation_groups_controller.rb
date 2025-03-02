@@ -4,6 +4,7 @@ module V1::Admin
   class PreorderReservationGroupsController < ApplicationController
     before_action :find_item, only: %i[show update destroy]
     before_action :require_root, only: %i[create update destroy]
+    after_action :clear_cache, only: %i[create update destroy]
 
     def index
       items = PreorderReservationGroup.visible.order(id: :desc)
