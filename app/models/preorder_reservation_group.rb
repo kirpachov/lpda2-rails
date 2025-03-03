@@ -73,7 +73,7 @@ class PreorderReservationGroup < ApplicationRecord
                      }
 
   scope :deferred, lambda {
-                     where(preorder_type: %w[nexi_authorization])
+    where(preorder_type: %w[nexi_authorization])
   }
 
   def deferred?
