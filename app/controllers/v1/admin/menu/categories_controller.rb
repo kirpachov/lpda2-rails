@@ -212,9 +212,15 @@ module V1
                                                          id: params[:id].inspect))
       end
 
+      def public_visible?(id)
+        @public_visibility ||= ::Menu::Category.visible.with_actual_public_visibility.pluck(:id, :public_visible).to_h
+
+        @public_visibility[id]
+      end
+
       def full_json(item_or_items)
         if item_or_items.is_a?(ActiveRecord::Relation)
-          return item_or_items.with_actual_public_visibility.includes(:menu_visibility, :parent, :visible_children, :visible_menu_dishes,
+          return item_or_items.includes(:menu_visibility, :parent, :visible_children, :visible_menu_dishes,
                                         :text_translations, menu_dishes_in_categories: [:menu_dish], images: [:attached_image_blob]).map do |item|
                    full_json(item)
                  end
@@ -229,6 +235,7 @@ module V1
       def single_item_full_json(item)
         item.as_json.merge(
           name: item.name,
+          public_visible: public_visible?(item.id),
           description: item.description,
           visibility: item.visibility.as_json,
           images: item.images.map(&:full_json),
