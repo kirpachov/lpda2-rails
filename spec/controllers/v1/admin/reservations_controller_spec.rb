@@ -1462,7 +1462,8 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         created_at_to:,
         status:,
         date_from:,
-        date_to:
+        date_to:,
+        query:,
       }
     end
     let(:created_at_from) { nil }
@@ -1470,6 +1471,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
     let(:date_from) { nil }
     let(:date_to) { nil }
     let(:status) { nil }
+    let(:query) { nil }
 
     let(:file) do
       fname = "/tmp/FOR_TEST_PURPOSES#{SecureRandom.hex}Reservations.xlsx"
@@ -1557,6 +1559,29 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
                                                             r.updated_at.strftime("%e/%m/%Y %k:%M").strip
                                                           end)
         }
+      end
+    end
+
+    context "when filtering by query" do
+      let(:secret) { SecureRandom.hex(30) }
+      let(:query) { "#{secret[1..15]}" }
+
+      before do
+        authenticate_request(user:)
+        create(:reservation, status: :active, notes: secret)
+        create(:reservation, status: :active, notes: "mario")
+      end
+
+      context "when filtering by query" do
+        before { req(query:) }
+
+        it { expect(col_values("notes")).to all(eq(secret)) }
+      end
+
+      context "when filtering by query: 'mario'" do
+        before { req(query: 'mario') }
+
+        it { expect(col_values("notes")).to all(eq("mario")) }
       end
     end
 
