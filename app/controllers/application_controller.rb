@@ -32,6 +32,10 @@ class ApplicationController < ActionController::API
       yield
       # block.call
     end
+  rescue Errno::ENOENT => e
+    Rails.cache.clear
+    Rails.logger.error("Error on cache_action_response: #{e.message}")
+    yield
   end
 
   def require_root
