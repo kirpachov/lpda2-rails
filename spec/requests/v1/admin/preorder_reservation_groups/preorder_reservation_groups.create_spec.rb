@@ -348,7 +348,7 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
   context "when preorder_type is nexi_authorization" do
     let(:preorder_type) { "nexi_authorization" }
 
-    it { expect { req }.to change { PreorderReservationGroup.where(preorder_type: preorder_type).count }.by(1) }
+    it { expect { req }.to change { PreorderReservationGroup.where(preorder_type:).count }.by(1) }
     it { expect { req }.to change { PreorderReservationGroup.deferred.count }.by(1) }
 
     context "when checking response" do

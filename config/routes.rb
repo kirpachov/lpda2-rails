@@ -10,9 +10,9 @@ Rails.application.routes.draw do
 
   mount RoutesBasicAuth.call(
     Sidekiq::Web,
-    username: ENV["BASIC_AUTH_USERNAME"],
-    password: ENV["BASIC_AUTH_PASSWORD"]
-  ) => '/sidekiq'
+    username: ENV.fetch("BASIC_AUTH_USERNAME", nil),
+    password: ENV.fetch("BASIC_AUTH_PASSWORD", nil)
+  ) => "/sidekiq"
 
   defaults format: :json do
     scope module: :v2, path: "v2" do

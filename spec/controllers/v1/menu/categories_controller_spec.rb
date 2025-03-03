@@ -75,10 +75,15 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
         create_menu_categories(2, visibility: nil, parent: granny)
 
         # Recursive check:
-        create_menu_categories(1, visibility: nil, parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, status: :deleted)
+        create_menu_categories(1, visibility: nil,
+                                  parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2,
+                                                                                             status: :deleted)
 
         # Recursive check #2:
-        create_menu_categories(1, visibility: nil, parent: granny.children.sample.children.sample).first.dishes = create_list(:menu_dish, 2, status: :inactive)
+        create_menu_categories(1, visibility: nil,
+                                  parent: granny.children.sample.children.sample).first.dishes = create_list(
+                                    :menu_dish, 2, status: :inactive
+                                  )
 
         req(skip_empty_categories: true)
       end
