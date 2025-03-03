@@ -27,8 +27,7 @@ class ExportReservations < ActiveInteraction::Base
                 payment_hpp_url payment_value payment_status
               ])
 
-    index = 0
-    reservations.find_each do |reservation|
+    reservations.each_with_index do |reservation, index|
       write_row(sheet, index + 1,
                 [reservation.id, reservation.fullname, reservation.datetime.strftime("%e/%m/%Y %k:%M").strip, reservation.children, reservation.adults,
                  reservation.email, reservation.phone, reservation.table, reservation.notes, reservation.status, reservation.secret,
