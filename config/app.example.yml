@@ -91,6 +91,8 @@ default: &default
     - localhost:4250
     - localhost:8080
     - laportadacqua.com
+    - lpda2api.localhost
+    - lpda2.localhost
 
   cookie_secure: true
   cookie_same_site: None

@@ -185,3 +185,33 @@ Questo sistema permette:
 1. Impostare pagamenti anticipati ricorrenti. Basterà aggiungere i ReservationTurn al PreorderReservationGroup per cui si vogliono richiedere pagamenti anticipati ricorrenti.
 2. Impostare pagamenti per date specifiche: basterà creare un PreorderReservationDate specificando il turno e la data per cui il pagamento è necessario.
 3. Un domani in cui verranno definite le tipologie di tavolo, sarà possibile specificare per quali tipologie è richiesto il pagamento.
+
+## Local production setup with nginx
+
+- Setup nginx server in `sudo vim /etc/nginx/sites-enabled/lpda2-backend`
+- Serve nginx server with `sudo nginx -t && sudo service nginx reload`
+- Start server `rails s`
+```nginx
+upstream lpda2_upstream {
+        server localhost:3050;
+}
+
+server {
+        server_name lpda2api.localhost;
+        client_max_body_size 20M;
+        listen 80;
+
+        location / {
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Forwarded-Proto https;
+                proxy_buffering off;
+                proxy_http_version 1.1;
+                proxy_connect_timeout       600;
+                proxy_send_timeout          600;
+                proxy_read_timeout          600;
+                send_timeout                600;
+                proxy_pass http://lpda2_upstream;
+        }
+}
+```
