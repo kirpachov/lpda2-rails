@@ -191,6 +191,7 @@ Questo sistema permette:
 - Setup nginx server in `sudo vim /etc/nginx/sites-enabled/lpda2-backend`
 - Serve nginx server with `sudo nginx -t && sudo service nginx reload`
 - Start server `rails s`
+- Check the setup with `curl http://lpda2api.localhost/`
 ```nginx
 upstream lpda2_upstream {
         server localhost:3050;
