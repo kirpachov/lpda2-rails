@@ -17,10 +17,12 @@ class ApplicationController < ActionController::API
     Rails.cache.clear
   end
 
-  def cache_action_response(cache_params: nil, &block)
+  def cache_action_response(&block)
     # Something like: "GET:v1/reservations#valid_dates"
     key = "#{request.method}:#{request.params["controller"]}##{request.params["action"]}"
-    cache_params ||= params.permit!.to_h
+    cache_params = params.permit!.to_h.merge(
+      locale: detect_current_locale
+    )
 
     cache_params_key = Digest::SHA1.hexdigest("#{cache_params.merge(
       invalidate: Time.zone.now.strftime("%Y-%m-%d %k:%M")
