@@ -9,7 +9,16 @@ module Menu
 
     def execute
       categories = all.visible
-      categories = categories.public_visible if public
+
+      if public
+        categories = categories.public_visible.or(
+          categories.private_visible.where(secret: ids)
+        ).or(
+          categories.where(
+            root_id: Category.visible.root.public_or_private_visible.select(:id)
+          )
+        )
+      end
 
       return categories if categories.empty?
 
@@ -21,9 +30,7 @@ module Menu
 
       categories = categories.having_public_dishes if param_true?(:skip_categories_without_dishes)
 
-      if (ids = params[:id].presence || params[:ids]).present?
-        ids = ids.split(",") if ids.is_a?(String)
-
+      if ids.present?
         categories = categories.where(id: ids.map(&:to_i)).or(
           categories.where(secret: ids)
         )
@@ -55,6 +62,17 @@ module Menu
       end
 
       categories.order(:index)
+    end
+
+    private
+
+    def ids
+      return @ids if defined?(@ids)
+
+      @ids = params[:id].presence || params[:ids].presence || params[:secret] || params[:secrets]
+      @ids = @ids.split(",") if @ids.is_a?(String)
+
+      @ids
     end
   end
 end

@@ -159,6 +159,58 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       it { expect(json[:items]).to be_empty }
     end
 
+    context "when public visibility is disabled but private visibility is enabled, and providing category id" do
+      before do
+        create_menu_categories(2)
+        Menu::Category.all.map { |item| item.visibility.update!(public_visible: false, private_visible: true) }
+        req(
+          ["ids", "id", "secret", "secrets"].sample => [
+            Menu::Category.all.limit(1).pluck(:secret).join(",")
+          ]
+        )
+      end
+
+      it { expect(Menu::Category.count).to eq 2 }
+      it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
+
+      it { expect(response).to be_successful }
+      it { expect(json[:items].count).to eq(1) }
+      it { expect(json[:items].pluck(:secret).first).to be_in(Menu::Category.all.pluck(:secret)) }
+    end
+
+    context "when looking for sub-categories of private-visible category" do
+      let(:root_category) do
+        create(:menu_category).tap do |c|
+          c.visibility.update!(public_visible: [false, true].sample, private_visible: true)
+        end
+      end
+
+      let!(:sub_category) do
+        create(:menu_category, visibility: nil, parent: root_category)
+      end
+
+      let!(:sub_sub_category) do
+        create(:menu_category, visibility: nil, parent: sub_category)
+      end
+
+      let(:req_params) { { parent_id: root_category.id } }
+
+      before do
+        req(req_params)
+      end
+
+      it { expect(Menu::Category.count).to eq 3 }
+      it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
+
+      it { expect(json[:items].pluck(:id)).to match_array([sub_category.id]) }
+
+      context "when looking for sub-sub category" do
+        let(:req_params) { { parent_id: sub_category.id } }
+
+        it { expect(json[:items].pluck(:id)).to match_array([sub_sub_category.id]) }
+      end
+    end
+
     [
       [1.day.from_now, 1.week.from_now],
       [1.week.ago, 1.day.ago],
