@@ -8,6 +8,8 @@ class ApplicationController < ActionController::API
 
   attr_reader :current_user
 
+  rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
+
   def authenticate_user
     try_authenticate_user
     render_unauthorized unless @current_user
@@ -52,6 +54,12 @@ class ApplicationController < ActionController::API
         root_at: current_user.root_at
       }
     )
+  end
+
+  def render_record_not_found
+    render json: {
+      message: "Record not found"
+    }, status: :not_found
   end
 
   def render_endpoint_not_found

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_02_12_153521) do
+ActiveRecord::Schema[7.0].define(version: 2025_03_17_090839) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -480,6 +480,30 @@ ActiveRecord::Schema[7.0].define(version: 2025_02_12_153521) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
+  create_table "table_type_to_preorder_reservation_groups", force: :cascade do |t|
+    t.bigint "table_type_id", null: false
+    t.bigint "preorder_reservation_group_id", null: false
+    t.float "price", null: false
+    t.integer "people_per_turn", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["preorder_reservation_group_id"], name: "index_table_type_to_prgroups_on_preorder_reservation_group_id"
+    t.index ["table_type_id"], name: "index_table_type_to_prgroups_on_table_type_id"
+    t.check_constraint "people_per_turn > 0", name: "people_per_turn_positive"
+    t.check_constraint "price >= 0::double precision", name: "price_non_negative"
+  end
+
+  create_table "table_types", force: :cascade do |t|
+    t.integer "default_people_per_turn", comment: "Default number of people that can reserve a table of this type during a turn. Can be overwritten on the join table between table_types and preorder_reservation_groups"
+    t.float "default_price", comment: "Default price per person for the table type. Can be overwritten on the join table between table_types and preorder_reservation_groups"
+    t.text "notes", comment: "Internal notes for the admin"
+    t.text "status", default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.check_constraint "default_people_per_turn > 0", name: "default_people_per_turn_positive"
+    t.check_constraint "default_price >= 0::double precision", name: "default_price_non_negative"
+  end
+
   create_table "tag_in_reservations", force: :cascade do |t|
     t.bigint "reservation_id", null: false
     t.bigint "reservation_tag_id", null: false
@@ -537,6 +561,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_02_12_153521) do
   add_foreign_key "reservation_turn_to_messages", "reservation_turn_messages"
   add_foreign_key "reservation_turn_to_messages", "reservation_turns"
   add_foreign_key "reset_password_secrets", "users"
+  add_foreign_key "table_type_to_preorder_reservation_groups", "preorder_reservation_groups"
+  add_foreign_key "table_type_to_preorder_reservation_groups", "table_types"
   add_foreign_key "tag_in_reservations", "reservation_tags"
   add_foreign_key "tag_in_reservations", "reservations"
 end
