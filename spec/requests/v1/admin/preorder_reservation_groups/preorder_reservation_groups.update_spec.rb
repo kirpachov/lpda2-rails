@@ -15,7 +15,8 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       message:,
       dates:,
       active_from:,
-      active_to:
+      active_to:,
+      table_types:,
     }
   end
 
@@ -27,6 +28,7 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
   let(:message) { { it: message_it, en: message_en } }
   let(:message_it) { Faker::Lorem.sentence }
   let(:message_en) { Faker::Lorem.sentence }
+  let(:table_types) { [] }
   let(:dates) do
     [{ date: Date.current.next_occurring(:monday).to_s, turn_id: turn.id }]
   end
@@ -215,6 +217,67 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
           expect(response).to have_http_status(:ok)
         end
       end
+    end
+  end
+
+  context "when providing table types" do
+    let!(:table_type) { create(:table_type) }
+
+    let(:price) { Random.rand(0..5) }
+    let(:people_per_turn) { Random.rand(1..30) }
+    let(:table_type_id) { table_type.id }
+
+    let(:table_types) do
+      [
+        {
+          table_type_id: table_type_id,
+          people_per_turn:,
+          price:
+        }
+      ]
+    end
+
+    before { group }
+
+    context "when table_type with that id does not exist" do
+      let(:table_type_id) { 999_999_999 }
+
+      context "when checking response" do
+        before { req }
+
+        it { expect(response).not_to have_http_status(:ok) }
+        it { expect(json).to include(message: String) }
+      end
+
+      it { expect { req }.not_to(change(PreorderReservationGroup, :count)) }
+      it { expect { req }.not_to(change { TableTypeToPreorderReservationGroup.count }) }
+    end
+
+    context "when table_type with that id is not active" do
+      before { table_type.inactive! }
+
+      context "when checking response" do
+        before { req }
+
+        it { expect(response).not_to have_http_status(:ok) }
+        it { expect(json).to include(message: String) }
+      end
+
+      it { expect { req }.not_to(change(PreorderReservationGroup, :count)) }
+      it { expect { req }.not_to(change { TableTypeToPreorderReservationGroup.count }) }
+    end
+
+    context "should associate table types to preorder group" do
+      context "when checking response" do
+        before { req }
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(json).not_to include(:message) }
+      end
+
+      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.count }.by(1)) }
+      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(people_per_turn: people_per_turn).count }.by(1)) }
+      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
     end
   end
 end
