@@ -612,6 +612,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         before { group }
 
         it { expect { req }.to(change { Reservation.count }.by(1)) }
+        it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([group.payment_value * 2])) }
         it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
 
@@ -630,6 +631,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
         before { group }
 
+        it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([group.payment_value * 2])) }
         it { expect { req }.to(change { Reservation.count }.by(1)) }
         it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
@@ -641,6 +643,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
 
       context "when a payment is always required for that turn" do
+        let(:adults) { Random.rand(1..9) }
         let(:group) do
           create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
             grp.turns = [turn]
@@ -651,6 +654,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
           group
         end
 
+        it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([group.payment_value * adults])) }
         it { expect { req }.to(change { Reservation.count }.by(1)) }
         it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }

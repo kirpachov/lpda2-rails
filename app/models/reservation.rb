@@ -96,7 +96,7 @@ class Reservation < ApplicationRecord
       options.merge(
         {
           reservation: self,
-          amount: grp.payment_value,
+          amount: grp.payment_value * people,
           deferred: grp.deferred?
         }.compact
       )
