@@ -19,7 +19,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         email:,
         phone:,
         notes:,
-        lang:
+        lang:,
+        table_type_id:,
       }
     end
     let(:notes) { Faker::Lorem.sentence }
@@ -35,6 +36,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
     let(:last_name) { Faker::Name.last_name }
     let(:first_name) { Faker::Name.first_name }
     let(:lang) { :en }
+    let(:table_type_id) { nil }
     let!(:turn) do
       create(:reservation_turn, starts_at: DateTime.parse("00:01"), ends_at: DateTime.parse("23:59"),
                                 weekday: Time.zone.now.beginning_of_week.wday)
@@ -727,6 +729,91 @@ RSpec.describe V1::ReservationsController, type: :controller do
               req
               expect(Nexi::HttpRequest.last.request_body.dig("languageId")).to eq(scenario[:code])
             end
+          end
+        end
+
+        context "when payment supports table_types" do
+          let!(:table_type) do
+            create(:table_type, status: :active, default_price: 4)
+          end
+
+          let(:table_type_id) { table_type.id }
+
+          before { group.add_table_type(table_type: table_type, people_per_turn: 15, price: 3) }
+
+          context "when user specifies valid table_type_id" do
+            let(:table_type_id) { table_type.id }
+            let(:adults) { 2 }
+            let(:children) { 1 }
+
+            it do
+              req
+              expect(json).not_to include(:message)
+            end
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.to(change { Reservation.all.pluck(:table_type_id) }.to([table_type_id])) }
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+            it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([3.0 * (2 + 1)])) }
+          end
+
+          context "when not specifying table type id, will use base payment" do
+            let(:table_type_id) { nil }
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+            it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([group.payment_value.to_f * (adults + children)])) }
+          end
+
+          context "when not specifying table type id and payment value is zero, won't create reservation payment" do
+            let(:table_type_id) { nil }
+
+            before { group.update!(payment_value: 0) }
+
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+          end
+
+          context "when user specifies invalid table_type_id" do
+            let(:table_type_id) { 999_999_999 }
+
+            it do
+              req
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(json).to include(message: /able/)
+              expect(json).to include(message: /ype/)
+            end
+
+            it { expect { req }.not_to(change { Reservation.count }) }
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+          end
+
+          context "when the specified table_type_id is not active" do
+            before { table_type.inactive! }
+
+            it do
+              req
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(json).to include(message: /able/)
+              expect(json).to include(message: /ype/)
+            end
+
+            it { expect { req }.not_to(change { Reservation.count }) }
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+          end
+
+          context "when the specified table_type_id is not associated to that preorder reservation group" do
+            before { TableTypeToPreorderReservationGroup.delete_all }
+
+            it do
+              req
+              expect(response).to have_http_status(:unprocessable_entity)
+              expect(json).to include(message: /able/)
+              expect(json).to include(message: /ype/)
+            end
+
+            it { expect { req }.not_to(change { Reservation.count }) }
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
           end
         end
       end

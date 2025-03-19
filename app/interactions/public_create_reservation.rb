@@ -31,38 +31,23 @@ class PublicCreateReservation < ActiveInteraction::Base
 
   validate :no_holidays
 
-  attr_reader :reservation
+  validate :table_type_must_be_active
+
+  attr_reader :reservation, :table_type
 
   def execute
-    @reservation = Reservation.new(
-      fullname: "#{first_name} #{last_name}",
-      datetime:,
-      adults:,
-      children:,
-      email:,
-      phone:,
-      notes: params[:notes].to_s.strip,
-      lang:,
-      other: {
-        first_name:,
-        last_name:
-      }
-    )
+    @reservation = initialize_reservation
 
-    if errors.empty?
-      if @reservation.requires_payment?
-        call = @reservation.create_payment
-        unless call.valid?
-          ExceptionNotifier.notify_exception(NexiApiIssue.new(call.errors.full_messages.join(", ")),
-                                             data: { errors: call.errors })
-          errors.merge!(call.errors)
-        end
-      else
-        errors.merge!(@reservation.errors) unless @reservation.valid? && @reservation.save
-      end
+    errors.merge!(reservation.errors) unless reservation.valid? && reservation.save
+
+    create_reservation_payment_if_needed if reservation.valid? && errors.empty?
+
+    if errors.any? && reservation.persisted?
+      reservation.destroy
+      return nil
     end
 
-    @reservation
+    reservation
   end
 
   # ###################################
@@ -132,9 +117,57 @@ class PublicCreateReservation < ActiveInteraction::Base
     str
   end
 
+  def initialize_reservation
+    Reservation.new(
+      fullname: "#{first_name} #{last_name}",
+      datetime:,
+      adults:,
+      children:,
+      email:,
+      phone:,
+      notes: params[:notes].to_s.strip,
+      lang:,
+      other: {
+        first_name:,
+        last_name:
+      },
+      table_type:
+    )
+  end
+
+  def find_table_type
+    return nil if params[:table_type_id].blank?
+
+    @table_type = TableType.find_by(id: params[:table_type_id])
+
+    errors.add(:base, "table type with id #{params[:table_type_id].inspect} not found.") unless @table_type
+
+    @table_type
+  end
+
+  def create_reservation_payment_if_needed
+    return unless reservation.requires_payment?
+
+    reservation.create_payment!
+  rescue ActiveInteraction::InvalidInteractionError => e
+    errors.add(:base, "Issue when creating payment: #{e.message}")
+
+    ExceptionNotifier.notify_exception(
+      NexiApiIssue.new(errors.full_messages.join(", ")),
+      data: { errors: errors }
+    )
+  end
+
   # ###################################
   # Validation methods
   # ###################################
+  def table_type_must_be_active
+    find_table_type
+    return if table_type.nil? || table_type.status == "active"
+
+    errors.add(:base, "table type must be active. got #{table_type&.status}")
+  end
+
   def no_holidays
     return if datetime.blank?
 

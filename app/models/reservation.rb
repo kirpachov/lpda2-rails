@@ -37,6 +37,7 @@ class Reservation < ApplicationRecord
   has_many :pixel_events, class_name: "Log::ImagePixelEvent", through: :image_pixels, source: :events
   has_one :payment, class_name: "ReservationPayment"
   has_many :events, class_name: "Log::ReservationEvent", dependent: :destroy
+  belongs_to :table_type, optional: true
 
   alias_attribute :tags, :reservation_tags
 
@@ -74,33 +75,22 @@ class Reservation < ApplicationRecord
   # ################################
   # Instance methods
   # ################################
-  def requires_payment?(options = {})
-    @requires_payment ||= required_payment_group(options).present?
+  def requires_payment?
+    required_payment_value.positive?
   end
   alias payment_required? requires_payment?
 
-  def required_payment_value(options = {})
-    @required_payment_value ||= required_payment_group(options)&.payment_value
+  def required_payment_value
+    ReservationPaymentValue.run!(reservation: self)
   end
 
-  def required_payment_group(options = {})
-    @required_payment_group ||= ReservationRequiresPayment.run!(
-      options.merge(reservation: self)
-    )
+  def required_payment_group
+    @required_payment_group ||= ReservationRequiresPayment.run!(reservation: self)
   end
 
   # Will generate and attach a URL user can open to pay the reservation.
-  def create_payment(options = {})
-    grp = required_payment_group(options)
-    Nexi::CreateReservationPayment.run(
-      options.merge(
-        {
-          reservation: self,
-          amount: grp.payment_value * people,
-          deferred: grp.deferred?
-        }.compact
-      )
-    )
+  def create_payment!(options = {})
+    CreateReservationPayment.run!(options:, reservation: self)
   end
 
   def reservation_turn

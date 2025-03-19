@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_03_17_090839) do
+ActiveRecord::Schema[7.0].define(version: 2025_03_18_112104) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -459,6 +459,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_17_090839) do
     t.datetime "updated_at", null: false
     t.text "lang", default: "en", null: false
     t.text "member_id"
+    t.bigint "table_type_id"
   end
 
   create_table "reset_password_secrets", force: :cascade do |t|
@@ -560,6 +561,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_17_090839) do
   add_foreign_key "reservation_payments", "reservations"
   add_foreign_key "reservation_turn_to_messages", "reservation_turn_messages"
   add_foreign_key "reservation_turn_to_messages", "reservation_turns"
+  add_foreign_key "reservations", "table_types"
   add_foreign_key "reset_password_secrets", "users"
   add_foreign_key "table_type_to_preorder_reservation_groups", "preorder_reservation_groups"
   add_foreign_key "table_type_to_preorder_reservation_groups", "table_types"
