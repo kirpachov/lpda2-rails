@@ -164,7 +164,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
         create_menu_categories(2)
         Menu::Category.all.map { |item| item.visibility.update!(public_visible: false, private_visible: true) }
         req(
-          ["ids", "id", "secret", "secrets"].sample => [
+          %w[ids id secret secrets].sample => [
             Menu::Category.all.limit(1).pluck(:secret).join(",")
           ]
         )
@@ -202,12 +202,12 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       it { expect(Menu::Category.count).to eq 3 }
       it { expect(Menu::Category.all.pluck(:status)).to all(eq "active") }
 
-      it { expect(json[:items].pluck(:id)).to match_array([sub_category.id]) }
+      it { expect(json[:items].pluck(:id)).to contain_exactly(sub_category.id) }
 
       context "when looking for sub-sub category" do
         let(:req_params) { { parent_id: sub_category.id } }
 
-        it { expect(json[:items].pluck(:id)).to match_array([sub_sub_category.id]) }
+        it { expect(json[:items].pluck(:id)).to contain_exactly(sub_sub_category.id) }
       end
     end
 
@@ -912,12 +912,12 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
     end
 
     context "when category is inactive" do
+      subject { response }
+
       before do
         category.update!(status: :inactive)
         req(id: category.id)
       end
-
-      subject { response }
 
       it_behaves_like NOT_FOUND
     end

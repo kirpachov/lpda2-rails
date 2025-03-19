@@ -38,7 +38,8 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
 
   let(:reservation) do
     create(:reservation).tap do |reservation|
-      create(:reservation_payment, reservation:, status: :paid, preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
+      create(:reservation_payment, reservation:, status: :paid,
+                                   preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
     end
   end
 
