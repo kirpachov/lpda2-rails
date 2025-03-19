@@ -1467,7 +1467,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         status:,
         date_from:,
         date_to:,
-        query:,
+        query:
       }
     end
     let(:created_at_from) { nil }
@@ -1583,7 +1583,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
       end
 
       context "when filtering by query: 'mario'" do
-        before { req(query: 'mario') }
+        before { req(query: "mario") }
 
         it { expect(col_values("notes")).to all(eq("mario")) }
       end
