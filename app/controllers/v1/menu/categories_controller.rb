@@ -45,7 +45,11 @@ module V1::Menu
     end
 
     def full_json(item_or_items)
-      return item_or_items.includes(:text_translations, :images, :parent).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+      if item_or_items.is_a?(ActiveRecord::Relation)
+        return item_or_items.includes(:text_translations, :images, :parent).map do |item|
+                 full_json(item)
+               end
+      end
 
       return single_item_full_json(item_or_items) if item_or_items.is_a?(::Menu::Category)
 

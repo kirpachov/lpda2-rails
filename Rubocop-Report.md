@@ -1,6 +1,6 @@
 # RuboCop Inspection Report
 
-497 files inspected, 4385 offenses detected:
+498 files inspected, 4440 offenses detected:
 
 ### Gemfile - (1 offense)
   * **Line # 1 - convention:** Style/FrozenStringLiteralComment: Missing frozen string literal comment.
@@ -43,38 +43,80 @@
     module ApplicationCable
     ```
 
-### app/controllers/application_controller.rb - (6 offenses)
+### app/controllers/application_controller.rb - (13 offenses)
+  * **Line # 3 - convention:** Metrics/ClassLength: Class has too many lines. [107/100]
+
+    ```rb
+    class ApplicationController < ActionController::API ...
+    ```
+
   * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class ApplicationController`.
 
     ```rb
     class ApplicationController < ActionController::API
     ```
 
-  * **Line # 59 - convention:** Style/SafeNavigation: Use safe navigation (`&.`) instead of checking if an object exists before calling the method.
+  * **Line # 20 - convention:** Metrics/AbcSize: Assignment Branch Condition size for cache_action_response is too high. [<4, 33, 2> 33.3/17]
+
+    ```rb
+      def cache_action_response ...
+    ```
+
+  * **Line # 20 - convention:** Metrics/MethodLength: Method has too many lines. [16/10]
+
+    ```rb
+      def cache_action_response ...
+    ```
+
+  * **Line # 20 - convention:** Style/DefWithParentheses: Omit the parentheses in defs when the method doesn't accept any arguments.
+
+    ```rb
+      def cache_action_response()
+    ```
+
+  * **Line # 20 - convention:** Naming/BlockForwarding: Use anonymous block forwarding.
+
+    ```rb
+      def cache_action_response(&block)
+    ```
+
+  * **Line # 20 - warning:** Lint/UnusedMethodArgument: Unused method argument - `block`. If it's necessary, use `_` or `_block` as an argument name to indicate that it won't be used. If it's unnecessary, remove it. You can also write as `cache_action_response(*)` if you want the method to accept any arguments but don't care about them.
+
+    ```rb
+      def cache_action_response(&block)
+    ```
+
+  * **Line # 27 - convention:** Style/RedundantInterpolation: Prefer `to_s` over string interpolation.
+
+    ```rb
+        cache_params_key = Digest::SHA1.hexdigest("#{cache_params.merge( ...
+    ```
+
+  * **Line # 86 - convention:** Style/SafeNavigation: Use safe navigation (`&.`) instead of checking if an object exists before calling the method.
 
     ```rb
           record.image_to_record.destroy! if record.image_to_record
     ```
 
-  * **Line # 93 - convention:** Metrics/AbcSize: Assignment Branch Condition size for json_metadata is too high. [<1, 21, 11> 23.73/17]
+  * **Line # 120 - convention:** Metrics/AbcSize: Assignment Branch Condition size for json_metadata is too high. [<1, 21, 11> 23.73/17]
 
     ```rb
       def json_metadata(resources) ...
     ```
 
-  * **Line # 93 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for json_metadata is too high. [9/7]
+  * **Line # 120 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for json_metadata is too high. [9/7]
 
     ```rb
       def json_metadata(resources) ...
     ```
 
-  * **Line # 93 - convention:** Metrics/MethodLength: Method has too many lines. [17/10]
+  * **Line # 120 - convention:** Metrics/MethodLength: Method has too many lines. [17/10]
 
     ```rb
       def json_metadata(resources) ...
     ```
 
-  * **Line # 93 - convention:** Metrics/PerceivedComplexity: Perceived complexity for json_metadata is too high. [9/8]
+  * **Line # 120 - convention:** Metrics/PerceivedComplexity: Perceived complexity for json_metadata is too high. [9/8]
 
     ```rb
       def json_metadata(resources) ...
@@ -87,26 +129,26 @@
       class AllergensController < ApplicationController
     ```
 
-  * **Line # 28 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 26, 6> 26.76/17]
+  * **Line # 29 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 26, 6> 26.76/17]
 
     ```rb
         def create ...
     ```
 
-  * **Line # 40 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 22, 7> 23.09/17]
+  * **Line # 41 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 22, 7> 23.09/17]
 
     ```rb
         def update ...
     ```
 
-  * **Line # 40 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for update is too high. [8/7]
+  * **Line # 41 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for update is too high. [8/7]
 
     ```rb
         def update ...
     ```
 
 ### app/controllers/v1/admin/menu/categories_controller.rb - (17 offenses)
-  * **Line # 5 - convention:** Metrics/ClassLength: Class has too many lines. [181/100]
+  * **Line # 5 - convention:** Metrics/ClassLength: Class has too many lines. [187/100]
 
     ```rb
         class CategoriesController < ApplicationController ...
@@ -118,98 +160,98 @@
         class CategoriesController < ApplicationController
     ```
 
-  * **Line # 40 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<1, 20, 5> 20.64/17]
+  * **Line # 41 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<1, 20, 5> 20.64/17]
 
     ```rb
           def create ...
     ```
 
-  * **Line # 50 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 18, 5> 18.68/17]
+  * **Line # 51 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 18, 5> 18.68/17]
 
     ```rb
           def update ...
     ```
 
-  * **Line # 81 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_dish is too high. [<3, 20, 3> 20.45/17]
+  * **Line # 82 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_dish is too high. [<3, 20, 3> 20.45/17]
 
     ```rb
           def add_dish ...
     ```
 
-  * **Line # 81 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 82 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
 
     ```rb
           def add_dish ...
     ```
 
-  * **Line # 97 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move is too high. [<0, 18, 7> 19.31/17]
+  * **Line # 98 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move is too high. [<0, 18, 7> 19.31/17]
 
     ```rb
           def move ...
     ```
 
-  * **Line # 119 - convention:** Metrics/AbcSize: Assignment Branch Condition size for copy is too high. [<3, 22, 2> 22.29/17]
+  * **Line # 120 - convention:** Metrics/AbcSize: Assignment Branch Condition size for copy is too high. [<3, 22, 2> 22.29/17]
 
     ```rb
           def copy ...
     ```
 
-  * **Line # 119 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
+  * **Line # 120 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
 
     ```rb
           def copy ...
     ```
 
-  * **Line # 128 - convention:** Performance/RedundantMerge: Use `copy_params[:parent_id] = params[:parent_id]` instead of `copy_params.merge!(parent_id: params[:parent_id])`.
+  * **Line # 129 - convention:** Performance/RedundantMerge: Use `copy_params[:parent_id] = params[:parent_id]` instead of `copy_params.merge!(parent_id: params[:parent_id])`.
 
     ```rb
             copy_params.merge!(parent_id: params[:parent_id]) if params.key?(:parent_id)
     ```
 
-  * **Line # 149 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 150 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
 
     ```rb
           def add_category ...
     ```
 
-  * **Line # 170 - warning:** Lint/BooleanSymbol: Symbol with a boolean name - you probably meant to use `true`.
+  * **Line # 171 - warning:** Lint/BooleanSymbol: Symbol with a boolean name - you probably meant to use `true`.
 
     ```rb
             publishing_now = [true, 1, "true", "1", :true].include?(params[:public_visible])
     ```
 
-  * **Line # 184 - warning:** Lint/BooleanSymbol: Symbol with a boolean name - you probably meant to use `true`.
+  * **Line # 185 - warning:** Lint/BooleanSymbol: Symbol with a boolean name - you probably meant to use `true`.
 
     ```rb
             [true, 1, "true", "1", :true].include? params[:force]
     ```
 
-  * **Line # 199 - convention:** Performance/RedundantMerge: Use `update_params[:visibility_id] = nil` instead of `update_params.merge!(visibility_id: nil)`.
+  * **Line # 200 - convention:** Performance/RedundantMerge: Use `update_params[:visibility_id] = nil` instead of `update_params.merge!(visibility_id: nil)`.
 
     ```rb
               update_params.merge!(visibility_id: nil)
     ```
 
-  * **Line # 217 - convention:** Layout/LineLength: Line is too long. [146/120]
+  * **Line # 224 - convention:** Layout/LineLength: Line is too long. [146/120]
 
     ```rb
                                             :text_translations, menu_dishes_in_categories: [:menu_dish], images: [:attached_image_blob]).map do |item|
     ```
 
-  * **Line # 228 - convention:** Metrics/AbcSize: Assignment Branch Condition size for single_item_full_json is too high. [<0, 19, 6> 19.92/17]
+  * **Line # 235 - convention:** Metrics/AbcSize: Assignment Branch Condition size for single_item_full_json is too high. [<0, 21, 6> 21.84/17]
 
     ```rb
           def single_item_full_json(item) ...
     ```
 
-  * **Line # 228 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 235 - convention:** Metrics/MethodLength: Method has too many lines. [13/10]
 
     ```rb
           def single_item_full_json(item) ...
     ```
 
 ### app/controllers/v1/admin/menu/dishes_controller.rb - (22 offenses)
-  * **Line # 5 - convention:** Metrics/ClassLength: Class has too many lines. [265/100]
+  * **Line # 5 - convention:** Metrics/ClassLength: Class has too many lines. [266/100]
 
     ```rb
         class DishesController < ApplicationController ...
@@ -221,121 +263,121 @@
         class DishesController < ApplicationController
     ```
 
-  * **Line # 39 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<1, 34, 7> 34.73/17]
+  * **Line # 41 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<1, 34, 7> 34.73/17]
 
     ```rb
           def create ...
     ```
 
-  * **Line # 39 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for create is too high. [8/7]
+  * **Line # 41 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for create is too high. [8/7]
 
     ```rb
           def create ...
     ```
 
-  * **Line # 39 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
+  * **Line # 41 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
 
     ```rb
           def create ...
     ```
 
-  * **Line # 47 - convention:** Layout/LineLength: Line is too long. [127/120]
+  * **Line # 49 - convention:** Layout/LineLength: Line is too long. [127/120]
 
     ```rb
                                                  menu_category_id: params[:category_id].present? ? params[:category_id].to_i : nil)
     ```
 
-  * **Line # 56 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<1, 28, 6> 28.65/17]
+  * **Line # 58 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<1, 28, 6> 28.65/17]
 
     ```rb
           def update ...
     ```
 
-  * **Line # 102 - convention:** Layout/LineLength: Line is too long. [131/120]
+  * **Line # 104 - convention:** Layout/LineLength: Line is too long. [131/120]
 
     ```rb
                                            menu_category_id: params[:category_id].blank? ? nil : params[:category_id].to_i).destroy_all
     ```
 
-  * **Line # 146 - convention:** Metrics/AbcSize: Assignment Branch Condition size for copy is too high. [<2, 19, 1> 19.13/17]
+  * **Line # 148 - convention:** Metrics/AbcSize: Assignment Branch Condition size for copy is too high. [<2, 19, 1> 19.13/17]
 
     ```rb
           def copy ...
     ```
 
-  * **Line # 146 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
+  * **Line # 148 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
 
     ```rb
           def copy ...
     ```
 
-  * **Line # 165 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_ingredient is too high. [<3, 20, 3> 20.45/17]
+  * **Line # 167 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_ingredient is too high. [<3, 20, 3> 20.45/17]
 
     ```rb
           def add_ingredient ...
     ```
 
-  * **Line # 165 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 167 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
 
     ```rb
           def add_ingredient ...
     ```
 
-  * **Line # 191 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_ingredient is too high. [<2, 18, 2> 18.22/17]
+  * **Line # 193 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_ingredient is too high. [<2, 18, 2> 18.22/17]
 
     ```rb
           def move_ingredient ...
     ```
 
-  * **Line # 207 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_tag is too high. [<3, 20, 3> 20.45/17]
+  * **Line # 209 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_tag is too high. [<3, 20, 3> 20.45/17]
 
     ```rb
           def add_tag ...
     ```
 
-  * **Line # 224 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
+  * **Line # 226 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
 
     ```rb
           rescue ActiveRecord::RecordNotFound => e
     ```
 
-  * **Line # 228 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_tag is too high. [<2, 18, 2> 18.22/17]
+  * **Line # 230 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_tag is too high. [<2, 18, 2> 18.22/17]
 
     ```rb
           def move_tag ...
     ```
 
-  * **Line # 244 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_allergen is too high. [<3, 20, 3> 20.45/17]
+  * **Line # 246 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_allergen is too high. [<3, 20, 3> 20.45/17]
 
     ```rb
           def add_allergen ...
     ```
 
-  * **Line # 244 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 246 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
 
     ```rb
           def add_allergen ...
     ```
 
-  * **Line # 263 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
+  * **Line # 265 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
 
     ```rb
           rescue ActiveRecord::RecordNotFound => e
     ```
 
-  * **Line # 269 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_allergen is too high. [<2, 18, 2> 18.22/17]
+  * **Line # 271 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move_allergen is too high. [<2, 18, 2> 18.22/17]
 
     ```rb
           def move_allergen ...
     ```
 
-  * **Line # 285 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_image is too high. [<3, 20, 3> 20.45/17]
+  * **Line # 287 - convention:** Metrics/AbcSize: Assignment Branch Condition size for add_image is too high. [<3, 20, 3> 20.45/17]
 
     ```rb
           def add_image ...
     ```
 
-  * **Line # 302 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
+  * **Line # 304 - warning:** Lint/UselessAssignment: Useless assignment to variable - `e`.
 
     ```rb
           rescue ActiveRecord::RecordNotFound => e
@@ -348,13 +390,13 @@
         class IngredientsController < ApplicationController
     ```
 
-  * **Line # 29 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 27, 5> 27.53/17]
+  * **Line # 30 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 27, 5> 27.53/17]
 
     ```rb
           def create ...
     ```
 
-  * **Line # 43 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 25, 6> 25.71/17]
+  * **Line # 44 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 25, 6> 25.71/17]
 
     ```rb
           def update ...
@@ -367,19 +409,19 @@
       class TagsController < ApplicationController
     ```
 
-  * **Line # 28 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 26, 6> 26.76/17]
+  * **Line # 29 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<2, 26, 6> 26.76/17]
 
     ```rb
         def create ...
     ```
 
-  * **Line # 40 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 22, 7> 23.09/17]
+  * **Line # 41 - convention:** Metrics/AbcSize: Assignment Branch Condition size for update is too high. [<0, 22, 7> 23.09/17]
 
     ```rb
         def update ...
     ```
 
-  * **Line # 40 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for update is too high. [8/7]
+  * **Line # 41 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for update is too high. [8/7]
 
     ```rb
         def update ...
@@ -398,7 +440,7 @@
           before_action :validate_key_exists, only: %i[value show update]
     ```
 
-  * **Line # 23 - convention:** Layout/LineLength: Line is too long. [153/120]
+  * **Line # 24 - convention:** Layout/LineLength: Line is too long. [153/120]
 
     ```rb
             # render json: current_user.preference(params[:key]).as_json(except: %i[id created_at]).merge(value: current_user.preference_value(params[:key]))
@@ -411,13 +453,13 @@
       class PreorderReservationGroupsController < ApplicationController
     ```
 
-  * **Line # 8 - convention:** Metrics/AbcSize: Assignment Branch Condition size for index is too high. [<4, 18, 2> 18.55/17]
+  * **Line # 9 - convention:** Metrics/AbcSize: Assignment Branch Condition size for index is too high. [<4, 18, 2> 18.55/17]
 
     ```rb
         def index ...
     ```
 
-  * **Line # 76 - convention:** Layout/LineLength: Line is too long. [123/120]
+  * **Line # 77 - convention:** Layout/LineLength: Line is too long. [123/120]
 
     ```rb
                 "Invalid params. PreorderReservationGroup or ActiveRecord::Relation expected, but #{item_or_items.class} given"
@@ -659,21 +701,81 @@
                                                               id: params[:id].inspect)}#{params[:variant].present? ? " with variant #{params[:variant].inspect}" : ""}")
     ```
 
-### app/controllers/v1/menu/categories_controller.rb - (1 offense)
-  * **Line # 33 - convention:** Layout/LineLength: Line is too long. [147/120]
+### app/controllers/v1/menu/categories_controller.rb - (10 offenses)
+  * **Line # 9 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
+
+    ```rb
+        def index ...
+    ```
+
+  * **Line # 39 - convention:** Layout/LineLength: Line is too long. [147/120]
 
     ```rb
           @item = Menu::Category.visible.public_visible.find_by(id: params[:id]) || Menu::Category.visible.private_visible.find_by(secret: params[:id])
     ```
 
-### app/controllers/v1/menu/dishes_controller.rb - (2 offenses)
-  * **Line # 32 - convention:** Metrics/AbcSize: Assignment Branch Condition size for full_json is too high. [<0, 25, 2> 25.08/17]
+  * **Line # 48 - convention:** Style/MultilineIfModifier: Favor a normal if-statement over a modifier clause in a multiline statement.
+
+    ```rb
+          return item_or_items.includes(:text_translations, :images, :parent).map { |item| ...
+    ```
+
+  * **Line # 48 - convention:** Style/BlockDelimiters: Avoid using `{...}` for multi-line blocks.
+
+    ```rb
+          return item_or_items.includes(:text_translations, :images, :parent).map { |item|
+    ```
+
+  * **Line # 48 - convention:** Style/IfUnlessModifier: Modifier form of `if` makes the line too long.
+
+    ```rb
+          return item_or_items.includes(:text_translations, :images, :parent).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+    ```
+
+  * **Line # 48 - convention:** Layout/LineLength: Line is too long. [151/120]
+
+    ```rb
+          return item_or_items.includes(:text_translations, :images, :parent).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+    ```
+
+  * **Line # 49 - convention:** Layout/IndentationWidth: Use 2 (not 1) spaces for indentation.
+
+    ```rb
+     full_json(item)
+    ```
+
+  * **Line # 49 - convention:** Layout/IndentationWidth: Use 2 (not -11) spaces for indentation.
+
+    ```rb
+      full_json(item)
+    ```
+
+  * **Line # 49 - convention:** Layout/BlockEndNewline: Expression at 49, 18 should be on its own line.
+
+    ```rb
+     full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
+    ```
+
+  * **Line # 50 - convention:** Layout/BlockAlignment: `}` at 50, 0 is not aligned with `item_or_items.includes(:text_translations, :images, :parent).map { |item|` at 48, 13 or `return item_or_items.includes(:text_translations, :images, :parent).map { |item|` at 48, 6.
+
+    ```rb
+    } if item_or_items.is_a?(ActiveRecord::Relation)
+    ```
+
+### app/controllers/v1/menu/dishes_controller.rb - (3 offenses)
+  * **Line # 9 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
+
+    ```rb
+        def index ...
+    ```
+
+  * **Line # 34 - convention:** Metrics/AbcSize: Assignment Branch Condition size for full_json is too high. [<0, 25, 2> 25.08/17]
 
     ```rb
         def full_json(item_or_items) ...
     ```
 
-  * **Line # 32 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
+  * **Line # 34 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
 
     ```rb
         def full_json(item_or_items) ...
@@ -693,26 +795,20 @@
       class ProfileController < ApplicationController
     ```
 
-### app/controllers/v1/public_data_controller.rb - (3 offenses)
+### app/controllers/v1/public_data_controller.rb - (2 offenses)
   * **Line # 4 - convention:** Style/Documentation: Missing top-level documentation comment for `class V1::PublicDataController`.
 
     ```rb
       class PublicDataController < ApplicationController
     ```
 
-  * **Line # 7 - convention:** Metrics/AbcSize: Assignment Branch Condition size for index is too high. [<1, 18, 0> 18.03/17]
+  * **Line # 7 - convention:** Metrics/MethodLength: Method has too many lines. [19/10]
 
     ```rb
         def index ...
     ```
 
-  * **Line # 7 - convention:** Metrics/MethodLength: Method has too many lines. [17/10]
-
-    ```rb
-        def index ...
-    ```
-
-### app/controllers/v1/reservations_controller.rb - (9 offenses)
+### app/controllers/v1/reservations_controller.rb - (4 offenses)
   * **Line # 4 - convention:** Style/Documentation: Missing top-level documentation comment for `class V1::ReservationsController`.
 
     ```rb
@@ -735,36 +831,6 @@
 
     ```rb
         def create ...
-    ```
-
-  * **Line # 70 - convention:** Metrics/AbcSize: Assignment Branch Condition size for valid_dates is too high. [<11, 62, 12> 64.1/17]
-
-    ```rb
-        def valid_dates ...
-    ```
-
-  * **Line # 70 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for valid_dates is too high. [10/7]
-
-    ```rb
-        def valid_dates ...
-    ```
-
-  * **Line # 70 - convention:** Metrics/MethodLength: Method has too many lines. [18/10]
-
-    ```rb
-        def valid_dates ...
-    ```
-
-  * **Line # 70 - convention:** Metrics/PerceivedComplexity: Perceived complexity for valid_dates is too high. [10/8]
-
-    ```rb
-        def valid_dates ...
-    ```
-
-  * **Line # 77 - convention:** Layout/LineLength: Line is too long. [190/120]
-
-    ```rb
-          if Setting.where(key: :reservation_max_days_in_advance).first.present? && (to_date > Time.zone.now.to_date + Setting.where(key: :reservation_max_days_in_advance).first.value.to_i.days)
     ```
 
 ### app/controllers/v2/reservations_controller.rb - (3 offenses)
@@ -1528,31 +1594,31 @@
     ```
 
 ### app/interactions/export_reservations.rb - (5 offenses)
-  * **Line # 22 - convention:** Metrics/AbcSize: Assignment Branch Condition size for write_all is too high. [<2, 31, 4> 31.32/17]
+  * **Line # 22 - convention:** Metrics/AbcSize: Assignment Branch Condition size for write_all is too high. [<3, 31, 3> 31.29/17]
 
     ```rb
       def write_all(sheet) ...
     ```
 
-  * **Line # 22 - convention:** Metrics/MethodLength: Method has too many lines. [13/10]
+  * **Line # 22 - convention:** Metrics/MethodLength: Method has too many lines. [15/10]
 
     ```rb
       def write_all(sheet) ...
     ```
 
-  * **Line # 32 - convention:** Layout/LineLength: Line is too long. [151/120]
+  * **Line # 33 - convention:** Layout/LineLength: Line is too long. [151/120]
 
     ```rb
                     [reservation.id, reservation.fullname, reservation.datetime.strftime("%e/%m/%Y %k:%M").strip, reservation.children, reservation.adults,
     ```
 
-  * **Line # 33 - convention:** Layout/LineLength: Line is too long. [132/120]
+  * **Line # 34 - convention:** Layout/LineLength: Line is too long. [132/120]
 
     ```rb
                      reservation.email, reservation.phone, reservation.table, reservation.notes, reservation.status, reservation.secret,
     ```
 
-  * **Line # 34 - convention:** Layout/LineLength: Line is too long. [130/120]
+  * **Line # 35 - convention:** Layout/LineLength: Line is too long. [130/120]
 
     ```rb
                      reservation.created_at.strftime("%e/%m/%Y %k:%M").strip, reservation.updated_at.strftime("%e/%m/%Y %k:%M").strip,
@@ -2198,50 +2264,44 @@
           return items unless params.has_key?(:query)
     ```
 
-### app/interactions/menu/search_categories.rb - (8 offenses)
+### app/interactions/menu/search_categories.rb - (7 offenses)
   * **Line # 4 - convention:** Style/Documentation: Missing top-level documentation comment for `class Menu::SearchCategories`.
 
     ```rb
       class SearchCategories < SearchRecords
     ```
 
-  * **Line # 7 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<12, 63, 17> 66.35/17]
+  * **Line # 10 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<13, 83, 18> 85.92/17]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 7 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for execute is too high. [17/7]
+  * **Line # 10 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for execute is too high. [18/7]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 7 - convention:** Metrics/MethodLength: Method has too many lines. [25/10]
+  * **Line # 10 - convention:** Metrics/MethodLength: Method has too many lines. [37/10]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 7 - convention:** Metrics/PerceivedComplexity: Perceived complexity for execute is too high. [17/8]
+  * **Line # 10 - convention:** Metrics/PerceivedComplexity: Perceived complexity for execute is too high. [18/8]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 14 - convention:** Style/IfUnlessModifier: Modifier form of `if` makes the line too long.
-
-    ```rb
-          categories = categories.having_public_dishes.or(categories.having_non_empty_children) if param_true?(:skip_empty_categories)
-    ```
-
-  * **Line # 32 - convention:** Style/PreferredHashMethods: Use `Hash#key?` instead of `Hash#has_key?`.
+  * **Line # 53 - convention:** Style/PreferredHashMethods: Use `Hash#key?` instead of `Hash#has_key?`.
 
     ```rb
           categories = categories.where(parent_id: params[:parent_id].presence) if params.has_key?(:parent_id)
     ```
 
-  * **Line # 39 - convention:** Performance/Casecmp: Use `params[:fixed_price].to_s.casecmp("true").zero?` instead of `params[:fixed_price].to_s.downcase == "true"`.
+  * **Line # 60 - convention:** Performance/Casecmp: Use `params[:fixed_price].to_s.casecmp("true").zero?` instead of `params[:fixed_price].to_s.downcase == "true"`.
 
     ```rb
             value = params[:fixed_price].to_s.downcase == "true"
@@ -3085,6 +3145,43 @@
         return true unless params.has_key?(:turns)
     ```
 
+### app/interactions/valid_dates_for_reservation.rb - (6 offenses)
+  * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class ValidDatesForReservation`.
+
+    ```rb
+    class ValidDatesForReservation < ActiveInteraction::Base
+    ```
+
+  * **Line # 6 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<10, 60, 11> 61.81/17]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 6 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for execute is too high. [9/7]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 6 - convention:** Metrics/MethodLength: Method has too many lines. [16/10]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 6 - convention:** Metrics/PerceivedComplexity: Perceived complexity for execute is too high. [9/8]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 13 - convention:** Layout/LineLength: Line is too long. [188/120]
+
+    ```rb
+        if Setting.where(key: :reservation_max_days_in_advance).first.present? && (to_date > Time.zone.now.to_date + Setting.where(key: :reservation_max_days_in_advance).first.value.to_i.days)
+    ```
+
 ### app/interactions/valid_times_group_by_turn.rb - (3 offenses)
   * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class ValidTimesGroupByTurn`.
 
@@ -3456,7 +3553,7 @@
     ```
 
 ### app/models/menu/category.rb - (18 offenses)
-  * **Line # 4 - convention:** Metrics/ClassLength: Class has too many lines. [203/100]
+  * **Line # 4 - convention:** Metrics/ClassLength: Class has too many lines. [215/100]
 
     ```rb
       class Category < ApplicationRecord ...
@@ -3522,43 +3619,43 @@
         validates :secret, presence: true, length: { minimum: SECRET_MIN_LENGTH }, uniqueness: { case_sensitive: false }, ...
     ```
 
-  * **Line # 128 - convention:** Rails/Blank: Use `if query.blank?` instead of `unless query.present?`.
+  * **Line # 140 - convention:** Rails/Blank: Use `if query.blank?` instead of `unless query.present?`.
 
     ```rb
             return all unless query.present?
     ```
 
-  * **Line # 130 - convention:** Layout/LineLength: Line is too long. [130/120]
+  * **Line # 142 - convention:** Layout/LineLength: Line is too long. [130/120]
 
     ```rb
             where(id: ransack(name_cont: query).result.select(:id)).or(where(id: ransack(description_cont: query).result.select(:id)))
     ```
 
-  * **Line # 187 - convention:** Rails/Blank: Use `if Category.where(parent_id:, index:).blank?` instead of `unless Category.where(parent_id:, index:).present?`.
+  * **Line # 203 - convention:** Rails/Blank: Use `if Category.where(parent_id:, index:).blank?` instead of `unless Category.where(parent_id:, index:).present?`.
 
     ```rb
           return unless Category.where(parent_id:, index:).present?
     ```
 
-  * **Line # 200 - convention:** Naming/PredicateName: Rename `has_children?` to `children?`.
+  * **Line # 216 - convention:** Naming/PredicateName: Rename `has_children?` to `children?`.
 
     ```rb
         def has_children?
     ```
 
-  * **Line # 210 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move is too high. [<8, 36, 11> 38.48/17]
+  * **Line # 226 - convention:** Metrics/AbcSize: Assignment Branch Condition size for move is too high. [<8, 36, 11> 38.48/17]
 
     ```rb
         def move(to_index) ...
     ```
 
-  * **Line # 210 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
+  * **Line # 226 - convention:** Metrics/MethodLength: Method has too many lines. [14/10]
 
     ```rb
         def move(to_index) ...
     ```
 
-  * **Line # 218 - convention:** Rails/SkipsModelValidations: Avoid using `update_all` because it skips validations.
+  * **Line # 234 - convention:** Rails/SkipsModelValidations: Avoid using `update_all` because it skips validations.
 
     ```rb
             self.class.where(parent_id:).update_all("index = index + 100000")
@@ -3861,7 +3958,7 @@
           array = record.value.to_s.split(",").map(&:strip).map(&:to_sym)
     ```
 
-### app/models/preorder_reservation_group.rb - (6 offenses)
+### app/models/preorder_reservation_group.rb - (5 offenses)
   * **Line # 8 - convention:** Layout/LineLength: Line is too long. [129/120]
 
     ```rb
@@ -3890,12 +3987,6 @@
 
     ```rb
                            active.where("active_from IS NULL or active_from < ?", Time.zone.now).where("active_to IS NULL or active_to > ?", Time.zone.now)
-    ```
-
-  * **Line # 76 - convention:** Layout/IndentationWidth: Use 2 (not 19) spaces for indentation.
-
-    ```rb
-                         where(preorder_type: %w[nexi_authorization])
     ```
 
 ### app/models/refresh_token.rb - (2 offenses)
@@ -4298,29 +4389,11 @@
     port ENV.fetch("PORT") { 3050 }
     ```
 
-### config/routes.rb - (9 offenses)
+### config/routes.rb - (6 offenses)
   * **Line # 6 - convention:** Metrics/BlockLength: Block has too many lines. [173/25]
 
     ```rb
     Rails.application.routes.draw do ...
-    ```
-
-  * **Line # 13 - convention:** Style/FetchEnvVar: Use `ENV.fetch("BASIC_AUTH_USERNAME")` or `ENV.fetch("BASIC_AUTH_USERNAME", nil)` instead of `ENV["BASIC_AUTH_USERNAME"]`.
-
-    ```rb
-        username: ENV["BASIC_AUTH_USERNAME"],
-    ```
-
-  * **Line # 14 - convention:** Style/FetchEnvVar: Use `ENV.fetch("BASIC_AUTH_PASSWORD")` or `ENV.fetch("BASIC_AUTH_PASSWORD", nil)` instead of `ENV["BASIC_AUTH_PASSWORD"]`.
-
-    ```rb
-        password: ENV["BASIC_AUTH_PASSWORD"]
-    ```
-
-  * **Line # 15 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-      ) => '/sidekiq'
     ```
 
   * **Line # 17 - convention:** Metrics/BlockLength: Block has too many lines. [161/25]
@@ -4854,7 +4927,7 @@
                             email: "sasha+#{SecureRandom.hex}@opinioni.net", datetime: day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours)
     ```
 
-### lib/routes_basic_auth.rb - (8 offenses)
+### lib/routes_basic_auth.rb - (6 offenses)
   * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class RoutesBasicAuth`.
 
     ```rb
@@ -4885,22 +4958,10 @@
         def call(klass, username:, password:) ...
     ```
 
-  * **Line # 6 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-          raise ArgumentError, 'klass must be a class' unless klass.is_a?(Class)
-    ```
-
   * **Line # 15 - convention:** Rails/Output: Do not write to stdout. Use Rails's logger if you want to log.
 
     ```rb
               puts "No username or password provided. Basic auth is disabled for #{klass}."
-    ```
-
-  * **Line # 19 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-            map '/' do
     ```
 
 ### lib/sidekiq_admin_constraint.rb - (2 offenses)
@@ -5948,2804 +6009,3428 @@
                 before { subject }
     ```
 
-### spec/controllers/v1/admin/menu/categories_controller_spec.rb - (467 offenses)
+### spec/controllers/v1/admin/menu/categories_controller_spec.rb - (571 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
     RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
     ```
 
-  * **Line # 75 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 76 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:items].size).to eq 10 }
     ```
 
-  * **Line # 76 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 77 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:total_count]).to eq 30 }
     ```
 
-  * **Line # 77 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 78 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:current_page]).to eq 1 }
     ```
 
-  * **Line # 78 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 79 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:per_page]).to eq 10 }
     ```
 
-  * **Line # 86 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:items].size).to eq 3 }
-    ```
-
   * **Line # 87 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
+            it { expect(subject[:items].size).to eq 3 }
     ```
 
   * **Line # 88 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 1 }
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
     ```
 
   * **Line # 89 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:per_page]).to eq 3 }
+            it { expect(subject[:metadata][:current_page]).to eq 1 }
     ```
 
-  * **Line # 97 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 90 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:items].size).to eq 3 }
+            it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
   * **Line # 98 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
+            it { expect(subject[:items].size).to eq 3 }
     ```
 
   * **Line # 99 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 2 }
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
     ```
 
   * **Line # 100 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+            it { expect(subject[:metadata][:current_page]).to eq 2 }
+    ```
+
+  * **Line # 101 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
             it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
-  * **Line # 109 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 110 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               it { expect(@page1).to eq @offset0 }
     ```
 
-  * **Line # 109 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 110 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               it { expect(@page1).to eq @offset0 }
-    ```
-
-  * **Line # 118 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:items].size).to eq 1 }
     ```
 
   * **Line # 119 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
+            it { expect(subject[:items].size).to eq 1 }
     ```
 
   * **Line # 120 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 4 }
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
     ```
 
   * **Line # 121 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:per_page]).to eq 3 }
+            it { expect(subject[:metadata][:current_page]).to eq 4 }
     ```
 
-  * **Line # 129 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 122 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:items].size).to eq 0 }
+            it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
   * **Line # 130 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
+            it { expect(subject[:items].size).to eq 0 }
     ```
 
   * **Line # 131 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 10 }
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
     ```
 
   * **Line # 132 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+            it { expect(subject[:metadata][:current_page]).to eq 10 }
+    ```
+
+  * **Line # 133 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
             it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
-  * **Line # 143 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 144 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               @items
     ```
 
-  * **Line # 146 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 147 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.length).to eq 10 }
     ```
 
-  * **Line # 147 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 148 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject).to all(be_a(Hash)) }
     ```
 
-  * **Line # 148 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 149 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.pluck(:id).uniq.count).to eq 10 }
     ```
 
-  * **Line # 167 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject).to be_a(Array) }
-    ```
-
   * **Line # 168 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.count).to eq 2 }
+              it { expect(subject).to be_a(Array) }
     ```
 
   * **Line # 169 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject[0][:index]).to eq 0 }
+              it { expect(subject.count).to eq 2 }
     ```
 
   * **Line # 170 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject[1][:index]).to eq 1 }
+              it { expect(subject[0][:index]).to eq 0 }
     ```
 
-  * **Line # 190 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 171 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject).to be_a(Array) }
+              it { expect(subject[1][:index]).to eq 1 }
     ```
 
   * **Line # 191 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+              it { expect(subject).to be_a(Array) }
+    ```
+
+  * **Line # 192 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
               it { expect(subject.pluck(:id)).to eq Menu::Category.order(:index).pluck(:id) }
     ```
 
-  * **Line # 201 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 202 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               req(except: @excluded.id)
     ```
 
-  * **Line # 207 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 208 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 208 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 209 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
-  * **Line # 209 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 210 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.first[:id]).to eq Menu::Category.last.id }
     ```
 
-  * **Line # 227 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 228 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject).to be_a(Hash) }
     ```
 
-  * **Line # 228 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 229 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(Menu::Category.find(subject[:id])).to be_a(Menu::Category) }
     ```
 
-  * **Line # 235 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 236 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
             it { ...
     ```
 
-  * **Line # 236 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 237 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               expect(subject).to include(
     ```
 
-  * **Line # 244 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 245 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:images].count).to eq 2 }
     ```
 
-  * **Line # 250 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 251 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               create_list(:menu_category, 2, visibility: nil, parent: @parent)
     ```
 
-  * **Line # 261 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 262 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
               before { req(parent_id: @parent.id) }
     ```
 
-  * **Line # 266 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 267 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 267 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 268 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 it { expect(subject.pluck(:id).uniq.count).to eq 2 }
     ```
 
-  * **Line # 270 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 271 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                   expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
     ```
 
-  * **Line # 270 - convention:** Layout/LineLength: Line is too long. [147/120]
+  * **Line # 271 - convention:** Layout/LineLength: Line is too long. [147/120]
 
     ```rb
                   expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
     ```
 
-  * **Line # 270 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 271 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
                   expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
-    ```
-
-  * **Line # 277 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject[:total_count]).to eq 2 }
     ```
 
   * **Line # 278 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:current_page]).to eq 1 }
+                it { expect(subject[:total_count]).to eq 2 }
     ```
 
   * **Line # 279 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:per_page]).to eq 10 }
+                it { expect(subject[:current_page]).to eq 1 }
     ```
 
   * **Line # 280 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:params]).to be_a(Hash) }
+                it { expect(subject[:per_page]).to eq 10 }
     ```
 
   * **Line # 281 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:params]).to include("parent_id" => @parent.id) }
+                it { expect(subject[:params]).to be_a(Hash) }
     ```
 
-  * **Line # 281 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 282 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 it { expect(subject[:params]).to include("parent_id" => @parent.id) }
     ```
 
-  * **Line # 291 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 282 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
-                it { expect(subject.count).to eq 3 }
+                it { expect(subject[:params]).to include("parent_id" => @parent.id) }
     ```
 
   * **Line # 292 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+                it { expect(subject.count).to eq 3 }
+    ```
+
+  * **Line # 293 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
                 it { expect(subject.pluck(:id).uniq.count).to eq 3 }
     ```
 
-  * **Line # 295 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 296 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                   expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
     ```
 
-  * **Line # 295 - convention:** Layout/LineLength: Line is too long. [146/120]
+  * **Line # 296 - convention:** Layout/LineLength: Line is too long. [146/120]
 
     ```rb
                   expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
-    ```
-
-  * **Line # 302 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject[:total_count]).to eq 3 }
     ```
 
   * **Line # 303 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:current_page]).to eq 1 }
+                it { expect(subject[:total_count]).to eq 3 }
     ```
 
   * **Line # 304 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:per_page]).to eq 10 }
+                it { expect(subject[:current_page]).to eq 1 }
     ```
 
   * **Line # 305 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject[:params]).to be_a(Hash) }
+                it { expect(subject[:per_page]).to eq 10 }
     ```
 
   * **Line # 306 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+                it { expect(subject[:params]).to be_a(Hash) }
+    ```
+
+  * **Line # 307 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
                 it { expect(subject[:params]).to include("parent_id" => "") }
     ```
 
-  * **Line # 314 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+  * **Line # 316 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
-              items = 5.times.map do |i|
+                create(:menu_category, status: %i[active inactive].sample, name: "Category ##{i + 1}!!!",
     ```
 
-  * **Line # 314 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+  * **Line # 316 - convention:** Style/SymbolArray: Use `%i` or `%I` for an array of symbols.
 
     ```rb
-              items = 5.times.map do |i| ...
+                create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
     ```
 
-  * **Line # 336 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 316 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+                create(:menu_category, status: %i[active inactive].sample, name: "Category ##{i + 1}!!!", 
+    ```
+
+  * **Line # 316 - convention:** Layout/LineLength: Line is too long. [147/120]
+
+    ```rb
+                create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
+    ```
+
+  * **Line # 317 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
+
+    ```rb
+    description: "Description for ##{i + 1}!!!")
+    ```
+
+  * **Line # 338 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 5 }
     ```
 
-  * **Line # 337 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 339 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
-  * **Line # 346 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 348 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 5 }
     ```
 
-  * **Line # 347 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 349 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 5 }
-    ```
-
-  * **Line # 356 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.count).to eq 1 }
-    ```
-
-  * **Line # 357 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
   * **Line # 358 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.first[:name]).to eq "Category #1!!!" }
-    ```
-
-  * **Line # 367 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
               it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 368 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 359 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 1 }
+    ```
+
+  * **Line # 360 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.first[:name]).to eq "Category #1!!!" }
     ```
 
   * **Line # 369 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.first[:name]).to eq "Category #1!!!" }
+              it { expect(subject.count).to eq 1 }
     ```
 
   * **Line # 370 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.first[:description]).to eq "Description for #1!!!" }
-    ```
-
-  * **Line # 379 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.count).to eq 1 }
-    ```
-
-  * **Line # 380 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 1 }
+    ```
+
+  * **Line # 371 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.first[:name]).to eq "Category #1!!!" }
+    ```
+
+  * **Line # 372 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.first[:description]).to eq "Description for #1!!!" }
     ```
 
   * **Line # 381 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.first[:name]).to eq "Category #5!!!" }
+              it { expect(subject.count).to eq 1 }
     ```
 
   * **Line # 382 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+              it { expect(subject.pluck(:id).uniq.count).to eq 1 }
+    ```
+
+  * **Line # 383 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.first[:name]).to eq "Category #5!!!" }
+    ```
+
+  * **Line # 384 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
               it { expect(subject.first[:description]).to eq "Description for #5!!!" }
     ```
 
-  * **Line # 389 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+  * **Line # 391 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
 
     ```rb
               items = 5.times.map do |i|
     ```
 
-  * **Line # 389 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+  * **Line # 391 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
 
     ```rb
               items = 5.times.map do |i| ...
     ```
 
-  * **Line # 401 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 403 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
               it do
-    ```
-
-  * **Line # 402 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
-    ```
-
-  * **Line # 403 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
     ```
 
   * **Line # 404 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                expect(subject.count).to eq 10
-    ```
-
-  * **Line # 414 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject.count).to eq 5 }
-    ```
-
-  * **Line # 415 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject.pluck(:id).uniq.count).to eq 5 }
-    ```
-
-  * **Line # 416 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject.pluck(:price).uniq).to all(be_positive) }
-    ```
-
-  * **Line # 417 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                it { expect(subject.pluck(:price).uniq).to all(be_a(Numeric)) }
-    ```
-
-  * **Line # 432 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
-
-    ```rb
-              items = 5.times.map do |i|
-    ```
-
-  * **Line # 432 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
-
-    ```rb
-              items = 5.times.map do |i| ...
-    ```
-
-  * **Line # 444 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-              it do
-    ```
-
-  * **Line # 445 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
                 expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
     ```
 
-  * **Line # 446 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 405 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
     ```
 
-  * **Line # 447 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 406 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 expect(subject.count).to eq 10
     ```
 
-  * **Line # 457 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 416 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 it { expect(subject.count).to eq 5 }
     ```
 
-  * **Line # 458 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 417 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
-  * **Line # 459 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 418 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                it { expect(subject.pluck(:price).uniq).to eq [nil] }
+                it { expect(subject.pluck(:price).uniq).to all(be_positive) }
     ```
 
-  * **Line # 484 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 419 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject).to all(include(status: "active")) }
+                it { expect(subject.pluck(:price).uniq).to all(be_a(Numeric)) }
     ```
 
-  * **Line # 485 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 434 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
 
     ```rb
-            it { expect(subject.size).to eq 1 }
+              items = 5.times.map do |i|
     ```
 
-  * **Line # 522 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 434 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
 
     ```rb
-            it { ...
+              items = 5.times.map do |i| ...
     ```
 
-  * **Line # 523 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 531 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 544 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 545 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(translations: Hash)
-    ```
-
-  * **Line # 546 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:translations]).to include(name: Hash)
-    ```
-
-  * **Line # 547 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject.dig(:translations, :name)).to include(en: "test-en")
-    ```
-
-  * **Line # 548 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject.dig(:translations, :name)).to include(it: "test-it")
-    ```
-
-  * **Line # 552 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [560]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 560 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [552]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 580 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 581 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 589 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:images].count).to eq 2 }
-    ```
-
-  * **Line # 606 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 607 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 639 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
-
-    ```rb
-              I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
-    ```
-
-  * **Line # 645 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
-
-    ```rb
-            after { I18n.locale = I18n.default_locale }
-    ```
-
-  * **Line # 688 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [696]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 696 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [688]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 709 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              create_list(:menu_category, 2, visibility: nil, parent: @grandparent)
-    ```
-
-  * **Line # 711 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              @parent = create(:menu_category, visibility: nil, parent: @grandparent)
-    ```
-
-  * **Line # 712 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              create_list(:menu_category, 2, visibility: nil, parent: @parent)
-    ```
-
-  * **Line # 714 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              @child = create(:menu_category, visibility: nil, parent: @parent)
-    ```
-
-  * **Line # 715 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              create_list(:menu_category, 2, visibility: nil, parent: @child)
-    ```
-
-  * **Line # 716 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              req(id: @child.id)
-    ```
-
-  * **Line # 720 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject).not_to include(message: String) }
-    ```
-
-  * **Line # 722 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it do ...
-    ```
-
-  * **Line # 722 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 723 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(breadcrumbs: Array)
-    ```
-
-  * **Line # 724 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs]).not_to be_empty
-    ```
-
-  * **Line # 725 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs].count).to eq 3
-    ```
-
-  * **Line # 726 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs].first).to be_a(Hash)
-    ```
-
-  * **Line # 727 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs].last).to include(id: @child.id)
-    ```
-
-  * **Line # 727 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              expect(subject[:breadcrumbs].last).to include(id: @child.id)
-    ```
-
-  * **Line # 728 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs].second).to include(id: @parent.id)
-    ```
-
-  * **Line # 728 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              expect(subject[:breadcrumbs].second).to include(id: @parent.id)
-    ```
-
-  * **Line # 729 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject[:breadcrumbs].first).to include(id: @grandparent.id)
-    ```
-
-  * **Line # 729 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              expect(subject[:breadcrumbs].first).to include(id: @grandparent.id)
-    ```
-
-  * **Line # 764 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 765 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 773 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 784 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
-
-    ```rb
-            it "request should create a category child" do
-    ```
-
-  * **Line # 785 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 803 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 804 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 812 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 822 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 823 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 840 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 841 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 849 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 859 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 860 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 877 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 878 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 886 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 896 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 897 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 914 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 915 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 923 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 935 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 936 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 953 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 954 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 962 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 972 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 973 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 990 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 991 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 999 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 1009 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "request should create a category" do
-    ```
-
-  * **Line # 1010 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change(Menu::Category, :count).by(1)
-    ```
-
-  * **Line # 1027 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 1028 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 1036 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:images].count).to eq 0 }
-    ```
-
-  * **Line # 1046 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 1047 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to change(Menu::Category, :count)
-    ```
-
-  * **Line # 1132 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1133 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1163 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1164 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1186 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1187 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1205 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 1206 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 1212 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(price: 15.2)
-    ```
-
-  * **Line # 1215 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { category.reload.price }.to(15.2) }
-    ```
-
-  * **Line # 1230 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1231 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1253 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1254 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1276 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1277 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1291 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name).to eq "Hello" }
-    ```
-
-  * **Line # 1292 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name_it).to eq "Ciao" }
-    ```
-
-  * **Line # 1293 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name_en).to eq "Hello" }
-    ```
-
-  * **Line # 1309 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-            it { ...
-    ```
-
-  * **Line # 1310 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to include(
-    ```
-
-  * **Line # 1324 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.description).to eq "Hello" }
-    ```
-
-  * **Line # 1325 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.description_it).to eq "Ciao" }
-    ```
-
-  * **Line # 1326 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.description_en).to eq "Hello" }
-    ```
-
-  * **Line # 1339 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to change(Menu::Category, :count) }
-    ```
-
-  * **Line # 1340 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { category.reload.parent }.from(nil).to(parent) }
-    ```
-
-  * **Line # 1341 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { category.reload.visibility_id }.from(category.visibility_id).to(nil) }
-    ```
-
-  * **Line # 1353 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 1354 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 1369 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.parent).to eq parent }
-    ```
-
-  * **Line # 1382 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to change(Menu::Category, :count) }
-    ```
-
-  * **Line # 1383 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { category.reload.parent }.from(parent).to(nil) }
-    ```
-
-  * **Line # 1388 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 1400 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-              it { ...
-    ```
-
-  * **Line # 1401 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to include(
-    ```
-
-  * **Line # 1416 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.parent).to eq nil }
-    ```
-
-  * **Line # 1416 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-              it { expect(subject.parent).to eq nil }
-    ```
-
-  * **Line # 1429 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 1430 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to change(Menu::Category, :count)
-    ```
-
-  * **Line # 1496 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "checking mock data" do
-    ```
-
-  * **Line # 1497 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-              expect(category.secret_desc).to eq nil
-    ```
-
-  * **Line # 1498 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-              expect(category.description).to eq nil
-    ```
-
-  * **Line # 1591 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:name]).to eq nil }
-    ```
-
-  * **Line # 1591 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-            it { expect(subject[:name]).to eq nil }
-    ```
-
-  * **Line # 1598 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name).to eq nil }
-    ```
-
-  * **Line # 1598 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-              it { expect(subject.name).to eq nil }
-    ```
-
-  * **Line # 1599 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name_en).to eq nil }
-    ```
-
-  * **Line # 1599 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-              it { expect(subject.name_en).to eq nil }
-    ```
-
-  * **Line # 1600 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.name_it).to eq "test-it" }
-    ```
-
-  * **Line # 1657 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
-    ```
-
-  * **Line # 1670 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
-
-    ```rb
-            before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_return(false) }
-    ```
-
-  * **Line # 1672 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
-    ```
-
-  * **Line # 1685 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
-
-    ```rb
-            before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid) }
-    ```
-
-  * **Line # 1687 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
-    ```
-
-  * **Line # 1734 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-            it { expect(category.visibility.public_visible).to eq false }
-    ```
-
-  * **Line # 1735 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
-
-    ```rb
-            it { expect(category.visibility.private_visible).to eq false }
-    ```
-
-  * **Line # 1747 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
-    ```
-
-  * **Line # 1748 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
-    ```
-
-  * **Line # 1751 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 1771 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
-    ```
-
-  * **Line # 1772 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.daily_to }) }
-    ```
-
-  * **Line # 1783 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.daily_from }) }
-    ```
-
-  * **Line # 1784 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
-    ```
-
-  * **Line # 1787 - convention:** Layout/LineLength: Line is too long. [156/120]
-
-    ```rb
-          context "when category was already public should not stop from updating any other field: should check if can publish only if publishing right now." do
-    ```
-
-  * **Line # 1795 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.public_visible }) }
-    ```
-
-  * **Line # 1798 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change {
-    ```
-
-  * **Line # 1803 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "updates public_from and return 200" do
-    ```
-
-  * **Line # 1804 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 1805 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to be_successful
-    ```
-
-  * **Line # 1815 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "does not update public_visible to true" do
-    ```
-
-  * **Line # 1816 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to(change { category.reload.visibility.public_visible })
-    ```
-
-  * **Line # 1817 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1818 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1821 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 1822 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 1834 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "is able to update public_visible to true" do
-    ```
-
-  * **Line # 1835 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
-    ```
-
-  * **Line # 1836 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 1837 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to be_successful
-    ```
-
-  * **Line # 1847 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "is able to update public_visible to true" do
-    ```
-
-  * **Line # 1848 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
-    ```
-
-  * **Line # 1849 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 1850 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to be_successful
-    ```
-
-  * **Line # 1860 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "does not update public_visible to true" do
-    ```
-
-  * **Line # 1861 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to(change { category.reload.visibility.public_visible })
-    ```
-
-  * **Line # 1862 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1863 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1873 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "does not update public_visible to true" do
-    ```
-
-  * **Line # 1874 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to(change { category.reload.visibility.public_visible })
-    ```
-
-  * **Line # 1875 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1876 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1880 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1893]
-
-    ```rb
-          context "when category hasnt any dish" do ...
-    ```
-
-  * **Line # 1886 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "updates private_visible to true" do
-    ```
-
-  * **Line # 1887 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change { category.reload.visibility.private_visible }.from(false).to(true)
-    ```
-
-  * **Line # 1888 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 1889 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to be_successful
-    ```
-
-  * **Line # 1893 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1880]
-
-    ```rb
-          context "when category hasnt any dish" do ...
-    ```
-
-  * **Line # 1899 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "is not able to update private_visible or public_visible to true" do
-    ```
-
-  * **Line # 1900 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.not_to(change { category.reload.visibility.private_visible })
-    ```
-
-  * **Line # 1901 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1902 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1913 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change {
-    ```
-
-  * **Line # 1919 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change {
-    ```
-
-  * **Line # 1924 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "is able to update public_from or private_to and return 200" do
-    ```
-
-  * **Line # 1925 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 1926 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to be_successful
-    ```
-
-  * **Line # 1930 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 1942 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
-    ```
-
-  * **Line # 1944 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
-    ```
-
-  * **Line # 1946 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "is not able to update public_from or public_to and return 422" do
-    ```
-
-  * **Line # 1947 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1948 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1952 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 1964 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
-    ```
-
-  * **Line # 1966 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
-    ```
-
-  * **Line # 1968 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "is not able to update private_from or private_to and return 422" do
-    ```
-
-  * **Line # 1969 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1970 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1974 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 1986 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
-    ```
-
-  * **Line # 1988 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
-    ```
-
-  * **Line # 1990 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "is not able to update public_from or public_to and return 422" do
-    ```
-
-  * **Line # 1991 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 1992 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 1996 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 2008 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
-    ```
-
-  * **Line # 2010 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
-    ```
-
-  * **Line # 2012 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "is not able to update private_from or public_to and return 422" do
-    ```
-
-  * **Line # 2013 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).to have_http_status(:unprocessable_entity)
-    ```
-
-  * **Line # 2014 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect(subject).not_to be_successful
-    ```
-
-  * **Line # 2018 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 2031 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-              it "updates public_from correctly" do
-    ```
-
-  * **Line # 2032 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect { subject }.to change {
-    ```
-
-  * **Line # 2035 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 2036 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to be_successful
-    ```
-
-  * **Line # 2046 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-              it "updates public_to correctly" do
-    ```
-
-  * **Line # 2047 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect { subject }.to change {
-    ```
-
-  * **Line # 2050 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 2051 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to be_successful
-    ```
-
-  * **Line # 2061 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-              it "updates private_from correctly" do
-    ```
-
-  * **Line # 2062 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect { subject }.to change {
-    ```
-
-  * **Line # 2065 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 2066 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to be_successful
-    ```
-
-  * **Line # 2076 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-              it "updates private_to correctly" do
-    ```
-
-  * **Line # 2077 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect { subject }.to change {
-    ```
-
-  * **Line # 2080 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to have_http_status(:ok)
-    ```
-
-  * **Line # 2081 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(subject).to be_successful
-    ```
-
-  * **Line # 2097 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:post, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :add_dish,
-    ```
-
-  * **Line # 2098 - convention:** Layout/LineLength: Line is too long. [143/120]
-
-    ```rb
-                                                                                       controller: "v1/admin/menu/categories", id: 22, dish_id: 55)
-    ```
-
-  * **Line # 2117 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
-    ```
-
-  * **Line # 2118 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
-    ```
-
-  * **Line # 2118 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
-    ```
-
-  * **Line # 2119 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2119 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-          it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2120 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.not_to(change { Menu::Category.count }) }
-    ```
-
-  * **Line # 2120 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-          it { expect { subject }.not_to(change { Menu::Category.count }) }
-    ```
-
-  * **Line # 2126 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Menu::DishesInCategory.count }) }
-    ```
-
-  * **Line # 2169 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
-    ```
-
-  * **Line # 2170 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
-    ```
-
-  * **Line # 2170 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
-    ```
-
-  * **Line # 2171 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Dish.count }.by(1) }
-    ```
-
-  * **Line # 2171 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Dish.count }.by(1) }
-    ```
-
-  * **Line # 2172 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Category.count }) }
-    ```
-
-  * **Line # 2172 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Category.count }) }
-    ```
-
-  * **Line # 2175 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              before { subject }
-    ```
-
-  * **Line # 2185 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
-
-    ```rb
-                allow_any_instance_of(Menu::DishesInCategory).to receive(:valid?).and_return(false)
-    ```
-
-  * **Line # 2191 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { category.reload.dishes.count }) }
-    ```
-
-  * **Line # 2192 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
-    ```
-
-  * **Line # 2192 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-              it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
-    ```
-
-  * **Line # 2193 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2193 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-              it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2202 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-        let!(:dish0) { create(:menu_dish).tap { |d| d.update!(name: "Dish0") } }
-    ```
-
-  * **Line # 2203 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-        let!(:dish1) { create(:menu_dish).tap { |d| d.update!(name: "Dish1") } }
-    ```
-
-  * **Line # 2204 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-        let!(:dish2) { create(:menu_dish).tap { |d| d.update!(name: "Dish2") } }
-    ```
-
-  * **Line # 2218 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:patch, "/v1/admin/menu/categories/22/order_dishes").to(format: :json, action: :order_dishes,
-    ```
-
-  * **Line # 2218 - convention:** Layout/LineLength: Line is too long. [124/120]
-
-    ```rb
-          expect(subject).to route(:patch, "/v1/admin/menu/categories/22/order_dishes").to(format: :json, action: :order_dishes,
-    ```
-
-  * **Line # 2219 - convention:** Layout/LineLength: Line is too long. [134/120]
-
-    ```rb
-                                                                                           controller: "v1/admin/menu/categories", id: 22)
-    ```
-
-  * **Line # 2240 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
-
-    ```rb
-            it do ...
-    ```
-
-  * **Line # 2240 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2253 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2270 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
-
-    ```rb
-            it do ...
-    ```
-
-  * **Line # 2270 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2283 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2303 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:delete, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :remove_dish,
-    ```
-
-  * **Line # 2303 - convention:** Layout/LineLength: Line is too long. [121/120]
-
-    ```rb
-          expect(subject).to route(:delete, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :remove_dish,
-    ```
-
-  * **Line # 2304 - convention:** Layout/LineLength: Line is too long. [145/120]
-
-    ```rb
-                                                                                         controller: "v1/admin/menu/categories", id: 22, dish_id: 55)
-    ```
-
-  * **Line # 2332 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { category.reload.dishes.count }.by(-1) }
-    ```
-
-  * **Line # 2333 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
-    ```
-
-  * **Line # 2333 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
-    ```
-
-  * **Line # 2362 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:post, "/v1/admin/menu/categories/22/add_category/55").to(format: :json, action: :add_category,
-    ```
-
-  * **Line # 2362 - convention:** Layout/LineLength: Line is too long. [126/120]
-
-    ```rb
-          expect(subject).to route(:post, "/v1/admin/menu/categories/22/add_category/55").to(format: :json, action: :add_category,
-    ```
-
-  * **Line # 2363 - convention:** Layout/LineLength: Line is too long. [159/120]
-
-    ```rb
-                                                                                             controller: "v1/admin/menu/categories", id: 22, category_child_id: 55)
-    ```
-
-  * **Line # 2382 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { category.reload.children.count }.by(1) }
-    ```
-
-  * **Line # 2383 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2383 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-          it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2427 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:post, "/v1/admin/menu/categories/22/copy").to(format: :json, action: :copy,
-    ```
-
-  * **Line # 2428 - convention:** Layout/LineLength: Line is too long. [125/120]
-
-    ```rb
-                                                                                  controller: "v1/admin/menu/categories", id: 22)
-    ```
-
-  * **Line # 2447 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2447 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-          it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2450 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            subject
-    ```
-
-  * **Line # 2466 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2466 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-              it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2467 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { category.reload.parent }) }
-    ```
-
-  * **Line # 2468 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
-    ```
-
-  * **Line # 2471 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 2475 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-              it "returns 200" do
-    ```
-
-  * **Line # 2476 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 2494 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2494 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-              it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2495 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { category.reload.parent }) }
-    ```
-
-  * **Line # 2496 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
-    ```
-
-  * **Line # 2497 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect { subject }.to change { parent.reload.children.count }.by(1) }
-    ```
-
-  * **Line # 2500 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 2504 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-              it "returns 200" do
-    ```
-
-  * **Line # 2505 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 2523 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Image.count }) }
-    ```
-
-  * **Line # 2523 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Image.count }) }
-    ```
-
-  * **Line # 2524 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { ImageToRecord.count }) }
-    ```
-
-  * **Line # 2524 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { ImageToRecord.count }) }
-    ```
-
-  * **Line # 2526 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2527 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2544 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Image.count }) }
-    ```
-
-  * **Line # 2544 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Image.count }) }
-    ```
-
-  * **Line # 2545 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.images.count }) }
-    ```
-
-  * **Line # 2546 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-    ```
-
-  * **Line # 2546 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-    ```
-
-  * **Line # 2548 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2549 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2566 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Image.count }.by(1) }
-    ```
-
-  * **Line # 2566 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Image.count }.by(1) }
-    ```
-
-  * **Line # 2567 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-    ```
-
-  * **Line # 2567 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
-    ```
-
-  * **Line # 2569 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2570 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2587 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2587 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2588 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
-    ```
-
-  * **Line # 2588 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
-    ```
-
-  * **Line # 2590 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2591 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2608 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2608 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-            it { expect { subject }.not_to(change { Menu::Dish.count }) }
-    ```
-
-  * **Line # 2609 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.dishes.count }) }
-    ```
-
-  * **Line # 2610 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
-    ```
-
-  * **Line # 2610 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
-    ```
-
-  * **Line # 2612 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2613 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2630 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Dish.count }.by(3) }
-    ```
-
-  * **Line # 2630 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Dish.count }.by(3) }
-    ```
-
-  * **Line # 2631 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.dishes.count }) }
-    ```
-
-  * **Line # 2632 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
-    ```
-
-  * **Line # 2632 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
-    ```
-
-  * **Line # 2634 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2635 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2652 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2652 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Category.count }.by(1) }
-    ```
-
-  * **Line # 2653 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.children.count }) }
-    ```
-
-  * **Line # 2655 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2656 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2673 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
-    ```
-
-  * **Line # 2673 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
-
-    ```rb
-            it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
-    ```
-
-  * **Line # 2674 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect { subject }.not_to(change { category.reload.children.count }) }
-    ```
-
-  * **Line # 2676 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2677 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              subject
-    ```
-
-  * **Line # 2711 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2721]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 2721 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2711]
-
-    ```rb
-          context "when passing a invalid id" do ...
-    ```
-
-  * **Line # 2738 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-            let!(:category0) { create(:menu_category, index: 0) }
-    ```
-
-  * **Line # 2739 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-            let!(:category1) { create(:menu_category, index: 1) }
-    ```
-
-  * **Line # 2740 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-            let!(:category2) { create(:menu_category, index: 2) }
-    ```
-
-  * **Line # 2742 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 2743 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              expect { subject }.to change { category.reload.index }.from(0).to(1)
-    ```
-
-  * **Line # 2751 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 446 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
               it do
     ```
 
-  * **Line # 2752 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 447 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                expect { subject }.to change { category.reload.index }.from(0).to(2)
+                expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
     ```
 
-  * **Line # 2758 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 448 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                expect { subject }.to change { category1.reload.index }.from(1).to(0)
+                expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
+    ```
+
+  * **Line # 449 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject.count).to eq 10
+    ```
+
+  * **Line # 459 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                it { expect(subject.count).to eq 5 }
+    ```
+
+  * **Line # 460 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+    ```
+
+  * **Line # 461 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                it { expect(subject.pluck(:price).uniq).to eq [nil] }
+    ```
+
+  * **Line # 485 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                it { expect(subject.count).to eq 1 }
+    ```
+
+  * **Line # 485 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
+
+    ```rb
+                it { expect(subject.pluck(:status)).to match_array([filter_status]) }
+    ```
+
+  * **Line # 486 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                it { expect(subject.pluck(:status)).to contain_exactly(filter_status) }
+    ```
+
+  * **Line # 505 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.pluck(:status)).to match_array(%w[active inactive]) }
+    ```
+
+  * **Line # 506 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.size).to eq 2 }
+    ```
+
+  * **Line # 518 - convention:** Style/MapToHash: Pass a block to `to_h` instead of calling `map.to_h`.
+
+    ```rb
+              json[:items].map do |item|
+    ```
+
+  * **Line # 565 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
+
+    ```rb
+            let(:public_visible_by_id) do ...
+    ```
+
+  * **Line # 571 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 575 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[root_visible.id]).to eq true }
+    ```
+
+  * **Line # 576 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[root_inactive.id]).to eq nil }
+    ```
+
+  * **Line # 577 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[root_not_public.id]).to eq nil }
+    ```
+
+  * **Line # 578 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[root_empty.id]).to eq nil }
+    ```
+
+  * **Line # 579 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[not_root_inactive.id]).to eq nil }
+    ```
+
+  * **Line # 580 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[not_root_active.id]).to eq true }
+    ```
+
+  * **Line # 581 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(public_visible_by_id[not_root_empty.id]).to eq nil }
+    ```
+
+  * **Line # 619 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 620 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 629 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 642 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 643 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(translations: Hash)
+    ```
+
+  * **Line # 644 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:translations]).to include(name: Hash)
+    ```
+
+  * **Line # 645 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.dig(:translations, :name)).to include(en: "test-en")
+    ```
+
+  * **Line # 646 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.dig(:translations, :name)).to include(it: "test-it")
+    ```
+
+  * **Line # 650 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [658]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 658 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [650]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 678 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 679 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 687 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:images].count).to eq 2 }
+    ```
+
+  * **Line # 704 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 705 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 737 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
+
+    ```rb
+              I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
+    ```
+
+  * **Line # 743 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
+
+    ```rb
+            after { I18n.locale = I18n.default_locale }
+    ```
+
+  * **Line # 786 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [794]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 794 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [786]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 807 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              create_list(:menu_category, 2, visibility: nil, parent: @grandparent)
+    ```
+
+  * **Line # 809 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              @parent = create(:menu_category, visibility: nil, parent: @grandparent)
+    ```
+
+  * **Line # 810 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              create_list(:menu_category, 2, visibility: nil, parent: @parent)
+    ```
+
+  * **Line # 812 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              @child = create(:menu_category, visibility: nil, parent: @parent)
+    ```
+
+  * **Line # 813 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              create_list(:menu_category, 2, visibility: nil, parent: @child)
+    ```
+
+  * **Line # 814 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              req(id: @child.id)
+    ```
+
+  * **Line # 818 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject).not_to include(message: String) }
+    ```
+
+  * **Line # 820 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 820 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 821 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(breadcrumbs: Array)
+    ```
+
+  * **Line # 822 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs]).not_to be_empty
+    ```
+
+  * **Line # 823 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs].count).to eq 3
+    ```
+
+  * **Line # 824 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs].first).to be_a(Hash)
+    ```
+
+  * **Line # 825 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs].last).to include(id: @child.id)
+    ```
+
+  * **Line # 825 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              expect(subject[:breadcrumbs].last).to include(id: @child.id)
+    ```
+
+  * **Line # 826 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs].second).to include(id: @parent.id)
+    ```
+
+  * **Line # 826 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              expect(subject[:breadcrumbs].second).to include(id: @parent.id)
+    ```
+
+  * **Line # 827 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject[:breadcrumbs].first).to include(id: @grandparent.id)
+    ```
+
+  * **Line # 827 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              expect(subject[:breadcrumbs].first).to include(id: @grandparent.id)
+    ```
+
+  * **Line # 862 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 863 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 872 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 883 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+
+    ```rb
+            it "request should create a category child" do
+    ```
+
+  * **Line # 884 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 902 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 903 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 911 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 922 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+              it { 
+    ```
+
+  * **Line # 922 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+              it { subject; expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 923 - convention:** Layout/IndentationWidth: Use 2 (not 12) spaces for indentation.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 923 - convention:** Layout/IndentationWidth: Use 2 (not -8) spaces for indentation.
+
+    ```rb
+      subject ...
+    ```
+
+  * **Line # 923 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 923 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+              it { subject ...
+    ```
+
+  * **Line # 923 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+              it { subject; expect(response).to be_successful }
+    ```
+
+  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 924 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                   expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 924 - convention:** Layout/BlockEndNewline: Expression at 924, 44 should be on its own line.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 925 - convention:** Layout/BlockAlignment: `}` at 925, 0 is not aligned with `it { ` at 922, 10.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 925 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+              it { subject ...
+    ```
+
+  * **Line # 926 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 926 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 926 - convention:** Layout/BlockEndNewline: Expression at 926, 36 should be on its own line.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 927 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+              it { 
+    ```
+
+  * **Line # 928 - convention:** Layout/IndentationWidth: Use 2 (not 12) spaces for indentation.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 928 - convention:** Layout/IndentationWidth: Use 2 (not -8) spaces for indentation.
+
+    ```rb
+      subject ...
+    ```
+
+  * **Line # 928 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to be_successful
+    ```
+
+  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                expect(response).to be_successful
+    ```
+
+  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                   expect(response).to be_successful
+    ```
+
+  * **Line # 930 - convention:** Layout/BlockAlignment: `}` at 930, 0 is not aligned with `it { ` at 927, 10.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 931 - convention:** Style/TrailingCommaInArguments: Avoid comma after the last parameter of a method call.
+
+    ```rb
+                  status: param_status,
+    ```
+
+  * **Line # 932 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.visible.count }.by(1) }
+    ```
+
+  * **Line # 933 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.where(status: param_status).count }.by(1) }
+    ```
+
+  * **Line # 938 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 951 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 952 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 969 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 970 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 978 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 988 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 989 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 1006 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1007 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1015 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 1025 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 1026 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 1043 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1044 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1052 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 1064 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 1065 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 1082 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1083 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1091 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 1101 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 1102 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 1119 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1120 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1128 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 1138 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "request should create a category" do
+    ```
+
+  * **Line # 1139 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change(Menu::Category, :count).by(1)
+    ```
+
+  * **Line # 1156 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1157 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1165 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject[:images].count).to eq 0 }
+    ```
+
+  * **Line # 1175 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 1176 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to change(Menu::Category, :count)
+    ```
+
+  * **Line # 1261 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1262 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1272 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+
+    ```rb
+          context 'with {status: inactive} to active category' do
+    ```
+
+  * **Line # 1275 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `let` declarations.
+
+    ```rb
+            subject do ...
+    ```
+
+  * **Line # 1279 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
+
+    ```rb
+            end
+    ```
+
+  * **Line # 1280 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
+
+    ```rb
+            let!(:category) { create(:menu_category, status: :active) }
+    ```
+
+  * **Line # 1283 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 1284 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 1285 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+            it { do_req; expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1286 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+            it { do_req; expect(response).to be_successful }
+    ```
+
+  * **Line # 1288 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+            it { do_req ...
+    ```
+
+  * **Line # 1289 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1289 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1289 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+
+    ```rb
+          context 'with {status: active} to inactive category' do
+    ```
+
+  * **Line # 1289 - convention:** Layout/BlockEndNewline: Expression at 1289, 44 should be on its own line.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1290 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+            it { do_req ...
+    ```
+
+  * **Line # 1291 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 1291 - convention:** Layout/BlockEndNewline: Expression at 1291, 36 should be on its own line.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 1292 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `let` declarations.
+
+    ```rb
+            subject do ...
+    ```
+
+  * **Line # 1292 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+            it { 
+    ```
+
+  * **Line # 1293 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
+
+    ```rb
+              do_req
+    ```
+
+  * **Line # 1293 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
+
+    ```rb
+      do_req
+    ```
+
+  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+              expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                 expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1295 - convention:** Layout/BlockAlignment: `}` at 1295, 0 is not aligned with `it { ` at 1292, 8.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 1297 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
+
+    ```rb
+            let!(:category) { create(:menu_category, status: :inactive) }
+    ```
+
+  * **Line # 1297 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+            it { 
+    ```
+
+  * **Line # 1298 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
+
+    ```rb
+              do_req
+    ```
+
+  * **Line # 1298 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
+
+    ```rb
+      do_req
+    ```
+
+  * **Line # 1298 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
+
+    ```rb
+            end
+    ```
+
+  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to be_successful
+    ```
+
+  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+              expect(response).to be_successful
+    ```
+
+  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                 expect(response).to be_successful
+    ```
+
+  * **Line # 1300 - convention:** Layout/BlockAlignment: `}` at 1300, 0 is not aligned with `it { ` at 1297, 8.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 1302 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 1302 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+            it { do_req; expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1303 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 1303 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+            it { do_req; expect(response).to be_successful }
+    ```
+
+  * **Line # 1307 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+            it { do_req ...
+    ```
+
+  * **Line # 1308 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1308 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1308 - convention:** Layout/BlockEndNewline: Expression at 1308, 44 should be on its own line.
+
+    ```rb
+     expect(response).to have_http_status(:ok) }
+    ```
+
+  * **Line # 1309 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+            it { do_req ...
+    ```
+
+  * **Line # 1310 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 1310 - convention:** Layout/BlockEndNewline: Expression at 1310, 36 should be on its own line.
+
+    ```rb
+     expect(response).to be_successful }
+    ```
+
+  * **Line # 1315 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+            it { 
+    ```
+
+  * **Line # 1316 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
+
+    ```rb
+              do_req
+    ```
+
+  * **Line # 1316 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
+
+    ```rb
+      do_req
+    ```
+
+  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+              expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                 expect(response).to have_http_status(:ok)
+    ```
+
+  * **Line # 1318 - convention:** Layout/BlockAlignment: `}` at 1318, 0 is not aligned with `it { ` at 1315, 8.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 1320 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+            it { 
+    ```
+
+  * **Line # 1321 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
+
+    ```rb
+              do_req
+    ```
+
+  * **Line # 1321 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
+
+    ```rb
+      do_req
+    ```
+
+  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(response).to be_successful
+    ```
+
+  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+              expect(response).to be_successful
+    ```
+
+  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+                 expect(response).to be_successful
+    ```
+
+  * **Line # 1323 - convention:** Layout/BlockAlignment: `}` at 1323, 0 is not aligned with `it { ` at 1320, 8.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 1338 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1339 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1361 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1362 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1380 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 1381 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 1387 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(price: 15.2)
+    ```
+
+  * **Line # 1390 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { category.reload.price }.to(15.2) }
+    ```
+
+  * **Line # 1405 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1406 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1428 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1429 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1451 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1452 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1466 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name).to eq "Hello" }
+    ```
+
+  * **Line # 1467 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name_it).to eq "Ciao" }
+    ```
+
+  * **Line # 1468 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name_en).to eq "Hello" }
+    ```
+
+  * **Line # 1484 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it { ...
+    ```
+
+  * **Line # 1485 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to include(
+    ```
+
+  * **Line # 1499 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.description).to eq "Hello" }
+    ```
+
+  * **Line # 1500 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.description_it).to eq "Ciao" }
+    ```
+
+  * **Line # 1501 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.description_en).to eq "Hello" }
+    ```
+
+  * **Line # 1514 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to change(Menu::Category, :count) }
+    ```
+
+  * **Line # 1515 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { category.reload.parent }.from(nil).to(parent) }
+    ```
+
+  * **Line # 1516 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { category.reload.visibility_id }.from(category.visibility_id).to(nil) }
+    ```
+
+  * **Line # 1528 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1529 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1544 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.parent).to eq parent }
+    ```
+
+  * **Line # 1557 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to change(Menu::Category, :count) }
+    ```
+
+  * **Line # 1558 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { category.reload.parent }.from(parent).to(nil) }
+    ```
+
+  * **Line # 1563 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 1575 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+              it { ...
+    ```
+
+  * **Line # 1576 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to include(
+    ```
+
+  * **Line # 1591 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.parent).to eq nil }
+    ```
+
+  * **Line # 1591 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+              it { expect(subject.parent).to eq nil }
+    ```
+
+  * **Line # 1604 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 1605 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to change(Menu::Category, :count)
+    ```
+
+  * **Line # 1671 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "checking mock data" do
+    ```
+
+  * **Line # 1672 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+              expect(category.secret_desc).to eq nil
+    ```
+
+  * **Line # 1673 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+              expect(category.description).to eq nil
+    ```
+
+  * **Line # 1766 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:name]).to eq nil }
+    ```
+
+  * **Line # 1766 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(subject[:name]).to eq nil }
+    ```
+
+  * **Line # 1773 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name).to eq nil }
+    ```
+
+  * **Line # 1773 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+              it { expect(subject.name).to eq nil }
+    ```
+
+  * **Line # 1774 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name_en).to eq nil }
+    ```
+
+  * **Line # 1774 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+              it { expect(subject.name_en).to eq nil }
+    ```
+
+  * **Line # 1775 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.name_it).to eq "test-it" }
+    ```
+
+  * **Line # 1832 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Category.visible.count }.by(-1) }
+    ```
+
+  * **Line # 1845 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+
+    ```rb
+            before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_return(false) }
+    ```
+
+  * **Line # 1847 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
+    ```
+
+  * **Line # 1860 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+
+    ```rb
+            before { allow_any_instance_of(Menu::Category).to receive(:deleted!).and_raise(ActiveRecord::RecordInvalid) }
+    ```
+
+  * **Line # 1862 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Category.visible.count }) }
+    ```
+
+  * **Line # 1909 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(category.visibility.public_visible).to eq false }
+    ```
+
+  * **Line # 1910 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
+
+    ```rb
+            it { expect(category.visibility.private_visible).to eq false }
+    ```
+
+  * **Line # 1922 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
+    ```
+
+  * **Line # 1923 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
+    ```
+
+  * **Line # 1926 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 1946 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to(change { category.reload.visibility.daily_from }) }
+    ```
+
+  * **Line # 1947 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.daily_to }) }
+    ```
+
+  * **Line # 1958 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.daily_from }) }
+    ```
+
+  * **Line # 1959 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to(change { category.reload.visibility.daily_to }) }
+    ```
+
+  * **Line # 1962 - convention:** Layout/LineLength: Line is too long. [156/120]
+
+    ```rb
+          context "when category was already public should not stop from updating any other field: should check if can publish only if publishing right now." do
+    ```
+
+  * **Line # 1970 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.public_visible }) }
+    ```
+
+  * **Line # 1973 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change {
+    ```
+
+  * **Line # 1978 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "updates public_from and return 200" do
+    ```
+
+  * **Line # 1979 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 1980 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to be_successful
+    ```
+
+  * **Line # 1990 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "does not update public_visible to true" do
+    ```
+
+  * **Line # 1991 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to(change { category.reload.visibility.public_visible })
+    ```
+
+  * **Line # 1992 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 1993 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 1996 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 1997 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2009 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "is able to update public_visible to true" do
+    ```
+
+  * **Line # 2010 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
+    ```
+
+  * **Line # 2011 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2012 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to be_successful
+    ```
+
+  * **Line # 2022 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "is able to update public_visible to true" do
+    ```
+
+  * **Line # 2023 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change { category.reload.visibility.public_visible }.from(false).to(true)
+    ```
+
+  * **Line # 2024 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2025 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to be_successful
+    ```
+
+  * **Line # 2035 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "does not update public_visible to true" do
+    ```
+
+  * **Line # 2036 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to(change { category.reload.visibility.public_visible })
+    ```
+
+  * **Line # 2037 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2038 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2048 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "does not update public_visible to true" do
+    ```
+
+  * **Line # 2049 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to(change { category.reload.visibility.public_visible })
+    ```
+
+  * **Line # 2050 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2051 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2055 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2068]
+
+    ```rb
+          context "when category hasnt any dish" do ...
+    ```
+
+  * **Line # 2061 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "updates private_visible to true" do
+    ```
+
+  * **Line # 2062 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change { category.reload.visibility.private_visible }.from(false).to(true)
+    ```
+
+  * **Line # 2063 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2064 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to be_successful
+    ```
+
+  * **Line # 2068 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2055]
+
+    ```rb
+          context "when category hasnt any dish" do ...
+    ```
+
+  * **Line # 2074 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "is not able to update private_visible or public_visible to true" do
+    ```
+
+  * **Line # 2075 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.not_to(change { category.reload.visibility.private_visible })
+    ```
+
+  * **Line # 2076 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2077 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2088 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change {
+    ```
+
+  * **Line # 2094 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change {
+    ```
+
+  * **Line # 2099 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "is able to update public_from or private_to and return 200" do
+    ```
+
+  * **Line # 2100 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2101 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to be_successful
+    ```
+
+  * **Line # 2105 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2117 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
+    ```
+
+  * **Line # 2119 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
+    ```
+
+  * **Line # 2121 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "is not able to update public_from or public_to and return 422" do
+    ```
+
+  * **Line # 2122 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2123 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2127 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2139 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
+    ```
+
+  * **Line # 2141 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
+    ```
+
+  * **Line # 2143 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "is not able to update private_from or private_to and return 422" do
+    ```
+
+  * **Line # 2144 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2145 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2149 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2161 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.public_from }) }
+    ```
+
+  * **Line # 2163 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.public_to }) }
+    ```
+
+  * **Line # 2165 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "is not able to update public_from or public_to and return 422" do
+    ```
+
+  * **Line # 2166 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2167 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2171 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2183 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.private_from }) }
+    ```
+
+  * **Line # 2185 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.visibility.private_to }) }
+    ```
+
+  * **Line # 2187 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "is not able to update private_from or public_to and return 422" do
+    ```
+
+  * **Line # 2188 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).to have_http_status(:unprocessable_entity)
+    ```
+
+  * **Line # 2189 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject).not_to be_successful
+    ```
+
+  * **Line # 2193 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2206 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+              it "updates public_from correctly" do
+    ```
+
+  * **Line # 2207 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change {
+    ```
+
+  * **Line # 2210 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2211 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to be_successful
+    ```
+
+  * **Line # 2221 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+              it "updates public_to correctly" do
+    ```
+
+  * **Line # 2222 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change {
+    ```
+
+  * **Line # 2225 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2226 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to be_successful
+    ```
+
+  * **Line # 2236 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+              it "updates private_from correctly" do
+    ```
+
+  * **Line # 2237 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change {
+    ```
+
+  * **Line # 2240 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2241 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to be_successful
+    ```
+
+  * **Line # 2251 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+              it "updates private_to correctly" do
+    ```
+
+  * **Line # 2252 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change {
+    ```
+
+  * **Line # 2255 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to have_http_status(:ok)
+    ```
+
+  * **Line # 2256 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect(subject).to be_successful
+    ```
+
+  * **Line # 2272 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:post, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :add_dish,
+    ```
+
+  * **Line # 2273 - convention:** Layout/LineLength: Line is too long. [143/120]
+
+    ```rb
+                                                                                       controller: "v1/admin/menu/categories", id: 22, dish_id: 55)
+    ```
+
+  * **Line # 2292 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
+    ```
+
+  * **Line # 2293 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+    ```
+
+  * **Line # 2293 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+    ```
+
+  * **Line # 2294 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2294 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+          it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2295 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.not_to(change { Menu::Category.count }) }
+    ```
+
+  * **Line # 2295 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+          it { expect { subject }.not_to(change { Menu::Category.count }) }
+    ```
+
+  * **Line # 2301 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Menu::DishesInCategory.count }) }
+    ```
+
+  * **Line # 2344 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { category.reload.dishes.count }.by(1) }
+    ```
+
+  * **Line # 2345 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+    ```
+
+  * **Line # 2345 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
+    ```
+
+  * **Line # 2346 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Dish.count }.by(1) }
+    ```
+
+  * **Line # 2346 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Dish.count }.by(1) }
+    ```
+
+  * **Line # 2347 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Category.count }) }
+    ```
+
+  * **Line # 2347 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Category.count }) }
+    ```
+
+  * **Line # 2350 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              before { subject }
+    ```
+
+  * **Line # 2360 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+
+    ```rb
+                allow_any_instance_of(Menu::DishesInCategory).to receive(:valid?).and_return(false)
+    ```
+
+  * **Line # 2366 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { category.reload.dishes.count }) }
+    ```
+
+  * **Line # 2367 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
+    ```
+
+  * **Line # 2367 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+              it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
+    ```
+
+  * **Line # 2368 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2368 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+              it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2377 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+        let!(:dish0) { create(:menu_dish).tap { |d| d.update!(name: "Dish0") } }
+    ```
+
+  * **Line # 2378 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+        let!(:dish1) { create(:menu_dish).tap { |d| d.update!(name: "Dish1") } }
+    ```
+
+  * **Line # 2379 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+        let!(:dish2) { create(:menu_dish).tap { |d| d.update!(name: "Dish2") } }
+    ```
+
+  * **Line # 2393 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:patch, "/v1/admin/menu/categories/22/order_dishes").to(format: :json, action: :order_dishes,
+    ```
+
+  * **Line # 2393 - convention:** Layout/LineLength: Line is too long. [124/120]
+
+    ```rb
+          expect(subject).to route(:patch, "/v1/admin/menu/categories/22/order_dishes").to(format: :json, action: :order_dishes,
+    ```
+
+  * **Line # 2394 - convention:** Layout/LineLength: Line is too long. [134/120]
+
+    ```rb
+                                                                                           controller: "v1/admin/menu/categories", id: 22)
+    ```
+
+  * **Line # 2415 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 2415 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2428 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2445 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 2445 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2458 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2478 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:delete, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :remove_dish,
+    ```
+
+  * **Line # 2478 - convention:** Layout/LineLength: Line is too long. [121/120]
+
+    ```rb
+          expect(subject).to route(:delete, "/v1/admin/menu/categories/22/dishes/55").to(format: :json, action: :remove_dish,
+    ```
+
+  * **Line # 2479 - convention:** Layout/LineLength: Line is too long. [145/120]
+
+    ```rb
+                                                                                         controller: "v1/admin/menu/categories", id: 22, dish_id: 55)
+    ```
+
+  * **Line # 2507 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { category.reload.dishes.count }.by(-1) }
+    ```
+
+  * **Line # 2508 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
+    ```
+
+  * **Line # 2508 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+          it { expect { subject }.to change { Menu::DishesInCategory.count }.by(-1) }
+    ```
+
+  * **Line # 2537 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:post, "/v1/admin/menu/categories/22/add_category/55").to(format: :json, action: :add_category,
+    ```
+
+  * **Line # 2537 - convention:** Layout/LineLength: Line is too long. [126/120]
+
+    ```rb
+          expect(subject).to route(:post, "/v1/admin/menu/categories/22/add_category/55").to(format: :json, action: :add_category,
+    ```
+
+  * **Line # 2538 - convention:** Layout/LineLength: Line is too long. [159/120]
+
+    ```rb
+                                                                                             controller: "v1/admin/menu/categories", id: 22, category_child_id: 55)
+    ```
+
+  * **Line # 2557 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { category.reload.children.count }.by(1) }
+    ```
+
+  * **Line # 2558 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2558 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2602 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:post, "/v1/admin/menu/categories/22/copy").to(format: :json, action: :copy,
+    ```
+
+  * **Line # 2603 - convention:** Layout/LineLength: Line is too long. [125/120]
+
+    ```rb
+                                                                                  controller: "v1/admin/menu/categories", id: 22)
+    ```
+
+  * **Line # 2622 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2622 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+          it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2625 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            subject
+    ```
+
+  * **Line # 2641 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2641 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2642 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { category.reload.parent }) }
+    ```
+
+  * **Line # 2643 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
+    ```
+
+  * **Line # 2646 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 2650 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+              it "returns 200" do
+    ```
+
+  * **Line # 2651 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 2669 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2669 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+              it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2670 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { category.reload.parent }) }
+    ```
+
+  * **Line # 2671 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.not_to(change { category.reload.parent.children.count }) }
+    ```
+
+  * **Line # 2672 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect { subject }.to change { parent.reload.children.count }.by(1) }
+    ```
+
+  * **Line # 2675 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 2679 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+              it "returns 200" do
+    ```
+
+  * **Line # 2680 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                subject
+    ```
+
+  * **Line # 2698 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Image.count }) }
+    ```
+
+  * **Line # 2698 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Image.count }) }
+    ```
+
+  * **Line # 2699 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { ImageToRecord.count }) }
+    ```
+
+  * **Line # 2699 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { ImageToRecord.count }) }
+    ```
+
+  * **Line # 2701 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2702 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2719 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Image.count }) }
+    ```
+
+  * **Line # 2719 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Image.count }) }
+    ```
+
+  * **Line # 2720 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.images.count }) }
+    ```
+
+  * **Line # 2721 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+    ```
+
+  * **Line # 2721 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+    ```
+
+  * **Line # 2723 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2724 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2741 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Image.count }.by(1) }
+    ```
+
+  * **Line # 2741 - convention:** RSpec/ExpectChange: Prefer `change(Image, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Image.count }.by(1) }
+    ```
+
+  * **Line # 2742 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+    ```
+
+  * **Line # 2742 - convention:** RSpec/ExpectChange: Prefer `change(ImageToRecord, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { ImageToRecord.count }.by(1) }
+    ```
+
+  * **Line # 2744 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2745 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
     ```
 
   * **Line # 2762 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-                expect { subject }.to change { category2.reload.index }.from(2).to(1)
+            it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2762 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2763 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
+    ```
+
+  * **Line # 2763 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::DishesInCategory.count }) }
+    ```
+
+  * **Line # 2765 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
     ```
 
   * **Line # 2766 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+              subject
+    ```
+
+  * **Line # 2783 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2783 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+            it { expect { subject }.not_to(change { Menu::Dish.count }) }
+    ```
+
+  * **Line # 2784 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.dishes.count }) }
+    ```
+
+  * **Line # 2785 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+    ```
+
+  * **Line # 2785 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+    ```
+
+  * **Line # 2787 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2788 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2805 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Dish.count }.by(3) }
+    ```
+
+  * **Line # 2805 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Dish, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Dish.count }.by(3) }
+    ```
+
+  * **Line # 2806 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.dishes.count }) }
+    ```
+
+  * **Line # 2807 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+    ```
+
+  * **Line # 2807 - convention:** RSpec/ExpectChange: Prefer `change(Menu::DishesInCategory, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::DishesInCategory.count }.by(3) }
+    ```
+
+  * **Line # 2809 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2810 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2827 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2827 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Category.count }.by(1) }
+    ```
+
+  * **Line # 2828 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.children.count }) }
+    ```
+
+  * **Line # 2830 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2831 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2848 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
+    ```
+
+  * **Line # 2848 - convention:** RSpec/ExpectChange: Prefer `change(Menu::Category, :count)`.
+
+    ```rb
+            it { expect { subject }.to change { Menu::Category.count }.by(3 + 1) }
+    ```
+
+  * **Line # 2849 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect { subject }.not_to(change { category.reload.children.count }) }
+    ```
+
+  * **Line # 2851 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2852 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              subject
+    ```
+
+  * **Line # 2886 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2896]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 2896 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [2886]
+
+    ```rb
+          context "when passing a invalid id" do ...
+    ```
+
+  * **Line # 2913 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+            let!(:category0) { create(:menu_category, index: 0) }
+    ```
+
+  * **Line # 2914 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+            let!(:category1) { create(:menu_category, index: 1) }
+    ```
+
+  * **Line # 2915 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+            let!(:category2) { create(:menu_category, index: 2) }
+    ```
+
+  * **Line # 2917 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 2918 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect { subject }.to change { category.reload.index }.from(0).to(1)
+    ```
+
+  * **Line # 2926 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+              it do
+    ```
+
+  * **Line # 2927 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change { category.reload.index }.from(0).to(2)
+    ```
+
+  * **Line # 2933 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change { category1.reload.index }.from(1).to(0)
+    ```
+
+  * **Line # 2937 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to change { category2.reload.index }.from(2).to(1)
+    ```
+
+  * **Line # 2941 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
                 subject
     ```
 
-  * **Line # 2775 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2950 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to change { category0.reload.index }.from(0).to(1) }
     ```
 
-  * **Line # 2776 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2951 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to change { category1.reload.index }.from(1).to(2) }
     ```
 
-  * **Line # 2777 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2952 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to change { category2.reload.index }.from(2).to(0) }
     ```
 
-  * **Line # 2780 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2955 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 subject
     ```
 
-  * **Line # 2789 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2964 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.not_to(change { category0.reload.index }) }
     ```
 
-  * **Line # 2791 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2966 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to change { category1.reload.index }.from(1).to(2) }
     ```
 
-  * **Line # 2792 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2967 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to(change { category1.reload.updated_at }) }
     ```
 
-  * **Line # 2793 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2968 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to change { category2.reload.index }.from(2).to(1) }
     ```
 
-  * **Line # 2794 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2969 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.to(change { category2.reload.updated_at }) }
     ```
 
-  * **Line # 2801 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2976 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.not_to(change { Menu::Category.order(:id).pluck(:updated_at) }) }
     ```
 
-  * **Line # 2802 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 2977 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect { subject }.not_to(change { Menu::Category.order(:id).pluck(:index) }) }
@@ -12870,7 +13555,7 @@
             it "contains all informations" do
     ```
 
-### spec/controllers/v1/admin/reservations_controller_spec.rb - (150 offenses)
+### spec/controllers/v1/admin/reservations_controller_spec.rb - (120 offenses)
   * **Line # 7 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
@@ -13507,265 +14192,85 @@
               let!(:reservations) do
     ```
 
-  * **Line # 1372 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, 
-    ```
-
-  * **Line # 1372 - convention:** Layout/LineLength: Line is too long. [121/120]
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-    ```
-
-  * **Line # 1373 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 1),
-    ```
-
-  * **Line # 1373 - convention:** Layout/LineLength: Line is too long. [124/120]
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-    ```
-
-  * **Line # 1374 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, 
-    ```
-
-  * **Line # 1374 - convention:** Layout/LineLength: Line is too long. [122/120]
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, adults: 1),
-    ```
-
-  * **Line # 1375 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 1),
-    ```
-
-  * **Line # 1375 - convention:** Layout/LineLength: Line is too long. [122/120]
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
-    ```
-
-  * **Line # 1376 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 9.hours, 
-    ```
-
-  * **Line # 1376 - convention:** Layout/LineLength: Line is too long. [125/120]
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
-    ```
-
-  * **Line # 1377 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 1),
-    ```
-
-  * **Line # 1377 - convention:** Layout/LineLength: Line is too long. [123/120]
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, adults: 2),
-    ```
-
-  * **Line # 1378 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, 
-    ```
-
-  * **Line # 1379 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 2),
-    ```
-
-  * **Line # 1380 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, 
-    ```
-
-  * **Line # 1380 - convention:** Layout/LineLength: Line is too long. [122/120]
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
-    ```
-
-  * **Line # 1381 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 2),
-    ```
-
-  * **Line # 1381 - convention:** Layout/LineLength: Line is too long. [125/120]
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 3),
-    ```
-
-  * **Line # 1382 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours, 
-    ```
-
-  * **Line # 1382 - convention:** Layout/LineLength: Line is too long. [122/120]
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
-    ```
-
-  * **Line # 1383 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 2),
-    ```
-
-  * **Line # 1383 - convention:** Layout/LineLength: Line is too long. [123/120]
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4),
-    ```
-
-  * **Line # 1384 - convention:** Layout/LineLength: Line is too long. [121/120]
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, adults: 4)
-    ```
-
-  * **Line # 1386 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, 
-    ```
-
-  * **Line # 1387 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 3),
-    ```
-
-  * **Line # 1388 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, 
-    ```
-
-  * **Line # 1389 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 3),
-    ```
-
-  * **Line # 1390 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, 
-    ```
-
-  * **Line # 1391 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 4),
-    ```
-
-  * **Line # 1392 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, 
-    ```
-
-  * **Line # 1393 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 4),
-    ```
-
-  * **Line # 1394 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                  create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours, 
-    ```
-
-  * **Line # 1395 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    adults: 4)
-    ```
-
-  * **Line # 1437 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
+  * **Line # 1441 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
 
     ```rb
               before { req(date: Date.today.to_date) }
     ```
 
-  * **Line # 1538 - convention:** Layout/LineLength: Line is too long. [133/120]
+  * **Line # 1470 - convention:** Style/TrailingCommaInHashLiteral: Avoid comma after the last item of a hash.
+
+    ```rb
+            query:,
+    ```
+
+  * **Line # 1544 - convention:** Layout/LineLength: Line is too long. [133/120]
 
     ```rb
               expect(file.sheet("Prenotazioni").column(col_index("payment_hpp_url"))).to include(*ReservationPayment.all.pluck(:hpp_url))
     ```
 
-  * **Line # 1606 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1571 - convention:** Style/RedundantInterpolation: Prefer `to_s` over string interpolation.
+
+    ```rb
+          let(:query) { "#{secret[1..15]}" }
+    ```
+
+  * **Line # 1586 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
+
+    ```rb
+            before { req(query: 'mario') }
+    ```
+
+  * **Line # 1635 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1616 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1645 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1626 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1655 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1657 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1686 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id) }
     ```
 
-  * **Line # 1666 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1695 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id, @new.id) }
     ```
 
-  * **Line # 1666 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1695 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id, @new.id) }
     ```
 
-  * **Line # 1675 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1704 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
     ```
 
-  * **Line # 1675 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1704 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
     ```
 
-  * **Line # 1675 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1704 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
@@ -14385,890 +14890,854 @@
             I18n.locale = @initial_lang
     ```
 
-### spec/controllers/v1/menu/categories_controller_spec.rb - (148 offenses)
+### spec/controllers/v1/menu/categories_controller_spec.rb - (142 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
     RSpec.describe V1::Menu::CategoriesController, type: :controller do
     ```
 
-  * **Line # 56 - convention:** Layout/LineLength: Line is too long. [184/120]
+  * **Line # 69 - convention:** Layout/LineLength: Line is too long. [184/120]
 
     ```rb
         context "filtering for { skip_empty_categories: true } and categories have only inactive dishes and empty categories, should be empty cuz children categories are empty as well." do
     ```
 
-  * **Line # 65 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            create_menu_categories(1, visibility: nil, 
-    ```
-
-  * **Line # 65 - convention:** Layout/LineLength: Line is too long. [142/120]
-
-    ```rb
-            create_menu_categories(1, visibility: nil, parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, status: :deleted)
-    ```
-
-  * **Line # 66 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, status: :deleted)
-    ```
-
-  * **Line # 66 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                                      parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, 
-    ```
-
-  * **Line # 66 - convention:** Layout/LineLength: Line is too long. [125/120]
-
-    ```rb
-                                      parent: granny.children.sample).first.dishes = create_list(:menu_dish, 2, status: :deleted)
-    ```
-
-  * **Line # 67 - convention:** Layout/ArgumentAlignment: Align the arguments of a method call if they span more than one line.
-
-    ```rb
-    status: :deleted)
-    ```
-
-  * **Line # 68 - convention:** Layout/LineLength: Line is too long. [159/120]
-
-    ```rb
-            create_menu_categories(1, visibility: nil, parent: granny.children.sample.children.sample).first.dishes = create_list(:menu_dish, 2, status: :inactive)
-    ```
-
-  * **Line # 69 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            create_menu_categories(1, visibility: nil, 
-    ```
-
-  * **Line # 70 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    parent: granny.children.sample.children.sample).first.dishes = create_list(:menu_dish, 2, status: :inactive)
-    ```
-
-  * **Line # 70 - convention:** Layout/LineLength: Line is too long. [142/120]
-
-    ```rb
-                                      parent: granny.children.sample.children.sample).first.dishes = create_list(:menu_dish, 2, status: :inactive)
-    ```
-
-  * **Line # 72 - convention:** Layout/FirstArgumentIndentation: Indent the first argument one step more than the start of the previous line.
-
-    ```rb
-    :menu_dish, 2, status: :inactive)
-    ```
-
-  * **Line # 72 - convention:** Layout/MultilineMethodCallBraceLayout: Closing method call brace must be on the line after the last argument when opening brace is on a separate line from the first argument.
-
-    ```rb
-    :menu_dish, 2, status: :inactive)
-    ```
-
-  * **Line # 73 - convention:** Layout/ClosingParenthesisIndentation: Indent `)` to column 34 (not 0)
-
-    ```rb
-    )
-    ```
-
-  * **Line # 85 - convention:** Layout/LineLength: Line is too long. [123/120]
+  * **Line # 98 - convention:** Layout/LineLength: Line is too long. [123/120]
 
     ```rb
         context "filtering for { skip_empty_categories: true } and categories are actually empty (no dishes, no categories)" do
     ```
 
-  * **Line # 98 - convention:** Layout/LineLength: Line is too long. [126/120]
+  * **Line # 111 - convention:** Layout/LineLength: Line is too long. [126/120]
 
     ```rb
         context "filtering for { skip_empty_categories: true } and some categories have dishes, other have children categories" do
     ```
 
-  * **Line # 154 - convention:** Layout/LineLength: Line is too long. [140/120]
+  * **Line # 167 - convention:** Style/WordArray: Use `%w` or `%W` for an array of words.
+
+    ```rb
+              ["ids", "id", "secret", "secrets"].sample => [
+    ```
+
+  * **Line # 178 - convention:** Rails/Pick: Prefer `pick(:secret)` over `pluck(:secret).first`.
+
+    ```rb
+          it { expect(json[:items].pluck(:secret).first).to be_in(Menu::Category.all.pluck(:secret)) }
+    ```
+
+  * **Line # 205 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
+
+    ```rb
+          it { expect(json[:items].pluck(:id)).to match_array([sub_category.id]) }
+    ```
+
+  * **Line # 210 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
+
+    ```rb
+            it { expect(json[:items].pluck(:id)).to match_array([sub_sub_category.id]) }
+    ```
+
+  * **Line # 219 - convention:** Layout/LineLength: Line is too long. [140/120]
 
     ```rb
           context "when public visibility is enabled but current time is out of absolute timezone (from: #{from.inspect}, to: #{to.inspect})" do
     ```
 
-  * **Line # 206 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 271 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:items].size).to eq 10 }
     ```
 
-  * **Line # 207 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 272 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:total_count]).to eq 30 }
     ```
 
-  * **Line # 208 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 273 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:current_page]).to eq 1 }
     ```
 
-  * **Line # 209 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 274 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:per_page]).to eq 10 }
     ```
 
-  * **Line # 217 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 282 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:items].size).to eq 3 }
     ```
 
-  * **Line # 218 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 283 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:total_count]).to eq 10 }
     ```
 
-  * **Line # 219 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 284 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:current_page]).to eq 1 }
     ```
 
-  * **Line # 220 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 285 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
-  * **Line # 228 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 293 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:items].size).to eq 3 }
     ```
 
-  * **Line # 229 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 294 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject[:metadata][:total_count]).to eq 10 }
-    ```
-
-  * **Line # 230 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 2 }
-    ```
-
-  * **Line # 231 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:per_page]).to eq 3 }
-    ```
-
-  * **Line # 240 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              it { expect(@page1).to eq @offset0 }
-    ```
-
-  * **Line # 240 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              it { expect(@page1).to eq @offset0 }
-    ```
-
-  * **Line # 249 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:items].size).to eq 1 }
-    ```
-
-  * **Line # 250 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
-    ```
-
-  * **Line # 251 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 4 }
-    ```
-
-  * **Line # 252 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:per_page]).to eq 3 }
-    ```
-
-  * **Line # 260 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:items].size).to eq 0 }
-    ```
-
-  * **Line # 261 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:total_count]).to eq 10 }
-    ```
-
-  * **Line # 262 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:current_page]).to eq 10 }
-    ```
-
-  * **Line # 263 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject[:metadata][:per_page]).to eq 3 }
-    ```
-
-  * **Line # 274 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              @items
-    ```
-
-  * **Line # 277 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.length).to eq 10 }
-    ```
-
-  * **Line # 278 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject).to all(be_a(Hash)) }
-    ```
-
-  * **Line # 279 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 10 }
     ```
 
   * **Line # 295 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject).to be_a(Array) }
+            it { expect(subject[:metadata][:current_page]).to eq 2 }
     ```
 
   * **Line # 296 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.count).to eq 2 }
+            it { expect(subject[:metadata][:per_page]).to eq 3 }
     ```
 
-  * **Line # 297 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 305 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
-            it { expect(subject[0][:index]).to eq 0 }
+              it { expect(@page1).to eq @offset0 }
     ```
 
-  * **Line # 298 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 305 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
-            it { expect(subject[1][:index]).to eq 1 }
+              it { expect(@page1).to eq @offset0 }
     ```
 
-  * **Line # 313 - convention:** Rails/SkipsModelValidations: Avoid using `update_all` because it skips validations.
+  * **Line # 314 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              Menu::Visibility.update_all(public_visible: true)
+            it { expect(subject[:items].size).to eq 1 }
     ```
 
-  * **Line # 319 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 315 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
+    ```
+
+  * **Line # 316 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:current_page]).to eq 4 }
+    ```
+
+  * **Line # 317 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:per_page]).to eq 3 }
+    ```
+
+  * **Line # 325 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:items].size).to eq 0 }
+    ```
+
+  * **Line # 326 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:total_count]).to eq 10 }
+    ```
+
+  * **Line # 327 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:current_page]).to eq 10 }
+    ```
+
+  * **Line # 328 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[:metadata][:per_page]).to eq 3 }
+    ```
+
+  * **Line # 339 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+
+    ```rb
+              @items
+    ```
+
+  * **Line # 342 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.length).to eq 10 }
+    ```
+
+  * **Line # 343 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject).to all(be_a(Hash)) }
+    ```
+
+  * **Line # 344 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.pluck(:id).uniq.count).to eq 10 }
+    ```
+
+  * **Line # 360 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject).to be_a(Array) }
     ```
 
-  * **Line # 320 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 361 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.count).to eq 2 }
+    ```
+
+  * **Line # 362 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[0][:index]).to eq 0 }
+    ```
+
+  * **Line # 363 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject[1][:index]).to eq 1 }
+    ```
+
+  * **Line # 378 - convention:** Rails/SkipsModelValidations: Avoid using `update_all` because it skips validations.
+
+    ```rb
+              Menu::Visibility.update_all(public_visible: true)
+    ```
+
+  * **Line # 384 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject).to be_a(Array) }
+    ```
+
+  * **Line # 385 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject.pluck(:id)).to eq Menu::Category.order(:index).pluck(:id) }
     ```
 
-  * **Line # 330 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 395 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             req(except: @excluded.id)
     ```
 
-  * **Line # 336 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 401 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 337 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 402 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
-  * **Line # 338 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 403 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject.first[:id]).to eq Menu::Category.last.id }
     ```
 
-  * **Line # 342 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 407 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
           ["true", "t", "1", true, 1].each do |param_value|
     ```
 
-  * **Line # 343 - convention:** Layout/LineLength: Line is too long. [133/120]
+  * **Line # 408 - convention:** Layout/LineLength: Line is too long. [133/120]
 
     ```rb
             context "when filtering by { #{param_name.inspect}: #{param_value.inspect} } should return only categories without parent" do
     ```
 
-  * **Line # 347 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 412 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
               let!(:children) { create_list(:menu_category, 2, parent:, visibility: nil) }
     ```
 
-  * **Line # 357 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 422 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 358 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 423 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq).to match_array(Menu::Category.without_parent.pluck(:id)) }
     ```
 
-  * **Line # 359 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 424 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:parent_id)).to all(be_nil) }
     ```
 
-  * **Line # 379 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 444 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(subject).to be_a(Hash) }
     ```
 
-  * **Line # 380 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 445 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             it { expect(Menu::Category.find(subject[:id])).to be_a(Menu::Category) }
     ```
 
-  * **Line # 388 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 453 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject).to include(
     ```
 
-  * **Line # 395 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 460 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject[:images].count).to eq 2 }
     ```
 
-  * **Line # 401 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 466 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             create_list(:menu_category, 2, visibility: nil, parent: @parent)
     ```
 
-  * **Line # 412 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 477 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             before { req(parent_id: @parent.id) }
     ```
 
-  * **Line # 417 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 482 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 418 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 483 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 2 }
     ```
 
-  * **Line # 421 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 486 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
     ```
 
-  * **Line # 421 - convention:** Layout/LineLength: Line is too long. [145/120]
+  * **Line # 486 - convention:** Layout/LineLength: Line is too long. [145/120]
 
     ```rb
                 expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
     ```
 
-  * **Line # 421 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 486 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
                 expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent: @parent).pluck(:id))
     ```
 
-  * **Line # 428 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 493 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject[:total_count]).to eq 2 }
     ```
 
-  * **Line # 429 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 494 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject[:current_page]).to eq 1 }
     ```
 
-  * **Line # 430 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 495 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject[:per_page]).to eq 10 }
     ```
 
-  * **Line # 431 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 496 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject[:params]).to be_a(Hash) }
-    ```
-
-  * **Line # 432 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:params]).to include("parent_id" => @parent.id) }
-    ```
-
-  * **Line # 432 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
-
-    ```rb
-              it { expect(subject[:params]).to include("parent_id" => @parent.id) }
-    ```
-
-  * **Line # 442 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.count).to eq 3 }
-    ```
-
-  * **Line # 443 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject.pluck(:id).uniq.count).to eq 3 }
-    ```
-
-  * **Line # 446 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-                expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
-    ```
-
-  * **Line # 446 - convention:** Layout/LineLength: Line is too long. [144/120]
-
-    ```rb
-                expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
-    ```
-
-  * **Line # 453 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:total_count]).to eq 3 }
-    ```
-
-  * **Line # 454 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:current_page]).to eq 1 }
-    ```
-
-  * **Line # 455 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:per_page]).to eq 10 }
-    ```
-
-  * **Line # 456 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:params]).to be_a(Hash) }
-    ```
-
-  * **Line # 457 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-              it { expect(subject[:params]).to include("parent_id" => "") }
-    ```
-
-  * **Line # 465 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
-
-    ```rb
-            items = 5.times.map do |i|
-    ```
-
-  * **Line # 465 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
-
-    ```rb
-            items = 5.times.map do |i| ...
-    ```
-
-  * **Line # 487 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.count).to eq 5 }
-    ```
-
-  * **Line # 488 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
   * **Line # 497 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.count).to eq 5 }
+              it { expect(subject[:params]).to include("parent_id" => @parent.id) }
     ```
 
-  * **Line # 498 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 497 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+              it { expect(subject[:params]).to include("parent_id" => @parent.id) }
     ```
 
   * **Line # 507 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.count).to eq 1 }
+              it { expect(subject.count).to eq 3 }
     ```
 
   * **Line # 508 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
+              it { expect(subject.pluck(:id).uniq.count).to eq 3 }
     ```
 
-  * **Line # 509 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 511 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.first[:name]).to eq "Category #1!!!" }
+                expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
+    ```
+
+  * **Line # 511 - convention:** Layout/LineLength: Line is too long. [144/120]
+
+    ```rb
+                expect(Menu::Category.where(id: subject.pluck(:id).uniq).pluck(:id)).to match_array(Menu::Category.where(parent_id: nil).pluck(:id))
     ```
 
   * **Line # 518 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.count).to eq 1 }
+              it { expect(subject[:total_count]).to eq 3 }
     ```
 
   * **Line # 519 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
+              it { expect(subject[:current_page]).to eq 1 }
     ```
 
   * **Line # 520 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.first[:name]).to eq "Category #1!!!" }
+              it { expect(subject[:per_page]).to eq 10 }
     ```
 
   * **Line # 521 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.first[:description]).to eq "Description for #1!!!" }
+              it { expect(subject[:params]).to be_a(Hash) }
     ```
 
-  * **Line # 530 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 522 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it { expect(subject.count).to eq 1 }
+              it { expect(subject[:params]).to include("parent_id" => "") }
     ```
 
-  * **Line # 531 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
-    ```
-
-  * **Line # 532 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.first[:name]).to eq "Category #5!!!" }
-    ```
-
-  * **Line # 533 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-            it { expect(subject.first[:description]).to eq "Description for #5!!!" }
-    ```
-
-  * **Line # 540 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+  * **Line # 530 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
 
     ```rb
             items = 5.times.map do |i|
     ```
 
-  * **Line # 540 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+  * **Line # 530 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
 
     ```rb
             items = 5.times.map do |i| ...
     ```
 
-  * **Line # 552 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 552 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it do
+            it { expect(subject.count).to eq 5 }
     ```
 
   * **Line # 553 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
+            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
-  * **Line # 554 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 562 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
+            it { expect(subject.count).to eq 5 }
     ```
 
-  * **Line # 555 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 563 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect(subject.count).to eq 10
+            it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
-  * **Line # 565 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 572 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.count).to eq 5 }
+            it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 566 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 573 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
-  * **Line # 567 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 574 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.pluck(:price).uniq).to all(be_positive) }
+            it { expect(subject.first[:name]).to eq "Category #1!!!" }
     ```
 
-  * **Line # 568 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 583 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.pluck(:price).uniq).to all(be_a(Numeric)) }
+            it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 583 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+  * **Line # 584 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            items = 5.times.map do |i|
+            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
-  * **Line # 583 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+  * **Line # 585 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            items = 5.times.map do |i| ...
+            it { expect(subject.first[:name]).to eq "Category #1!!!" }
     ```
 
-  * **Line # 595 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 586 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it do
+            it { expect(subject.first[:description]).to eq "Description for #1!!!" }
+    ```
+
+  * **Line # 595 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+            it { expect(subject.count).to eq 1 }
     ```
 
   * **Line # 596 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
+            it { expect(subject.pluck(:id).uniq.count).to eq 1 }
     ```
 
   * **Line # 597 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
+            it { expect(subject.first[:name]).to eq "Category #5!!!" }
     ```
 
   * **Line # 598 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+            it { expect(subject.first[:description]).to eq "Description for #5!!!" }
+    ```
+
+  * **Line # 605 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+
+    ```rb
+            items = 5.times.map do |i|
+    ```
+
+  * **Line # 605 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+
+    ```rb
+            items = 5.times.map do |i| ...
+    ```
+
+  * **Line # 617 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 618 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
+    ```
+
+  * **Line # 619 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
+    ```
+
+  * **Line # 620 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
               expect(subject.count).to eq 10
     ```
 
-  * **Line # 608 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 630 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 5 }
     ```
 
-  * **Line # 609 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 631 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id).uniq.count).to eq 5 }
     ```
 
-  * **Line # 610 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 632 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              it { expect(subject.pluck(:price).uniq).to eq [nil] }
+              it { expect(subject.pluck(:price).uniq).to all(be_positive) }
     ```
 
   * **Line # 633 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
+              it { expect(subject.pluck(:price).uniq).to all(be_a(Numeric)) }
+    ```
+
+  * **Line # 648 - warning:** Lint/UselessAssignment: Useless assignment to variable - `items`.
+
+    ```rb
+            items = 5.times.map do |i|
+    ```
+
+  * **Line # 648 - convention:** Performance/TimesMap: Use `Array.new(5)` with a block instead of `.times.map`.
+
+    ```rb
+            items = 5.times.map do |i| ...
+    ```
+
+  * **Line # 660 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 661 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.map(&:price).uniq).to contain_exactly(nil, 10, 20, 30, 40, 50)
+    ```
+
+  * **Line # 662 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.map(&:price?)).to match_array(([false] * 5) + ([true] * 5))
+    ```
+
+  * **Line # 663 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              expect(subject.count).to eq 10
+    ```
+
+  * **Line # 673 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.count).to eq 5 }
+    ```
+
+  * **Line # 674 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.pluck(:id).uniq.count).to eq 5 }
+    ```
+
+  * **Line # 675 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+              it { expect(subject.pluck(:price).uniq).to eq [nil] }
+    ```
+
+  * **Line # 698 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
               it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 634 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 699 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id)).to contain_exactly(categories[0].id) }
     ```
 
-  * **Line # 656 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 721 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 657 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 722 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id)).to match_array(categories[0..1].map(&:id)) }
     ```
 
-  * **Line # 678 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 743 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 679 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 744 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id)).to match_array(categories[0].id) }
     ```
 
-  * **Line # 700 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 765 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 701 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 766 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.pluck(:id)).to match_array(categories[0..1].map(&:id)) }
     ```
 
-  * **Line # 726 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 791 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject).to all(include(status: "active")) }
     ```
 
-  * **Line # 727 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 792 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject.size).to eq 1 }
     ```
 
-  * **Line # 821 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 886 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject).to include(
     ```
 
-  * **Line # 828 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 893 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject[:images].count).to eq 0 }
     ```
 
-  * **Line # 841 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 906 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
           it do
     ```
 
-  * **Line # 842 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 907 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject).to include(translations: Hash)
     ```
 
-  * **Line # 843 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 908 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject[:translations]).to include(name: Hash)
     ```
 
-  * **Line # 844 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 909 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject.dig(:translations, :name)).to include(en: "test-en")
     ```
 
-  * **Line # 845 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 910 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject.dig(:translations, :name)).to include(it: "test-it")
     ```
 
-  * **Line # 849 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [857]
+  * **Line # 915 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
+
+    ```rb
+          subject { response }
+    ```
+
+  * **Line # 920 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `before` declarations.
+
+    ```rb
+          subject { response }
+    ```
+
+  * **Line # 921 - convention:** Layout/EmptyLines: Extra blank line detected.
+
+    ```rb
+     ...
+    ```
+
+  * **Line # 925 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [933]
 
     ```rb
         context "when passing a invalid id" do ...
     ```
 
-  * **Line # 857 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [849]
+  * **Line # 933 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [925]
 
     ```rb
         context "when passing a invalid id" do ...
     ```
 
-  * **Line # 878 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 954 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject).to include(
     ```
 
-  * **Line # 885 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 961 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           it { expect(subject[:images].count).to eq 2 }
     ```
 
-  * **Line # 902 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 978 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
           it { ...
     ```
 
-  * **Line # 903 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 979 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
             expect(subject).to include(
     ```
 
-  * **Line # 934 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
+  * **Line # 1010 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
 
     ```rb
             I18n.locale = (I18n.available_locales - [I18n.default_locale]).sample
     ```
 
-  * **Line # 940 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
+  * **Line # 1016 - convention:** Rails/I18nLocaleAssignment: Use `I18n.with_locale` with block instead of `I18n.locale=`.
 
     ```rb
           after { I18n.locale = I18n.default_locale }
@@ -17784,137 +18253,11 @@
             subject
     ```
 
-### spec/interactions/fetch_reservation_payment_status_spec.rb - (30 offenses)
-  * **Line # 9 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
-
-    ```rb
-      end
-    ```
-
-  * **Line # 13 - convention:** Style/RedundantRegexpArgument: Use string `"CODICE_TRANSAZIONE"` as argument instead of regexp `/CODICE_TRANSAZIONE/`.
-
-    ```rb
-          ).gsub(/CODICE_TRANSAZIONE/, reservation_payment_external_id)
-    ```
-
-  * **Line # 26 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let(:reservation_payment_external_id) { "PO123321" }
-    ```
-
-  * **Line # 27 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let!(:reservation) { create(:reservation) }
-    ```
-
-  * **Line # 28 - convention:** RSpec/EmptyLineAfterFinalLet: Add an empty line after the last `let!`.
-
-    ```rb
-      let!(:reservation_payment) { create(:reservation_payment, reservation:, external_id: reservation_payment_external_id) }
-    ```
-
-  * **Line # 28 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let!(:reservation_payment) { create(:reservation_payment, reservation:, external_id: reservation_payment_external_id) }
-    ```
-
-  * **Line # 28 - convention:** Layout/LineLength: Line is too long. [121/120]
-
-    ```rb
-      let!(:reservation_payment) { create(:reservation_payment, reservation:, external_id: reservation_payment_external_id) }
-    ```
-
-  * **Line # 29 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `let` declarations.
-
-    ```rb
-      subject(:call) do ...
-    ```
-
+### spec/interactions/fetch_reservation_payment_status_spec.rb - (7 offenses)
   * **Line # 29 - convention:** Layout/LineLength: Line is too long. [121/120]
 
     ```rb
                      "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_order_status_path)}").to_return do |_request|
-    ```
-
-  * **Line # 30 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let(:reservation_payment_external_id) { "PO123321" }
-    ```
-
-  * **Line # 31 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let!(:reservation) { create(:reservation) }
-    ```
-
-  * **Line # 32 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let!(:reservation_payment) { ...
-    ```
-
-  * **Line # 32 - convention:** Style/BlockDelimiters: Avoid using `{...}` for multi-line blocks.
-
-    ```rb
-      let!(:reservation_payment) {
-    ```
-
-  * **Line # 33 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-      let!(:reservation_payment) { ...
-    ```
-
-  * **Line # 33 - convention:** Style/BlockDelimiters: Avoid using `{...}` for multi-line blocks.
-
-    ```rb
-      let!(:reservation_payment) {
-    ```
-
-  * **Line # 33 - convention:** Layout/BlockEndNewline: Expression at 33, 91 should be on its own line.
-
-    ```rb
-     create(:reservation_payment, reservation:, external_id: reservation_payment_external_id) }
-    ```
-
-  * **Line # 34 - convention:** Layout/IndentationWidth: Use 2 (not 1) spaces for indentation.
-
-    ```rb
-     create(:reservation_payment, reservation:, external_id: reservation_payment_external_id)
-    ```
-
-  * **Line # 34 - convention:** Layout/IndentationWidth: Use 2 (not 0) spaces for indentation.
-
-    ```rb
-      create(:reservation_payment, reservation:, external_id: reservation_payment_external_id)
-    ```
-
-  * **Line # 35 - convention:** Layout/BlockAlignment: `}` at 35, 0 is not aligned with `let!(:reservation_payment) {` at 33, 2.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 35 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 36 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 43 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-            it { expect(call.errors).to be_empty }
     ```
 
   * **Line # 47 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
@@ -17929,12 +18272,6 @@
               expect { subject }.to(change { reservation_payment.reload.status }.from("todo").to("paid"))
     ```
 
-  * **Line # 54 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-            it { expect(call.errors).to be_empty }
-    ```
-
   * **Line # 59 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
@@ -17945,12 +18282,6 @@
 
     ```rb
               expect { subject }.not_to(change { reservation_payment.reload.status }.from("todo"))
-    ```
-
-  * **Line # 65 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-            it { expect(call.errors).to be_empty }
     ```
 
   * **Line # 71 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
@@ -22143,19 +22474,6 @@
     RSpec.describe Log::DeliveredEmail, type: :model do
     ```
 
-### spec/models/log/image_pixel_event_spec.rb - (2 offenses)
-  * **Line # 1 - convention:** Style/FrozenStringLiteralComment: Missing frozen string literal comment.
-
-    ```rb
-    require "rails_helper"
-    ```
-
-  * **Line # 3 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
-
-    ```rb
-    RSpec.describe Log::ImagePixelEvent, type: :model do
-    ```
-
 ### spec/models/log/image_pixel_spec.rb - (3 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
@@ -25261,7 +25579,7 @@
       def req(k = key, p = params, h = headers)
     ```
 
-### spec/requests/v1/admin/preorder_reservation_groups/preorder_reservation_groups.create_spec.rb - (42 offenses)
+### spec/requests/v1/admin/preorder_reservation_groups/preorder_reservation_groups.create_spec.rb - (41 offenses)
   * **Line # 35 - convention:** Naming/MethodParameterName: Method parameter must be at least 3 characters long.
 
     ```rb
@@ -25470,12 +25788,6 @@
 
     ```rb
           it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
-    ```
-
-  * **Line # 351 - convention:** Style/HashSyntax: Omit the hash value.
-
-    ```rb
-        it { expect { req }.to change { PreorderReservationGroup.where(preorder_type: preorder_type).count }.by(1) }
     ```
 
   * **Line # 359 - convention:** RSpec/PredicateMatcher: Prefer using `be_deferred` matcher over `deferred?`.
@@ -25814,38 +26126,56 @@
           it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     ```
 
-### spec/requests/v1/admin/reservations_controller/reservations_controller.refund_payment_spec.rb - (6 offenses)
-  * **Line # 53 - convention:** Layout/LineLength: Line is too long. [123/120]
+### spec/requests/v1/admin/reservations_controller/reservations_controller.refund_payment_spec.rb - (9 offenses)
+  * **Line # 41 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          create(:reservation_payment, reservation:, status: :paid, 
+    ```
+
+  * **Line # 41 - convention:** Layout/LineLength: Line is too long. [132/120]
+
+    ```rb
+          create(:reservation_payment, reservation:, status: :paid, preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
+    ```
+
+  * **Line # 42 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
+
+    ```rb
+    preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
+    ```
+
+  * **Line # 54 - convention:** Layout/LineLength: Line is too long. [123/120]
 
     ```rb
                      "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_refund_payment_path)}").to_return do |_request|
     ```
 
-  * **Line # 113 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+  * **Line # 114 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     ```
 
-  * **Line # 124 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+  * **Line # 125 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
         it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
     ```
 
-  * **Line # 132 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+  * **Line # 133 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
         it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
     ```
 
-  * **Line # 140 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+  * **Line # 141 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     ```
 
-  * **Line # 148 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+  * **Line # 149 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
