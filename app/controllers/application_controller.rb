@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
     Rails.cache.clear
   end
 
-  def cache_action_response(&block)
+  def cache_action_response
     # Something like: "GET:v1/reservations#valid_dates"
     key = "#{request.method}:#{request.params["controller"]}##{request.params["action"]}"
     cache_params = params.permit!.to_h.merge(

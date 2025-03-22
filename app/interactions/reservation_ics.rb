@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+# Will format and add Icalendar event information to the email.
 class ReservationIcs < ActiveInteraction::Base
   record :reservation, class: Reservation
 
   def execute
     cal = Icalendar::Calendar.new
 
-    event_start = reservation.datetime
-    event_end = reservation.datetime + 90.minutes
+    event_start = ignore_dst(reservation.datetime)
+    event_end = ignore_dst(reservation.datetime) + 90.minutes
 
     tzid = Config.app[:restaurant_location_time_zone]
     cal.event do |e|

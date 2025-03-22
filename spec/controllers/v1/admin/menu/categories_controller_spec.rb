@@ -313,7 +313,8 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         before do
           # visibility = create(:menu_visibility)
           5.times.each do |i|
-            create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
+            create(:menu_category, status: %i[active inactive].sample, name: "Category ##{i + 1}!!!",
+                                   description: "Description for ##{i + 1}!!!")
           end
 
           # Menu::Category.import! items, validate: false
@@ -482,7 +483,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             subject { parsed_response_body[:items] }
 
             it { expect(subject.count).to eq 1 }
-            it { expect(subject.pluck(:status)).to match_array([filter_status]) }
+            it { expect(subject.pluck(:status)).to contain_exactly(filter_status) }
           end
         end
       end
@@ -512,6 +513,11 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             cat.visibility.update!(public_visible: true)
             cat.dishes = [create(:menu_dish, status: :active)]
           end
+        end
+        let(:public_visible_by_id) do
+          json[:items].map do |item|
+            [item[:id], item[:public_visible]]
+          end.to_h
         end
 
         # don't show
@@ -560,12 +566,6 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
         before do
           req
-        end
-
-        let(:public_visible_by_id) do
-          json[:items].map do |item|
-            [item[:id], item[:public_visible]]
-          end.to_h
         end
 
         it { expect(Menu::Category.count).to eq 7 }
@@ -919,8 +919,16 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
             parsed_response_body[:item]
           end
 
-          it { subject; expect(response).to have_http_status(:ok) }
-          it { subject; expect(response).to be_successful }
+          it {
+            subject
+            expect(response).to have_http_status(:ok)
+          }
+
+          it {
+            subject
+            expect(response).to be_successful
+          }
+
           it { expect { subject }.to change { Menu::Category.visible.count }.by(1) }
           it { expect { subject }.to change { Menu::Category.where(status: param_status).count }.by(1) }
 
@@ -928,7 +936,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
 
           it {
             expect(subject).to include(
-              status: param_status,
+              status: param_status
             )
           }
         end
@@ -1269,38 +1277,50 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
         it_behaves_like NOT_FOUND
       end
 
-      context 'with {status: inactive} to active category' do
-        let(:do_req) { req(id: category.id, status: "inactive") }
-
+      context "with {status: inactive} to active category" do
         subject do
           do_req
           parsed_response_body[:item]
         end
 
+        let(:do_req) { req(id: category.id, status: "inactive") }
         let!(:category) { create(:menu_category, status: :active) }
 
         it { expect { do_req }.to(change { Menu::Category.where(status: :inactive).count }.by(1)) }
         it { expect { do_req }.to(change { category.reload.status }.to("inactive")) }
 
-        it { do_req; expect(response).to have_http_status(:ok) }
-        it { do_req; expect(response).to be_successful }
+        it {
+          do_req
+          expect(response).to have_http_status(:ok)
+        }
+
+        it {
+          do_req
+          expect(response).to be_successful
+        }
       end
 
-      context 'with {status: active} to inactive category' do
-        let(:do_req) { req(id: category.id, status: "active") }
-
+      context "with {status: active} to inactive category" do
         subject do
           do_req
           parsed_response_body[:item]
         end
 
+        let(:do_req) { req(id: category.id, status: "active") }
         let!(:category) { create(:menu_category, status: :inactive) }
 
         it { expect { do_req }.to(change { Menu::Category.where(status: :active).count }.by(1)) }
         it { expect { do_req }.to(change { category.reload.status }.to("active")) }
 
-        it { do_req; expect(response).to have_http_status(:ok) }
-        it { do_req; expect(response).to be_successful }
+        it {
+          do_req
+          expect(response).to have_http_status(:ok)
+        }
+
+        it {
+          do_req
+          expect(response).to be_successful
+        }
       end
 
       context 'with {name: "Hello"}' do

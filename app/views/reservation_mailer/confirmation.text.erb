@@ -1,6 +1,6 @@
 <%= t('reservation_mailer.greetings', fullname: @reservation.fullname) %>
 
-<%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: @reservation.datetime.strftime('%k:%M'), people: @reservation.people) %>
+<%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: ignore_dst(@reservation.datetime).strftime('%k:%M'), people: @reservation.people) %>
 
 <% if @reservation.payment %>
   <%= @reservation.payment.paid? ? t('reservation_mailer.confirmation.payment_completed') : t('reservation_mailer.confirmation.remember_payment') %>
