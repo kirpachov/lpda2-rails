@@ -742,6 +742,16 @@ RSpec.describe V1::ReservationsController, type: :controller do
           before { group.add_table_type(table_type: table_type, people_per_turn: 15, price: 3) }
 
           context "when user specifies valid table_type_id" do
+            def fill_seats(count:, table_type:, datetimes:)
+              available_seats = count
+              while available_seats > 0
+                adults_count = Random.rand(1..available_seats)
+                children_count = Random.rand(0..(available_seats - adults_count))
+                create(:reservation, datetime: datetimes.sample, table_type:, adults: adults_count, children: children_count)
+                available_seats -= (adults_count + children_count)
+              end
+            end
+
             let(:table_type_id) { table_type.id }
             let(:adults) { 2 }
             let(:children) { 1 }
@@ -756,17 +766,9 @@ RSpec.describe V1::ReservationsController, type: :controller do
             it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
             it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([3.0 * (2 + 1)])) }
 
-            context "when there are enough reserved to fill all the available seats, will notify user about that." do
+            context "when there are no seats available for that reservation turn, will notify user about that." do
               before do
-                # What we're doing here is trying to fill all the available seats for that table type
-                available_seats = 15
-                while available_seats > 0
-                  adults_count = Random.rand(1..available_seats)
-                  children_count = Random.rand(0..(available_seats - adults_count))
-                  create(:reservation, datetime: datetime, table_type: table_type, adults: adults_count, children: children_count)
-                  available_seats = available_seats - (adults_count + children_count)
-                end
-                expect(available_seats).to eq 0
+                fill_seats(count: 15, table_type: table_type, datetimes: [datetime])
                 expect(Reservation.where(table_type: table_type).pluck(:adults, :children).flatten.sum).to eq 15
                 expect(Reservation.pluck(:adults, :children).flatten.sum).to eq 15
               end
@@ -786,6 +788,111 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
               it { expect { req }.not_to change(Reservation, :count) }
               it { expect { req }.not_to change(ReservationPayment, :count) }
+            end
+
+            context "when there NOT seats free." do
+              [
+                { adults: 1, children: 0 },
+                { adults: 1, children: 2 },
+                { adults: 2, children: 1 },
+                { adults: 3, children: 0 },
+              ].each do |scenario|
+                context "when have #{scenario[:adults]} adults and #{scenario[:children]} children" do
+                  let(:adults) { scenario[:adults] }
+                  let(:children) { scenario[:children] }
+                  let(:datetime) { "#{date.to_date} 19:00" }
+                  let(:datetime_18) { "#{date.to_date} 18:00" }
+                  let(:datetime_21) { "#{date.to_date} 21:00" }
+
+                  before do
+                    expect do
+                      fill_seats(count: 15, table_type: table_type, datetimes: [datetime, datetime_18, datetime_21])
+                    end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.from(0).to(15)
+                  end
+
+                  # it { expect(Reservation.all.pluck(:adults, :children).flatten.sum).to eq(12) }
+
+                  it do
+                    req
+                    expect(json).to include(message: /type/)
+                    expect(json).to include(message: /turn/)
+                    expect(json).to include(message: /seat/)
+                  end
+
+                  it do
+                    req
+                    expect(response).to have_http_status(:unprocessable_entity)
+                  end
+
+                  it { expect { req }.not_to(change(Reservation, :count)) }
+                  it { expect { req }.not_to(change(ReservationPayment, :count)) }
+                end
+              end
+            end
+
+            context "when there are still a couple seats free." do
+              [
+                { adults: 1, children: 2 },
+                { adults: 2, children: 1 },
+                { adults: 3, children: 0 },
+              ].each do |scenario|
+                context "when have #{scenario[:adults]} adults and #{scenario[:children]} children" do
+                  let(:adults) { scenario[:adults] }
+                  let(:children) { scenario[:children] }
+                  let(:datetime) { "#{date.to_date} 19:00" }
+                  let(:datetime_18) { "#{date.to_date} 18:00" }
+                  let(:datetime_1830) { "#{date.to_date} 18:30" }
+                  let(:datetime_21) { "#{date.to_date} 21:00" }
+                  let(:datetime_2130) { "#{date.to_date} 21:30" }
+
+                  let!(:turn) do
+                    create(:reservation_turn, starts_at: DateTime.parse("18:00"), ends_at: DateTime.parse("19:59"),
+                                              weekday: date.wday)
+                  end
+
+                  let!(:turn2) do
+                    create(:reservation_turn, starts_at: DateTime.parse("20:00"), ends_at: DateTime.parse("21:59"),
+                                              weekday: date.wday)
+                  end
+
+                  let!(:table_type2) do
+                    create(:table_type, status: :active, default_price: 4)
+                  end
+
+                  before do
+                    group.add_table_type(table_type: table_type2, people_per_turn: 15, price: 3)
+
+                    # Creating some reservations that should not be counted
+                    # This will be all cancelled or deleted
+                    fill_seats(count: 5, table_type: table_type, datetimes: [datetime, datetime_18, datetime_1830])
+                    Reservation.all.each {|r| r.update!(status: %w[deleted cancelled].sample) }
+
+                    # These belong to a different table type so won't be counted.
+                    fill_seats(count: 5, table_type: table_type2, datetimes: [datetime, datetime_18, datetime_1830])
+
+                    # These don't even have a table type
+                    fill_seats(count: 5, table_type: nil, datetimes: [datetime, datetime_18, datetime_1830])
+
+                    # These belong to another reservation turn
+                    expect do
+                      fill_seats(count: 12, table_type: table_type, datetimes: [datetime_21, datetime_2130])
+                    end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.by(12)
+
+                    expect do
+                      fill_seats(count: 12, table_type: table_type, datetimes: [datetime, datetime_18, datetime_1830])
+                    end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.by(12)
+                  end
+
+                  it do
+                    req
+                    expect(json).not_to include(:message)
+                    expect(response).to have_http_status(:ok)
+                  end
+
+                  it { expect { req }.to(change(Reservation, :count).by(1)) }
+                  it { expect { req }.to(change(ReservationPayment, :count).by(1)) }
+                end
+              end
             end
           end
 

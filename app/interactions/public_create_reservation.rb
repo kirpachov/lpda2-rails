@@ -162,7 +162,7 @@ class PublicCreateReservation < ActiveInteraction::Base
         datetime: datetime
       )
 
-      if call.valid? && call.result < people
+      if call.valid? && call.result < 0
         errors.add(:base, I18n.t("reservations.errors.no_seats_available_for_table_type_for_turn"))
       else
         errors.merge!(call.errors)
