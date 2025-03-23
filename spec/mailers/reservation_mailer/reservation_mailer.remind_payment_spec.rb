@@ -121,7 +121,7 @@ RSpec.describe ReservationMailer do
             I18n.t(
               "reservation_mailer.remind_payment.body",
               date: I18n.l(reservation.datetime, format: "%e %B %Y", locale: lang),
-              hour: reservation.datetime.strftime("%k:%M"),
+              hour: ignore_dst(reservation.datetime).strftime("%k:%M"),
               people: reservation.people,
               locale: lang
             )
