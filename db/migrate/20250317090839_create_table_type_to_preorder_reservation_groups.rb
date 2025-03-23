@@ -11,6 +11,7 @@ class CreateTableTypeToPreorderReservationGroups < ActiveRecord::Migration[7.0]
       t.timestamps
       t.check_constraint "price >= 0", name: "price_non_negative"
       t.check_constraint "people_per_turn > 0", name: "people_per_turn_positive"
+      t.index %i[table_type_id preorder_reservation_group_id], unique: true, name: "index_table_type_to_prgroups_uniq"
     end
   end
 end

@@ -12,4 +12,5 @@ class TableTypeToPreorderReservationGroup < ApplicationRecord
   # ################################
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false
   validates :people_per_turn, numericality: { greater_than: 0 }, allow_nil: false
+  validates :table_type_id, uniqueness: { scope: :preorder_reservation_group_id }
 end

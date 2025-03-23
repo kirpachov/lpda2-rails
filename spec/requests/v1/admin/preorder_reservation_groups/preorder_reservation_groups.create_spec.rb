@@ -439,5 +439,35 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(people_per_turn: people_per_turn).count }.by(1)) }
       it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
     end
+
+    context "when adding same table type twice with different settings (people_per_turn and price)" do
+      let(:table_types) do
+        [
+          {
+            table_type_id:,
+            people_per_turn: [12, 15].sample,
+            price: [2, 5].sample
+          },
+          {
+            table_type_id:,
+            people_per_turn: [12, 15].sample,
+            price: [2, 5].sample
+          }
+        ]
+      end
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+
+      it { expect { req }.not_to(change(PreorderReservationGroup, :count)) }
+      it { expect { req }.not_to(change(TableTypeToPreorderReservationGroup, :count)) }
+    end
   end
 end

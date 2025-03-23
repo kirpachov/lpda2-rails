@@ -489,6 +489,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_18_112104) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["preorder_reservation_group_id"], name: "index_table_type_to_prgroups_on_preorder_reservation_group_id"
+    t.index ["table_type_id", "preorder_reservation_group_id"], name: "index_table_type_to_prgroups_uniq", unique: true
     t.index ["table_type_id"], name: "index_table_type_to_prgroups_on_table_type_id"
     t.check_constraint "people_per_turn > 0", name: "people_per_turn_positive"
     t.check_constraint "price >= 0::double precision", name: "price_non_negative"
