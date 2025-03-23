@@ -103,7 +103,7 @@ module V1::Admin
     def update_status
       status = params[:status].to_s.gsub(/\s+/, "").downcase
       return render_error(status: 400, message: I18n.t("invalid_status")) unless %w[arrived noshow
-                                                                                    active].include?(status)
+                                                                                    active cancelled].include?(status)
 
       return show if @item.update(status:)
 
