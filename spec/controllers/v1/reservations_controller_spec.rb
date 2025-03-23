@@ -755,6 +755,38 @@ RSpec.describe V1::ReservationsController, type: :controller do
             it { expect { req }.to(change { Reservation.all.pluck(:table_type_id) }.to([table_type_id])) }
             it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
             it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([3.0 * (2 + 1)])) }
+
+            context "when there are enough reserved to fill all the available seats, will notify user about that." do
+              before do
+                # What we're doing here is trying to fill all the available seats for that table type
+                available_seats = 15
+                while available_seats > 0
+                  adults_count = Random.rand(1..available_seats)
+                  children_count = Random.rand(0..(available_seats - adults_count))
+                  create(:reservation, datetime: datetime, table_type: table_type, adults: adults_count, children: children_count)
+                  available_seats = available_seats - (adults_count + children_count)
+                end
+                expect(available_seats).to eq 0
+                expect(Reservation.where(table_type: table_type).pluck(:adults, :children).flatten.sum).to eq 15
+                expect(Reservation.pluck(:adults, :children).flatten.sum).to eq 15
+              end
+
+              it do
+                req
+                expect(json).to include(message: /able/)
+                expect(json).to include(message: /turn/)
+                expect(json).to include(message: /type/)
+                expect(json).to include(message: /seat/)
+              end
+
+              it do
+                req
+                expect(response).to have_http_status(:unprocessable_entity)
+              end
+
+              it { expect { req }.not_to change(Reservation, :count) }
+              it { expect { req }.not_to change(ReservationPayment, :count) }
+            end
           end
 
           context "when not specifying table type id, will use base payment" do

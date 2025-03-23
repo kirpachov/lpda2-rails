@@ -33,7 +33,7 @@ class PublicCreateReservation < ActiveInteraction::Base
 
   validate :table_type_must_be_active
 
-  attr_reader :reservation, :table_type
+  attr_reader :reservation
 
   def execute
     @reservation = initialize_reservation
@@ -135,6 +135,12 @@ class PublicCreateReservation < ActiveInteraction::Base
     )
   end
 
+  def table_type
+    return @table_type if defined?(@table_type)
+
+    find_table_type
+  end
+
   def find_table_type
     return nil if params[:table_type_id].blank?
 
@@ -148,7 +154,22 @@ class PublicCreateReservation < ActiveInteraction::Base
   def create_reservation_payment_if_needed
     return unless reservation.requires_payment?
 
-    reservation.create_payment!
+    if table_type
+      call = AvailableSeatsForReservationTurnAndPgroup.run(
+        pgroup: reservation.required_payment_group,
+        table_type: table_type,
+        reservation_turn: reservation_turn,
+        datetime: datetime
+      )
+
+      if call.valid? && call.result < people
+        errors.add(:base, I18n.t("reservations.errors.no_seats_available_for_table_type_for_turn"))
+      else
+        errors.merge!(call.errors)
+      end
+    end
+
+    reservation.create_payment! if errors.empty?
   rescue ActiveInteraction::InvalidInteractionError => e
     errors.add(:base, "Issue when creating payment: #{e.message}")
 
@@ -162,7 +183,6 @@ class PublicCreateReservation < ActiveInteraction::Base
   # Validation methods
   # ###################################
   def table_type_must_be_active
-    find_table_type
     return if table_type.nil? || table_type.status == "active"
 
     errors.add(:base, "table type must be active. got #{table_type&.status}")
