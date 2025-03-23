@@ -957,10 +957,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         let(:status) { "cancelled" }
 
         it do
-          expect { req }.not_to(change { reservation.reload.status })
-          expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(:bad_request)
-          expect(parsed_response_body[:message].to_s.downcase).to include("status")
+          expect { req }.to change { reservation.reload.status }.from(reservation.status).to(status)
+          expect(parsed_response_body).to include(item: Hash)
+          expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
+          expect(response).to have_http_status(:ok)
         end
       end
 
