@@ -19,7 +19,7 @@ module Stats
           day: reservations.where(datetime: Date.current.all_day).pluck(:adults, :children).flatten.sum,
           week: current_week_reservations.pluck(:adults, :children).flatten.sum,
           month: current_month_reservations.pluck(:adults, :children).flatten.sum,
-          year: current_year_reservations.pluck(:adults, :children).flatten.sum,
+          year: current_year_reservations.pluck(:adults, :children).flatten.sum
         }
       }.with_indifferent_access
     end
@@ -83,7 +83,9 @@ module Stats
     def search_params
       return @search_params if defined?(@search_params)
 
-      @search_params = params.keys.filter { |key| key.start_with?("reservations_count", "reservations-count") }.map do |key|
+      @search_params = params.keys.filter do |key|
+                         key.start_with?("reservations_count", "reservations-count")
+                       end.map do |key|
         [
           key.split("_")[1..].join("_").to_sym,
           params[key]
