@@ -50,6 +50,36 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       it { expect(json[:items]).to be_empty }
     end
 
+    context "when inactive categories, should not be found even when its root is visible" do
+      let(:root) { create(:menu_category) }
+
+      before do
+        create(:menu_category, status: :inactive, parent: root, visibility: nil)
+        req
+      end
+
+      it { expect(Menu::Category.count).to eq 2 }
+      it { expect(Menu::Category.all.pluck(:status)).to match_array(["active", "inactive"]) }
+
+      it { expect(response).to be_successful }
+      it { expect(json[:items].pluck(:id)).to eq [root.id] }
+    end
+
+    context "when inactive categories, should not be found even when by secret" do
+      let(:root) { create(:menu_category) }
+
+      before do
+        cat = create(:menu_category, status: :inactive, parent: root, visibility: nil)
+        req(ids: [cat.secret])
+      end
+
+      it { expect(Menu::Category.count).to eq 2 }
+      it { expect(Menu::Category.all.pluck(:status)).to match_array(["active", "inactive"]) }
+
+      it { expect(response).to be_successful }
+      it { expect(json[:items]).to be_empty }
+    end
+
     context "when category hasnt any dish and providing { skip_categories_without_dishes: true }" do
       before do
         create(:menu_category, parent: create_menu_categories(2).first, visibility: nil)

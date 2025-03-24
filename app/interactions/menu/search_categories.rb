@@ -11,6 +11,8 @@ module Menu
       categories = all.visible
 
       if public
+        categories = categories.active
+
         categories = categories.public_visible.or(
           categories.private_visible.where(secret: ids)
         ).or(

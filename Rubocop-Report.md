@@ -1,6 +1,6 @@
 # RuboCop Inspection Report
 
-498 files inspected, 4440 offenses detected:
+500 files inspected, 4346 offenses detected:
 
 ### Gemfile - (1 offense)
   * **Line # 1 - convention:** Style/FrozenStringLiteralComment: Missing frozen string literal comment.
@@ -43,7 +43,7 @@
     module ApplicationCable
     ```
 
-### app/controllers/application_controller.rb - (13 offenses)
+### app/controllers/application_controller.rb - (10 offenses)
   * **Line # 3 - convention:** Metrics/ClassLength: Class has too many lines. [107/100]
 
     ```rb
@@ -66,24 +66,6 @@
 
     ```rb
       def cache_action_response ...
-    ```
-
-  * **Line # 20 - convention:** Style/DefWithParentheses: Omit the parentheses in defs when the method doesn't accept any arguments.
-
-    ```rb
-      def cache_action_response()
-    ```
-
-  * **Line # 20 - convention:** Naming/BlockForwarding: Use anonymous block forwarding.
-
-    ```rb
-      def cache_action_response(&block)
-    ```
-
-  * **Line # 20 - warning:** Lint/UnusedMethodArgument: Unused method argument - `block`. If it's necessary, use `_` or `_block` as an argument name to indicate that it won't be used. If it's unnecessary, remove it. You can also write as `cache_action_response(*)` if you want the method to accept any arguments but don't care about them.
-
-    ```rb
-      def cache_action_response(&block)
     ```
 
   * **Line # 27 - convention:** Style/RedundantInterpolation: Prefer `to_s` over string interpolation.
@@ -701,7 +683,7 @@
                                                               id: params[:id].inspect)}#{params[:variant].present? ? " with variant #{params[:variant].inspect}" : ""}")
     ```
 
-### app/controllers/v1/menu/categories_controller.rb - (10 offenses)
+### app/controllers/v1/menu/categories_controller.rb - (2 offenses)
   * **Line # 9 - convention:** Metrics/MethodLength: Method has too many lines. [11/10]
 
     ```rb
@@ -712,54 +694,6 @@
 
     ```rb
           @item = Menu::Category.visible.public_visible.find_by(id: params[:id]) || Menu::Category.visible.private_visible.find_by(secret: params[:id])
-    ```
-
-  * **Line # 48 - convention:** Style/MultilineIfModifier: Favor a normal if-statement over a modifier clause in a multiline statement.
-
-    ```rb
-          return item_or_items.includes(:text_translations, :images, :parent).map { |item| ...
-    ```
-
-  * **Line # 48 - convention:** Style/BlockDelimiters: Avoid using `{...}` for multi-line blocks.
-
-    ```rb
-          return item_or_items.includes(:text_translations, :images, :parent).map { |item|
-    ```
-
-  * **Line # 48 - convention:** Style/IfUnlessModifier: Modifier form of `if` makes the line too long.
-
-    ```rb
-          return item_or_items.includes(:text_translations, :images, :parent).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
-    ```
-
-  * **Line # 48 - convention:** Layout/LineLength: Line is too long. [151/120]
-
-    ```rb
-          return item_or_items.includes(:text_translations, :images, :parent).map { |item| full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
-    ```
-
-  * **Line # 49 - convention:** Layout/IndentationWidth: Use 2 (not 1) spaces for indentation.
-
-    ```rb
-     full_json(item)
-    ```
-
-  * **Line # 49 - convention:** Layout/IndentationWidth: Use 2 (not -11) spaces for indentation.
-
-    ```rb
-      full_json(item)
-    ```
-
-  * **Line # 49 - convention:** Layout/BlockEndNewline: Expression at 49, 18 should be on its own line.
-
-    ```rb
-     full_json(item) } if item_or_items.is_a?(ActiveRecord::Relation)
-    ```
-
-  * **Line # 50 - convention:** Layout/BlockAlignment: `}` at 50, 0 is not aligned with `item_or_items.includes(:text_translations, :images, :parent).map { |item|` at 48, 13 or `return item_or_items.includes(:text_translations, :images, :parent).map { |item|` at 48, 6.
-
-    ```rb
-    } if item_or_items.is_a?(ActiveRecord::Relation)
     ```
 
 ### app/controllers/v1/menu/dishes_controller.rb - (3 offenses)
@@ -1594,7 +1528,7 @@
     ```
 
 ### app/interactions/export_reservations.rb - (5 offenses)
-  * **Line # 22 - convention:** Metrics/AbcSize: Assignment Branch Condition size for write_all is too high. [<3, 31, 3> 31.29/17]
+  * **Line # 22 - convention:** Metrics/AbcSize: Assignment Branch Condition size for write_all is too high. [<3, 32, 3> 32.28/17]
 
     ```rb
       def write_all(sheet) ...
@@ -1606,10 +1540,10 @@
       def write_all(sheet) ...
     ```
 
-  * **Line # 33 - convention:** Layout/LineLength: Line is too long. [151/120]
+  * **Line # 33 - convention:** Layout/LineLength: Line is too long. [163/120]
 
     ```rb
-                    [reservation.id, reservation.fullname, reservation.datetime.strftime("%e/%m/%Y %k:%M").strip, reservation.children, reservation.adults,
+                    [reservation.id, reservation.fullname, ignore_dst(reservation.datetime).strftime("%e/%m/%Y %k:%M").strip, reservation.children, reservation.adults,
     ```
 
   * **Line # 34 - convention:** Layout/LineLength: Line is too long. [132/120]
@@ -3033,7 +2967,7 @@
         def keys ...
     ```
 
-  * **Line # 36 - convention:** Style/ReturnNilInPredicateMethodDefinition: Return `false` instead of `nil` in predicate methods.
+  * **Line # 38 - convention:** Style/ReturnNilInPredicateMethodDefinition: Return `false` instead of `nil` in predicate methods.
 
     ```rb
           return if keys.all? { |key| VALID_KEYS.include?(key.to_s) }
@@ -3062,6 +2996,85 @@
 
     ```rb
           @reservation_filters ||= params.keys.filter { |key| key.start_with?("reservation") }.map do |key|
+    ```
+
+### app/interactions/stats/reservations_count.rb - (13 offenses)
+  * **Line # 12 - convention:** Metrics/AbcSize: Assignment Branch Condition size for calc_stats is too high. [<0, 24, 0> 24/17]
+
+    ```rb
+        def calc_stats ...
+    ```
+
+  * **Line # 12 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+
+    ```rb
+        def calc_stats ...
+    ```
+
+  * **Line # 22 - convention:** Style/TrailingCommaInHashLiteral: Avoid comma after the last item of a hash.
+
+    ```rb
+              year: current_year_reservations.pluck(:adults, :children).flatten.sum,
+    ```
+
+  * **Line # 70 - convention:** Layout/LineLength: Line is too long. [136/120]
+
+    ```rb
+            reservations.select("SUM(adults + children), to_char(datetime, #{format}) as time").group("to_char(datetime, #{format})").to_sql
+    ```
+
+  * **Line # 80 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+          @reservations ||= Reservation.where(id: SearchReservations.run!(params: search_params).visible.not_cancelled.select(:id))
+    ```
+
+  * **Line # 86 - convention:** Style/BlockDelimiters: Avoid using `{...}` for multi-line blocks.
+
+    ```rb
+          @search_params = params.keys.filter { |key|
+    ```
+
+  * **Line # 86 - convention:** Layout/LineLength: Line is too long. [124/120]
+
+    ```rb
+          @search_params = params.keys.filter { |key| key.start_with?("reservations_count", "reservations-count") }.map do |key|
+    ```
+
+  * **Line # 87 - convention:** Layout/IndentationWidth: Use 2 (not 1) spaces for indentation.
+
+    ```rb
+     key.start_with?("reservations_count", "reservations-count")
+    ```
+
+  * **Line # 87 - convention:** Layout/IndentationWidth: Use 2 (not -21) spaces for indentation.
+
+    ```rb
+      key.start_with?("reservations_count", "reservations-count")
+    ```
+
+  * **Line # 87 - convention:** Layout/BlockEndNewline: Expression at 87, 62 should be on its own line.
+
+    ```rb
+     key.start_with?("reservations_count", "reservations-count") }.map do |key|
+    ```
+
+  * **Line # 88 - convention:** Layout/BlockAlignment: `}` at 88, 0 is not aligned with `params.keys.filter { |key|` at 86, 23 or `@search_params = params.keys.filter { |key|` at 86, 6.
+
+    ```rb
+    }.map do |key|
+    ```
+
+  * **Line # 88 - convention:** Style/MultilineBlockChain: Avoid multi-line chains of blocks.
+
+    ```rb
+                           end.map do |key|
+    ```
+
+  * **Line # 88 - convention:** Style/MapToHash: Pass a block to `to_h` instead of calling `map.to_h`.
+
+    ```rb
+                           end.map do |key|
     ```
 
 ### app/interactions/string_to_duration.rb - (5 offenses)
@@ -6009,7 +6022,7 @@
                 before { subject }
     ```
 
-### spec/controllers/v1/admin/menu/categories_controller_spec.rb - (571 offenses)
+### spec/controllers/v1/admin/menu/categories_controller_spec.rb - (481 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
@@ -6400,30 +6413,6 @@
                 create(:menu_category, status: %i[active inactive].sample, name: "Category ##{i + 1}!!!",
     ```
 
-  * **Line # 316 - convention:** Style/SymbolArray: Use `%i` or `%I` for an array of symbols.
-
-    ```rb
-                create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
-    ```
-
-  * **Line # 316 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-                create(:menu_category, status: %i[active inactive].sample, name: "Category ##{i + 1}!!!", 
-    ```
-
-  * **Line # 316 - convention:** Layout/LineLength: Line is too long. [147/120]
-
-    ```rb
-                create(:menu_category, status: [:active, :inactive].sample, name: "Category ##{i + 1}!!!", description: "Description for ##{i + 1}!!!")
-    ```
-
-  * **Line # 317 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    description: "Description for ##{i + 1}!!!")
-    ```
-
   * **Line # 338 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
@@ -6634,12 +6623,6 @@
                 it { expect(subject.count).to eq 1 }
     ```
 
-  * **Line # 485 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
-
-    ```rb
-                it { expect(subject.pluck(:status)).to match_array([filter_status]) }
-    ```
-
   * **Line # 486 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
@@ -6662,18 +6645,6 @@
 
     ```rb
               json[:items].map do |item|
-    ```
-
-  * **Line # 565 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-            let(:public_visible_by_id) do ...
-    ```
-
-  * **Line # 571 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
     ```
 
   * **Line # 575 - convention:** RSpec/BeEq: Prefer `be` over `eq`.
@@ -6994,166 +6965,16 @@
               it { expect(subject[:images].count).to eq 0 }
     ```
 
-  * **Line # 922 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-              it { 
-    ```
-
-  * **Line # 922 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-              it { subject; expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 923 - convention:** Layout/IndentationWidth: Use 2 (not 12) spaces for indentation.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 923 - convention:** Layout/IndentationWidth: Use 2 (not -8) spaces for indentation.
-
-    ```rb
-      subject ...
-    ```
-
   * **Line # 923 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 subject
     ```
 
-  * **Line # 923 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-              it { subject ...
-    ```
-
-  * **Line # 923 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-              it { subject; expect(response).to be_successful }
-    ```
-
-  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 924 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 924 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                   expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 924 - convention:** Layout/BlockEndNewline: Expression at 924, 44 should be on its own line.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 925 - convention:** Layout/BlockAlignment: `}` at 925, 0 is not aligned with `it { ` at 922, 10.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 925 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-              it { subject ...
-    ```
-
-  * **Line # 926 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 926 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 926 - convention:** Layout/BlockEndNewline: Expression at 926, 36 should be on its own line.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 927 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-              it { 
-    ```
-
-  * **Line # 928 - convention:** Layout/IndentationWidth: Use 2 (not 12) spaces for indentation.
-
-    ```rb
-                subject
-    ```
-
-  * **Line # 928 - convention:** Layout/IndentationWidth: Use 2 (not -8) spaces for indentation.
-
-    ```rb
-      subject ...
-    ```
-
   * **Line # 928 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 subject
-    ```
-
-  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to be_successful
-    ```
-
-  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                expect(response).to be_successful
-    ```
-
-  * **Line # 929 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                   expect(response).to be_successful
-    ```
-
-  * **Line # 930 - convention:** Layout/BlockAlignment: `}` at 930, 0 is not aligned with `it { ` at 927, 10.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 931 - convention:** Style/TrailingCommaInArguments: Avoid comma after the last parameter of a method call.
-
-    ```rb
-                  status: param_status,
     ```
 
   * **Line # 932 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
@@ -7376,354 +7197,6 @@
 
     ```rb
               expect(subject).to include(
-    ```
-
-  * **Line # 1272 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-          context 'with {status: inactive} to active category' do
-    ```
-
-  * **Line # 1275 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `let` declarations.
-
-    ```rb
-            subject do ...
-    ```
-
-  * **Line # 1279 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
-
-    ```rb
-            end
-    ```
-
-  * **Line # 1280 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-            let!(:category) { create(:menu_category, status: :active) }
-    ```
-
-  * **Line # 1283 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 1284 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 1285 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-            it { do_req; expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1286 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-            it { do_req; expect(response).to be_successful }
-    ```
-
-  * **Line # 1288 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-            it { do_req ...
-    ```
-
-  * **Line # 1289 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1289 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1289 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-          context 'with {status: active} to inactive category' do
-    ```
-
-  * **Line # 1289 - convention:** Layout/BlockEndNewline: Expression at 1289, 44 should be on its own line.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1290 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-            it { do_req ...
-    ```
-
-  * **Line # 1291 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 1291 - convention:** Layout/BlockEndNewline: Expression at 1291, 36 should be on its own line.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 1292 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `let` declarations.
-
-    ```rb
-            subject do ...
-    ```
-
-  * **Line # 1292 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            it { 
-    ```
-
-  * **Line # 1293 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
-
-    ```rb
-              do_req
-    ```
-
-  * **Line # 1293 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
-
-    ```rb
-      do_req
-    ```
-
-  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-              expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1294 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                 expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1295 - convention:** Layout/BlockAlignment: `}` at 1295, 0 is not aligned with `it { ` at 1292, 8.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 1297 - convention:** RSpec/ScatteredLet: Group all let/let! blocks in the example group together.
-
-    ```rb
-            let!(:category) { create(:menu_category, status: :inactive) }
-    ```
-
-  * **Line # 1297 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            it { 
-    ```
-
-  * **Line # 1298 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
-
-    ```rb
-              do_req
-    ```
-
-  * **Line # 1298 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
-
-    ```rb
-      do_req
-    ```
-
-  * **Line # 1298 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
-
-    ```rb
-            end
-    ```
-
-  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to be_successful
-    ```
-
-  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-              expect(response).to be_successful
-    ```
-
-  * **Line # 1299 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                 expect(response).to be_successful
-    ```
-
-  * **Line # 1300 - convention:** Layout/BlockAlignment: `}` at 1300, 0 is not aligned with `it { ` at 1297, 8.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 1302 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 1302 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-            it { do_req; expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1303 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
-    ```
-
-  * **Line # 1303 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
-
-    ```rb
-            it { do_req; expect(response).to be_successful }
-    ```
-
-  * **Line # 1307 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-            it { do_req ...
-    ```
-
-  * **Line # 1308 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1308 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1308 - convention:** Layout/BlockEndNewline: Expression at 1308, 44 should be on its own line.
-
-    ```rb
-     expect(response).to have_http_status(:ok) }
-    ```
-
-  * **Line # 1309 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
-
-    ```rb
-            it { do_req ...
-    ```
-
-  * **Line # 1310 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 1310 - convention:** Layout/BlockEndNewline: Expression at 1310, 36 should be on its own line.
-
-    ```rb
-     expect(response).to be_successful }
-    ```
-
-  * **Line # 1315 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            it { 
-    ```
-
-  * **Line # 1316 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
-
-    ```rb
-              do_req
-    ```
-
-  * **Line # 1316 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
-
-    ```rb
-      do_req
-    ```
-
-  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-              expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1317 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                 expect(response).to have_http_status(:ok)
-    ```
-
-  * **Line # 1318 - convention:** Layout/BlockAlignment: `}` at 1318, 0 is not aligned with `it { ` at 1315, 8.
-
-    ```rb
-    }
-    ```
-
-  * **Line # 1320 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-            it { 
-    ```
-
-  * **Line # 1321 - convention:** Layout/IndentationWidth: Use 2 (not 10) spaces for indentation.
-
-    ```rb
-              do_req
-    ```
-
-  * **Line # 1321 - convention:** Layout/IndentationWidth: Use 2 (not -6) spaces for indentation.
-
-    ```rb
-      do_req
-    ```
-
-  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-      expect(response).to be_successful
-    ```
-
-  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-              expect(response).to be_successful
-    ```
-
-  * **Line # 1322 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
-
-    ```rb
-                 expect(response).to be_successful
-    ```
-
-  * **Line # 1323 - convention:** Layout/BlockAlignment: `}` at 1323, 0 is not aligned with `it { ` at 1320, 8.
-
-    ```rb
-    }
     ```
 
   * **Line # 1338 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
@@ -13555,7 +13028,7 @@
             it "contains all informations" do
     ```
 
-### spec/controllers/v1/admin/reservations_controller_spec.rb - (120 offenses)
+### spec/controllers/v1/admin/reservations_controller_spec.rb - (118 offenses)
   * **Line # 7 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
@@ -14198,12 +13671,6 @@
               before { req(date: Date.today.to_date) }
     ```
 
-  * **Line # 1470 - convention:** Style/TrailingCommaInHashLiteral: Avoid comma after the last item of a hash.
-
-    ```rb
-            query:,
-    ```
-
   * **Line # 1544 - convention:** Layout/LineLength: Line is too long. [133/120]
 
     ```rb
@@ -14214,12 +13681,6 @@
 
     ```rb
           let(:query) { "#{secret[1..15]}" }
-    ```
-
-  * **Line # 1586 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-            before { req(query: 'mario') }
     ```
 
   * **Line # 1635 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
@@ -14890,7 +14351,7 @@
             I18n.locale = @initial_lang
     ```
 
-### spec/controllers/v1/menu/categories_controller_spec.rb - (142 offenses)
+### spec/controllers/v1/menu/categories_controller_spec.rb - (136 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
@@ -14915,28 +14376,10 @@
         context "filtering for { skip_empty_categories: true } and some categories have dishes, other have children categories" do
     ```
 
-  * **Line # 167 - convention:** Style/WordArray: Use `%w` or `%W` for an array of words.
-
-    ```rb
-              ["ids", "id", "secret", "secrets"].sample => [
-    ```
-
   * **Line # 178 - convention:** Rails/Pick: Prefer `pick(:secret)` over `pluck(:secret).first`.
 
     ```rb
           it { expect(json[:items].pluck(:secret).first).to be_in(Menu::Category.all.pluck(:secret)) }
-    ```
-
-  * **Line # 205 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
-
-    ```rb
-          it { expect(json[:items].pluck(:id)).to match_array([sub_category.id]) }
-    ```
-
-  * **Line # 210 - convention:** RSpec/MatchArray: Prefer `contain_exactly` when matching an array literal.
-
-    ```rb
-            it { expect(json[:items].pluck(:id)).to match_array([sub_sub_category.id]) }
     ```
 
   * **Line # 219 - convention:** Layout/LineLength: Line is too long. [140/120]
@@ -15675,24 +15118,6 @@
 
     ```rb
             expect(subject.dig(:translations, :name)).to include(it: "test-it")
-    ```
-
-  * **Line # 915 - convention:** RSpec/EmptyLineAfterSubject: Add an empty line after `subject`.
-
-    ```rb
-          subject { response }
-    ```
-
-  * **Line # 920 - convention:** RSpec/LeadingSubject: Declare `subject` above any other `before` declarations.
-
-    ```rb
-          subject { response }
-    ```
-
-  * **Line # 921 - convention:** Layout/EmptyLines: Extra blank line detected.
-
-    ```rb
-     ...
     ```
 
   * **Line # 925 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [933]
@@ -26126,25 +25551,7 @@
           it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     ```
 
-### spec/requests/v1/admin/reservations_controller/reservations_controller.refund_payment_spec.rb - (9 offenses)
-  * **Line # 41 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
-
-    ```rb
-          create(:reservation_payment, reservation:, status: :paid, 
-    ```
-
-  * **Line # 41 - convention:** Layout/LineLength: Line is too long. [132/120]
-
-    ```rb
-          create(:reservation_payment, reservation:, status: :paid, preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
-    ```
-
-  * **Line # 42 - convention:** Layout/HashAlignment: Align the keys of a hash literal if they span more than one line.
-
-    ```rb
-    preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
-    ```
-
+### spec/requests/v1/admin/reservations_controller/reservations_controller.refund_payment_spec.rb - (6 offenses)
   * **Line # 54 - convention:** Layout/LineLength: Line is too long. [123/120]
 
     ```rb
@@ -26245,17 +25652,17 @@
       def req(k = key, p = params, h = headers)
     ```
 
-### spec/requests/v1/admin/stats_controller/stats_controller.index_spec.rb - (10 offenses)
+### spec/requests/v1/admin/stats_controller/stats_controller.index_spec.rb - (15 offenses)
   * **Line # 8 - warning:** Lint/ConstantDefinitionInBlock: Do not define constants this way within a block.
 
     ```rb
-      ALL_KEYS = %w[reservations-by-hour].freeze
+      ALL_KEYS = %w[reservations-by-hour reservations-count].freeze
     ```
 
   * **Line # 8 - convention:** RSpec/LeakyConstantDeclaration: Stub constant instead of declaring explicitly.
 
     ```rb
-      ALL_KEYS = %w[reservations-by-hour].freeze
+      ALL_KEYS = %w[reservations-by-hour reservations-count].freeze
     ```
 
   * **Line # 14 - convention:** Naming/MethodParameterName: Method parameter must be at least 3 characters long.
@@ -26304,6 +25711,36 @@
 
     ```rb
           let(:res2) { create(:reservation, adults: 1, datetime: datetime2) }
+    ```
+
+  * **Line # 177 - convention:** RSpec/ExampleLength: Example has too many lines. [14/5]
+
+    ```rb
+        it "be blank if there are no reservations" do ...
+    ```
+
+  * **Line # 216 - convention:** Layout/LineLength: Line is too long. [123/120]
+
+    ```rb
+          create(:reservation, adults: 4, datetime: DateTime.parse("2025-03-17 10:00:00")) # next day: won't be counted in week
+    ```
+
+  * **Line # 218 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+          create(:reservation, adults: 5, datetime: DateTime.parse("2025-03-09 10:00:00")) # last sunday (won't be counted in week)
+    ```
+
+  * **Line # 219 - convention:** Layout/LineLength: Line is too long. [129/120]
+
+    ```rb
+          create(:reservation, adults: 3, datetime: DateTime.parse("2025-03-08 10:00:00")) # last saturday (won't be counted in week)
+    ```
+
+  * **Line # 235 - convention:** RSpec/ExampleLength: Example has too many lines. [36/5]
+
+    ```rb
+        it do ...
     ```
 
 ### spec/requests/v1/admin/users_controller/users_controller.index_spec.rb - (4 offenses)
