@@ -432,6 +432,9 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
 
         it { expect(response).to have_http_status(:ok) }
         it { expect(json).not_to include(:message) }
+        it { expect(json[:item]).to include(table_type_to_preorder_reservation_groups: Array) }
+        it { expect(json[:item][:table_type_to_preorder_reservation_groups].pluck(:table_type_id)).to eq([table_type.id]) }
+        it { expect(json[:item][:table_type_to_preorder_reservation_groups].first[:table_type][:id]).to eq(table_type.id) }
       end
 
       it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
