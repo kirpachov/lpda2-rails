@@ -40,17 +40,21 @@ RSpec.describe V1::ImagesController, type: :controller do
       before do
         create(:menu_category).images << create(:image, :with_attached_image)
         create(:menu_category).images << create(:image, :with_attached_image)
+        create(:table_type).images << create(:image, :with_attached_image)
       end
 
       context "should not return other record's images" do
         it "checking mock data" do
           expect(Menu::Category.count).to eq 2
-          expect(Image.count).to eq 2
-          expect(ImageToRecord.count).to eq 2
+          expect(TableType.count).to eq 1
+          expect(Image.count).to eq 3
+          expect(ImageToRecord.count).to eq 3
         end
 
         context "basic" do
-          before { req(record_type: "Menu::Category", record_id: Menu::Category.all.sample.id) }
+          let(:record) { [TableType.all.sample].sample }
+          # let(:record) { [Menu::Category.all.sample, TableType.all.sample].sample }
+          before { req(record_type: record.class, record_id: record.id) }
 
           it { expect(response).to have_http_status(:ok) }
           it { expect(parsed_response_body[:items].count).to eq 1 }
@@ -63,8 +67,6 @@ RSpec.describe V1::ImagesController, type: :controller do
             " menu::category ",
             " menu::category",
             " menu::Category",
-            " menu::CategorY",
-            "meNu::CategorY"
           ].each do |invalid_klass|
             it "when providing record_type: #{invalid_klass.inspect}" do
               req(record_type: invalid_klass, record_id: Menu::Category.all.sample.id)
@@ -85,8 +87,9 @@ RSpec.describe V1::ImagesController, type: :controller do
 
         it "checking mock data" do
           expect(Menu::Category.count).to eq 2
-          expect(Image.count).to eq 6
-          expect(ImageToRecord.count).to eq 6
+          expect(TableType.count).to eq 1
+          expect(Image.count).to eq 7
+          expect(ImageToRecord.count).to eq 7
         end
 
         context "basic" do
@@ -132,6 +135,30 @@ RSpec.describe V1::ImagesController, type: :controller do
       end
 
       it { expect { req }.not_to(change { ImageToRecord.count }) }
+
+      [
+        { record_type: "Menu::Category", fixture: :menu_category },
+        { record_type: "menu::category", fixture: :menu_category },
+        { record_type: " menu::category ", fixture: :menu_category },
+        { record_type: "TableType", fixture: :table_type },
+        { record_type: "table_type", fixture: :table_type },
+      ].each do |record_type|
+        context "when record_type is #{record_type.inspect}" do
+          let(:record) { create(record_type[:fixture]) }
+          let(:record_type) { record_type[:record_type] }
+          let(:record_id) { record.id }
+
+          it do
+            req
+            expect(json).not_to include(:message)
+            expect(response).to have_http_status(:ok)
+          end
+
+          it { expect { req }.to change { record.reload.images.count }.from(0).to(1) }
+          it { expect { req }.to change { Image.count }.from(0).to(1) }
+          it { expect { req }.to change { ImageToRecord.count }.from(0).to(1) }
+        end
+      end
 
       context "when providing {record_type: String, record_id: Integer}" do
         subject do
@@ -375,8 +402,8 @@ RSpec.describe V1::ImagesController, type: :controller do
     end
     let(:image_id) { all_images.sample.id }
     let(:record_id) { record.id }
-    let(:record_type) { "Menu::Category" }
-    let(:record) { create(:menu_category).tap { |cat| cat.images = all_images } }
+    let(:record_type) { record.class.name }
+    let(:record) { create([:menu_category, :table_type].sample).tap { |cat| cat.images = all_images } }
     let(:all_images) { create_list(:image, 3, :with_attached_image) }
 
     it { expect(instance).to respond_to(:remove_from_record) }

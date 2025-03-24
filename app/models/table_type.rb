@@ -7,6 +7,7 @@ class TableType < ApplicationRecord
   # Constants, settings, modules, et...
   # ################################
   include TrackModelChanges
+  include HasImagesAttached
   extend Mobility
   translates :name
   translates :description

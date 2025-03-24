@@ -4,8 +4,8 @@ module V1::Admin
   # Manage /v1/admin/table_types requests
   class TableTypesController < ApplicationController
     before_action :find_item, only: %i[show update destroy update_status remove_from_preorder_reservation_groups]
-    before_action :require_root, except: %i[index]
-    after_action :clear_cache, except: %i[index]
+    before_action :require_root, except: %i[index show]
+    after_action :clear_cache, except: %i[index show]
 
     # GET /v1/admin/table_types
     def index
@@ -87,7 +87,7 @@ module V1::Admin
 
     def full_json(item_or_items)
       if item_or_items.is_a?(ActiveRecord::Relation)
-        return item_or_items.includes(:text_translations).map do |item|
+        return item_or_items.includes(:text_translations, { images: :attached_image_blob, table_type_to_preorder_reservation_groups: :preorder_reservation_group}).map do |item|
                  full_json(item)
                end
       end
@@ -103,8 +103,8 @@ module V1::Admin
         name: item.name,
         description: item.description,
         translations: item.translations_json,
-
-        # TODO include preorder_reservation_groups
+        images: item.images.map(&:full_json),
+        table_type_to_preorder_reservation_groups: item.table_type_to_preorder_reservation_groups.as_json(include: [:preorder_reservation_group])
       )
     end
   end
