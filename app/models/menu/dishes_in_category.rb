@@ -36,7 +36,11 @@ module Menu
     def assign_valid_index
       return if index.present? && index.to_i >= 0
 
-      self.index = self.class.where(category_id:).count
+      if self.class.where(index: (count_same_category = self.class.where(category_id:).count)).count.zero?
+        return self.index = count_same_category
+      end
+
+      self.index = self.class.where(category_id:).order(:index).last&.index.to_i + 1
     end
   end
 end

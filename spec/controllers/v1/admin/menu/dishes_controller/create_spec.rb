@@ -17,7 +17,9 @@ RSpec.describe V1::Admin::Menu::DishesController do
                                                                   controller: "v1/admin/menu/dishes")
     end
 
-    def req(params = {})
+    let(:default_params) { {} }
+
+    def req(params = default_params)
       post :create, params:
     end
 
@@ -35,6 +37,30 @@ RSpec.describe V1::Admin::Menu::DishesController do
       it { expect(req).to be_successful }
 
       it { expect { req(description: "desc") }.to change(Menu::Dish, :count).by(1) }
+
+      context "when category_id is provided but indexes are messed up (example taken from actual bug in production)" do
+        let(:dishes) { create_list(:menu_dish, 3) }
+        let(:category) { create(:menu_category) }
+
+        let(:default_params) do
+          { category_id: category.id }
+        end
+
+        before do
+          dishes.each do |dish|
+            category.dishes << dish
+          end
+
+          Menu::DishesInCategory.all.order(:id)[0].update(index: 0)
+          # missing index: 1 !
+          Menu::DishesInCategory.all.order(:id)[1].update(index: 2)
+          Menu::DishesInCategory.all.order(:id)[2].update(index: 3)
+        end
+
+        it { expect { req }.not_to raise_error }
+        it { expect { req }.to change(Menu::Dish, :count).by(1) }
+        it { expect { req }.to change(Menu::DishesInCategory, :count).by(1) }
+      end
 
       context "when category_id is provided but blank, should create dish without category (root dish)." do
         subject do
