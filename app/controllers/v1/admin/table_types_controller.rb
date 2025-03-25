@@ -82,7 +82,7 @@ module V1::Admin
     end
 
     def find_item
-      @item = TableType.find(params[:id])
+      @item = TableType.visible.find(params[:id])
     end
 
     def full_json(item_or_items)

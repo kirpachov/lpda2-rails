@@ -45,7 +45,7 @@ RSpec.describe "DELETE /v1/admin/table_types/<table-type-id>" do
   end
 
   let!(:table_type) do
-    create(:table_type)
+    create(:table_type, name: nil, description: nil)
   end
 
   let(:table_type_id) { table_type.id }
