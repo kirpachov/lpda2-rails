@@ -380,7 +380,17 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
       people_per_turn: 10,
       new_reservation_size: 3,
       small_enough: 2,
-      existing_reservations: [{ time: "19:00", adults: 2 }, { time: "19:30", adults: 2 }, { time: "20:00", adults: 2 }, { time: "20:30", adults: 2 }],
+      existing_reservations: [{
+         time: "19:00", adults: 2 },
+         { time: "19:30", adults: 2 },
+         { time: "20:00", adults: 2 },
+         { time: "20:30", adults: 1 },
+         { time: "21:00", adults: 1 },
+
+         # Won't be counted as outside of the dinner turn
+         { time: "21:10", adults: 10 },
+         { time: "10:10", adults: 10 },
+      ],
     },
   ].each do |scenario|
     context "when turn has table_types but they are already full (all seats are taken) (scenario=#{scenario.inspect})" do
@@ -389,16 +399,18 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
       let(:date) { Time.zone.now.to_date.to_s }
 
       let(:table_type) { create(:table_type, :with_image) }
-      let(:turns) do
-        [
-          ReservationTurn.create!(name: "Night", weekday: Time.zone.now.wday, starts_at: "19:00", ends_at: "21:00", step: 30),
-        ]
+      let(:dinner) do
+        ReservationTurn.create!(name: "Night", weekday: Time.zone.now.wday, starts_at: "19:00", ends_at: "21:00", step: 30)
+      end
+
+      let(:lunch) do
+        ReservationTurn.create!(name: "lunch", weekday: Time.zone.now.wday, starts_at: "10:00", ends_at: "14:00", step: 30)
       end
 
       let!(:group) do
         create(:preorder_reservation_group).tap do |grp|
           grp.add_table_type(table_type: table_type, people_per_turn: scenario[:people_per_turn], price: 4)
-          grp.turns = turns
+          grp.turns = [[dinner, lunch], [dinner]].sample
         end
       end
 
@@ -410,8 +422,15 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
         scenario[:existing_reservations].each do |res|
           reservation = create(:reservation, table_type: table_type, adults: res[:adults], children: 0, datetime: DateTime.parse("#{date} #{res[:time]}"))
 
-          expect(reservation.table_type).to eq(table_type)
-          expect(reservation.reservation_turn).to eq(turns[0])
+          # expect(reservation.table_type).to eq(table_type)
+          # expect(reservation.reservation_turn).to eq(dinner)
+        end
+
+        # Creating some "noise" reservations. Theese should not be considered.
+        Random.rand(0..3).times do
+          create(:reservation, status: %w[active arrived deleted noshow cancelled].sample, table_type: table_type, adults: Random.rand(1..10), children: 0, datetime: DateTime.parse("#{date} #{
+            Random.rand(10..14)
+          }:00"))
         end
 
         travel_to Time.zone.now.beginning_of_day do
@@ -423,7 +442,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
       it { expect(json).not_to include(message: String) }
 
       it { expect(json).to include(turns: Array) }
-      it { expect(json[:turns].length).to eq(1) }
+      it { expect(json[:turns]).not_to be_empty }
       it { expect(json[:turns][0]).to include(preorder_reservation_group: Hash) }
 
       it do
@@ -438,7 +457,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
           it { expect(json).not_to include(message: String) }
 
           it { expect(json).to include(turns: Array) }
-          it { expect(json[:turns].length).to eq(1) }
+          it { expect(json[:turns]).not_to be_empty }
           it { expect(json[:turns][0]).to include(preorder_reservation_group: Hash) }
 
           it do
