@@ -60,7 +60,7 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
     # table_type_id 
     table_type_to_preorder_reservation_groups = item.table_type_to_preorder_reservation_groups.includes(table_type: [:text_translations, images: [:attached_image_blob]]).map do |join|
       join.as_json(
-        only: %i[people_per_turn price]
+        only: %i[people_per_turn price table_type_id]
       ).merge(
         table_type: join.table_type.public_json
       )

@@ -388,6 +388,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     it do
       expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups")).to be_a(Array).and(all(include(
         "table_type" => Hash,
+        "table_type_id" => Integer,
         "price" => Float,
         "people_per_turn" => Integer
       )))
@@ -411,6 +412,10 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
         description: String,
         images: Array,
       ))
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").pluck(:table_type).sample.keys.map(&:to_s) & ["notes"]).to be_empty
     end
 
     it do
