@@ -85,6 +85,10 @@ class UpdatePreorderGroup < ActiveInteraction::Base
   end
 
   def associate_table_types
+    group.table_type_to_preorder_reservation_groups.where.not(
+      table_type_id: table_types.map(&:table_type_id)
+    ).destroy_all
+
     table_types.each(&:save!)
   rescue ActiveRecord::RecordInvalid => e
     errors.add(:base, "#{e.message} while associating table types to group")
@@ -100,11 +104,14 @@ class UpdatePreorderGroup < ActiveInteraction::Base
     table_types = [params.delete(:table_types)].flatten.filter(&:present?)
 
     table_types.map do |datum|
-      item = TableTypeToPreorderReservationGroup.new(
+      item = TableTypeToPreorderReservationGroup.find_or_initialize_by(
         preorder_reservation_group: @group,
         table_type: TableType.active.find_by(id: datum[:table_type_id]),
-        people_per_turn: datum[:people_per_turn],
-        price: datum[:price]
+      )
+
+      item.assign_attributes(
+        people_per_turn: datum[:people_per_turn].to_i,
+        price: datum[:price].to_i
       )
 
       errors.add(:base, item.errors.full_messages.join(",")) unless item.valid?
