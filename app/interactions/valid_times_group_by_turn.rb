@@ -8,7 +8,9 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
   end
 
   def execute
-    ReservationTurn.visible.where(weekday: date.wday).includes(reservation_turn_messages: [:text_translations]).map do |turn|
+    ReservationTurn.visible.where(weekday: date.wday).includes(
+      reservation_turn_messages: [:text_translations],
+    ).map do |turn|
       process_turn(turn)
     end.flatten
   end
@@ -16,16 +18,58 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
   private
 
   def process_turn(turn)
-    group = turn.preorder_reservation_groups.first&.active? ? turn.preorder_reservation_groups.first : nil
     turn.as_json.merge(
       valid_times: turn.valid_times(date: params[:date]),
-      preorder_reservation_group: group&.as_json(methods: %i[message]),
+      preorder_reservation_group: group_json(turn.preorder_reservation_groups.active.first),
       messages: turn.reservation_turn_messages.active_at(date).map do |m|
         m.as_json(
           only: %i[id from_date to_date],
           methods: %i[message]
         )
       end
+    )
+  end
+
+  # Will format PreorderReservationGroup's data.
+  # Will returned data like this:
+  # {
+  #   messsage: String,
+  #   table_type_to_preorder_reservation_groups: [
+  #     {
+  #       people_per_turn: Integer,
+  #       price: Float,
+  #       table_type: {
+  #         name: String,
+  #         description: String,
+  #         images: [
+  #           {
+  #             id: Integer,
+  #             filename: String,
+  #             status: String,
+  #             ...
+  #             url: String
+  #           }
+  #         ]
+  #       }
+  #     }
+  #   ]
+  # }
+  def group_json(item)
+    return nil if item.nil?
+
+    # table_type_id 
+    table_type_to_preorder_reservation_groups = item.table_type_to_preorder_reservation_groups.includes(table_type: [:text_translations, images: [:attached_image_blob]]).map do |join|
+      join.as_json(
+        only: %i[people_per_turn price]
+      ).merge(
+        table_type: join.table_type.public_json
+      )
+    end
+
+    item.as_json(
+      methods: %i[message]
+    ).merge(
+      table_type_to_preorder_reservation_groups: 
     )
   end
 

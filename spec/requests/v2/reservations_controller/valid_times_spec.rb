@@ -344,6 +344,82 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     end
   end
 
+  context "when turn has table_types associated, the active ones should be returned" do
+    subject(:turn) { json[:turns].find { |j| j["starts_at"].include?("12:00") } }
+
+    let(:inactive_table_type) { create(:table_type, :with_image, status: :inactive) }
+    let(:not_associated_table_type) { create(:table_type, :with_image) }
+    let(:table_type) { create(:table_type, :with_image) }
+    let(:turns) do
+      [
+        ReservationTurn.create!(name: "Day", weekday: Time.now.wday, starts_at: "12:00", ends_at: "14:00", step: 30),
+        ReservationTurn.create!(name: "Night", weekday: Time.now.wday, starts_at: "19:00", ends_at: "21:00", step: 30),
+      ]
+    end
+
+    let!(:group) do
+      create(:preorder_reservation_group).tap do |grp|
+        grp.add_table_type(table_type: inactive_table_type, people_per_turn: 12, price: 3)
+        grp.add_table_type(table_type: table_type, people_per_turn: 10, price: 4)
+        grp.turns = [turns[0]]
+      end
+    end
+
+    before do
+      travel_to Time.zone.now.beginning_of_day do
+        req(date: Time.zone.now.to_date.to_s)
+      end
+    end
+
+    it { expect(response).to have_http_status(:ok) }
+    it { expect(json).not_to include(message: String) }
+
+    it { expect(turn).to include("preorder_reservation_group" => Hash) }
+
+    it do
+      expect(turn["preorder_reservation_group"]).to include(
+        "id" => group.id,
+        "payment_value" => group.payment_value,
+        "preorder_type" => group.preorder_type,
+        "table_type_to_preorder_reservation_groups" => Array
+      )
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups")).to be_a(Array).and(all(include(
+        "table_type" => Hash,
+        "price" => Float,
+        "people_per_turn" => Integer
+      )))
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").length).to eq(2)
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").pluck(:price)).to match_array([3, 4])
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").pluck(:people_per_turn)).to match_array([10, 12])
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").pluck(:table_type)).to all(include(
+        name: String,
+        description: String,
+        images: Array,
+      ))
+    end
+
+    it do
+      expect(turn.dig("preorder_reservation_group", "table_type_to_preorder_reservation_groups").pluck(:table_type).flatten.pluck(:images).flatten).to all(include(
+        "url" => String
+      ))
+    end
+  end
+
   context "when turn has an associated PreorderReservationGroup but it has status 'inactive'" do
     let(:group) { create(:preorder_reservation_group, status: :inactive) }
 

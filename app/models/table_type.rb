@@ -30,5 +30,32 @@ class TableType < ApplicationRecord
   validates :default_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: false
   validates :default_people_per_turn, numericality: { greater_than: 0 }, allow_nil: false
 
+  # ################################
+  # Defaults
+  # ################################
   attribute :status, :string, default: "active"
+
+  # ################################
+  # Instance methods
+  # ################################
+  # {
+  #   name: String,
+  #   description: String,
+  #   images: [
+  #     {
+  #       id: Integer,
+  #       filename: String,
+  #       status: String,
+  #       ...
+  #       url: String
+  #     }
+  #   ]
+  # }
+  def public_json
+    as_json(
+      methods: %i[name description],
+    ).merge(
+      images: images.map(&:public_json)
+    )
+  end
 end

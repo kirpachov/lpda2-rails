@@ -115,6 +115,14 @@ class Image < ApplicationRecord
     as_json.merge(url:)
   end
 
+  # Returns data formatted like so:
+  # {
+  #   id: Integer,
+  #   filename: String,
+  #   status: String,
+  #   ...
+  #   url: String
+  # }
   def public_json(_options = {})
     as_json(only: %w[id filename status tag original_id key created_at updated_at], methods: %i[url])
   end

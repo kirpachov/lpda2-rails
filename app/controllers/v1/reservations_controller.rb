@@ -57,6 +57,8 @@ module V1
       render json: { success: true }
     end
 
+    # GET /v1/reservations/valid_times
+    # @deprecated
     def valid_times
       call = ValidTimesGroupByTurn.run(params:)
       if call.errors.any? || call.invalid?
