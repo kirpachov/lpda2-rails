@@ -52,10 +52,10 @@ class TableType < ApplicationRecord
   #   ]
   # }
   def public_json
-    as_json(
-      methods: %i[name description],
-    ).merge(
+    {
+      name:,
+      description:,
       images: images.map(&:public_json)
-    )
+    }
   end
 end
