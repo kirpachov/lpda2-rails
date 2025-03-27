@@ -161,7 +161,7 @@ module V1::Admin
 
     def full_json(item_or_items)
       if item_or_items.is_a?(ActiveRecord::Relation)
-        return item_or_items.includes(:reservation_tags, :delivered_emails, :payment).map do |item|
+        return item_or_items.includes(:reservation_tags, :delivered_emails, :payment, table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |item|
                  full_json(item)
                end
       end
@@ -176,6 +176,10 @@ module V1::Admin
       item.as_json(
         include: [
           {
+            table_type: {
+              methods: %i[name description],
+              include: [{ images: { methods: %i[full_json] } }]
+            },
             payment: {
               only: %i[id hpp_url status external_id value]
             },
