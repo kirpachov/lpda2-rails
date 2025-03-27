@@ -65,8 +65,11 @@ RSpec.describe "GET /v1/admin/table_types" do
       t.save!
     end
 
+    tt3 = create(:table_type, status: :deleted)
+
     group.add_table_type(table_type: tt1, price: 5, people_per_turn: 2)
     group.add_table_type(table_type: tt2, price: 10, people_per_turn: 4)
+    group.add_table_type(table_type: tt3, price: 10, people_per_turn: 4)
   end
 
   def req(params: default_params, headers: default_headers)
@@ -94,6 +97,15 @@ RSpec.describe "GET /v1/admin/table_types" do
 
   context "when querying" do
     it_behaves_like "successful request GET /v1/admin/table_types"
+  end
+
+  context "won't return deleted table types" do
+    before { req }
+
+    it do
+      expect(json[:items].pluck(:id)).not_to be_empty
+      expect(json[:items].pluck(:id)).not_to include(TableType.deleted.pluck(:id).sample)
+    end
   end
 
   context "checking response structure" do

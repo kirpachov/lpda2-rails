@@ -52,7 +52,7 @@ module V1::Admin
 
     # DELETE /v1/admin/table_types/<id>
     def destroy
-      return if @item.destroy
+      return if @item.soft_delete
 
       render_unprocessable_entity(@item)
     end

@@ -32,7 +32,8 @@ RSpec.shared_examples "successful request DELETE /v1/admin/table_types/<table-ty
     expect(json).not_to include(message: String)
   end
 
-  it { expect { req }.to(change(TableType, :count).by(-1)) }
+  it { expect { req }.not_to(change(TableType, :count)) }
+  it { expect { req }.to(change { TableType.all.pluck(:status) }) }
 end
 
 RSpec.describe "DELETE /v1/admin/table_types/<table-type-id>" do
@@ -75,6 +76,9 @@ RSpec.describe "DELETE /v1/admin/table_types/<table-type-id>" do
 
   context "when creating a basic table type" do
     it_behaves_like "successful request DELETE /v1/admin/table_types/<table-type-id>"
+
+    it { expect { req }.to(change { table_type.reload.status }.from("active").to("deleted")) }
+    it { expect { req }.to(change { TableType.visible.count }.by(-1)) }
   end
 
   context "when providing non-existent table type id" do

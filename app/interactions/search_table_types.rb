@@ -5,7 +5,7 @@ class SearchTableTypes < ActiveInteraction::Base
   interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
   def execute
-    items = TableType.all
+    items = TableType.visible
 
     if params[:query].present?
       items = items.where(

@@ -12,9 +12,9 @@ class TableType < ApplicationRecord
   translates :name
   translates :description
 
-  enum status: {
+  enum :status, {
     active: :active,
-
+    deleted: :deleted,
     inactive: :inactive,
   }
 
@@ -34,6 +34,11 @@ class TableType < ApplicationRecord
   # Defaults
   # ################################
   attribute :status, :string, default: "active"
+
+  # ################################
+  # Scopes
+  # ################################
+  scope :visible, -> { where.not(status: :deleted) }
 
   # ################################
   # Instance methods
@@ -57,5 +62,14 @@ class TableType < ApplicationRecord
       description:,
       images: images.map(&:public_json)
     }
+  end
+
+  def soft_delete
+    if table_type_to_preorder_reservation_groups.any?
+      errors.add(:base, "Pagamenti alla prenotazione associati. Rimuovili prima di eliminare il tipo di tavolo.")
+      return false
+    end
+
+    update(status: :deleted)
   end
 end
