@@ -324,3 +324,6 @@ it:
     key_not_found: "Chiave %{key} non trovata"
   contacts:
     key_not_found: "Chiave %{key} non trovata"
+  reservations:
+    errors:
+      no_seats_available_for_table_type_for_turn: "Non ci sono abbastanza posti disponibili per il tipo di tavolo selezionato per il turno selezionato."

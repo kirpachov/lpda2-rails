@@ -81,6 +81,20 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context "when reservation has table type" do
+        before do
+          create(:reservation, table_type: create(:table_type, :with_images))
+          create(:reservation, table_type: create(:table_type, :with_images))
+          req
+        end
+
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(json).not_to include(message: String) }
+
+        it { expect(json[:items].first).to include(table_type: Hash) }
+        it { expect(json[:items].first[:table_type]).to include(name: String, description: String, id: Integer, default_people_per_turn: Integer, default_price: Float, images: Array) }
+      end
+
       %w[todo paid].each do |payment_status|
         context "when reservations have payment but with status #{payment_status.inspect}" do
           before do

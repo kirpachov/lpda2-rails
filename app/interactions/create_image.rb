@@ -37,7 +37,7 @@ class CreateImage < ActiveInteraction::Base
   end
 
   def record_type
-    params[:record_type].gsub(/\s+/, "").split("::").map(&:capitalize).join("::").constantize
+    params[:record_type].titleize.gsub("/", "::").gsub(/\s+/, "").constantize
   end
 
   def record

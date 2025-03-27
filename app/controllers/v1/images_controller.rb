@@ -111,7 +111,7 @@ module V1
     end
 
     def record_type
-      params[:record_type].to_s.gsub(/\s+/, "").split("::").map(&:capitalize).join("::")
+      params[:record_type].to_s.titleize.gsub("/", "::").gsub(/\s+/, "")
     end
 
     def serve_image(image)

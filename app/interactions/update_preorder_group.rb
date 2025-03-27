@@ -12,7 +12,10 @@ class UpdatePreorderGroup < ActiveInteraction::Base
   #     { turn_id: 2, date: "2024-02-14" },
   #     { turn_id: 1, date: "2024-02-14" },
   #   ],
-  #   turns: [<ReservationTurn#id>]
+  #   turns: [<ReservationTurn#id>],
+  #   table_types: [
+  #     { table_type_id: 1, people_per_turn: 2, price: 10 },
+  #   ]
   # }
   interface :params, methods: %i[[] merge! fetch each has_key?], default: {}
 
@@ -24,10 +27,10 @@ class UpdatePreorderGroup < ActiveInteraction::Base
 
   def execute
     PreorderReservationGroup.transaction do
-      # group = group
       update_group if valid?
       update_dates if errors.empty?
       update_turns if errors.empty?
+      associate_table_types if errors.empty?
 
       raise ActiveRecord::Rollback if errors.any?
     end
@@ -79,5 +82,41 @@ class UpdatePreorderGroup < ActiveInteraction::Base
 
   def group
     @group ||= PreorderReservationGroup.find_by(id: params[:id])
+  end
+
+  def associate_table_types
+    group.table_type_to_preorder_reservation_groups.where.not(
+      table_type_id: table_types.map(&:table_type_id)
+    ).destroy_all
+
+    table_types.each(&:save!)
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, "#{e.message} while associating table types to group")
+  end
+
+  def table_types
+    @table_types ||= initialize_table_types
+  end
+
+  def initialize_table_types
+    return [] unless params.has_key?(:table_types)
+
+    table_types = [params.delete(:table_types)].flatten.filter(&:present?)
+
+    table_types.map do |datum|
+      item = TableTypeToPreorderReservationGroup.find_or_initialize_by(
+        preorder_reservation_group: @group,
+        table_type: TableType.active.find_by(id: datum[:table_type_id]),
+      )
+
+      item.assign_attributes(
+        people_per_turn: datum[:people_per_turn].to_i,
+        price: datum[:price].to_i
+      )
+
+      errors.add(:base, item.errors.full_messages.join(",")) unless item.valid?
+
+      item
+    end
   end
 end

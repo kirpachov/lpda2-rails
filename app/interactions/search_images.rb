@@ -33,6 +33,8 @@ class SearchImages < ActiveInteraction::Base
   end
 
   def record_type
-    params[:record_type].to_s.gsub(/\s+/, "").split("::").map(&:capitalize).join("::")
+    params[:record_type].titleize.gsub("/", "::").gsub(/\s+/, "").constantize.to_s
+  rescue NameError
+    nil
   end
 end

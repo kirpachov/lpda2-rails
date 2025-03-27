@@ -61,6 +61,8 @@ class PreorderReservationGroup < ApplicationRecord
   # When reservations will be created for those turns payment will be required.
   has_many :preorder_reservation_groups_to_turn, dependent: :destroy
   has_many :turns, through: :preorder_reservation_groups_to_turn, source: :reservation_turn
+  has_many :table_type_to_preorder_reservation_groups, dependent: :destroy
+  has_many :table_types, through: :table_type_to_preorder_reservation_groups
 
   # Dates for which selected turns will require payment.
   has_many :dates, class_name: "PreorderReservationDate", foreign_key: :group_id, dependent: :destroy
@@ -78,6 +80,14 @@ class PreorderReservationGroup < ApplicationRecord
 
   def deferred?
     preorder_type.to_s.in?(%w[nexi_authorization])
+  end
+
+  def add_table_type(args)
+    table_type_to_preorder_reservation_groups.create(args)
+  end
+
+  def add_table_type!(args)
+    table_type_to_preorder_reservation_groups.create!(args)
   end
 
   private

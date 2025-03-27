@@ -31,7 +31,7 @@ RSpec.shared_examples "successful request GET /v1/admin/reservation_turn_message
   end
 end
 
-RSpec.describe "POST /v1/admin/reservation_turn_messages" do
+RSpec.describe "GET /v1/admin/reservation_turn_messages" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
   let(:default_headers) { auth_headers }

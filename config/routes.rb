@@ -93,6 +93,13 @@ Rails.application.routes.draw do
       end
 
       scope module: :admin, path: "admin" do
+        resources :table_types do
+          member do
+            delete "remove_from_preorder_reservation_groups"
+            patch "update_status"
+          end
+        end
+
         resources :stats, only: %i[index]
         resources :users, only: %i[index show create destroy]
         resources :preorder_reservation_groups
