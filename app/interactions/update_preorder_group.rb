@@ -106,7 +106,7 @@ class UpdatePreorderGroup < ActiveInteraction::Base
     table_types.map do |datum|
       item = TableTypeToPreorderReservationGroup.find_or_initialize_by(
         preorder_reservation_group: @group,
-        table_type: TableType.active.find_by(id: datum[:table_type_id]),
+        table_type: TableType.active.find_by(id: datum[:table_type_id])
       )
 
       item.assign_attributes(

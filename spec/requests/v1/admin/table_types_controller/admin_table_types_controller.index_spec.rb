@@ -35,6 +35,7 @@ RSpec.describe "GET /v1/admin/table_types" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
   let(:default_headers) { auth_headers }
+  let(:group) { create(:preorder_reservation_group) }
   let(:default_params) do
     {}
   end
@@ -46,8 +47,6 @@ RSpec.describe "GET /v1/admin/table_types" do
   def translated_description
     { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence }
   end
-
-  let(:group) { create(:preorder_reservation_group) }
 
   before do
     tt1 = create(:table_type).tap do |t|
@@ -113,14 +112,19 @@ RSpec.describe "GET /v1/admin/table_types" do
 
     it { expect(response).to have_http_status(:ok) }
     it { expect(json).to include(items: Array, metadata: Hash) }
-    it { expect(json[:items]).to all(include(id: Integer, name: String, description: String, images: Array, table_type_to_preorder_reservation_groups: Array)) }
+
+    it {
+      expect(json[:items]).to all(include(id: Integer, name: String, description: String, images: Array,
+                                          table_type_to_preorder_reservation_groups: Array))
+    }
 
     it do
       expect(json[:items].sample[:images]).to all(include(id: Integer, url: String))
     end
 
     it do
-      expect(json[:items].sample[:table_type_to_preorder_reservation_groups]).to all(include(id: Integer, preorder_reservation_group_id: Integer, preorder_reservation_group: Hash))
+      expect(json[:items].sample[:table_type_to_preorder_reservation_groups]).to all(include(id: Integer,
+                                                                                             preorder_reservation_group_id: Integer, preorder_reservation_group: Hash))
     end
   end
 end

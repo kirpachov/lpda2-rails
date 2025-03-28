@@ -5,7 +5,7 @@
 class CreateReservationPayment < ActiveInteraction::Base
   object :reservation, class: Reservation
 
-  interface :options, methods: [:to_h, :merge, :[]], default: {}
+  interface :options, methods: %i[to_h merge \[\]], default: {}
 
   validate :preorder_reservation_group_must_be_present
   validates :required_payment_value, numericality: { greater_than: 0 }

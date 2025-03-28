@@ -96,7 +96,7 @@ RSpec.describe "DELETE /v1/admin/table_types/<table-type-id>" do
     let!(:preorder_reservation_group) do
       create(:preorder_reservation_group).tap do |prg|
         prg.add_table_type!(
-          table_type: table_type,
+          table_type:,
           price: 10,
           people_per_turn: 200
         )

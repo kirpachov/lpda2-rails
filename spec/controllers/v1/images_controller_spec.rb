@@ -53,6 +53,7 @@ RSpec.describe V1::ImagesController, type: :controller do
 
         context "basic" do
           let(:record) { [TableType.all.sample].sample }
+
           # let(:record) { [Menu::Category.all.sample, TableType.all.sample].sample }
           before { req(record_type: record.class, record_id: record.id) }
 
@@ -66,7 +67,7 @@ RSpec.describe V1::ImagesController, type: :controller do
             "menu::category ",
             " menu::category ",
             " menu::category",
-            " menu::Category",
+            " menu::Category"
           ].each do |invalid_klass|
             it "when providing record_type: #{invalid_klass.inspect}" do
               req(record_type: invalid_klass, record_id: Menu::Category.all.sample.id)
@@ -141,7 +142,7 @@ RSpec.describe V1::ImagesController, type: :controller do
         { record_type: "menu::category", fixture: :menu_category },
         { record_type: " menu::category ", fixture: :menu_category },
         { record_type: "TableType", fixture: :table_type },
-        { record_type: "table_type", fixture: :table_type },
+        { record_type: "table_type", fixture: :table_type }
       ].each do |record_type|
         context "when record_type is #{record_type.inspect}" do
           let(:record) { create(record_type[:fixture]) }
@@ -403,7 +404,7 @@ RSpec.describe V1::ImagesController, type: :controller do
     let(:image_id) { all_images.sample.id }
     let(:record_id) { record.id }
     let(:record_type) { record.class.name }
-    let(:record) { create([:menu_category, :table_type].sample).tap { |cat| cat.images = all_images } }
+    let(:record) { create(%i[menu_category table_type].sample).tap { |cat| cat.images = all_images } }
     let(:all_images) { create_list(:image, 3, :with_attached_image) }
 
     it { expect(instance).to respond_to(:remove_from_record) }

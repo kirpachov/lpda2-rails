@@ -59,7 +59,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       end
 
       it { expect(Menu::Category.count).to eq 2 }
-      it { expect(Menu::Category.all.pluck(:status)).to match_array(["active", "inactive"]) }
+      it { expect(Menu::Category.all.pluck(:status)).to match_array(%w[active inactive]) }
 
       it { expect(response).to be_successful }
       it { expect(json[:items].pluck(:id)).to eq [root.id] }
@@ -74,7 +74,7 @@ RSpec.describe V1::Menu::CategoriesController, type: :controller do
       end
 
       it { expect(Menu::Category.count).to eq 2 }
-      it { expect(Menu::Category.all.pluck(:status)).to match_array(["active", "inactive"]) }
+      it { expect(Menu::Category.all.pluck(:status)).to match_array(%w[active inactive]) }
 
       it { expect(response).to be_successful }
       it { expect(json[:items]).to be_empty }

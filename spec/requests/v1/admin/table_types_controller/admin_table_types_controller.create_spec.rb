@@ -71,7 +71,13 @@ RSpec.describe "POST /v1/admin/table_types" do
     it_behaves_like "successful request /v1/admin/table_types"
 
     it { expect { req }.to change { TableType.where(status: :active).count }.by(1) }
-    it { expect { req }.to change { TableType.where(default_people_per_turn: default_params[:default_people_per_turn]).count }.by(1) }
+
+    it {
+      expect { req }.to change {
+                          TableType.where(default_people_per_turn: default_params[:default_people_per_turn]).count
+                        }.by(1)
+    }
+
     it { expect { req }.to change { TableType.where(default_price: default_params[:default_price]).count }.by(1) }
     it { expect { req }.to change { TableType.where(notes: default_params[:notes]).count }.by(1) }
 

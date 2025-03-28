@@ -91,7 +91,11 @@ RSpec.describe "PATCH /v1/admin/table_types/<table-type-id>/update_status" do
 
       it_behaves_like "successful request PATCH /v1/admin/table_types/<table-type-id>/update_status"
 
-      it { expect { req }.to(change { table_type.reload.status.to_s }.from(scenario[:from].to_s).to(scenario[:to]).to_s) }
+      it {
+        expect { req }.to(change do
+                            table_type.reload.status.to_s
+                          end.from(scenario[:from].to_s).to(scenario[:to]).to_s)
+      }
     end
   end
 end
