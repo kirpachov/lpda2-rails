@@ -10,14 +10,14 @@ RSpec.describe V1::Admin::Menu::DishesController do
   let(:instance) { described_class.new }
 
   describe "#create" do
+    let(:default_params) { {} }
+
     it { expect(instance).to respond_to(:create) }
 
     it do
       expect(subject).to route(:post, "/v1/admin/menu/dishes").to(format: :json, action: :create,
                                                                   controller: "v1/admin/menu/dishes")
     end
-
-    let(:default_params) { {} }
 
     def req(params = default_params)
       post :create, params:

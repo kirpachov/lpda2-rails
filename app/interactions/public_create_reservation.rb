@@ -157,9 +157,9 @@ class PublicCreateReservation < ActiveInteraction::Base
     if table_type
       call = AvailableSeatsForReservationTurnAndPgroup.run(
         pgroup: reservation.required_payment_group,
-        table_type: table_type,
-        reservation_turn: reservation_turn,
-        datetime: datetime
+        table_type:,
+        reservation_turn:,
+        datetime:
       )
 
       if call.valid? && call.result < 0
@@ -175,7 +175,7 @@ class PublicCreateReservation < ActiveInteraction::Base
 
     ExceptionNotifier.notify_exception(
       NexiApiIssue.new(errors.full_messages.join(", ")),
-      data: { errors: errors }
+      data: { errors: }
     )
   end
 

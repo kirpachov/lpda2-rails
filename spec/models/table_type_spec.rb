@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe TableType, type: :model do
   it { expect(build(:table_type)).to be_valid }

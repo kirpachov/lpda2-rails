@@ -66,7 +66,8 @@ module V1::Admin
 
     def full_json(item_or_items)
       if item_or_items.is_a?(ActiveRecord::Relation)
-        return item_or_items.includes(:text_translations, dates: [:reservation_turn], turns: [], table_type_to_preorder_reservation_groups: :table_type).map do |item|
+        return item_or_items.includes(:text_translations, dates: [:reservation_turn], turns: [],
+                                                          table_type_to_preorder_reservation_groups: :table_type).map do |item|
                  full_json(item)
                end
       end

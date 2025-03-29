@@ -20,7 +20,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         phone:,
         notes:,
         lang:,
-        table_type_id:,
+        table_type_id:
       }
     end
     let(:notes) { Faker::Lorem.sentence }
@@ -739,7 +739,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           let(:table_type_id) { table_type.id }
 
-          before { group.add_table_type(table_type: table_type, people_per_turn: 15, price: 3) }
+          before { group.add_table_type(table_type:, people_per_turn: 15, price: 3) }
 
           context "when user specifies valid table_type_id" do
             def fill_seats(count:, table_type:, datetimes:)
@@ -747,7 +747,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
               while available_seats > 0
                 adults_count = Random.rand(1..available_seats)
                 children_count = Random.rand(0..(available_seats - adults_count))
-                create(:reservation, datetime: datetimes.sample, table_type:, adults: adults_count, children: children_count)
+                create(:reservation, datetime: datetimes.sample, table_type:, adults: adults_count,
+                                     children: children_count)
                 available_seats -= (adults_count + children_count)
               end
             end
@@ -768,8 +769,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             context "when there are no seats available for that reservation turn, will notify user about that." do
               before do
-                fill_seats(count: 15, table_type: table_type, datetimes: [datetime])
-                expect(Reservation.where(table_type: table_type).pluck(:adults, :children).flatten.sum).to eq 15
+                fill_seats(count: 15, table_type:, datetimes: [datetime])
+                expect(Reservation.where(table_type:).pluck(:adults, :children).flatten.sum).to eq 15
                 expect(Reservation.pluck(:adults, :children).flatten.sum).to eq 15
               end
 
@@ -795,7 +796,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
                 { adults: 1, children: 0 },
                 { adults: 1, children: 2 },
                 { adults: 2, children: 1 },
-                { adults: 3, children: 0 },
+                { adults: 3, children: 0 }
               ].each do |scenario|
                 context "when have #{scenario[:adults]} adults and #{scenario[:children]} children" do
                   let(:adults) { scenario[:adults] }
@@ -806,7 +807,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
                   before do
                     expect do
-                      fill_seats(count: 15, table_type: table_type, datetimes: [datetime, datetime_18, datetime_21])
+                      fill_seats(count: 15, table_type:, datetimes: [datetime, datetime_18, datetime_21])
                     end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.from(0).to(15)
                   end
 
@@ -834,7 +835,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
               [
                 { adults: 1, children: 2 },
                 { adults: 2, children: 1 },
-                { adults: 3, children: 0 },
+                { adults: 3, children: 0 }
               ].each do |scenario|
                 context "when have #{scenario[:adults]} adults and #{scenario[:children]} children" do
                   let(:adults) { scenario[:adults] }
@@ -864,8 +865,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
                     # Creating some reservations that should not be counted
                     # This will be all cancelled or deleted
-                    fill_seats(count: 5, table_type: table_type, datetimes: [datetime, datetime_18, datetime_1830])
-                    Reservation.all.each {|r| r.update!(status: %w[deleted cancelled].sample) }
+                    fill_seats(count: 5, table_type:, datetimes: [datetime, datetime_18, datetime_1830])
+                    Reservation.all.each { |r| r.update!(status: %w[deleted cancelled].sample) }
 
                     # These belong to a different table type so won't be counted.
                     fill_seats(count: 5, table_type: table_type2, datetimes: [datetime, datetime_18, datetime_1830])
@@ -875,11 +876,11 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
                     # These belong to another reservation turn
                     expect do
-                      fill_seats(count: 12, table_type: table_type, datetimes: [datetime_21, datetime_2130])
+                      fill_seats(count: 12, table_type:, datetimes: [datetime_21, datetime_2130])
                     end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.by(12)
 
                     expect do
-                      fill_seats(count: 12, table_type: table_type, datetimes: [datetime, datetime_18, datetime_1830])
+                      fill_seats(count: 12, table_type:, datetimes: [datetime, datetime_18, datetime_1830])
                     end.to change { Reservation.all.pluck(:adults, :children).flatten.sum }.by(12)
                   end
 
@@ -901,7 +902,12 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it { expect { req }.to(change { Reservation.count }.by(1)) }
             it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-            it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.to([group.payment_value.to_f * (adults + children)])) }
+
+            it {
+              expect { req }.to(change do
+                                  ReservationPayment.all.pluck(:value)
+                                end.to([group.payment_value.to_f * (adults + children)]))
+            }
           end
 
           context "when not specifying table type id and payment value is zero, won't create reservation payment" do

@@ -35,6 +35,16 @@ RSpec.describe "GET /v1/admin/table_types/<id>" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
   let(:default_headers) { auth_headers }
+  let(:group) { create(:preorder_reservation_group) }
+  let(:table_type) do
+    create(:table_type).tap do |t|
+      t.assign_translation("name", translated_name)
+      t.assign_translation("description", translated_description)
+      t.images << create(:image, :with_attached_image)
+      group.add_table_type(table_type: t, price: 5, people_per_turn: 2)
+      t.save!
+    end
+  end
   let(:default_params) do
     { id: table_type.id }
   end
@@ -45,18 +55,6 @@ RSpec.describe "GET /v1/admin/table_types/<id>" do
 
   def translated_description
     { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence }
-  end
-
-  let(:group) { create(:preorder_reservation_group) }
-
-  let(:table_type) do
-    create(:table_type).tap do |t|
-      t.assign_translation("name", translated_name)
-      t.assign_translation("description", translated_description)
-      t.images << create(:image, :with_attached_image)
-      group.add_table_type(table_type: t, price: 5, people_per_turn: 2)
-      t.save!
-    end
   end
 
   def req(params: default_params, headers: default_headers)
@@ -86,14 +84,20 @@ RSpec.describe "GET /v1/admin/table_types/<id>" do
     before { req }
 
     it { expect(response).to have_http_status(:ok) }
-    it { expect(json[:item]).to include(id: Integer, name: String, description: String, images: Array, table_type_to_preorder_reservation_groups: Array) }
+
+    it {
+      expect(json[:item]).to include(id: Integer, name: String, description: String, images: Array,
+                                     table_type_to_preorder_reservation_groups: Array)
+    }
 
     it do
       expect(json.dig(:item, :images)).to all(include(id: Integer, url: String))
     end
 
     it do
-      expect(json.dig(:item, :table_type_to_preorder_reservation_groups)).to all(include(id: Integer, preorder_reservation_group_id: Integer, preorder_reservation_group: Hash))
+      expect(json.dig(:item,
+                      :table_type_to_preorder_reservation_groups)).to all(include(id: Integer, preorder_reservation_group_id: Integer,
+                                                                                  preorder_reservation_group: Hash))
     end
   end
 end

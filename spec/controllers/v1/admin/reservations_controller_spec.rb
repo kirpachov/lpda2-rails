@@ -92,7 +92,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it { expect(json).not_to include(message: String) }
 
         it { expect(json[:items].first).to include(table_type: Hash) }
-        it { expect(json[:items].first[:table_type]).to include(name: String, description: String, id: Integer, default_people_per_turn: Integer, default_price: Float, images: Array) }
+
+        it {
+          expect(json[:items].first[:table_type]).to include(name: String, description: String, id: Integer,
+                                                             default_people_per_turn: Integer, default_price: Float, images: Array)
+        }
       end
 
       %w[todo paid].each do |payment_status|

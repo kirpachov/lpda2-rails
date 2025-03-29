@@ -27,14 +27,14 @@ class AvailableSeatsForReservationTurnAndPgroup < ActiveInteraction::Base
   def reservations_same_turn
     @reservations_same_turn ||= Reservation.visible.where.not(
       status: %w[deleted cancelled]
-    ).where(table_type: table_type).where(
-      datetime: datetime.beginning_of_day..datetime.end_of_day
+    ).where(table_type:).where(
+      datetime: datetime.all_day
     ).filter { |r| r.reservation_turn == reservation_turn }
   end
 
   def joins
     @joins ||= TableTypeToPreorderReservationGroup.where(
-      table_type: table_type,
+      table_type:,
       preorder_reservation_group: pgroup
     )
   end

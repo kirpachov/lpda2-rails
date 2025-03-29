@@ -391,7 +391,7 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
     let(:table_types) do
       [
         {
-          table_type_id: table_type_id,
+          table_type_id:,
           people_per_turn:,
           price:
         }
@@ -433,14 +433,26 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
         it { expect(response).to have_http_status(:ok) }
         it { expect(json).not_to include(:message) }
         it { expect(json[:item]).to include(table_type_to_preorder_reservation_groups: Array) }
-        it { expect(json[:item][:table_type_to_preorder_reservation_groups].pluck(:table_type_id)).to eq([table_type.id]) }
-        it { expect(json[:item][:table_type_to_preorder_reservation_groups].first[:table_type][:id]).to eq(table_type.id) }
+
+        it {
+          expect(json[:item][:table_type_to_preorder_reservation_groups].pluck(:table_type_id)).to eq([table_type.id])
+        }
+
+        it {
+          expect(json[:item][:table_type_to_preorder_reservation_groups].first[:table_type][:id]).to eq(table_type.id)
+        }
       end
 
       it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
       it { expect { req }.to(change { TableTypeToPreorderReservationGroup.count }.by(1)) }
-      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(people_per_turn: people_per_turn).count }.by(1)) }
-      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
+
+      it {
+        expect { req }.to(change do
+                            TableTypeToPreorderReservationGroup.where(people_per_turn:).count
+                          end.by(1))
+      }
+
+      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price:).count }.by(1)) }
     end
 
     context "when adding same table type twice with different settings (people_per_turn and price)" do
