@@ -15,7 +15,7 @@ class TableType < ApplicationRecord
   enum :status, {
     active: :active,
     deleted: :deleted,
-    inactive: :inactive,
+    inactive: :inactive
   }
 
   # ################################

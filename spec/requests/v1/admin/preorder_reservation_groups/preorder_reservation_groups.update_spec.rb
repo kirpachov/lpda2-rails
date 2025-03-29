@@ -16,7 +16,7 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       dates:,
       active_from:,
       active_to:,
-      table_types:,
+      table_types:
     }
   end
 
@@ -230,7 +230,7 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
     let(:table_types) do
       [
         {
-          table_type_id: table_type_id,
+          table_type_id:,
           people_per_turn:,
           price:
         }
@@ -276,8 +276,14 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       end
 
       it { expect { req }.to(change { TableTypeToPreorderReservationGroup.count }.by(1)) }
-      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(people_per_turn: people_per_turn).count }.by(1)) }
-      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
+
+      it {
+        expect { req }.to(change do
+                            TableTypeToPreorderReservationGroup.where(people_per_turn:).count
+                          end.by(1))
+      }
+
+      it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price:).count }.by(1)) }
     end
 
     context "when reservation group has table types" do
@@ -287,11 +293,11 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
 
       context "when trying to remove table type" do
         let(:table_types) { [] }
-  
+
         # CHECKING MOCK DATA
         it { expect(group.table_type_to_preorder_reservation_groups.count).to eq(1) }
         it { expect(group.table_types.count).to eq(1) }
-  
+
         it { expect { req }.to(change { TableTypeToPreorderReservationGroup.count }.by(-1)) }
         it { expect { req }.not_to(change(TableType, :count)) }
         it { expect { req }.not_to(change(PreorderReservationGroup, :count)) }
@@ -320,46 +326,46 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
         it { expect { req }.to(change { new_table_type.reload.preorder_reservation_groups }.from([]).to([group])) }
         it { expect { req }.to(change { table_type.reload.preorder_reservation_groups }.from([group]).to([])) }
       end
-  
+
       context "when trying to update table type price" do
         let(:price) { 999 }
-  
+
         # CHECKING MOCK DATA
         it { expect(group.table_type_to_preorder_reservation_groups.count).to eq(1) }
         it { expect(group.table_types.count).to eq(1) }
-  
+
         it do
           req
           expect(response).to have_http_status(:ok)
         end
-  
+
         it do
           req
           expect(json).not_to include(:message)
         end
-  
-        it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
+
+        it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price:).count }.by(1)) }
         it { expect { req }.not_to(change { TableTypeToPreorderReservationGroup.count }) }
       end
-  
+
       context "when updating people_per_turn" do
         let(:people_per_turn) { 8 }
-  
+
         # CHECKING MOCK DATA
         it { expect(group.table_type_to_preorder_reservation_groups.count).to eq(1) }
         it { expect(group.table_types.count).to eq(1) }
-  
+
         it do
           req
           expect(response).to have_http_status(:ok)
         end
-  
+
         it do
           req
           expect(json).not_to include(:message)
         end
-  
-        it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price: price).count }.by(1)) }
+
+        it { expect { req }.to(change { TableTypeToPreorderReservationGroup.where(price:).count }.by(1)) }
         it { expect { req }.not_to(change { TableTypeToPreorderReservationGroup.count }) }
       end
     end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ValidTimesGroupByTurn < ActiveInteraction::Base
-
   # people: Integer
   # How many people are trying to reserve. Optional.
   # Useful to understand if a TableType can be returned based on availability.
@@ -14,7 +13,7 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
 
   def execute
     ReservationTurn.visible.where(weekday: date.wday).includes(
-      reservation_turn_messages: [:text_translations],
+      reservation_turn_messages: [:text_translations]
     ).map do |turn|
       process_turn(turn)
     end.flatten
@@ -63,7 +62,9 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
     item = turn.preorder_reservation_groups.active.first
     return nil if item.nil?
 
-    table_type_to_preorder_reservation_groups = item.table_type_to_preorder_reservation_groups.includes(table_type: [:text_translations, images: [:attached_image_blob]]).map do |join|
+    table_type_to_preorder_reservation_groups = item.table_type_to_preorder_reservation_groups.includes(table_type: [
+                                                                                                          :text_translations, { images: [:attached_image_blob] }
+                                                                                                        ]).map do |join|
       free_seats = AvailableSeatsForReservationTurnAndPgroup.run!(
         reservation_turn: turn,
         pgroup: item,
@@ -83,7 +84,7 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
     item.as_json(
       methods: %i[message]
     ).merge(
-      table_type_to_preorder_reservation_groups: 
+      table_type_to_preorder_reservation_groups:
     )
   end
 
