@@ -46,6 +46,13 @@ default: &default
 
   restaurant_location_time_zone: "Europe/Rome"
 
+  # Will add later by other configs the remaing part. The result will look like
+  # https://graph.facebook.com/v22.0/<phone-numer-id>/messages
+  whatsapp_api_url: "https://graph.facebook.com/v22.0/"
+
+  # Template name for reservation confirmation
+  whatsapp_reservation_confirmation_template_name: "reservation_confirmation2"
+
   # ---------------------------------------------------------
   # SMTP CONFIGURATIONS
   # ---------------------------------------------------------

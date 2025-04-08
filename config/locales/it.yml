@@ -295,6 +295,7 @@ it:
   invalid_status: "Stato non valido"
   reservation_mailer:
     signature: "~ Lo Staff de La Porta D'Acqua"
+    payment_is_required: "Ricorda che per confermare questa perenotazione è necessario completare il pagamento al link %{url}"
     cancelled:
       subject: "Prenotazione annullata"
       body: "La tua prenotazione per il giorno %{date} alle ore %{hour} per %{people} persone è stata annullata."

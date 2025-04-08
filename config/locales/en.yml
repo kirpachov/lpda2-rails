@@ -293,6 +293,7 @@ en:
   invalid_status: "Invalid status"
   reservation_mailer:
     signature: "~ La Porta D'Acqua's Staff"
+    payment_is_required: "Remember that to confirm this reservation, it is necessary to complete the payment at the link %{url}"
     cancelled:
       subject: "Reservation cancelled at La Porta D'acqua"
       body: "Your reservation for the day %{date} at %{hour} for %{people} people has been cancelled."
