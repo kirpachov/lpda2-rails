@@ -59,7 +59,7 @@ module Nexi
         reservation:,
         status: :todo,
         external_id: call.cod_trans,
-        preorder_type: deferred ? :html_nexi_payment : :html_nexi_authorization,
+        preorder_type: deferred ? :html_nexi_authorization : :html_nexi_payment,
         success_url: result_url,
         failure_url: cancel_url
       )

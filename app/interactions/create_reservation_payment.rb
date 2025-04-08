@@ -2,46 +2,35 @@
 
 # Wrapping logic of creating a reservation payment.
 # Indipendent from payment gateways, currently only Nexi is supported, but it could be easily extended.
+# Usage:
+# CreateReservationPayment.run(
+#   reservation: @reservation,
+#   amount: 10.0,
+#   deferred: true,
+# )
 class CreateReservationPayment < ActiveInteraction::Base
   object :reservation, class: Reservation
 
+  float :amount
+
+  # If the reservation is a payment or an authorization. When deferred is a authorization, the payment will be done later.
+  boolean :deferred, default: false
+
   interface :options, methods: %i[to_h merge \[\]], default: {}
 
-  validate :preorder_reservation_group_must_be_present
-  validates :required_payment_value, numericality: { greater_than: 0 }
-
-  delegate :table_type, :required_payment_value, :people, to: :reservation
+  # validate :preorder_reservation_group_must_be_present
+  validates :amount, numericality: { greater_than: 0 }
 
   def execute
-    call = Nexi::CreateReservationPayment.run(
+    compose(
+      Nexi::CreateReservationPayment,
       options.merge(
         {
           reservation:,
-          amount: required_payment_value * people,
-          deferred: preorder_reservation_group.deferred?
+          amount:,
+          deferred:
         }.compact
       )
     )
-
-    errors.merge!(call.errors) if call.errors.any? || call.invalid?
-
-    call
-  end
-
-  def preorder_reservation_group
-    @preorder_reservation_group ||= reservation.required_payment_group
-  end
-
-  def preorder_reservation_group_must_be_present
-    return if preorder_reservation_group
-
-    errors.add(:base, "preorder_reservation_group is blank.")
-  end
-
-  def table_type_must_be_active
-    return if table_type.nil?
-    return if table_type.status == "active"
-
-    errors.add(:base, "table type must be active. got #{table_type.status}")
   end
 end
