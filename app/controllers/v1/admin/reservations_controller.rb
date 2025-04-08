@@ -4,9 +4,9 @@ module V1::Admin
   class ReservationsController < ApplicationController
     before_action :find_item,
                   only: %i[show refund_payment refresh_payment_status deliver_confirmation_email update destroy update_status add_tag
-                           remove_tag]
+                           remove_tag create_payment]
     before_action :find_tag, only: %i[add_tag remove_tag]
-    before_action :require_root, only: %i[refund_payment refresh_payment_status]
+    before_action :require_root, only: %i[refund_payment create_payment refresh_payment_status]
 
     def index
       call = ::SearchReservations.run(params:)
@@ -108,6 +108,18 @@ module V1::Admin
       return show if @item.update(status:)
 
       render_unprocessable_entity(@item)
+    end
+
+    # POST /v1/admin/reservations/:id/payment
+    def create_payment
+      call = AdminCreateReservationPayment.run(reservation: @item, params: params.permit!.to_h)
+
+      return render_unprocessable_entity(call) if call.errors.any? || call.invalid?
+
+      render json: {
+        item: full_json(@item),
+        call: call.result
+      }
     end
 
     def add_tag
