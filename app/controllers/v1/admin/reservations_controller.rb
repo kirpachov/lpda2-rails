@@ -194,7 +194,7 @@ module V1::Admin
               include: [{ images: { methods: %i[full_json] } }]
             },
             payment: {
-              only: %i[id hpp_url status external_id value]
+              only: %i[id hpp_url status external_id preorder_type value]
             },
             delivered_emails: {
               only: %i[id created_at updated_at],
