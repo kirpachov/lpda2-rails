@@ -113,12 +113,22 @@ RSpec.describe "POST /v1/admin/reservations/<id>/payment" do
       req
       expect(Nexi::HttpRequest.last.request_body.dig!("TCONTAB")).to eq("D")
     end
+
+    it do
+      req
+      expect(ReservationPayment.last.preorder_type).to eq("html_nexi_authorization")
+    end
   end
 
   context "when setting deferred: false (or nil), will include 'tcontab'='C' in request" do
     let(:default_params) { { amount:, deferred: [false, "false", nil].sample } }
 
     include_context "successful request POST /v1/admin/reservations/<id>/payment"
+
+    it do
+      req
+      expect(ReservationPayment.last.preorder_type).to eq("html_nexi_payment")
+    end
 
     it do
       req
