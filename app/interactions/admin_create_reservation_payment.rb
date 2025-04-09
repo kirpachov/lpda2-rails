@@ -16,7 +16,7 @@ class AdminCreateReservationPayment < ActiveInteraction::Base
 
     assign_table_type if table_type && errors.empty?
 
-    send_confirmation_email if errors.empty?
+    send_confirmation_email if errors.empty? && reservation.email.present?
 
     reservation.touch if errors.empty?
 

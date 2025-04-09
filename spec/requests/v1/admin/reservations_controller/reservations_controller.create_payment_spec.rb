@@ -102,6 +102,35 @@ RSpec.describe "POST /v1/admin/reservations/<id>/payment" do
     it { expect { req }.to(change { reservation.reload.payment }.from(nil)) }
 
     include_context "successful request POST /v1/admin/reservations/<id>/payment"
+
+    it do
+      Sidekiq::Testing.inline! do
+        allow(ReservationMailer).to receive(:with).and_call_original
+
+        req
+
+        expect(ReservationMailer).to have_received(:with).once
+      end
+    end
+  end
+
+  context "when reservation does not have email it's fine" do
+    before { reservation.update!(email: nil) }
+
+    it do
+      Sidekiq::Testing.inline! do
+        allow(ReservationMailer).to receive(:with).and_call_original
+
+        req
+
+        expect(ReservationMailer).not_to have_received(:with)
+      end
+    end
+
+    it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.from([]).to([15.2])) }
+    it { expect { req }.to(change { reservation.reload.payment }.from(nil)) }
+
+    include_context "successful request POST /v1/admin/reservations/<id>/payment"
   end
 
   context "when setting deferred: true, will include 'tcontab'='D' in request" do
