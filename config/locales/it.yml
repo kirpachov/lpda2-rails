@@ -325,5 +325,6 @@ it:
   contacts:
     key_not_found: "Chiave %{key} non trovata"
   reservations:
+    proceed_with_payment: "Procedi al pagamento"
     errors:
       no_seats_available_for_table_type_for_turn: "Non ci sono abbastanza posti disponibili per il tipo di tavolo selezionato per il turno selezionato."

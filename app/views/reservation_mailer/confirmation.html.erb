@@ -101,6 +101,15 @@
                       <w:anchorlock/>
                       <v:textbox inset="0,0,0,0">
                         <center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
+
+
+              <% if @reservation.payment && @reservation.payment.todo? && @reservation.payment&.hpp_url.present? %>
+                <div style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#a65c23;border-radius:4px;-webkit-border-radius:4px;-moz-border-radius:4px;width:auto; width:auto;;border-top:1px solid #8a3b8f;border-right:1px solid #8a3b8f;border-bottom:1px solid #8a3b8f;border-left:1px solid #8a3b8f;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;">
+                  <a style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:undefined;text-decoration: none;color:#ffffff" href="<%= @reservation.payment.hpp_url %>"><span
+                    style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><%= t('reservations.proceed_with_payment') %></span></a>
+                </div>
+              <% end %>
+
               <div style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#a65c23;border-radius:4px;-webkit-border-radius:4px;-moz-border-radius:4px;width:auto; width:auto;;border-top:1px solid #8a3b8f;border-right:1px solid #8a3b8f;border-bottom:1px solid #8a3b8f;border-left:1px solid #8a3b8f;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;">
                 <a style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:undefined;text-decoration: none;color:#ffffff" href="<%= @show_reservation_url %>"><span
                   style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><%= t('reservation_mailer.reservation_details') %></span></a>

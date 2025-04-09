@@ -323,5 +323,6 @@ en:
   contacts:
     key_not_found: "Key %{key} was not found"
   reservations:
+    proceed_with_payment: "Proceed with payment"
     errors:
       no_seats_available_for_table_type_for_turn: "There are not enough seats available for the selected table type for the selected turn."
