@@ -1,4 +1,7 @@
 it:
+  preferences:
+    key_not_found: "Chiave non trovata"
+
   record_not_found: "Impossibile trovare \"%{model}\" con 'id'=%{id}"
   record_not_found_by: "Impossibile trovare \"%{model}\" con '%{attribute}'=\"%{value}\""
 
@@ -151,6 +154,8 @@ it:
         not_next: "La prenotazione è già passata"
     format: "%{attribute} %{message}"
     messages:
+      too_close_to_date: "È troppo vicina alla data"
+      after_to_timestamp: "La data di fine deve essere dopo la data di inizio"
       cannot_cancel_reservation_too_close_to_date: "Non puoi cancellare la prenotazione perchè è troppo vicina alla data."
       invalid_password: "Password non valida"
       root_required: "È richiesta l'autorizzazione di amministratore"

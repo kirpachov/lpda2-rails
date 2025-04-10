@@ -1,4 +1,7 @@
 en:
+  preferences:
+    key_not_found: "Key was not found"
+
   record_not_found: "Unable to find \"%{model}\" with 'id'=%{id}"
   record_not_found_by: "Unable to find \"%{model}\" with '%{attribute}'=%{value}"
 
@@ -149,6 +152,8 @@ en:
       reservation:
         not_next: "Reservation is not next"
     messages:
+      too_close_to_date: "It is too close to the date"
+      after_to_timestamp: "The end date must be after the start date"
       cannot_cancel_reservation_too_close_to_date: "You cannot cancel the reservation because it is too close to the date."
       invalid_password: "Invalid password"
       root_required: "Administration privileges are required to perform this action."
