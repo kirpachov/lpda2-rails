@@ -1595,7 +1595,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
   end
 
   context "PATCH #cancel" do
-    let(:params) { { secret: reservation.secret } }
+    let(:lang) { I18n.default_locale }
+    let(:params) { { secret: reservation.secret, lang: lang } }
     let!(:reservation) { create(:reservation) }
 
     let(:nexi_response) do
@@ -1720,70 +1721,73 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
-    context "if reservation_min_hours_advance_cancel is set and reservation is too close" do
-      let(:reservation) { create(:reservation, datetime:) }
+    ["it", "en"].each do |lang|
+      context "when lang is #{lang} if reservation_min_hours_advance_cancel is set and reservation is too close" do
+        let(:lang) { lang }
+        let(:reservation) { create(:reservation, datetime:) }
 
-      # #################################
-      # Case when not allowed
-      # #################################
-      [
-        ["2024-11-24 18:00", "2024-11-24 17:00", 1],
-        ["2024-11-24 18:00", "2024-11-24 17:30", 1],
-        ["2024-11-24 18:00", "2024-11-24 17:01", 1],
-        ["2024-11-24 18:00", "2024-11-24 17:59", 1],
-        ["2024-11-24 18:00", "2024-11-24 10:01", 10],
-        ["2024-11-24 18:00", "2024-11-24 18:01", 24]
-      ].each do |scenario|
-        context "when scenario #{scenario.inspect} should not be allowed" do
-          let(:datetime) { DateTime.parse(scenario[0]) }
-          let(:now_datetime) { DateTime.parse(scenario[1]) }
-          let(:config_value) { scenario[2] }
+        # #################################
+        # Case when not allowed
+        # #################################
+        [
+          ["2024-11-24 18:00", "2024-11-24 17:00", 1],
+          ["2024-11-24 18:00", "2024-11-24 17:30", 1],
+          ["2024-11-24 18:00", "2024-11-24 17:01", 1],
+          ["2024-11-24 18:00", "2024-11-24 17:59", 1],
+          ["2024-11-24 18:00", "2024-11-24 10:01", 10],
+          ["2024-11-24 18:00", "2024-11-24 18:01", 24]
+        ].each do |scenario|
+          context "when scenario #{scenario.inspect} should not be allowed" do
+            let(:datetime) { DateTime.parse(scenario[0]) }
+            let(:now_datetime) { DateTime.parse(scenario[1]) }
+            let(:config_value) { scenario[2] }
 
-          before do
-            Setting[:reservation_min_hours_advance_cancel] = config_value
+            before do
+              Setting[:reservation_min_hours_advance_cancel] = config_value
+            end
+
+            def req(data = params)
+              travel_to(now_datetime) { super(data) }
+            end
+
+            it do
+              req
+              expect(response).to have_http_status(:unprocessable_entity)
+            end
+
+            it { expect { req }.not_to(change { reservation.reload.status }) }
           end
-
-          def req(data = params)
-            travel_to(now_datetime) { super(data) }
-          end
-
-          it do
-            req
-            expect(response).to have_http_status(:unprocessable_entity)
-          end
-
-          it { expect { req }.not_to(change { reservation.reload.status }) }
         end
-      end
 
-      # #################################
-      # Allowed
-      # #################################
-      [
-        ["2024-11-24 18:00", "2024-11-24 14:00", 1],
-        ["2024-11-24 18:00", "2024-11-24 11:30", 1],
-        ["2024-11-24 18:00", "2024-11-24 10:01", 1],
-        ["2024-11-24 18:00", "2024-11-20 17:59", 1]
-      ].each do |scenario|
-        context "when scenario #{scenario.inspect} should be allowed" do
-          let(:datetime) { DateTime.parse(scenario[0]) }
-          let(:now_datetime) { DateTime.parse(scenario[0]) }
-          let(:config_value) { scenario[1] }
+        # #################################
+        # Allowed
+        # #################################
+        [
+          ["2024-11-24 18:00", "2024-11-24 14:00", 1],
+          ["2024-11-24 18:00", "2024-11-24 11:30", 1],
+          ["2024-11-24 18:00", "2024-11-24 10:01", 1],
+          ["2024-11-24 18:00", "2024-11-20 17:59", 1]
+        ].each do |scenario|
+          context "when scenario #{scenario.inspect} should be allowed" do
+            let(:datetime) { DateTime.parse(scenario[0]) }
+            let(:now_datetime) { DateTime.parse(scenario[0]) }
+            let(:config_value) { scenario[1] }
 
-          before do
-            Setting[:reservation_min_hours_advance_cancel] = config_value
+            before do
+              Setting[:reservation_min_hours_advance_cancel] = config_value
+            end
+
+            def req(data = params)
+              travel_to(now_datetime) { super(data) }
+            end
+
+            it do
+              req
+              expect(response).to have_http_status(:unprocessable_entity)
+            end
+
+            it { expect { req }.not_to(change { reservation.reload.status }) }
           end
-
-          def req(data = params)
-            travel_to(now_datetime) { super(data) }
-          end
-
-          it do
-            req
-            expect(response).to have_http_status(:unprocessable_entity)
-          end
-
-          it { expect { req }.not_to(change { reservation.reload.status }) }
         end
       end
     end

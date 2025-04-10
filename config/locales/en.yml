@@ -145,6 +145,9 @@ en:
       year: Year
   errors:
     format: "%{attribute} %{message}"
+    attributes:
+      reservation:
+        not_next: "Reservation is not next"
     messages:
       cannot_cancel_reservation_too_close_to_date: "You cannot cancel the reservation because it is too close to the date."
       invalid_password: "Invalid password"
@@ -326,3 +329,5 @@ en:
     proceed_with_payment: "Proceed with payment"
     errors:
       no_seats_available_for_table_type_for_turn: "There are not enough seats available for the selected table type for the selected turn."
+
+      

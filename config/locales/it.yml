@@ -146,6 +146,9 @@ it:
       month: Mese
       year: Anno
   errors:
+    attributes:
+      reservation:
+        not_next: "La prenotazione è già passata"
     format: "%{attribute} %{message}"
     messages:
       cannot_cancel_reservation_too_close_to_date: "Non puoi cancellare la prenotazione perchè è troppo vicina alla data."
