@@ -40,6 +40,29 @@ RSpec.describe "GET /v1/admin/table_types" do
     {}
   end
 
+  let(:tt1) do
+    create(:table_type).tap do |t|
+      t.assign_translation("name", translated_name)
+      t.assign_translation("description", translated_description)
+      t.images << create(:image, :with_attached_image)
+      t.save!
+    end
+  end
+
+  let(:tt2) do
+    create(:table_type).tap do |t|
+      t.assign_translation("name", translated_name)
+      t.assign_translation("description", translated_description)
+      t.images << create(:image, :with_attached_image)
+      t.images << create(:image, :with_attached_image)
+      t.save!
+    end
+  end
+
+  let(:tt3) do
+    create(:table_type, status: :deleted)
+  end
+
   def translated_name
     { it: Faker::Lorem.sentence, en: Faker::Lorem.sentence }
   end
@@ -49,23 +72,6 @@ RSpec.describe "GET /v1/admin/table_types" do
   end
 
   before do
-    tt1 = create(:table_type).tap do |t|
-      t.assign_translation("name", translated_name)
-      t.assign_translation("description", translated_description)
-      t.images << create(:image, :with_attached_image)
-      t.save!
-    end
-
-    tt2 = create(:table_type).tap do |t|
-      t.assign_translation("name", translated_name)
-      t.assign_translation("description", translated_description)
-      t.images << create(:image, :with_attached_image)
-      t.images << create(:image, :with_attached_image)
-      t.save!
-    end
-
-    tt3 = create(:table_type, status: :deleted)
-
     group.add_table_type(table_type: tt1, price: 5, people_per_turn: 2)
     group.add_table_type(table_type: tt2, price: 10, people_per_turn: 4)
     group.add_table_type(table_type: tt3, price: 10, people_per_turn: 4)
@@ -96,6 +102,30 @@ RSpec.describe "GET /v1/admin/table_types" do
 
   context "when querying" do
     it_behaves_like "successful request GET /v1/admin/table_types"
+  end
+
+  context "when filtering by name in query" do
+    let(:default_params) { { query: tt1.name } }
+
+    it_behaves_like "successful request GET /v1/admin/table_types"
+
+    it do
+      req
+      expect(json[:items].pluck(:id)).to include(tt1.id)
+      expect(json[:items].pluck(:id)).not_to include(tt2.id)
+    end
+  end
+
+  context "when filtering by description in query" do
+    let(:default_params) { { query: tt1.description } }
+
+    it_behaves_like "successful request GET /v1/admin/table_types"
+
+    it do
+      req
+      expect(json[:items].pluck(:id)).to include(tt1.id)
+      expect(json[:items].pluck(:id)).not_to include(tt2.id)
+    end
   end
 
   context "won't return deleted table types" do

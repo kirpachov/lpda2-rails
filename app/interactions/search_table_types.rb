@@ -8,13 +8,7 @@ class SearchTableTypes < ActiveInteraction::Base
     items = TableType.visible
 
     if params[:query].present?
-      items = items.where(
-        id: ransack(name_cont: params[:query]).result.select(:id)
-      ).or(
-        items.where(
-          id: ransack(description_cont: params[:query]).result.select(:id)
-        )
-      )
+      items = items.filter_by_query(params[:query])
     end
 
     items
