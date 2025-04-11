@@ -61,7 +61,7 @@ class AdminCreateReservationPayment < ActiveInteraction::Base
   def deferred
     params[:deferred].to_s == "true"
   end
-  alias_method :deferred?, :deferred
+  alias deferred? deferred
 
   # ################################
   # Validators
