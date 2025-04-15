@@ -10,6 +10,8 @@ module Lpda2
   class Application < Rails::Application
     config.load_defaults 7.0
 
+    config.middleware.insert 0, Rack::UTF8Sanitizer
+
     config.app = config_for("app.example").symbolize_keys
     config.app.merge!(config_for("app").symbolize_keys) if File.exist?("config/app.yml")
 

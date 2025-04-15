@@ -395,7 +395,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
     [
       "'Coro",
-      "Coro'"
+      "Coro'",
+      "Jørgensen"
     ].each do |special_name|
       context "when first_name is #{special_name.inspect}" do
         let(:first_name) { special_name }

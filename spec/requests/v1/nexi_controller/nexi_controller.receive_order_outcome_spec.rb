@@ -168,4 +168,31 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
     it { expect { req }.to(change { reservation.events.count }) }
     it { expect { req }.to(change { Nexi::OrderOutcomeRequest.count }.by(1)) }
   end
+
+  context "when surname is included and it's a non-common surname" do
+    [
+      "Smith",
+      "Corò",
+      "Nicolò",
+      "Nicolo'",
+      "J\xF8rgensen"
+    ].each do |surname|
+      context "when surname is #{surname.inspect}" do
+        let(:surname) { surname }
+        let(:default_params) do
+          super().merge(
+            surname:
+          )
+        end
+
+        it do
+          req
+          expect(response).to have_http_status(:ok)
+        end
+
+        it { expect { req }.to change { reservation.events.count }.by(1) }
+        it { expect { req }.to change { payment.reload.status }.from("todo").to("paid") }
+      end
+    end
+  end
 end

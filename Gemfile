@@ -69,6 +69,8 @@ gem "bootsnap", require: false
 
 gem "parallel", "~> 1.24.0"
 
+gem 'rack-utf8_sanitizer', "~> 1.10.1"
+
 group :development, :test do
   # https://github.com/flyerhzm/bullet
   gem "bullet", "~> 8.0.1"
