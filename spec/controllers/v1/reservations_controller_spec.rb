@@ -1596,7 +1596,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
   context "PATCH #cancel" do
     let(:lang) { I18n.default_locale }
-    let(:params) { { secret: reservation.secret, lang: lang } }
+    let(:params) { { secret: reservation.secret, lang: } }
     let!(:reservation) { create(:reservation) }
 
     let(:nexi_response) do
@@ -1721,7 +1721,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
-    ["it", "en"].each do |lang|
+    %w[it en].each do |lang|
       context "when lang is #{lang} if reservation_min_hours_advance_cancel is set and reservation is too close" do
         let(:lang) { lang }
         let(:reservation) { create(:reservation, datetime:) }

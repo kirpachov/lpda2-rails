@@ -7,9 +7,7 @@ class SearchTableTypes < ActiveInteraction::Base
   def execute
     items = TableType.visible
 
-    if params[:query].present?
-      items = items.filter_by_query(params[:query])
-    end
+    items = items.filter_by_query(params[:query]) if params[:query].present?
 
     items
   end

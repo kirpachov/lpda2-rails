@@ -3,7 +3,6 @@
 require "rails_helper"
 
 RSpec.shared_examples "failed request POST /v1/admin/reservations/<id>/payment" do
-
   it { expect { req }.not_to(change { Reservation.all.as_json }) }
   it { expect { req }.not_to(change { ReservationPayment.all.as_json }) }
 
@@ -53,7 +52,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/payment" do
 
   let(:default_params) do
     {
-      amount:,
+      amount:
       # table_type_id:,
     }
   end
@@ -63,7 +62,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/payment" do
 
   before do
     stub_request(:post,
-                  "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
+                 "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
       {
         body: File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
       }
@@ -92,12 +91,11 @@ RSpec.describe "POST /v1/admin/reservations/<id>/payment" do
 
     it do
       req
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
   context "when creating a basic payment" do
-
     it { expect { req }.to(change { ReservationPayment.all.pluck(:value) }.from([]).to([15.2])) }
     it { expect { req }.to(change { reservation.reload.payment }.from(nil)) }
 

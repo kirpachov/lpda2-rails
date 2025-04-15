@@ -40,7 +40,6 @@ class TableType < ApplicationRecord
   # ################################
   scope :visible, -> { where.not(status: :deleted) }
 
-
   # ##############################
   # Class methods
   # ##############################

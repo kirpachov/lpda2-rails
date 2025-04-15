@@ -90,7 +90,7 @@ class Reservation < ApplicationRecord
 
   # Will generate and attach a URL user can open to pay the reservation.
   def create_payment!(options = {})
-  CreateReservationPaymentByGroup.run!(options:, reservation: self)
+    CreateReservationPaymentByGroup.run!(options:, reservation: self)
   end
 
   def reservation_turn
