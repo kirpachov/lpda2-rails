@@ -86,6 +86,7 @@ debug "Creating default preorder group..."
 
 preorder_group = PreorderReservationGroup.create!(
   title: "Default preorder",
+  preorder_type: :nexi_payment,
   payment_value: 15.2
 )
 
