@@ -7,9 +7,21 @@ class ReservationPayment < ApplicationRecord
   # ################################
   # Constants, settings, modules, et...
   # ################################
+
+  DEFERRED_METHOD_TYPES = %w[html_nexi_authorization].freeze
+
+  # Initially "paid" was used for "authorized" too. Then we needed to distinguish when a payment was authorized but not yet paid,
+  # or when a payment was paid after an authorization.
   enum status: {
+    # Initial status, when payment is not yet done.
     todo: "todo",
+
+    # When payment is deferred ("Autorizzazione") and it's not yet paid.
+    authorized: "authorized",
+
+    # When payment has been done.
     paid: "paid",
+
     refunded: "refunded"
   }
 
@@ -45,6 +57,13 @@ class ReservationPayment < ApplicationRecord
   validates :value, presence: true, numericality: { only_integer: false, greater_than: 0 }
 
   before_validation :gen_hpp_url, if: -> { html.present? }
+
+  scope :deferred, -> { where(preorder_type: DEFERRED_METHOD_TYPES) }
+
+  def deferred?
+    DEFERRED_METHOD_TYPES.include?(preorder_type.to_s)
+  end
+  alias_method :deferred, :deferred?
 
   def gen_hpp_url
     return if reservation&.secret.blank?

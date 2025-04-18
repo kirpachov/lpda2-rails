@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
   let!(:reservation) { create(:reservation) }
-  let!(:payment) { create(:reservation_payment, reservation:) }
+  let!(:payment) { create(:reservation_payment, reservation:, preorder_type: :html_nexi_payment) }
   let(:default_params) do
     {
       # esito:
@@ -109,16 +109,18 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
       req
       email = ActionMailer::Base.deliveries.last
       expect(email.to).to include(reservation.email)
-      expect(email.html_part.encoded).to include("We have received the payment")
-      expect(email.html_part.encoded).to include(I18n.t("reservation_mailer.payment_received.body"))
-      expect(email.text_part.encoded).to include("We have received the payment")
-      expect(email.text_part.encoded).to include(I18n.t("reservation_mailer.payment_received.body"))
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("We have received the payment")
+      # expect(email.html_part.encoded).to include("We have received the payment")
+      # expect(email.html_part.encoded).to include(I18n.t("reservation_mailer.payment_received.body"))
+      # expect(email.text_part.encoded).to include("We have received the payment")
+      # expect(email.text_part.encoded).to include(I18n.t("reservation_mailer.payment_received.body"))
     end
 
     it do
       req
       email = ActionMailer::Base.deliveries.last
-      expect(email.subject).to include("Payment received")
+      expect(email.subject).to include("eservation")
+      expect(email.subject).to include("confirmed")
     end
 
     context "when language is 'it'" do
@@ -127,9 +129,12 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
         req
       end
 
-      it { expect(ActionMailer::Base.deliveries.last.subject).to include("Pagamento ricevuto") }
-      it { expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Abbiamo ricevuto il pagamento") }
-      it { expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Abbiamo ricevuto il pagamento") }
+      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
+      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("confermata") }
+      it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
+      it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
+      it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
+      it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato") }
     end
   end
 
@@ -194,5 +199,37 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
         it { expect { req }.to change { payment.reload.status }.from("todo").to("paid") }
       end
     end
+  end
+
+  context "when preorder_type is html_nexi_authorization" do
+    let!(:payment) { create(:reservation_payment, reservation:, preorder_type: :html_nexi_authorization) }
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it { expect { req }.to change { payment.reload.status }.from("todo").to("authorized") }
+    it { expect { req }.to change { reservation.events.count }.by(1) }
+    it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+
+    it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
+    it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization") }
+  end
+
+  context "when preorder_type is html_nexi_payment" do
+    let!(:payment) { create(:reservation_payment, reservation:, preorder_type: :html_nexi_payment) }
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it { expect { req }.to change { payment.reload.status }.from("todo").to("paid") }
+    it { expect { req }.to change { reservation.events.count }.by(1) }
+    # it { expect { req }.to have_enqueued_mail(ReservationMailer, :confirmation).once }
+    it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+    it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
+    it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment") }
   end
 end

@@ -1,13 +1,13 @@
 <%= t('reservation_mailer.greetings', fullname: @reservation.fullname) %>
 
-<% if @reservation.payment %>
-<% if @reservation.payment.paid? %>
-<%= t('reservation_mailer.confirmation.payment_completed') %>
-<% else %>
-<%= t('reservation_mailer.confirmation.remember_payment') %>
-<%= @reservation.payment.hpp_url %>
-<% end %>
-<% end %>
+<%  if @reservation.payment&.paid? %>
+<%=   t('reservation_mailer.confirmation.payment_completed') %>
+<%  elsif @reservation.payment&.authorized? %>
+<%=   t('reservation_mailer.confirmation.authorization_completed') %>
+<%  elsif @reservation.payment&.todo? %>
+<%=   t('reservation_mailer.confirmation.remember_payment') %>
+<%=   @reservation.payment.hpp_url %>
+<%  end %>
 
 <%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: ignore_dst(@reservation.datetime).strftime('%k:%M'), people: @reservation.people) %>
 

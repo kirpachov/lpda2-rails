@@ -16,8 +16,14 @@ module Nexi
       )
 
       if params.dig!(:esito).to_s.downcase.strip == "ok"
-        ReservationMailer.with(reservation_id: find_reservation.id).payment_received.deliver_now
-        return find_payment.paid!
+        find_payment.deferred? ? find_payment.authorized! : find_payment.paid!
+
+        find_payment.reload
+        find_reservation.reload
+
+        ReservationMailer.with(reservation_id: find_reservation.id).confirmation.deliver_now
+
+        return
       end
 
       Rails.logger.warn "Nexi::ReceiveOrderOutcome: Don't know what to do with params: #{params.inspect}, headers: #{headers.inspect}"

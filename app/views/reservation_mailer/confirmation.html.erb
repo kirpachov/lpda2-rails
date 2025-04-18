@@ -36,10 +36,18 @@
                 <% if @reservation.payment %>
                   <p style="line-height: 1.8; word-break: break-word; font-size: 14px; mso-line-height-alt: 25px; margin: 0;">
                     <span style="font-size: 14px;">
-                      <%= @reservation.payment.paid? ? t('reservation_mailer.confirmation.payment_completed') : t('reservation_mailer.confirmation.remember_payment') %>
+                      <%  if @reservation.payment&.paid? %>
+                      <%=   t('reservation_mailer.confirmation.payment_completed') %>
+                      <%  elsif @reservation.payment&.authorized? %>
+                      <%=   t('reservation_mailer.confirmation.authorization_completed') %>
+                      <%  elsif @reservation.payment&.todo? %>
+                      <%=   t('reservation_mailer.confirmation.remember_payment') %>
+                      <%=   @reservation.payment.hpp_url %>
+                      <%  end %>
                     </span>
                   </p>
                 <% end %>
+
                 <% if @reservation.notes.present? %>
                   <p style="line-height: 1.8; word-break: break-word; font-size: 14px; mso-line-height-alt: 25px; margin: 0;">
                     <span style="font-size: 14px;"><%= t('reservation_mailer.special_request') %></span></p>

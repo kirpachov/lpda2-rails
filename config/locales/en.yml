@@ -304,13 +304,11 @@ en:
     cancelled:
       subject: "Reservation cancelled at La Porta D'acqua"
       body: "Your reservation for the day %{date} at %{hour} for %{people} people has been cancelled."
-    payment_received:
-      body: "We have received the payment for your reservation. Your reservation is now confirmed."
-      subject: "Payment received for your reservation at La Porta D'acqua"
     confirmation:
-      subject: "Your reservation at La Porta D'acqua %{fullname}"
+      subject: "Your reservation at La Porta D'acqua %{fullname} is confirmed"
       no_email: "This reservation has no email."
-      payment_completed: "Payment has been completed."
+      payment_completed: "We have received the payment for your reservation."
+      authorization_completed: "The credit card authorization has been completed."
       remember_payment: "If you haven't done yet, we remind you that payment is required for this reservation. You can complete the payment at the link below."
     reminder:
       subject: "Remember your reservation at La Porta D'acqua %{fullname}"
