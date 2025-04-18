@@ -37,6 +37,18 @@ class ReservationMailer < ApplicationMailer
     )
   end
 
+  # After an authorization becomes a payment.
+  def payment_success
+    raise ArgumentError, "Reservation does not have an email" if reservation.email.blank?
+    raise ArgumentError, "Reservation does not have a payment" if reservation.payment.blank?
+
+    mail(
+      to: reservation_to,
+      subject: (@title = I18n.t("reservation_mailer.payment_success.subject", fullname: reservation.fullname)),
+      template_name: "confirmation"
+    )
+  end
+
   private
 
   def detect_record

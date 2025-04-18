@@ -303,6 +303,9 @@ it:
   invalid_status: "Stato non valido"
   reservation_mailer:
     signature: "~ Lo Staff de La Porta D'Acqua"
+    payment_success:
+      subject: "Pagamento completato per la tua prenotazione presso La Porta D'acqua %{fullname}"
+      # body: "Il pagamento della tua prenotazione è andato a buon fine."
     cancelled:
       subject: "Prenotazione annullata"
       body: "La tua prenotazione per il giorno %{date} alle ore %{hour} per %{people} persone è stata annullata."

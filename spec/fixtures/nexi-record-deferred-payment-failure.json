@@ -1,0 +1,10 @@
+{
+  "mac": "macmacmac",
+  "esito": "KO",
+  "errore": {
+    "codice": 17,
+    "messaggio": "Impossibile eseguire la Contabilizzazione"
+  },
+  "timeStamp": "1744926147224",
+  "idOperazione": "119119"
+}

@@ -19,7 +19,10 @@ module Log
       redirect_payment_success: "redirect_payment_success",
 
       # Provider notified us about the outcome of the payment.
-      payment_outcome: "payment_outcome"
+      payment_outcome: "payment_outcome",
+
+      # Had a card hold, and proceeded to charge the user.
+      record_deferred_payment: "record_deferred_payment"
     }
 
     validates :event_type, presence: true

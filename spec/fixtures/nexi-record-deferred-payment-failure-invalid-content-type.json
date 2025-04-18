@@ -1,0 +1,10 @@
+{
+  "mac": " ",
+  "esito": "KO",
+  "errore": {
+    "codice": 99,
+    "messaggio": "Cannot consume content type"
+  },
+  "timeStamp": "1744920627923",
+  "idOperazione": ""
+}
