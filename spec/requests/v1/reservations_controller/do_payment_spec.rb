@@ -77,6 +77,16 @@ RSpec.context "GET /v1/reservations/:secret/do_payment", type: :request do
     it { expect(response.headers["Location"]).to eq(payment.success_url) }
   end
 
+  context "when authorization has been successful, does redirect to success page" do
+    before do
+      payment.update!(status: "authorized")
+      req
+    end
+
+    it { expect(response).to have_http_status(:found) }
+    it { expect(response.headers["Location"]).to eq(payment.success_url) }
+  end
+
   context "when reservation is in the past" do
     before do
       reservation.update!(datetime: 1.day.ago)

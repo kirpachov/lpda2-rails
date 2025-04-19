@@ -17,7 +17,7 @@ module V1
     def do_payment
       return item_not_found if @item.payment.blank?
 
-      if @item.payment.paid? && @item.payment.success_url.present?
+      if (@item.payment.paid? || @item.payment.authorized?) && @item.payment.success_url.present?
         Log::ReservationEvent.create!(reservation: @item, event_type: "redirect_payment_success")
         return redirect_to @item.payment.success_url, allow_other_host: true
       end
