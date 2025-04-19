@@ -303,6 +303,8 @@ it:
   invalid_status: "Stato non valido"
   reservation_mailer:
     signature: "~ Lo Staff de La Porta D'Acqua"
+    payment_required_to_confirm:
+      subject: "Prenotazione quasi completata"
     payment_success:
       subject: "Pagamento completato per la tua prenotazione presso La Porta D'acqua %{fullname}"
       # body: "Il pagamento della tua prenotazione è andato a buon fine."
@@ -310,11 +312,12 @@ it:
       subject: "Prenotazione annullata"
       body: "La tua prenotazione per il giorno %{date} alle ore %{hour} per %{people} persone è stata annullata."
     confirmation:
-      subject: "La tua prenotazione presso La Porta D'acqua %{fullname} è confermata"
+      subject: "La tua prenotazione presso La Porta D'acqua %{fullname} è stata registrata"
       no_email: "Questa prenotazione non ha alcuna mail associata."
       payment_completed: "Il pagamento è stato completato."
       authorization_completed: "L'autorizzazione della carta di credito è stata completata."
       remember_payment: "Se non l'hai già fatto, ti ricordiamo che per questa prenotazione è richiesto un pagamento. Puoi completare il pagamento al link sottostante."
+      card_hold_required: "Se non l'hai già fatto, ti ricordiamo che per questa prenotazione è richiesta una pre-autorizzazione della carta di credito. Puoi completare la pre-autorizzazione al link sottostante."
     reminder:
       subject: "Ricorda la tua prenotazione presso La Porta D'acqua %{fullname}"
       body: "Ti ricordiamo che hai una prenotazione per il giorno %{date} alle ore %{hour} per %{people} persone."
@@ -334,6 +337,6 @@ it:
   contacts:
     key_not_found: "Chiave %{key} non trovata"
   reservations:
-    proceed_with_payment: "Procedi al pagamento"
+    confirm_reservation: "Conferma prenotazione"
     errors:
       no_seats_available_for_table_type_for_turn: "Non ci sono abbastanza posti disponibili per il tipo di tavolo selezionato per il turno selezionato."

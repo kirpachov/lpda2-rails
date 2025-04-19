@@ -38,8 +38,6 @@ module V1
                             message: call.errors.full_messages.join(", "))
       end
 
-      call.result.deliver_confirmation_email_later
-
       cookies[Reservation::PUBLIC_CREATE_COOKIE] = {
         value: call.result.secret,
         expires: 90.days.from_now,

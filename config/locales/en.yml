@@ -301,6 +301,8 @@ en:
   invalid_status: "Invalid status"
   reservation_mailer:
     signature: "~ La Porta D'Acqua's Staff"
+    payment_required_to_confirm:
+      subject: "Reservation almost completed"
     payment_success:
       subject: "Payment completed for your reservation at La Porta D'acqua %{fullname}"
       # body: "We inform you that the payment for your reservation was completed successfully."
@@ -308,11 +310,12 @@ en:
       subject: "Reservation cancelled at La Porta D'acqua"
       body: "Your reservation for the day %{date} at %{hour} for %{people} people has been cancelled."
     confirmation:
-      subject: "Your reservation at La Porta D'acqua %{fullname} is confirmed"
+      subject: "Your reservation at La Porta D'acqua %{fullname} was registered"
       no_email: "This reservation has no email."
       payment_completed: "We have received the payment for your reservation."
       authorization_completed: "The credit card authorization has been completed."
       remember_payment: "If you haven't done yet, we remind you that payment is required for this reservation. You can complete the payment at the link below."
+      card_hold_required: "If you haven't done yet, we remind you that a credit card hold is required for this reservation. You can complete the hold at the link below."
     reminder:
       subject: "Remember your reservation at La Porta D'acqua %{fullname}"
       body: "We remind you that you have a reservation for the day %{date} at %{hour} for %{people} people."
@@ -332,7 +335,7 @@ en:
   contacts:
     key_not_found: "Key %{key} was not found"
   reservations:
-    proceed_with_payment: "Proceed with payment"
+    confirm_reservation: "Confirm reservation"
     errors:
       no_seats_available_for_table_type_for_turn: "There are not enough seats available for the selected table type for the selected turn."
 

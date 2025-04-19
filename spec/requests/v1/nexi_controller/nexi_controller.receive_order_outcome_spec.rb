@@ -120,7 +120,7 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
       req
       email = ActionMailer::Base.deliveries.last
       expect(email.subject).to include("eservation")
-      expect(email.subject).to include("confirmed")
+      expect(email.subject).to include("registered")
     end
 
     context "when language is 'it'" do
@@ -130,7 +130,7 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
       end
 
       it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
-      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("confermata") }
+      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
       it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
       it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
       it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }

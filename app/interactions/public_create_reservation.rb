@@ -47,6 +47,14 @@ class PublicCreateReservation < ActiveInteraction::Base
       return nil
     end
 
+    if errors.blank?
+      if reservation.payment.present?
+        ReservationMailer.with(reservation_id: reservation.id).payment_required_to_confirm.deliver_later
+      else
+        reservation.deliver_confirmation_email_later
+      end
+    end
+
     reservation
   end
 

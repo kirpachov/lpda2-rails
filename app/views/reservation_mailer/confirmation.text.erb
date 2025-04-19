@@ -5,14 +5,22 @@
 <%  elsif @reservation.payment&.authorized? %>
 <%=   t('reservation_mailer.confirmation.authorization_completed') %>
 <%  elsif @reservation.payment&.todo? %>
-<%=   t('reservation_mailer.confirmation.remember_payment') %>
-<%=   @reservation.payment.hpp_url %>
+<%    if @reservation.payment.deferred? %>
+<%=     t('reservation_mailer.confirmation.card_hold_required') %>
+<%    else %>
+<%=     t('reservation_mailer.confirmation.remember_payment') %>
+<%    end %>
 <%  end %>
 
 <%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: ignore_dst(@reservation.datetime).strftime('%k:%M'), people: @reservation.people) %>
 
-<%= t('reservation_mailer.changed_mind') %>
-
 <%= t('reservation_mailer.reservation_details') %>:
+<%
+  @call_to_action_url = @show_reservation_url
 
-<%= @show_reservation_url %>
+  if @reservation.payment && @reservation.payment.todo? && @reservation.payment&.hpp_url.present?
+    @call_to_action_url = @reservation.payment.hpp_url
+  end
+%>
+
+<%= @call_to_action_url %>

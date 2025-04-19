@@ -6,6 +6,8 @@ class ReservationMailer < ApplicationMailer
   before_action :set_locale_by_reservation
   layout "public"
 
+  # Mail send after a reservation is created.
+  # In case a payment is required, we won't send confirmation immediately; it will be sent after the payment is confirmed.
   # reload!; ReservationMailer.confirmation(reservation: Reservation.last).deliver_now
   def confirmation
     attachments["invite.ics"] = ReservationIcs.run!(reservation:)
@@ -13,6 +15,27 @@ class ReservationMailer < ApplicationMailer
     mail(
       to: reservation_to,
       subject: (@title = I18n.t("reservation_mailer.confirmation.subject", fullname: reservation.fullname))
+    )
+  end
+
+  # When a reservation is created but a payment is required, we won't send confirmation immediately.
+  # Confirmation will be sent after the payment is confirmed.
+  # Used for both payment and card authorization.
+  # 
+  # Testing:
+  # Rails console:
+  # reload!; ReservationMailer.payment_required_to_confirm(reservation: Reservation.last).deliver_now
+  # 
+  # In browser:
+  # http://localhost:3050/rails/mailers/reservation_mailer/payment_required_to_confirm.txt?locale=it
+  def payment_required_to_confirm
+    raise ArgumentError, "Reservation does not have an email" if reservation.email.blank?
+    raise ArgumentError, "Reservation does not have a payment" if reservation.payment.blank?
+
+    mail(
+      to: reservation_to,
+      subject: (@title = I18n.t("reservation_mailer.payment_required_to_confirm.subject", fullname: reservation.fullname)),
+      template_name: "confirmation"
     )
   end
 
