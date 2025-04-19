@@ -30,17 +30,22 @@ class ReservationMailer < ApplicationMailer
     )
   end
 
-  def payment_received
-    mail(
-      to: reservation_to,
-      subject: (@title = I18n.t("reservation_mailer.payment_received.subject", fullname: reservation.fullname))
-    )
-  end
-
   def remind_payment
     mail(
       to: reservation_to,
       subject: (@title = I18n.t("reservation_mailer.remind_payment.subject", fullname: reservation.fullname))
+    )
+  end
+
+  # After an authorization becomes a payment.
+  def payment_success
+    raise ArgumentError, "Reservation does not have an email" if reservation.email.blank?
+    raise ArgumentError, "Reservation does not have a payment" if reservation.payment.blank?
+
+    mail(
+      to: reservation_to,
+      subject: (@title = I18n.t("reservation_mailer.payment_success.subject", fullname: reservation.fullname)),
+      template_name: "confirmation"
     )
   end
 

@@ -40,6 +40,9 @@ default: &default
   # https://ecommerce.nexi.it/specifiche-tecniche/apibackoffice/stornorimborso.html
   nexi_refund_payment_path: "ecomm/api/bo/storna"
 
+  # https://ecommerce.nexi.it/specifiche-tecniche/apibackoffice/incasso.html
+  nexi_record_deferred_path: "ecomm/api/bo/contabilizza"
+
   nexi_order_status_path: "ecomm/api/bo/situazioneOrdine"
 
   nexi_api_url: https://int-ecommerce.nexi.it

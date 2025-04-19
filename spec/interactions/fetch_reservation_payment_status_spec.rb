@@ -11,8 +11,9 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
   let(:response_file) { Rails.root.join("spec/fixtures/nexi-order-status-success.json") }
   let(:reservation_payment_external_id) { "PO123321" }
   let!(:reservation) { create(:reservation) }
+  let(:preorder_type) { :html_nexi_authorization }
   let!(:reservation_payment) do
-    create(:reservation_payment, reservation:, external_id: reservation_payment_external_id)
+    create(:reservation_payment, preorder_type:, reservation:, external_id: reservation_payment_external_id)
   end
 
   let(:stub_response) do
@@ -36,8 +37,21 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
   it { expect(reservation_payment).to be_valid }
   it { expect(call.errors).to be_empty }
 
+  context "when authorization, and its already in status 'paid' (user already charged)" do
+    let(:preorder_type) { :html_nexi_authorization }
+
+    before do
+      reservation_payment.update(status: "paid")
+    end
+
+    it { expect { subject }.not_to(change { reservation_payment.reload.status }) }
+    it { expect { subject }.not_to(change { reservation_payment.reload.as_json }) }
+  end
+
   %w[html_nexi_payment html_nexi_authorization].each do |preorder_type|
     context "when preorder_type is #{preorder_type.inspect}" do
+      let(:preorder_type) { preorder_type }
+
       context "when nexi returns success" do
         let(:response_file) { Rails.root.join("spec/fixtures/nexi-order-status-success.json") }
 
@@ -45,7 +59,16 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
         it { expect(call.errors).to be_empty }
 
         it do
-          expect { subject }.to(change { reservation_payment.reload.status }.from("todo").to("paid"))
+          if preorder_type == "html_nexi_payment"
+            expect { subject }.to(change do
+                                    reservation_payment.reload.status
+                                  end.from("todo").to("paid"))
+          end
+          if preorder_type == "html_nexi_authorization"
+            expect { subject }.to(change do
+                                    reservation_payment.reload.status
+                                  end.from("todo").to("authorized"))
+          end
           expect { described_class.run(reservation_payment:) }.not_to(change { reservation_payment.reload.status })
         end
       end

@@ -68,7 +68,12 @@ class FetchReservationPaymentStatus < ActiveInteraction::Base
     when "Annullato", "Rimborsato", "Rimborsato Parz."
       reservation_payment.refunded!
     when "Contabilizzato", "Contabilizzato Parz.", "Autorizzato"
-      reservation_payment.paid!
+      if reservation_payment.deferred?
+        # If authorization already charged, don't set to 'authorized' again.
+        reservation_payment.authorized! unless reservation_payment.paid?
+      else
+        reservation_payment.paid!
+      end
     when "Negato"
       reservation_payment.todo!
     end

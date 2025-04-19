@@ -20,7 +20,7 @@ module V1
           include: [
             {
               payment: {
-                only: %i[hpp_url status value]
+                only: %i[hpp_url preorder_type status value]
               }
             }
           ]
