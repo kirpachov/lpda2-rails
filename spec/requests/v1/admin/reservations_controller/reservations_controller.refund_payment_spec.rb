@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_examples "failed refund_payment" do
+RSpec.shared_examples "failed /v1/admin/reservations/<id>/refund_payment" do
   it do
     req
     expect(response).not_to have_http_status(:ok)
@@ -38,7 +38,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
 
   let(:reservation) do
     create(:reservation).tap do |reservation|
-      create(:reservation_payment, reservation:, status: :paid,
+      create(:reservation_payment, reservation:, status: %i[paid authorized].sample,
                                    preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
     end
   end
@@ -121,7 +121,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
   context "when reservation is deleted" do
     before { reservation.deleted! }
 
-    it_behaves_like "failed refund_payment"
+    it_behaves_like "failed /v1/admin/reservations/<id>/refund_payment"
     it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
     it { expect { req }.not_to(change { Nexi::HttpRequest.where(record: reservation).count }) }
   end
@@ -129,7 +129,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
   context "when payment has status 'todo" do
     before { reservation.payment.update!(status: :todo) }
 
-    it_behaves_like "failed refund_payment"
+    it_behaves_like "failed /v1/admin/reservations/<id>/refund_payment"
     it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
     it { expect { req }.not_to(change { Nexi::HttpRequest.where(record: reservation).count }) }
   end
@@ -137,7 +137,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
   context "when nexi api(s) return blank response" do
     let(:nexi_response) { {} }
 
-    it_behaves_like "failed refund_payment"
+    it_behaves_like "failed /v1/admin/reservations/<id>/refund_payment"
     it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     it { expect { req }.to(change { Nexi::HttpRequest.where(record: reservation).count }.by(1)) }
   end
@@ -145,7 +145,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
   context "when nexi api(s) return invalid response" do
     let(:nexi_response) { { esito: "KO" } }
 
-    it_behaves_like "failed refund_payment"
+    it_behaves_like "failed /v1/admin/reservations/<id>/refund_payment"
     it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     it { expect { req }.to(change { Nexi::HttpRequest.where(record: reservation).count }.by(1)) }
   end

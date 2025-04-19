@@ -7,7 +7,7 @@ class RefundReservationPayment < ActiveInteraction::Base
   validate do
     # TODO: translate all the messages
     errors.add(:reservation, "does not have a payment") unless reservation.payment.present?
-    errors.add(:reservation, "is not paid") unless reservation.payment&.paid?
+    errors.add(:reservation, "is not paid") unless reservation.payment&.status.to_s.in?(%w[paid authorized])
     errors.add(:reservation, "is already refunded") if reservation.payment&.refunded?
     errors.add(:reservation, "is deleted") if reservation.deleted?
     if reservation.payment&.value.to_f <= 0
