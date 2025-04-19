@@ -304,7 +304,7 @@ it:
   reservation_mailer:
     signature: "~ Lo Staff de La Porta D'Acqua"
     payment_required_to_confirm:
-      subject: "Prenotazione quasi completata"
+      subject: "Azione richiesta per la tua prenotazione presso La Porta D'acqua %{fullname}"
     payment_success:
       subject: "Pagamento completato per la tua prenotazione presso La Porta D'acqua %{fullname}"
       # body: "Il pagamento della tua prenotazione è andato a buon fine."

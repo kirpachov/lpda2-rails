@@ -302,7 +302,7 @@ en:
   reservation_mailer:
     signature: "~ La Porta D'Acqua's Staff"
     payment_required_to_confirm:
-      subject: "Reservation almost completed"
+      subject: "An action is required to confirm your reservation at La Porta D'acqua %{fullname}"
     payment_success:
       subject: "Payment completed for your reservation at La Porta D'acqua %{fullname}"
       # body: "We inform you that the payment for your reservation was completed successfully."

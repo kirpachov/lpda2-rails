@@ -48,6 +48,8 @@ class PublicCreateReservation < ActiveInteraction::Base
     end
 
     if errors.blank?
+      reservation.reload
+
       if reservation.payment.present?
         ReservationMailer.with(reservation_id: reservation.id).payment_required_to_confirm.deliver_later
       else

@@ -663,8 +663,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
 
         it do
-          req
-          expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "confirmation",
+          req 
+          expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "payment_required_to_confirm",
                                                                            "deliver_now", params: anything, args: anything).once
         end
 
