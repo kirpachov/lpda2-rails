@@ -116,7 +116,7 @@ module V1
         only: %i[id fullname datetime children adults email phone notes secret created_at updated_at],
         include: {
           payment: {
-            only: %w[hpp_url status value]
+            only: %w[hpp_url preorder_type status value]
           }
         }
       )
