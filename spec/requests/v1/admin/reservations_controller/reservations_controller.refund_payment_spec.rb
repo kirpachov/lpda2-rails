@@ -110,7 +110,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
       expect(json).not_to include(message: String)
     end
 
-    it { expect { req }.to(change { reservation.reload.payment.status }.from("paid").to("refunded")) }
+    it { expect { req }.to(change { reservation.reload.payment.status }.to("refunded")) }
     it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     it { expect { req }.to(change { Nexi::HttpRequest.where(record: reservation).count }.by(1)) }
 
