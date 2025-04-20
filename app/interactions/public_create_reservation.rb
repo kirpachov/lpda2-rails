@@ -164,7 +164,12 @@ class PublicCreateReservation < ActiveInteraction::Base
   def create_reservation_payment_if_needed
     return unless reservation.requires_payment?
 
+    deferred = nil
+
     if table_type
+      # If table_type is present, it's a payment and never a card hold.
+      deferred = false
+
       call = AvailableSeatsForReservationTurnAndPgroup.run(
         pgroup: reservation.required_payment_group,
         table_type:,
@@ -179,7 +184,7 @@ class PublicCreateReservation < ActiveInteraction::Base
       end
     end
 
-    reservation.create_payment! if errors.empty?
+    reservation.create_payment!(deferred:) if errors.empty?
   rescue ActiveInteraction::InvalidInteractionError => e
     errors.add(:base, "Issue when creating payment: #{e.message}")
 

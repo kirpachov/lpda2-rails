@@ -2,23 +2,38 @@
 
 # Create a Reservation payment by a given Reservation and its PreorderReservationGroup.
 class CreateReservationPaymentByGroup < ActiveInteraction::Base
+
+  # ################################
+  # Inputs
+  # ################################
   object :reservation, class: Reservation
 
-  interface :options, methods: %i[to_h merge \[\]], default: {}
+  boolean :force_deferred_payment, default: nil, allow_nil: true
 
+  # ################################
+  # Validators
+  # ################################
   validate :preorder_reservation_group_must_be_present
   validates :required_payment_value, numericality: { greater_than: 0 }
 
+  # ################################
+  # LOGIC
+  # ################################
   delegate :table_type, :required_payment_value, :people, to: :reservation
 
   def execute
     compose(
       CreateReservationPayment,
-      options:,
       reservation:,
       amount: required_payment_value * people,
-      deferred: preorder_reservation_group.deferred?
+      deferred: deferred_payment?
     )
+  end
+
+  def deferred_payment?
+    return force_deferred_payment unless force_deferred_payment.nil?
+
+    preorder_reservation_group.deferred?
   end
 
   def preorder_reservation_group

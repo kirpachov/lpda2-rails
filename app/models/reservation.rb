@@ -89,8 +89,8 @@ class Reservation < ApplicationRecord
   end
 
   # Will generate and attach a URL user can open to pay the reservation.
-  def create_payment!(options = {})
-    CreateReservationPaymentByGroup.run!(options:, reservation: self)
+  def create_payment!(deferred: nil)
+    CreateReservationPaymentByGroup.run!(force_deferred_payment: deferred, reservation: self)
   end
 
   def reservation_turn

@@ -59,6 +59,7 @@ class ReservationPayment < ApplicationRecord
   before_validation :gen_hpp_url, if: -> { html.present? }
 
   scope :deferred, -> { where(preorder_type: DEFERRED_METHOD_TYPES) }
+  scope :not_deferred, -> { where.not(preorder_type: DEFERRED_METHOD_TYPES) }
 
   def deferred?
     DEFERRED_METHOD_TYPES.include?(preorder_type.to_s)
