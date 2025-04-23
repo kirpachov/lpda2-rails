@@ -33,7 +33,8 @@ end
 RSpec.describe V1::Admin::ReservationsController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
   include_context CONTROLLER_AUTHENTICATION_CONTEXT
-  include_context TESTS_OPTIMIZATIONS_CONTEXT
+  # include_context TESTS_OPTIMIZATIONS_CONTEXT
+  include_context SIDEKIQ_INLINE_TESTING
 
   let(:instance) { described_class.new }
 
@@ -957,6 +958,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(item: Hash)
           expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
           expect(response).to have_http_status(:ok)
+          expect(json[:item]).to have_key("cancelled_at")
+          expect(json[:item]).to have_key(:cancelled_at)
+          expect(json[:item][:cancelled_at]).to be_nil
         end
       end
 
@@ -968,6 +972,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(item: Hash)
           expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
           expect(response).to have_http_status(:ok)
+          expect(json[:item]).to have_key("cancelled_at")
+          expect(json[:item]).to have_key(:cancelled_at)
+          expect(json[:item][:cancelled_at]).to be_nil
         end
       end
 
@@ -979,6 +986,10 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           expect(parsed_response_body).to include(item: Hash)
           expect(parsed_response_body[:item]).to include(id: Integer, status:, created_at: String)
           expect(response).to have_http_status(:ok)
+          expect(json[:item]).to have_key("cancelled_at")
+          expect(json[:item]).to have_key(:cancelled_at)
+          expect(json[:item][:cancelled_at]).to be_a(String)
+          expect(json[:item][:cancelled_at]).to include(Time.now.strftime("%Y-%m-%d"))
         end
       end
 

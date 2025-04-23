@@ -71,10 +71,21 @@ class Reservation < ApplicationRecord
   scope :public_visible, -> { visible.where.not(status: %w[cancelled]) }
   scope :visible, -> { where.not(status: :deleted) }
   scope :next, -> { where("datetime >= ?", Time.zone.now) }
+  scope :with_cancelled_at, lambda {
+    ch = Log::ModelChange.select(:record_id, :created_at).where(record_type: "Reservation", change_type: "update").where("record_changes->'status'->>1 = 'cancelled'")
+    select("reservations.*, ch.created_at as cancelled_at").joins("LEFT OUTER JOIN (#{ch.to_sql}) as ch ON ch.record_id = id")
+  }
 
   # ################################
   # Instance methods
   # ################################
+  def cancelled_at
+    return attributes["cancelled_at"] if attributes.key?("cancelled_at")
+    return attributes[:cancelled_at] if attributes.key?(:cancelled_at)
+
+    Reservation.where(id:).with_cancelled_at.first.cancelled_at
+  end
+
   def requires_payment?
     required_payment_value.positive?
   end

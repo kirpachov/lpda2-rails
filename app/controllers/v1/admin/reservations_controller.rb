@@ -186,7 +186,7 @@ module V1::Admin
 
     def full_json(item_or_items)
       if item_or_items.is_a?(ActiveRecord::Relation)
-        return item_or_items.includes(:reservation_tags, :delivered_emails, :payment,
+        return item_or_items.with_cancelled_at.includes(:reservation_tags, :delivered_emails, :payment,
                                       table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |item|
                  full_json(item)
                end
@@ -200,6 +200,7 @@ module V1::Admin
 
     def single_item_full_json(item)
       item.as_json(
+        methods: %i[cancelled_at],
         include: [
           {
             table_type: {
