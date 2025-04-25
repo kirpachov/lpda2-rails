@@ -64,7 +64,7 @@ class ReservationPayment < ApplicationRecord
   def deferred?
     DEFERRED_METHOD_TYPES.include?(preorder_type.to_s)
   end
-  alias_method :deferred, :deferred?
+  alias deferred deferred?
 
   def gen_hpp_url
     return if reservation&.secret.blank?

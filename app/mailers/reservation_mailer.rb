@@ -21,11 +21,11 @@ class ReservationMailer < ApplicationMailer
   # When a reservation is created but a payment is required, we won't send confirmation immediately.
   # Confirmation will be sent after the payment is confirmed.
   # Used for both payment and card authorization.
-  # 
+  #
   # Testing:
   # Rails console:
   # reload!; ReservationMailer.payment_required_to_confirm(reservation: Reservation.last).deliver_now
-  # 
+  #
   # In browser:
   # http://localhost:3050/rails/mailers/reservation_mailer/payment_required_to_confirm.txt?locale=it
   def payment_required_to_confirm
@@ -34,7 +34,8 @@ class ReservationMailer < ApplicationMailer
 
     mail(
       to: reservation_to,
-      subject: (@title = I18n.t("reservation_mailer.payment_required_to_confirm.subject", fullname: reservation.fullname)),
+      subject: (@title = I18n.t("reservation_mailer.payment_required_to_confirm.subject",
+                                fullname: reservation.fullname)),
       template_name: "confirmation"
     )
   end

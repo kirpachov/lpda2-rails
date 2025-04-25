@@ -2,7 +2,6 @@
 
 # Create a Reservation payment by a given Reservation and its PreorderReservationGroup.
 class CreateReservationPaymentByGroup < ActiveInteraction::Base
-
   # ################################
   # Inputs
   # ################################

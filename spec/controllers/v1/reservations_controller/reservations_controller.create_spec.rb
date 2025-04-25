@@ -7,7 +7,7 @@ require "rails_helper"
 # include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: true
 # include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: false
 # include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: { deferred: true }
-RSpec.shared_context "SUCCESSFUL V1::ReservationsController POST #create" do |options = {}|
+RSpec.shared_examples "SUCCESSFUL V1::ReservationsController POST #create" do |options = {}|
   it do
     req
     expect(json).not_to include(:message)
@@ -725,7 +725,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
 
         it do
-          req 
+          req
           expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "payment_required_to_confirm",
                                                                            "deliver_now", params: anything, args: anything).once
         end
@@ -955,6 +955,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           context "when base payment requires an authorization, if table_type is specified will create a payment instead" do
             before { group.update!(preorder_type: :nexi_authorization) }
+
             let(:table_type_id) { table_type.id }
             let(:adults) { 2 }
 
@@ -972,6 +973,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           context "when base payment requires a payment, if table_type is specified will create a payment (as expected)" do
             before { group.update!(preorder_type: :nexi_payment) }
+
             let(:table_type_id) { table_type.id }
 
             include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: { deferred: false }
@@ -979,6 +981,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
           context "when base payment requires a payment, if table_type is not present will create a payment (as expected)" do
             before { group.update!(preorder_type: :nexi_payment) }
+
             let(:table_type_id) { nil }
 
             include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: { deferred: false }

@@ -1,18 +1,12 @@
 # RuboCop Inspection Report
 
-524 files inspected, 4479 offenses detected:
+530 files inspected, 4649 offenses detected:
 
-### Gemfile - (2 offenses)
+### Gemfile - (1 offense)
   * **Line # 1 - convention:** Style/FrozenStringLiteralComment: Missing frozen string literal comment.
 
     ```rb
     source "https://rubygems.org"
-    ```
-
-  * **Line # 72 - convention:** Style/StringLiterals: Prefer double-quoted strings unless you need single quotes to avoid extra backslashes for escaping.
-
-    ```rb
-    gem 'rack-utf8_sanitizer', "~> 1.10.1"
     ```
 
 ### Guardfile - (2 offenses)
@@ -511,8 +505,8 @@
       class ReservationTurnsController < ApplicationController
     ```
 
-### app/controllers/v1/admin/reservations_controller.rb - (7 offenses)
-  * **Line # 4 - convention:** Metrics/ClassLength: Class has too many lines. [166/100]
+### app/controllers/v1/admin/reservations_controller.rb - (8 offenses)
+  * **Line # 4 - convention:** Metrics/ClassLength: Class has too many lines. [175/100]
 
     ```rb
       class ReservationsController < ApplicationController ...
@@ -524,31 +518,37 @@
       class ReservationsController < ApplicationController
     ```
 
-  * **Line # 6 - convention:** Layout/LineLength: Line is too long. [133/120]
+  * **Line # 6 - convention:** Layout/LineLength: Line is too long. [157/120]
 
     ```rb
-                      only: %i[show refund_payment refresh_payment_status deliver_confirmation_email update destroy update_status add_tag
+                      only: %i[show refund_payment record_deferred_payment refresh_payment_status deliver_confirmation_email update destroy update_status add_tag
     ```
 
-  * **Line # 147 - convention:** Metrics/AbcSize: Assignment Branch Condition size for export is too high. [<2, 20, 2> 20.2/17]
-
-    ```rb
-        def export ...
-    ```
-
-  * **Line # 147 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 160 - convention:** Metrics/AbcSize: Assignment Branch Condition size for export is too high. [<2, 20, 2> 20.2/17]
 
     ```rb
         def export ...
     ```
 
-  * **Line # 177 - convention:** Layout/LineLength: Line is too long. [121/120]
+  * **Line # 160 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+
+    ```rb
+        def export ...
+    ```
+
+  * **Line # 190 - convention:** Layout/ArgumentAlignment: Align the arguments of a method call if they span more than one line.
 
     ```rb
                                           table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |item|
     ```
 
-  * **Line # 188 - convention:** Metrics/MethodLength: Method has too many lines. [18/10]
+  * **Line # 190 - convention:** Layout/LineLength: Line is too long. [139/120]
+
+    ```rb
+                                                            table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |item|
+    ```
+
+  * **Line # 201 - convention:** Metrics/MethodLength: Method has too many lines. [19/10]
 
     ```rb
         def single_item_full_json(item) ...
@@ -798,19 +798,19 @@
       class ReservationsController < ApplicationController
     ```
 
-  * **Line # 17 - convention:** Metrics/AbcSize: Assignment Branch Condition size for do_payment is too high. [<0, 20, 4> 20.4/17]
+  * **Line # 17 - convention:** Metrics/AbcSize: Assignment Branch Condition size for do_payment is too high. [<0, 22, 5> 22.56/17]
 
     ```rb
         def do_payment ...
     ```
 
-  * **Line # 33 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<3, 22, 1> 22.23/17]
+  * **Line # 33 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create is too high. [<3, 20, 1> 20.25/17]
 
     ```rb
         def create ...
     ```
 
-  * **Line # 33 - convention:** Metrics/MethodLength: Method has too many lines. [13/10]
+  * **Line # 33 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
 
     ```rb
         def create ...
@@ -1050,6 +1050,13 @@
 
     ```rb
       # If the reservation is a payment or an authorization. When deferred is a authorization, the payment will be done later.
+    ```
+
+### app/interactions/create_reservation_payment_by_group.rb - (1 offense)
+  * **Line # 5 - convention:** Layout/EmptyLinesAroundClassBody: Extra empty line detected at class body beginning.
+
+    ```rb
+     ...
     ```
 
 ### app/interactions/dev/cat_image.rb - (2 offenses)
@@ -1665,25 +1672,25 @@
         when "html_nexi_authorization" then fetch_nexi_status
     ```
 
-  * **Line # 24 - convention:** Metrics/AbcSize: Assignment Branch Condition size for fetch_nexi_status is too high. [<3, 46, 14> 48.18/17]
+  * **Line # 24 - convention:** Metrics/AbcSize: Assignment Branch Condition size for fetch_nexi_status is too high. [<3, 52, 17> 54.79/17]
 
     ```rb
       def fetch_nexi_status ...
     ```
 
-  * **Line # 24 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for fetch_nexi_status is too high. [12/7]
+  * **Line # 24 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for fetch_nexi_status is too high. [14/7]
 
     ```rb
       def fetch_nexi_status ...
     ```
 
-  * **Line # 24 - convention:** Metrics/MethodLength: Method has too many lines. [24/10]
+  * **Line # 24 - convention:** Metrics/MethodLength: Method has too many lines. [28/10]
 
     ```rb
       def fetch_nexi_status ...
     ```
 
-  * **Line # 24 - convention:** Metrics/PerceivedComplexity: Perceived complexity for fetch_nexi_status is too high. [10/8]
+  * **Line # 24 - convention:** Metrics/PerceivedComplexity: Perceived complexity for fetch_nexi_status is too high. [13/8]
 
     ```rb
       def fetch_nexi_status ...
@@ -2631,22 +2638,71 @@
       class ReceiveOrderOutcome < ActiveInteraction::Base
     ```
 
-  * **Line # 7 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<0, 31, 3> 31.14/17]
+  * **Line # 7 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<0, 39, 4> 39.2/17]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 7 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+  * **Line # 7 - convention:** Metrics/MethodLength: Method has too many lines. [15/10]
 
     ```rb
         def execute ...
     ```
 
-  * **Line # 23 - convention:** Layout/LineLength: Line is too long. [134/120]
+  * **Line # 29 - convention:** Layout/LineLength: Line is too long. [134/120]
 
     ```rb
           Rails.logger.warn "Nexi::ReceiveOrderOutcome: Don't know what to do with params: #{params.inspect}, headers: #{headers.inspect}"
+    ```
+
+### app/interactions/nexi/record_deferred_payment.rb - (8 offenses)
+  * **Line # 32 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<1, 25, 3> 25.2/17]
+
+    ```rb
+        def execute ...
+    ```
+
+  * **Line # 32 - convention:** Metrics/MethodLength: Method has too many lines. [12/10]
+
+    ```rb
+        def execute ...
+    ```
+
+  * **Line # 40 - convention:** Layout/LineLength: Line is too long. [175/120]
+
+    ```rb
+            mac_part: "apiKey=#{params[:apiKey]}codiceTransazione=#{params[:codiceTransazione]}divisa=#{params[:divisa]}importo=#{params[:importo]}timeStamp=#{params[:timeStamp]}"
+    ```
+
+  * **Line # 40 - convention:** Style/TrailingCommaInArguments: Avoid comma after the last parameter of a method call.
+
+    ```rb
+            mac_part: "apiKey=#{params[:apiKey]}codiceTransazione=#{params[:codiceTransazione]}divisa=#{params[:divisa]}importo=#{params[:importo]}timeStamp=#{params[:timeStamp]}",
+    ```
+
+  * **Line # 58 - convention:** Style/TrailingCommaInHashLiteral: Avoid comma after the last item of a hash.
+
+    ```rb
+            timeStamp: Time.zone.now.to_i * 1000,
+    ```
+
+  * **Line # 62 - convention:** Metrics/AbcSize: Assignment Branch Condition size for validate_response is too high. [<1, 39, 8> 39.82/17]
+
+    ```rb
+        def validate_response ...
+    ```
+
+  * **Line # 62 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for validate_response is too high. [8/7]
+
+    ```rb
+        def validate_response ...
+    ```
+
+  * **Line # 67 - convention:** Performance/Casecmp: Use `!client.json["esito"].to_s.casecmp("ok").zero?` instead of `client.json["esito"].to_s.downcase != "ok"`.
+
+    ```rb
+          if client.json.is_a?(Hash) && client.json["esito"].to_s.downcase != "ok"
     ```
 
 ### app/interactions/nexi/refund_payment.rb - (7 offenses)
@@ -2755,8 +2811,8 @@
       def execute ...
     ```
 
-### app/interactions/public_create_reservation.rb - (9 offenses)
-  * **Line # 3 - convention:** Metrics/ClassLength: Class has too many lines. [229/100]
+### app/interactions/public_create_reservation.rb - (12 offenses)
+  * **Line # 3 - convention:** Metrics/ClassLength: Class has too many lines. [239/100]
 
     ```rb
     class PublicCreateReservation < ActiveInteraction::Base ...
@@ -2768,46 +2824,95 @@
     class PublicCreateReservation < ActiveInteraction::Base
     ```
 
-  * **Line # 38 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<1, 21, 6> 21.86/17]
+  * **Line # 38 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<1, 35, 9> 36.15/17]
 
     ```rb
       def execute ...
     ```
 
-  * **Line # 120 - convention:** Metrics/MethodLength: Method has too many lines. [15/10]
+  * **Line # 38 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for execute is too high. [9/7]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 38 - convention:** Metrics/MethodLength: Method has too many lines. [16/10]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 38 - convention:** Metrics/PerceivedComplexity: Perceived complexity for execute is too high. [10/8]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 130 - convention:** Metrics/MethodLength: Method has too many lines. [15/10]
 
     ```rb
       def initialize_reservation ...
     ```
 
-  * **Line # 154 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create_reservation_payment_if_needed is too high. [<2, 30, 8> 31.11/17]
+  * **Line # 164 - convention:** Metrics/AbcSize: Assignment Branch Condition size for create_reservation_payment_if_needed is too high. [<4, 30, 8> 31.3/17]
 
     ```rb
       def create_reservation_payment_if_needed ...
     ```
 
-  * **Line # 154 - convention:** Metrics/MethodLength: Method has too many lines. [21/10]
+  * **Line # 164 - convention:** Metrics/MethodLength: Method has too many lines. [23/10]
 
     ```rb
       def create_reservation_payment_if_needed ...
     ```
 
-  * **Line # 165 - convention:** Style/NumericPredicate: Use `call.result.negative?` instead of `call.result < 0`.
+  * **Line # 180 - convention:** Style/NumericPredicate: Use `call.result.negative?` instead of `call.result < 0`.
 
     ```rb
           if call.valid? && call.result < 0
     ```
 
-  * **Line # 265 - convention:** Metrics/AbcSize: Assignment Branch Condition size for datetime_format_is_valid is too high. [<0, 17, 3> 17.26/17]
+  * **Line # 280 - convention:** Metrics/AbcSize: Assignment Branch Condition size for datetime_format_is_valid is too high. [<0, 17, 3> 17.26/17]
 
     ```rb
       def datetime_format_is_valid ...
     ```
 
-  * **Line # 317 - convention:** Style/NumericPredicate: Use `(datetime.to_i % reservation_turn.step).zero?` instead of `datetime.to_i % reservation_turn.step == 0`.
+  * **Line # 332 - convention:** Style/NumericPredicate: Use `(datetime.to_i % reservation_turn.step).zero?` instead of `datetime.to_i % reservation_turn.step == 0`.
 
     ```rb
         return if datetime.to_i % reservation_turn.step == 0
+    ```
+
+### app/interactions/record_deferred_payment.rb - (5 offenses)
+  * **Line # 17 - convention:** Metrics/AbcSize: Assignment Branch Condition size for execute is too high. [<1, 45, 9> 45.9/17]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 17 - convention:** Metrics/CyclomaticComplexity: Cyclomatic complexity for execute is too high. [10/7]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 17 - convention:** Metrics/MethodLength: Method has too many lines. [15/10]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 17 - convention:** Metrics/PerceivedComplexity: Perceived complexity for execute is too high. [10/8]
+
+    ```rb
+      def execute ...
+    ```
+
+  * **Line # 27 - convention:** Rails/SkipsModelValidations: Avoid using `touch` because it skips validations.
+
+    ```rb
+        reservation.touch
     ```
 
 ### app/interactions/refund_reservation_payment.rb - (4 offenses)
@@ -3334,11 +3439,47 @@
             headers: mail.header.fields.map { |field| [field.name, field.value] }.to_h,
     ```
 
-### app/mailers/reservation_mailer.rb - (1 offense)
+### app/mailers/reservation_mailer.rb - (7 offenses)
   * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class ReservationMailer`.
 
     ```rb
     class ReservationMailer < ApplicationMailer
+    ```
+
+  * **Line # 10 - convention:** Layout/LineLength: Line is too long. [122/120]
+
+    ```rb
+      # In case a payment is required, we won't send confirmation immediately; it will be sent after the payment is confirmed.
+    ```
+
+  * **Line # 24 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+      # 
+    ```
+
+  * **Line # 28 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+      # 
+    ```
+
+  * **Line # 37 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          subject: (@title = I18n.t("reservation_mailer.payment_required_to_confirm.subject", 
+    ```
+
+  * **Line # 37 - convention:** Layout/LineLength: Line is too long. [123/120]
+
+    ```rb
+          subject: (@title = I18n.t("reservation_mailer.payment_required_to_confirm.subject", fullname: reservation.fullname)),
+    ```
+
+  * **Line # 38 - convention:** Layout/ArgumentAlignment: Align the arguments of a method call if they span more than one line.
+
+    ```rb
+    fullname: reservation.fullname)),
     ```
 
 ### app/mailers/user_mailer.rb - (1 offense)
@@ -4110,7 +4251,13 @@
       validates :secret, presence: true, uniqueness: true
     ```
 
-### app/models/reservation.rb - (4 offenses)
+### app/models/reservation.rb - (7 offenses)
+  * **Line # 3 - convention:** Metrics/ClassLength: Class has too many lines. [103/100]
+
+    ```rb
+    class Reservation < ApplicationRecord ...
+    ```
+
   * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class Reservation`.
 
     ```rb
@@ -4133,6 +4280,37 @@
 
     ```rb
       validates :secret, uniqueness: { case_sensitive: false }
+    ```
+
+  * **Line # 75 - convention:** Layout/LineLength: Line is too long. [166/120]
+
+    ```rb
+        ch = Log::ModelChange.select(:record_id, :created_at).where(record_type: "Reservation", change_type: "update").where("record_changes->'status'->>1 = 'cancelled'")
+    ```
+
+  * **Line # 76 - convention:** Layout/LineLength: Line is too long. [126/120]
+
+    ```rb
+        select("reservations.*, ch.created_at as cancelled_at").joins("LEFT OUTER JOIN (#{ch.to_sql}) as ch ON ch.record_id = id")
+    ```
+
+### app/models/reservation_payment.rb - (3 offenses)
+  * **Line # 13 - convention:** Layout/LineLength: Line is too long. [129/120]
+
+    ```rb
+      # Initially "paid" was used for "authorized" too. Then we needed to distinguish when a payment was authorized but not yet paid,
+    ```
+
+  * **Line # 67 - convention:** Style/Alias: Use `alias` instead of `alias_method` in a class body.
+
+    ```rb
+      alias_method :deferred, :deferred?
+    ```
+
+  * **Line # 67 - convention:** Style/Alias: Use `alias deferred deferred?` instead of `alias :deferred :deferred?`.
+
+    ```rb
+      alias :deferred :deferred?
     ```
 
 ### app/models/reservation_tag.rb - (1 offense)
@@ -4518,37 +4696,37 @@
     ```
 
 ### config/routes.rb - (6 offenses)
-  * **Line # 6 - convention:** Metrics/BlockLength: Block has too many lines. [180/25]
+  * **Line # 6 - convention:** Metrics/BlockLength: Block has too many lines. [181/25]
 
     ```rb
     Rails.application.routes.draw do ...
     ```
 
-  * **Line # 17 - convention:** Metrics/BlockLength: Block has too many lines. [168/25]
+  * **Line # 17 - convention:** Metrics/BlockLength: Block has too many lines. [169/25]
 
     ```rb
       defaults format: :json do ...
     ```
 
-  * **Line # 26 - convention:** Metrics/BlockLength: Block has too many lines. [159/25]
+  * **Line # 26 - convention:** Metrics/BlockLength: Block has too many lines. [160/25]
 
     ```rb
         scope module: :v1, path: "v1" do ...
     ```
 
-  * **Line # 95 - convention:** Metrics/BlockLength: Block has too many lines. [109/25]
+  * **Line # 95 - convention:** Metrics/BlockLength: Block has too many lines. [110/25]
 
     ```rb
           scope module: :admin, path: "admin" do ...
     ```
 
-  * **Line # 155 - convention:** Metrics/BlockLength: Block has too many lines. [56/25]
+  * **Line # 156 - convention:** Metrics/BlockLength: Block has too many lines. [56/25]
 
     ```rb
             scope module: :menu, path: "menu" do ...
     ```
 
-  * **Line # 191 - convention:** Metrics/BlockLength: Block has too many lines. [26/25]
+  * **Line # 192 - convention:** Metrics/BlockLength: Block has too many lines. [26/25]
 
     ```rb
               resources :dishes do ...
@@ -5067,6 +5245,13 @@
 
     ```rb
     class AddTableTypeToReservations < ActiveRecord::Migration[7.0]
+    ```
+
+### db/migrate/20250419001805_migrate_authorizations_from_paid_to_authorized.rb - (1 offense)
+  * **Line # 3 - convention:** Style/Documentation: Missing top-level documentation comment for `class MigrateAuthorizationsFromPaidToAuthorized`.
+
+    ```rb
+    class MigrateAuthorizationsFromPaidToAuthorized < ActiveRecord::Migration[7.0]
     ```
 
 ### db/seeds.rb - (4 offenses)
@@ -13182,7 +13367,7 @@
             it "contains all informations" do
     ```
 
-### spec/controllers/v1/admin/reservations_controller_spec.rb - (119 offenses)
+### spec/controllers/v1/admin/reservations_controller_spec.rb - (123 offenses)
   * **Line # 7 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
@@ -13231,667 +13416,691 @@
     RSpec.describe V1::Admin::ReservationsController, type: :controller do
     ```
 
-  * **Line # 98 - convention:** Layout/LineLength: Line is too long. [131/120]
+  * **Line # 99 - convention:** Layout/LineLength: Line is too long. [131/120]
 
     ```rb
                                                                  default_people_per_turn: Integer, default_price: Float, images: Array)
     ```
 
-  * **Line # 116 - convention:** Performance/InefficientHashSearch: Use `#key?` instead of `#keys.include?`.
-
-    ```rb
-              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.filter(&:present?).count).to eq(1) }
-    ```
-
-  * **Line # 116 - convention:** Performance/Count: Use `count` instead of `filter...count`.
-
-    ```rb
-              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.filter(&:present?).count).to eq(1) }
-    ```
-
-  * **Line # 117 - convention:** Performance/Detect: Use `find` instead of `filter.first`.
-
-    ```rb
-              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.first).to be_present }
-    ```
-
   * **Line # 117 - convention:** Performance/InefficientHashSearch: Use `#key?` instead of `#keys.include?`.
 
     ```rb
+              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.filter(&:present?).count).to eq(1) }
+    ```
+
+  * **Line # 117 - convention:** Performance/Count: Use `count` instead of `filter...count`.
+
+    ```rb
+              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.filter(&:present?).count).to eq(1) }
+    ```
+
+  * **Line # 118 - convention:** Performance/Detect: Use `find` instead of `filter.first`.
+
+    ```rb
               it { expect(json[:items].filter { |j| j.keys.include?("payment") }.first).to be_present }
     ```
 
-  * **Line # 124 - convention:** Performance/Detect: Use `find` instead of `filter.first`.
+  * **Line # 118 - convention:** Performance/InefficientHashSearch: Use `#key?` instead of `#keys.include?`.
+
+    ```rb
+              it { expect(json[:items].filter { |j| j.keys.include?("payment") }.first).to be_present }
+    ```
+
+  * **Line # 125 - convention:** Performance/Detect: Use `find` instead of `filter.first`.
 
     ```rb
                 expect(json[:items].filter do |j| ...
     ```
 
-  * **Line # 125 - convention:** Performance/InefficientHashSearch: Use `#key?` instead of `#keys.include?`.
+  * **Line # 126 - convention:** Performance/InefficientHashSearch: Use `#key?` instead of `#keys.include?`.
 
     ```rb
                          j.keys.include?("payment")
     ```
 
-  * **Line # 165 - convention:** RSpec/ExampleLength: Example has too many lines. [12/5]
+  * **Line # 166 - convention:** RSpec/ExampleLength: Example has too many lines. [12/5]
 
     ```rb
             it "ignores param" do ...
     ```
 
-  * **Line # 165 - convention:** RSpec/MultipleExpectations: Example has too many expectations [8/1].
+  * **Line # 166 - convention:** RSpec/MultipleExpectations: Example has too many expectations [8/1].
 
     ```rb
             it "ignores param" do
     ```
 
-  * **Line # 209 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 210 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 expect(subject).to all(include(status: "active").or(include(status: "noshow")).or(include(status: "cancelled")))
     ```
 
-  * **Line # 209 - convention:** Layout/LineLength: Line is too long. [124/120]
+  * **Line # 210 - convention:** Layout/LineLength: Line is too long. [124/120]
 
     ```rb
                 expect(subject).to all(include(status: "active").or(include(status: "noshow")).or(include(status: "cancelled")))
     ```
 
-  * **Line # 212 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 213 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 3 }
     ```
 
-  * **Line # 241 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 242 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 270 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 271 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               it { expect(subject.count).to eq 2 }
     ```
 
-  * **Line # 327 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 328 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
               let(:query) { reservations.sample.fullname.split(" ").sample }
     ```
 
-  * **Line # 343 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 344 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
               let(:query) { reservations.sample.notes.split(" ").sample }
     ```
 
-  * **Line # 352 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 353 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
             let!(:reservations) do
     ```
 
-  * **Line # 355 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+  * **Line # 356 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
 
     ```rb
                 create(:reservation, status: :active, datetime: Time.now),
     ```
 
-  * **Line # 369 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+  * **Line # 370 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
 
     ```rb
               it { expect(parsed_response_body[:items][0][:datetime].to_date).to eq Time.now.to_date }
     ```
 
-  * **Line # 375 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
+  * **Line # 376 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
 
     ```rb
               before { req(date: Date.today.to_date) }
     ```
 
-  * **Line # 379 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+  * **Line # 380 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
 
     ```rb
               it { expect(parsed_response_body[:items][0][:datetime].to_date).to eq Time.now.to_date }
     ```
 
-  * **Line # 413 - convention:** Layout/LineLength: Line is too long. [127/120]
+  * **Line # 414 - convention:** Layout/LineLength: Line is too long. [127/120]
 
     ```rb
             context "when filtering by {date_from: 1.day.from_now.end_of_day.to_datetime.to_s, date_to: 1.day.from_now.to_date}" do
     ```
 
-  * **Line # 429 - convention:** Layout/LineLength: Line is too long. [135/120]
+  * **Line # 430 - convention:** Layout/LineLength: Line is too long. [135/120]
 
     ```rb
             context "when filtering by {datetime_from: 1.day.from_now.end_of_day.to_datetime.to_s, datetime_to: 1.day.from_now.to_date}" do
     ```
 
-  * **Line # 525 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 526 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
             %w[order_by_direction order_by_order].each do |order_by_order_name|
     ```
 
-  * **Line # 544 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 545 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
             %w[attribute column field by].each do |attribute_alias|
     ```
 
-  * **Line # 545 - convention:** Layout/LineLength: Line is too long. [132/120]
+  * **Line # 546 - convention:** Layout/LineLength: Line is too long. [132/120]
 
     ```rb
               context "when ordering with {order_by: { #{attribute_alias.inspect}: 'datetime', #{direction_alias.inspect}: 'DESC' }}" do
     ```
 
-  * **Line # 553 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 554 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
                 it "allows any combination between aliases." do
     ```
 
-  * **Line # 644 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+  * **Line # 645 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
 
     ```rb
               reservation.image_pixels.first.events.create!(event_time: Time.now)
     ```
 
-  * **Line # 648 - convention:** RSpec/ExampleLength: Example has too many lines. [8/5]
+  * **Line # 649 - convention:** RSpec/ExampleLength: Example has too many lines. [8/5]
 
     ```rb
             it do ...
     ```
 
-  * **Line # 648 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
+  * **Line # 649 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 684 - convention:** RSpec/ExampleLength: Example has too many lines. [19/5]
+  * **Line # 685 - convention:** RSpec/ExampleLength: Example has too many lines. [19/5]
 
     ```rb
             it "returns reservation info" do ...
     ```
 
-  * **Line # 684 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 685 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
             it "returns reservation info" do
     ```
 
-  * **Line # 711 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 712 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it "returns 200" do
     ```
 
-  * **Line # 720 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 721 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
             ["2024-10-12 19:00", "2024-12-25 21:00"].each do |datetime|
     ```
 
-  * **Line # 721 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 722 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
               [1, 2, 3].each do |adults|
     ```
 
-  * **Line # 722 - convention:** Layout/LineLength: Line is too long. [121/120]
+  * **Line # 723 - convention:** Layout/LineLength: Line is too long. [121/120]
 
     ```rb
                 context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, adults: #{adults}}" do
     ```
 
-  * **Line # 727 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 728 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
                   it "returns provided info" do ...
     ```
 
-  * **Line # 727 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 728 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
                   it "returns provided info" do
     ```
 
-  * **Line # 731 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 732 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
                     expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").first)
     ```
 
-  * **Line # 732 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 733 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
                     expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").last)
     ```
 
-  * **Line # 737 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 738 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
                 [201, "204 fuori"].each do |table|
     ```
 
-  * **Line # 738 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 739 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
                   ["bambini", "bella vita"].each do |notes|
     ```
 
-  * **Line # 739 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 740 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
                     ["sa@ba", "gi@gi"].each do |email|
     ```
 
-  * **Line # 740 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 741 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
                       ["123 333 333", "456 666 666"].each do |phone|
     ```
 
-  * **Line # 741 - convention:** Layout/LineLength: Line is too long. [229/120]
+  * **Line # 742 - convention:** Layout/LineLength: Line is too long. [229/120]
 
     ```rb
                         context "when providing {fullname: #{fullname.inspect}, datetime: #{datetime.inspect}, adults: #{adults}, table: #{table.inspect}, notes: #{notes.inspect}, email: #{email.inspect}, phone: #{phone.inspect}}" do
     ```
 
-  * **Line # 744 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+  * **Line # 745 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
 
     ```rb
                           it "returns provided info" do ...
     ```
 
-  * **Line # 744 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
+  * **Line # 745 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
 
     ```rb
                           it "returns provided info" do
     ```
 
-  * **Line # 749 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 750 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
                             expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").first)
     ```
 
-  * **Line # 750 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
+  * **Line # 751 - convention:** Style/RedundantArgument: Argument " " is redundant because it is implied by default.
 
     ```rb
                             expect(parsed_response_body.dig(:item, :datetime)).to include(datetime.split(" ").last)
     ```
 
-  * **Line # 809 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
+  * **Line # 810 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
 
     ```rb
             let(:fullname) { "Anne Marie" + SecureRandom.hex }
     ```
 
-  * **Line # 836 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
+  * **Line # 837 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
 
     ```rb
             let(:notes) { "Please be kind" + SecureRandom.hex }
     ```
 
-  * **Line # 845 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
+  * **Line # 846 - convention:** Style/StringConcatenation: Prefer string interpolation to string concatenation.
 
     ```rb
             let(:email) { "giuly@presley" + SecureRandom.hex }
     ```
 
-  * **Line # 928 - convention:** Layout/LineLength: Line is too long. [140/120]
+  * **Line # 929 - convention:** Layout/LineLength: Line is too long. [140/120]
 
     ```rb
                                                                                                  action: :update_status, id: "2", format: :json)
     ```
 
-  * **Line # 955 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 956 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 956 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 966 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 970 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 970 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 977 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 984 - convention:** RSpec/ExampleLength: Example has too many lines. [8/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 984 - convention:** RSpec/MultipleExpectations: Example has too many expectations [8/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 988 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 992 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+
+    ```rb
+              expect(json[:item][:cancelled_at]).to include(Time.now.strftime("%Y-%m-%d"))
+    ```
+
+  * **Line # 999 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 1044 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1055 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
             it { expect { req }.to change { TagInReservation.count }.by(1) }
     ```
 
-  * **Line # 1045 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 1056 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1046 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
+  * **Line # 1057 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { ReservationTag.count }) }
     ```
 
-  * **Line # 1050 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 1061 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
             it "is successful" do ...
     ```
 
-  * **Line # 1050 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 1061 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
             it "is successful" do
     ```
 
-  * **Line # 1059 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 1070 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
             it "can try to add twice the tag, will be added just once." do
     ```
 
-  * **Line # 1060 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1071 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
               expect { req }.to change { TagInReservation.count }.by(1)
     ```
 
-  * **Line # 1062 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1073 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
               expect { req }.not_to(change { TagInReservation.count })
     ```
 
-  * **Line # 1073 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+  * **Line # 1084 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
 
     ```rb
               allow_any_instance_of(TagInReservation).to receive(:valid?).and_return(false)
     ```
 
-  * **Line # 1076 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+  * **Line # 1087 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
 
     ```rb
               allow_any_instance_of(TagInReservation).to receive(:errors).and_return(errors)
     ```
 
-  * **Line # 1079 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1090 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { TagInReservation.count }) }
     ```
 
-  * **Line # 1081 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 1092 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
             it "returns 422 with message" do
     ```
 
-  * **Line # 1097 - convention:** Layout/LineLength: Line is too long. [136/120]
+  * **Line # 1108 - convention:** Layout/LineLength: Line is too long. [136/120]
 
     ```rb
                                                                                                 action: :remove_tag, id: "2", format: :json)
     ```
 
-  * **Line # 1136 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1147 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
             it { expect { req }.to change { TagInReservation.count }.by(-1) }
     ```
 
-  * **Line # 1137 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 1148 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1138 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
+  * **Line # 1149 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { ReservationTag.count }) }
     ```
 
-  * **Line # 1143 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 1154 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
             it "is successful" do ...
     ```
 
-  * **Line # 1143 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 1154 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
             it "is successful" do
     ```
 
-  * **Line # 1152 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 1163 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
             it "when removing same tag twice, should be fine." do
     ```
 
-  * **Line # 1168 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
+  * **Line # 1179 - convention:** RSpec/ExpectChange: Prefer `change(TagInReservation, :count)`.
 
     ```rb
             it { expect { req }.to change { TagInReservation.count }.by(-1) }
     ```
 
-  * **Line # 1169 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 1180 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1170 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
+  * **Line # 1181 - convention:** RSpec/ExpectChange: Prefer `change(ReservationTag, :count)`.
 
     ```rb
             it { expect { req }.not_to(change { ReservationTag.count }) }
     ```
 
-  * **Line # 1175 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+  * **Line # 1186 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
 
     ```rb
             it "is successful" do ...
     ```
 
-  * **Line # 1175 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 1186 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
             it "is successful" do
     ```
 
-  * **Line # 1184 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 1195 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
             it "when removing same tag twice, should be fine." do
     ```
 
-  * **Line # 1212 - warning:** Lint/UnderscorePrefixedVariableName: Do not use prefix `_` for a variable that is used.
+  * **Line # 1223 - warning:** Lint/UnderscorePrefixedVariableName: Do not use prefix `_` for a variable that is used.
 
     ```rb
         def req(_params = params)
     ```
 
-  * **Line # 1240 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 1251 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it "is successful" do
     ```
 
-  * **Line # 1248 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+  * **Line # 1259 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
 
     ```rb
                 allow_any_instance_of(Hash).to receive(:dig!).and_call_original
     ```
 
-  * **Line # 1256 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
+  * **Line # 1267 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
 
     ```rb
               it { expect { req }.to change { Log::DeliveredEmail.count }.by(1) }
     ```
 
-  * **Line # 1258 - convention:** RSpec/ExpectChange: Prefer `change(Log::ImagePixel, :count)`.
+  * **Line # 1269 - convention:** RSpec/ExpectChange: Prefer `change(Log::ImagePixel, :count)`.
 
     ```rb
               it { expect { req }.to change { Log::ImagePixel.count }.by(1) }
     ```
 
-  * **Line # 1260 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+  * **Line # 1271 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
 
     ```rb
               it "is successful" do
     ```
 
-  * **Line # 1268 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
+  * **Line # 1279 - convention:** RSpec/ExampleLength: Example has too many lines. [9/5]
 
     ```rb
               it "last delivered email should have the correct reservation" do ...
     ```
 
-  * **Line # 1268 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
+  * **Line # 1279 - convention:** RSpec/MultipleExpectations: Example has too many expectations [6/1].
 
     ```rb
               it "last delivered email should have the correct reservation" do
     ```
 
-  * **Line # 1287 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 1298 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
               it "is successful" do
     ```
 
-  * **Line # 1297 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+  * **Line # 1308 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
               it "returns delivery details" do
     ```
 
-  * **Line # 1303 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
+  * **Line # 1314 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
 
     ```rb
               it do ...
     ```
 
-  * **Line # 1303 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 1314 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
 
     ```rb
               it do
     ```
 
-  * **Line # 1363 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 1374 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
             let!(:reservations) do
     ```
 
-  * **Line # 1366 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
+  * **Line # 1377 - convention:** Rails/TimeZone: Do not use `Time.now` without zone. Use one of `Time.zone.now`, `Time.current`, `Time.now.in_time_zone`, `Time.now.utc`, `Time.now.getlocal`, `Time.now.xmlschema`, `Time.now.iso8601`, `Time.now.jisx0301`, `Time.now.rfc3339`, `Time.now.httpdate`, `Time.now.to_i`, `Time.now.to_f` instead.
 
     ```rb
                 create(:reservation, status: :active, datetime: Time.now, adults: 2),
     ```
 
-  * **Line # 1373 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 1384 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
             let!(:reservation_turns) do
     ```
 
-  * **Line # 1380 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 1391 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
               let!(:reservation_turns) do
     ```
 
-  * **Line # 1387 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 1398 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
               let!(:reservations) do
     ```
 
-  * **Line # 1459 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
+  * **Line # 1470 - convention:** Rails/Date: Do not use `Date.today` without zone. Use `Time.zone.today` instead.
 
     ```rb
               before { req(date: Date.today.to_date) }
     ```
 
-  * **Line # 1562 - convention:** Layout/LineLength: Line is too long. [133/120]
+  * **Line # 1573 - convention:** Layout/LineLength: Line is too long. [133/120]
 
     ```rb
               expect(file.sheet("Prenotazioni").column(col_index("payment_hpp_url"))).to include(*ReservationPayment.all.pluck(:hpp_url))
     ```
 
-  * **Line # 1589 - convention:** Style/RedundantInterpolation: Prefer `to_s` over string interpolation.
+  * **Line # 1600 - convention:** Style/RedundantInterpolation: Prefer `to_s` over string interpolation.
 
     ```rb
           let(:query) { "#{secret[1..15]}" }
     ```
 
-  * **Line # 1653 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1664 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1663 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1674 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1673 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+  * **Line # 1684 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
 
     ```rb
           context do ...
     ```
 
-  * **Line # 1704 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1715 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id) }
     ```
 
-  * **Line # 1713 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1724 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id, @new.id) }
     ```
 
-  * **Line # 1713 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1724 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@middle.id, @new.id) }
     ```
 
-  * **Line # 1722 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1733 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
     ```
 
-  * **Line # 1722 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1733 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
     ```
 
-  * **Line # 1722 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
+  * **Line # 1733 - convention:** RSpec/InstanceVariable: Avoid instance variables - use let, a method call, or a local variable (if possible).
 
     ```rb
             it { expect(col_values("id")).to contain_exactly(@old.id, @middle.id, @new.id) }
@@ -16479,1274 +16688,1360 @@
             allow_any_instance_of(ActionDispatch::Request).to receive(:cookies).and_return(Reservation::PUBLIC_CREATE_COOKIE => secret)
     ```
 
-### spec/controllers/v1/reservations_controller_spec.rb - (212 offenses)
+### spec/controllers/v1/reservations_controller/reservations_controller.cancel_spec.rb - (22 offenses)
+  * **Line # 5 - convention:** RSpec/FilePath: Spec path should end with `v1/reservations_controller*_spec.rb`.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
+  * **Line # 5 - convention:** RSpec/SpecFilePathFormat: Spec path should end with `v1/reservations_controller*_spec.rb`.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
     RSpec.describe V1::ReservationsController, type: :controller do
     ```
 
-  * **Line # 52 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
-
-    ```rb
-          expect(subject).to route(:post, "/v1/reservations").to(format: :json, action: :create,
-    ```
-
-  * **Line # 64 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-          it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 66 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
-
-    ```rb
-          context do ...
-    ```
-
-  * **Line # 78 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-          it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 80 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
-
-    ```rb
-          context do ...
-    ```
-
-  * **Line # 92 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-          it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 94 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
-
-    ```rb
-          context do ...
-    ```
-
-  * **Line # 110 - convention:** Layout/LineLength: Line is too long. [129/120]
-
-    ```rb
-          context "when providing a #{scenario[:name]} date, should create a reservation for turn with weekday=#{scenario[:wday]}" do
-    ```
-
-  * **Line # 112 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-            let!(:turn) do
-    ```
-
-  * **Line # 122 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-          let!(:turn) do
-    ```
-
-  * **Line # 141 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { doit }.to(change { Reservation.count }) }
-    ```
-
-  * **Line # 158 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-              it { expect { doit }.to(change { Reservation.count }) }
-    ```
-
-  * **Line # 176 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-              it { expect { doit }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 192 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-          let!(:turn) do
-    ```
-
-  * **Line # 263 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it do
-    ```
-
-  * **Line # 289 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it do
-    ```
-
-  * **Line # 296 - convention:** Layout/LineLength: Line is too long. [122/120]
-
-    ```rb
-        context "when a 'weekly' Holiday exists (closed only on the morning while the reservation is made for the evening)" do
-    ```
-
-  * **Line # 297 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-          let!(:holiday) do
-    ```
-
-  * **Line # 310 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it do
-    ```
-
-  * **Line # 325 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-              it do
-    ```
-
-  * **Line # 335 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-          let!(:holiday) do
-    ```
-
-  * **Line # 348 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it do
-    ```
-
-  * **Line # 358 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-          it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 360 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it do
-    ```
-
-  * **Line # 371 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 374 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 386 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 388 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 404 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 406 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 417 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 419 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 441 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 443 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 454 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 456 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 468 - convention:** Layout/LineLength: Line is too long. [127/120]
-
-    ```rb
-                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
-    ```
-
-  * **Line # 471 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
-
-    ```rb
-                body: File.read(Rails.root.join("spec", "fixtures", "nexi-error-page.html"))
-    ```
-
-  * **Line # 493 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 494 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 495 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 498 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 509 - convention:** Layout/LineLength: Line is too long. [127/120]
-
-    ```rb
-                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
-    ```
-
-  * **Line # 534 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 535 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 536 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 539 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 550 - convention:** Layout/LineLength: Line is too long. [127/120]
-
-    ```rb
-                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
-    ```
-
-  * **Line # 558 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
-
-    ```rb
-            File.read(Rails.root.join("spec", "fixtures", "nexi-unauthorized-page.html"))
-    ```
-
-  * **Line # 572 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 573 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 574 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 597 - convention:** Layout/LineLength: Line is too long. [127/120]
-
-    ```rb
-                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
-    ```
-
-  * **Line # 605 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
-
-    ```rb
-            File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
-    ```
-
-  * **Line # 617 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 619 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 620 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 638 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 639 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 640 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 661 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 662 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 663 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 668 - convention:** Layout/LineLength: Line is too long. [128/120]
-
-    ```rb
-                                                                               "deliver_now", params: anything, args: anything).once
-    ```
-
-  * **Line # 671 - convention:** RSpec/ExampleLength: Example has too many lines. [23/5]
-
-    ```rb
-            it do ...
-    ```
-
-  * **Line # 671 - convention:** RSpec/MultipleExpectations: Example has too many expectations [22/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 694 - convention:** Layout/LineLength: Line is too long. [144/120]
-
-    ```rb
-              expect(Nexi::HttpRequest.last.request_body.dig!("urlpost")).to eq(Rails.application.routes.url_helpers.nexi_receive_order_outcome_url)
-    ```
-
-  * **Line # 697 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it do
-    ```
-
-  * **Line # 710 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 713 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 715 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 721 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 731 - convention:** Style/SingleArgumentDig: Use `Nexi::HttpRequest.last.request_body["languageId"]` instead of `Nexi::HttpRequest.last.request_body.dig("languageId")`.
-
-    ```rb
-                  expect(Nexi::HttpRequest.last.request_body.dig("languageId")).to eq(scenario[:code])
-    ```
-
-  * **Line # 766 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 768 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 774 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
-
-    ```rb
-                    expect(Reservation.where(table_type:).pluck(:adults, :children).flatten.sum).to eq 15
-    ```
-
-  * **Line # 775 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
-
-    ```rb
-                    expect(Reservation.pluck(:adults, :children).flatten.sum).to eq 15
-    ```
-
-  * **Line # 778 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-                  it do
-    ```
-
-  * **Line # 806 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_18) { "#{date.to_date} 18:00" }
-    ```
-
-  * **Line # 806 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_18) { "#{date.to_date} 18:00" }
-    ```
-
-  * **Line # 807 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_21) { "#{date.to_date} 21:00" }
-    ```
-
-  * **Line # 807 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_21) { "#{date.to_date} 21:00" }
-    ```
-
-  * **Line # 810 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
-
-    ```rb
-                        expect do
-    ```
-
-  * **Line # 817 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                      it do
-    ```
-
-  * **Line # 845 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_18) { "#{date.to_date} 18:00" }
-    ```
-
-  * **Line # 845 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_18) { "#{date.to_date} 18:00" }
-    ```
-
-  * **Line # 846 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_1830) { "#{date.to_date} 18:30" }
-    ```
-
-  * **Line # 846 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_1830) { "#{date.to_date} 18:30" }
-    ```
-
-  * **Line # 847 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_21) { "#{date.to_date} 21:00" }
-    ```
-
-  * **Line # 847 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_21) { "#{date.to_date} 21:00" }
-    ```
-
-  * **Line # 848 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
-
-    ```rb
-                      let(:datetime_2130) { "#{date.to_date} 21:30" }
-    ```
-
-  * **Line # 848 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
-
-    ```rb
-                      let(:datetime_2130) { "#{date.to_date} 21:30" }
-    ```
-
-  * **Line # 850 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-                      let!(:turn) do
-    ```
-
-  * **Line # 855 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-                      let!(:turn2) do
-    ```
-
-  * **Line # 870 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
-
-    ```rb
-                        Reservation.all.each { |r| r.update!(status: %w[deleted cancelled].sample) }
-    ```
-
-  * **Line # 879 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
-
-    ```rb
-                        expect do
-    ```
-
-  * **Line # 883 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
-
-    ```rb
-                        expect do
-    ```
-
-  * **Line # 888 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-                      it do
-    ```
-
-  * **Line # 904 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 905 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 919 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 920 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 926 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 933 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 934 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 940 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 947 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 948 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 954 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 961 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 962 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 995 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 996 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
-    ```
-
-  * **Line # 997 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
-    ```
-
-  * **Line # 999 - convention:** RSpec/ExampleLength: Example has too many lines. [8/5]
-
-    ```rb
-                it do ...
-    ```
-
-  * **Line # 999 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 1010 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
-
-    ```rb
-                it do ...
-    ```
-
-  * **Line # 1010 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 1019 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 1034 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 1035 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { ReservationPayment.count }) }
-    ```
-
-  * **Line # 1036 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
-    ```
-
-  * **Line # 1048 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-                it do
-    ```
-
-  * **Line # 1068 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-          it "creates a reservation" do
-    ```
-
-  * **Line # 1077 - convention:** Layout/LineLength: Line is too long. [121/120]
-
-    ```rb
-                                                                             "deliver_now", params: anything, args: anything)
-    ```
-
-  * **Line # 1098 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-            let!(:turn) do
-    ```
-
-  * **Line # 1103 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1114 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1125 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 1142 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to(change { Reservation.count }.by(1)) }
-    ```
-
-  * **Line # 1169 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-                it "returns 422" do
-    ```
-
-  * **Line # 1193 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-                it "returns 422" do
-    ```
-
-  * **Line # 1208 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1221 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1233 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1246 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1258 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1269 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1280 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1291 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1302 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1313 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1324 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 1326 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "returns 200 and create record" do
-    ```
-
-  * **Line # 1336 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 1338 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "returns 200 and create record" do
-    ```
-
-  * **Line # 1348 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 1350 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-            it "returns 200 and create record" do
-    ```
-
-  * **Line # 1357 - convention:** Layout/LineLength: Line is too long. [129/120]
-
-    ```rb
-          context 'should create a reservation with "<firstname> <lastname>" as fullname and save the detail in the "other" field' do
-    ```
-
-  * **Line # 1361 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "creates a reservation" do
-    ```
-
-  * **Line # 1374 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "creates a reservation" do
-    ```
-
-  * **Line # 1387 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "creates a reservation" do
-    ```
-
-  * **Line # 1396 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1458]
-
-    ```rb
-          context "when email is empty" do ...
-    ```
-
-  * **Line # 1396 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1458]
-
-    ```rb
-          context "when email is empty" do ...
-    ```
-
-  * **Line # 1399 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1401 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1409 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1471]
-
-    ```rb
-          context "when email is nil" do ...
-    ```
-
-  * **Line # 1409 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1471]
-
-    ```rb
-          context "when email is nil" do ...
-    ```
-
-  * **Line # 1412 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1414 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1422 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1484]
-
-    ```rb
-          context "when email is invalid" do ...
-    ```
-
-  * **Line # 1422 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1484]
-
-    ```rb
-          context "when email is invalid" do ...
-    ```
-
-  * **Line # 1432 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1434 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it "returns 422" do
-    ```
-
-  * **Line # 1445 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
-
-    ```rb
-            let!(:reservation) { create(:reservation, datetime:, email:) }
-    ```
-
-  * **Line # 1447 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1449 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1458 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1396]
-
-    ```rb
-          context "when email is empty" do ...
-    ```
-
-  * **Line # 1458 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1396]
-
-    ```rb
-          context "when email is empty" do ...
-    ```
-
-  * **Line # 1461 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1463 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1471 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1409]
-
-    ```rb
-          context "when email is nil" do ...
-    ```
-
-  * **Line # 1471 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1409]
-
-    ```rb
-          context "when email is nil" do ...
-    ```
-
-  * **Line # 1474 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1476 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1484 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1422]
-
-    ```rb
-          context "when email is invalid" do ...
-    ```
-
-  * **Line # 1484 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1422]
-
-    ```rb
-          context "when email is invalid" do ...
-    ```
-
-  * **Line # 1494 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1496 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it "returns 422" do
-    ```
-
-  * **Line # 1509 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1511 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1522 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-            it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1524 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-            it "returns 422" do
-    ```
-
-  * **Line # 1544 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.not_to(change { Reservation.count }) }
-    ```
-
-  * **Line # 1546 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
-
-    ```rb
-                it "returns 422" do
-    ```
-
-  * **Line # 1579 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
-
-    ```rb
-                it { expect { req }.to change { Reservation.count }.by(1) }
-    ```
-
-  * **Line # 1587 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
-
-    ```rb
-                it "returns 200" do
-    ```
-
-  * **Line # 1615 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 28 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
           expect(subject).to route(:patch, "/v1/reservations/cancel").to(format: :json, action: :cancel,
     ```
 
-  * **Line # 1621 - convention:** Layout/LineLength: Line is too long. [125/120]
+  * **Line # 34 - convention:** Layout/LineLength: Line is too long. [125/120]
 
     ```rb
                        "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_refund_payment_path)}").to_return do |_request|
     ```
 
-  * **Line # 1641 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
+  * **Line # 54 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
 
     ```rb
           it { expect { req }.to change { Log::DeliveredEmail.count }.by(1) }
     ```
 
-  * **Line # 1649 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+  * **Line # 62 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
 
     ```rb
               let!(:payment) { create(:reservation_payment, status: payment_status, reservation:) }
     ```
 
-  * **Line # 1651 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+  * **Line # 64 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
 
     ```rb
               it  { expect { req }.not_to(change { ReservationPayment.count }) }
     ```
 
-  * **Line # 1652 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 65 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
               it  { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1654 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
+  * **Line # 67 - convention:** RSpec/ExpectChange: Prefer `change(Log::DeliveredEmail, :count)`.
 
     ```rb
               it { expect { req }.to change { Log::DeliveredEmail.count }.by(1) }
     ```
 
-  * **Line # 1678 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+  * **Line # 91 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
 
     ```rb
             it  { expect { req }.not_to(change { ReservationPayment.count }) }
     ```
 
-  * **Line # 1679 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 92 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
             it  { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1697 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+  * **Line # 110 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
 
     ```rb
               it  { expect { req }.not_to(change { ReservationPayment.count }) }
     ```
 
-  * **Line # 1698 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 111 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
               it  { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1713 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+  * **Line # 126 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
 
     ```rb
             it  { expect { req }.not_to(change { ReservationPayment.count }) }
     ```
 
-  * **Line # 1714 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+  * **Line # 127 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
 
     ```rb
             it  { expect { req }.not_to(change { Reservation.count }) }
     ```
 
-  * **Line # 1733 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 146 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
             [ ...
     ```
 
-  * **Line # 1766 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+  * **Line # 179 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
 
     ```rb
             [ ...
     ```
 
-  * **Line # 1798 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 211 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 1830 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+  * **Line # 243 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
 
     ```rb
               allow_any_instance_of(Reservation).to receive(:cancelled!).and_return(false)
     ```
 
-  * **Line # 1833 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
+  * **Line # 246 - convention:** RSpec/AnyInstance: Avoid stubbing using `allow_any_instance_of`.
 
     ```rb
               allow_any_instance_of(Reservation).to receive(:errors).and_return(errors)
     ```
 
-  * **Line # 1839 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 252 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it "renders errors" do
     ```
 
-  * **Line # 1855 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+### spec/controllers/v1/reservations_controller/reservations_controller.create_spec.rb - (196 offenses)
+  * **Line # 10 - convention:** RSpec/SharedContext: Use `shared_examples` when you don't define context.
 
     ```rb
-          expect(subject).to route(:get, "/v1/reservations/supersecret").to(format: :json, action: :show, controller: "v1/reservations",
+    RSpec.shared_context "SUCCESSFUL V1::ReservationsController POST #create" do |options = {}|
     ```
 
-  * **Line # 1855 - convention:** Layout/LineLength: Line is too long. [132/120]
+  * **Line # 45 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
 
     ```rb
-          expect(subject).to route(:get, "/v1/reservations/supersecret").to(format: :json, action: :show, controller: "v1/reservations",
+        it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     ```
 
-  * **Line # 1880 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 67 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
+  * **Line # 114 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:post, "/v1/reservations").to(format: :json, action: :create,
+    ```
+
+  * **Line # 126 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+          it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 128 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+
+    ```rb
+          context do ...
+    ```
+
+  * **Line # 140 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+          it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 142 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+
+    ```rb
+          context do ...
+    ```
+
+  * **Line # 154 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+          it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 156 - convention:** RSpec/MissingExampleGroupArgument: The first argument to `context` should not be empty.
+
+    ```rb
+          context do ...
+    ```
+
+  * **Line # 172 - convention:** Layout/LineLength: Line is too long. [129/120]
+
+    ```rb
+          context "when providing a #{scenario[:name]} date, should create a reservation for turn with weekday=#{scenario[:wday]}" do
+    ```
+
+  * **Line # 174 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+            let!(:turn) do
+    ```
+
+  * **Line # 184 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+          let!(:turn) do
+    ```
+
+  * **Line # 203 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { doit }.to(change { Reservation.count }) }
+    ```
+
+  * **Line # 220 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+              it { expect { doit }.to(change { Reservation.count }) }
+    ```
+
+  * **Line # 238 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+              it { expect { doit }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 254 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+          let!(:turn) do
+    ```
+
+  * **Line # 325 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it do
+    ```
+
+  * **Line # 351 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it do
+    ```
+
+  * **Line # 358 - convention:** Layout/LineLength: Line is too long. [122/120]
+
+    ```rb
+        context "when a 'weekly' Holiday exists (closed only on the morning while the reservation is made for the evening)" do
+    ```
+
+  * **Line # 359 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+          let!(:holiday) do
+    ```
+
+  * **Line # 372 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it do
+    ```
+
+  * **Line # 387 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+              it do
+    ```
+
+  * **Line # 397 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+          let!(:holiday) do
+    ```
+
+  * **Line # 410 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it do
+    ```
+
+  * **Line # 420 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+          it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 422 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it do
+    ```
+
+  * **Line # 433 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 436 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 1893 - convention:** RSpec/ExampleLength: Example has too many lines. [13/5]
+  * **Line # 448 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 450 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 466 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 468 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 479 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 481 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 503 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 505 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 516 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 518 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 530 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
+    ```
+
+  * **Line # 533 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
+
+    ```rb
+                body: File.read(Rails.root.join("spec", "fixtures", "nexi-error-page.html"))
+    ```
+
+  * **Line # 555 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 556 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 557 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 560 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 571 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
+    ```
+
+  * **Line # 596 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 597 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 598 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 601 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 612 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
+    ```
+
+  * **Line # 620 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
+
+    ```rb
+            File.read(Rails.root.join("spec", "fixtures", "nexi-unauthorized-page.html"))
+    ```
+
+  * **Line # 634 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 635 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 636 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 659 - convention:** Layout/LineLength: Line is too long. [127/120]
+
+    ```rb
+                         "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_simple_payment_path)}").to_return do |_request|
+    ```
+
+  * **Line # 667 - convention:** Rails/FilePath: Prefer `Rails.root.join('path/to')`.
+
+    ```rb
+            File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
+    ```
+
+  * **Line # 679 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 681 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+    ```
+
+  * **Line # 682 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 700 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 701 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+    ```
+
+  * **Line # 702 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 723 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 724 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+    ```
+
+  * **Line # 725 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 728 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+              req 
+    ```
+
+  * **Line # 729 - convention:** Layout/LineLength: Line is too long. [126/120]
+
+    ```rb
+              expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "payment_required_to_confirm",
+    ```
+
+  * **Line # 730 - convention:** Layout/LineLength: Line is too long. [128/120]
+
+    ```rb
+                                                                               "deliver_now", params: anything, args: anything).once
+    ```
+
+  * **Line # 733 - convention:** RSpec/ExampleLength: Example has too many lines. [23/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 733 - convention:** RSpec/MultipleExpectations: Example has too many expectations [22/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 756 - convention:** Layout/LineLength: Line is too long. [144/120]
+
+    ```rb
+              expect(Nexi::HttpRequest.last.request_body.dig!("urlpost")).to eq(Rails.application.routes.url_helpers.nexi_receive_order_outcome_url)
+    ```
+
+  * **Line # 759 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 772 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 775 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 777 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 783 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 793 - convention:** Style/SingleArgumentDig: Use `Nexi::HttpRequest.last.request_body["languageId"]` instead of `Nexi::HttpRequest.last.request_body.dig("languageId")`.
+
+    ```rb
+                  expect(Nexi::HttpRequest.last.request_body.dig("languageId")).to eq(scenario[:code])
+    ```
+
+  * **Line # 828 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 830 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+    ```
+
+  * **Line # 836 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
+
+    ```rb
+                    expect(Reservation.where(table_type:).pluck(:adults, :children).flatten.sum).to eq 15
+    ```
+
+  * **Line # 837 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
+
+    ```rb
+                    expect(Reservation.pluck(:adults, :children).flatten.sum).to eq 15
+    ```
+
+  * **Line # 840 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+                  it do
+    ```
+
+  * **Line # 868 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_18) { "#{date.to_date} 18:00" }
+    ```
+
+  * **Line # 868 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_18) { "#{date.to_date} 18:00" }
+    ```
+
+  * **Line # 869 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_21) { "#{date.to_date} 21:00" }
+    ```
+
+  * **Line # 869 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_21) { "#{date.to_date} 21:00" }
+    ```
+
+  * **Line # 872 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
+
+    ```rb
+                        expect do
+    ```
+
+  * **Line # 879 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                      it do
+    ```
+
+  * **Line # 907 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_18) { "#{date.to_date} 18:00" }
+    ```
+
+  * **Line # 907 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_18) { "#{date.to_date} 18:00" }
+    ```
+
+  * **Line # 908 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_1830) { "#{date.to_date} 18:30" }
+    ```
+
+  * **Line # 908 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_1830) { "#{date.to_date} 18:30" }
+    ```
+
+  * **Line # 909 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_21) { "#{date.to_date} 21:00" }
+    ```
+
+  * **Line # 909 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_21) { "#{date.to_date} 21:00" }
+    ```
+
+  * **Line # 910 - convention:** RSpec/IndexedLet: This `let` statement uses index in its name. Please give it a meaningful name.
+
+    ```rb
+                      let(:datetime_2130) { "#{date.to_date} 21:30" }
+    ```
+
+  * **Line # 910 - convention:** Naming/VariableNumber: Use normalcase for symbol numbers.
+
+    ```rb
+                      let(:datetime_2130) { "#{date.to_date} 21:30" }
+    ```
+
+  * **Line # 912 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+                      let!(:turn) do
+    ```
+
+  * **Line # 917 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+                      let!(:turn2) do
+    ```
+
+  * **Line # 932 - convention:** Performance/CollectionLiteralInLoop: Avoid immutable Array literals in loops. It is better to extract it into a local variable or a constant.
+
+    ```rb
+                        Reservation.all.each { |r| r.update!(status: %w[deleted cancelled].sample) }
+    ```
+
+  * **Line # 941 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
+
+    ```rb
+                        expect do
+    ```
+
+  * **Line # 945 - convention:** RSpec/ExpectInHook: Do not use `expect` in `before` hook
+
+    ```rb
+                        expect do
+    ```
+
+  * **Line # 956 - convention:** Layout/LineLength: Line is too long. [124/120]
+
+    ```rb
+              context "when base payment requires an authorization, if table_type is specified will create a payment instead" do
+    ```
+
+  * **Line # 957 - convention:** RSpec/EmptyLineAfterHook: Add an empty line after `before`.
+
+    ```rb
+                before { group.update!(preorder_type: :nexi_authorization) }
+    ```
+
+  * **Line # 965 - convention:** Layout/LineLength: Line is too long. [139/120]
+
+    ```rb
+              context "when base payment requires an authorization, if table_type is not present will create an authorization (as expected)" do
+    ```
+
+  * **Line # 974 - convention:** RSpec/EmptyLineAfterHook: Add an empty line after `before`.
+
+    ```rb
+                before { group.update!(preorder_type: :nexi_payment) }
+    ```
+
+  * **Line # 974 - convention:** Layout/LineLength: Line is too long. [123/120]
+
+    ```rb
+              context "when base payment requires a payment, if table_type is specified will create a payment (as expected)" do
+    ```
+
+  * **Line # 981 - convention:** RSpec/EmptyLineAfterHook: Add an empty line after `before`.
+
+    ```rb
+                before { group.update!(preorder_type: :nexi_payment) }
+    ```
+
+  * **Line # 982 - convention:** Layout/LineLength: Line is too long. [125/120]
+
+    ```rb
+              context "when base payment requires a payment, if table_type is not present will create a payment (as expected)" do
+    ```
+
+  * **Line # 1007 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 1015 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1022 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1023 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 1029 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1036 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1037 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 1043 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1050 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1051 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 1086 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 1087 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+    ```
+
+  * **Line # 1088 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
+    ```
+
+  * **Line # 1090 - convention:** RSpec/ExampleLength: Example has too many lines. [8/5]
+
+    ```rb
+                it do ...
+    ```
+
+  * **Line # 1090 - convention:** RSpec/MultipleExpectations: Example has too many expectations [7/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1101 - convention:** RSpec/ExampleLength: Example has too many lines. [6/5]
+
+    ```rb
+                it do ...
+    ```
+
+  * **Line # 1101 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1110 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1127 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 1128 - convention:** RSpec/ExpectChange: Prefer `change(ReservationPayment, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { ReservationPayment.count }) }
+    ```
+
+  * **Line # 1129 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::HttpRequest, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
+    ```
+
+  * **Line # 1141 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+                it do
+    ```
+
+  * **Line # 1161 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+          it "creates a reservation" do
+    ```
+
+  * **Line # 1170 - convention:** Layout/LineLength: Line is too long. [121/120]
+
+    ```rb
+                                                                             "deliver_now", params: anything, args: anything)
+    ```
+
+  * **Line # 1191 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+            let!(:turn) do
+    ```
+
+  * **Line # 1196 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1207 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1218 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 1235 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to(change { Reservation.count }.by(1)) }
+    ```
+
+  * **Line # 1262 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+                it "returns 422" do
+    ```
+
+  * **Line # 1286 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+                it "returns 422" do
+    ```
+
+  * **Line # 1301 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1314 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1326 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1339 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1351 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1362 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1373 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1384 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1395 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1406 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1417 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 1419 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "returns 200 and create record" do
+    ```
+
+  * **Line # 1429 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 1431 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "returns 200 and create record" do
+    ```
+
+  * **Line # 1441 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 1443 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it "returns 200 and create record" do
+    ```
+
+  * **Line # 1450 - convention:** Layout/LineLength: Line is too long. [129/120]
+
+    ```rb
+          context 'should create a reservation with "<firstname> <lastname>" as fullname and save the detail in the "other" field' do
+    ```
+
+  * **Line # 1454 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "creates a reservation" do
+    ```
+
+  * **Line # 1467 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "creates a reservation" do
+    ```
+
+  * **Line # 1480 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "creates a reservation" do
+    ```
+
+  * **Line # 1489 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1551]
+
+    ```rb
+          context "when email is empty" do ...
+    ```
+
+  * **Line # 1489 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1551]
+
+    ```rb
+          context "when email is empty" do ...
+    ```
+
+  * **Line # 1492 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1494 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1502 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1564]
+
+    ```rb
+          context "when email is nil" do ...
+    ```
+
+  * **Line # 1502 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1564]
+
+    ```rb
+          context "when email is nil" do ...
+    ```
+
+  * **Line # 1505 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1507 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1515 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1577]
+
+    ```rb
+          context "when email is invalid" do ...
+    ```
+
+  * **Line # 1515 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1577]
+
+    ```rb
+          context "when email is invalid" do ...
+    ```
+
+  * **Line # 1525 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1527 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it "returns 422" do
+    ```
+
+  * **Line # 1538 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+            let!(:reservation) { create(:reservation, datetime:, email:) }
+    ```
+
+  * **Line # 1540 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1542 - convention:** RSpec/MultipleExpectations: Example has too many expectations [4/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1551 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1489]
+
+    ```rb
+          context "when email is empty" do ...
+    ```
+
+  * **Line # 1551 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1489]
+
+    ```rb
+          context "when email is empty" do ...
+    ```
+
+  * **Line # 1554 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1556 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1564 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1502]
+
+    ```rb
+          context "when email is nil" do ...
+    ```
+
+  * **Line # 1564 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1502]
+
+    ```rb
+          context "when email is nil" do ...
+    ```
+
+  * **Line # 1567 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1569 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1577 - convention:** RSpec/RepeatedExampleGroupBody: Repeated context block body on line(s) [1515]
+
+    ```rb
+          context "when email is invalid" do ...
+    ```
+
+  * **Line # 1577 - convention:** RSpec/RepeatedExampleGroupDescription: Repeated context block description on line(s) [1515]
+
+    ```rb
+          context "when email is invalid" do ...
+    ```
+
+  * **Line # 1587 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1589 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it "returns 422" do
+    ```
+
+  * **Line # 1602 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1604 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1615 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+            it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1617 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+            it "returns 422" do
+    ```
+
+  * **Line # 1637 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.not_to(change { Reservation.count }) }
+    ```
+
+  * **Line # 1639 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
+
+    ```rb
+                it "returns 422" do
+    ```
+
+  * **Line # 1672 - convention:** RSpec/ExpectChange: Prefer `change(Reservation, :count)`.
+
+    ```rb
+                it { expect { req }.to change { Reservation.count }.by(1) }
+    ```
+
+  * **Line # 1680 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+                it "returns 200" do
+    ```
+
+  * **Line # 1687 - convention:** Layout/TrailingEmptyLines: Final newline missing.
+
+    ```rb
+    end
+    ```
+
+### spec/controllers/v1/reservations_controller/reservations_controller.show_spec.rb - (8 offenses)
+  * **Line # 5 - convention:** RSpec/FilePath: Spec path should end with `v1/reservations_controller*_spec.rb`.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
+  * **Line # 5 - convention:** RSpec/SpecFilePathFormat: Spec path should end with `v1/reservations_controller*_spec.rb`.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
+  * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
+
+    ```rb
+    RSpec.describe V1::ReservationsController, type: :controller do
+    ```
+
+  * **Line # 18 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+          expect(subject).to route(:get, "/v1/reservations/supersecret").to(format: :json, action: :show, controller: "v1/reservations",
+    ```
+
+  * **Line # 18 - convention:** Layout/LineLength: Line is too long. [132/120]
+
+    ```rb
+          expect(subject).to route(:get, "/v1/reservations/supersecret").to(format: :json, action: :show, controller: "v1/reservations",
+    ```
+
+  * **Line # 43 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 56 - convention:** RSpec/ExampleLength: Example has too many lines. [13/5]
 
     ```rb
               it { ...
     ```
 
-  * **Line # 1894 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 57 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
                 expect(subject).to include(
@@ -18096,44 +18391,74 @@
             subject
     ```
 
-### spec/interactions/fetch_reservation_payment_status_spec.rb - (7 offenses)
-  * **Line # 29 - convention:** Layout/LineLength: Line is too long. [121/120]
+### spec/interactions/fetch_reservation_payment_status_spec.rb - (12 offenses)
+  * **Line # 30 - convention:** Layout/LineLength: Line is too long. [121/120]
 
     ```rb
                      "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_order_status_path)}").to_return do |_request|
     ```
 
-  * **Line # 47 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 47 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-            it do
+        it { expect { subject }.not_to(change { reservation_payment.reload.status }) }
     ```
 
   * **Line # 48 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
-              expect { subject }.to(change { reservation_payment.reload.status }.from("todo").to("paid"))
+        it { expect { subject }.not_to(change { reservation_payment.reload.as_json }) }
     ```
 
-  * **Line # 59 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 61 - convention:** RSpec/ExampleLength: Example has too many lines. [11/5]
+
+    ```rb
+            it do ...
+    ```
+
+  * **Line # 61 - convention:** RSpec/MultipleExpectations: Example has too many expectations [3/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 60 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 63 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to(change do
+    ```
+
+  * **Line # 68 - convention:** RSpec/RepeatedSubjectCall: Calls to subject are memoized, this block is misleading
+
+    ```rb
+                expect { subject }.to(change do
+    ```
+
+  * **Line # 68 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+
+    ```rb
+                expect { subject }.to(change do
+    ```
+
+  * **Line # 82 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+            it do
+    ```
+
+  * **Line # 83 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               expect { subject }.not_to(change { reservation_payment.reload.status }.from("todo"))
     ```
 
-  * **Line # 71 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+  * **Line # 94 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
             it do
     ```
 
-  * **Line # 72 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
+  * **Line # 95 - convention:** RSpec/NamedSubject: Name your test subject if you need to reference it explicitly.
 
     ```rb
               expect { subject }.to(change { reservation_payment.reload.status }.from("todo").to("refunded"))
@@ -21719,25 +22044,6 @@
 
     ```rb
           [ ...
-    ```
-
-### spec/mailers/reservation_mailer/reservation_mailer.payment_received_spec.rb - (3 offenses)
-  * **Line # 66 - convention:** Performance/Detect: Use `reverse.find` instead of `filter.last`.
-
-    ```rb
-          mail_to = mail.to_s.split("\n").flatten.filter { |j| j.starts_with?("To:") }.last
-    ```
-
-  * **Line # 122 - convention:** Layout/LineLength: Line is too long. [125/120]
-
-    ```rb
-                                                                                   fullname: reservation.fullname, locale: lang))
-    ```
-
-  * **Line # 127 - convention:** Layout/LineLength: Line is too long. [130/120]
-
-    ```rb
-                                                                              "reservation_mailer.payment_received.body", locale: lang
     ```
 
 ### spec/mailers/reservation_mailer/reservation_mailer.remind_payment_spec.rb - (5 offenses)
@@ -26030,6 +26336,19 @@
               body: File.read(Rails.root.join("spec", "fixtures", "nexi-unauthorized-page.html"))
     ```
 
+### spec/requests/v1/admin/reservations_controller/reservations_controller.record_deferred_payment_spec.rb - (2 offenses)
+  * **Line # 78 - convention:** RSpec/LetSetup: Do not use `let!` to setup objects not referenced in tests.
+
+    ```rb
+      let!(:reservation_payment) do
+    ```
+
+  * **Line # 90 - convention:** Layout/LineLength: Line is too long. [124/120]
+
+    ```rb
+                     "#{Config.app.dig!(:nexi_api_url)}/#{Config.app.dig!(:nexi_record_deferred_path)}").to_return do |_request|
+    ```
+
 ### spec/requests/v1/admin/reservations_controller/reservations_controller.refresh_payment_status_spec.rb - (15 offenses)
   * **Line # 62 - convention:** Layout/LineLength: Line is too long. [121/120]
 
@@ -26644,7 +26963,7 @@
                           :password)).to be_present.and(be_a(Array)).and(include(I18n.t("errors.messages.invalid_password")))
     ```
 
-### spec/requests/v1/nexi_controller/nexi_controller.receive_order_outcome_spec.rb - (14 offenses)
+### spec/requests/v1/nexi_controller/nexi_controller.receive_order_outcome_spec.rb - (132 offenses)
   * **Line # 5 - convention:** RSpec/Rails/InferredSpecType: Remove redundant spec type.
 
     ```rb
@@ -26705,28 +27024,736 @@
         it do
     ```
 
-  * **Line # 108 - convention:** RSpec/ExampleLength: Example has too many lines. [7/5]
-
-    ```rb
-        it do ...
-    ```
-
-  * **Line # 108 - convention:** RSpec/MultipleExpectations: Example has too many expectations [5/1].
+  * **Line # 108 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
 
     ```rb
         it do
     ```
 
-  * **Line # 149 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::OrderOutcomeRequest, :count)`.
+  * **Line # 119 - convention:** RSpec/MultipleExpectations: Example has too many expectations [2/1].
+
+    ```rb
+        it do
+    ```
+
+  * **Line # 132 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 132 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 132 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
+    ```
+
+  * **Line # 133 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 133 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
+    ```
+
+  * **Line # 133 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
+    ```
+
+  * **Line # 133 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 133 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
+    ```
+
+  * **Line # 133 - convention:** Layout/BlockEndNewline: Expression at 133, 79 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
+    ```
+
+  * **Line # 134 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione")
+    ```
+
+  * **Line # 134 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione")
+    ```
+
+  * **Line # 134 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione")
+    ```
+
+  * **Line # 134 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 134 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 135 - convention:** Layout/BlockAlignment: `}` at 135, 0 is not aligned with `it { ` at 132, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 135 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
+    ```
+
+  * **Line # 135 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
+    ```
+
+  * **Line # 135 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
+    ```
+
+  * **Line # 135 - convention:** Layout/BlockEndNewline: Expression at 135, 78 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
+    ```
+
+  * **Line # 136 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 136 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 137 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 137 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 137 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 137 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+          it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato") }
+    ```
+
+  * **Line # 137 - convention:** Layout/BlockEndNewline: Expression at 137, 90 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 138 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 138 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 138 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 139 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
+    ```
+
+  * **Line # 139 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
+    ```
+
+  * **Line # 139 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.subject).to include("registrata")
+    ```
+
+  * **Line # 139 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.subject).to include("registrata")
+    ```
+
+  * **Line # 139 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.subject).to include("registrata")
+    ```
+
+  * **Line # 139 - convention:** Layout/BlockEndNewline: Expression at 139, 94 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
+    ```
+
+  * **Line # 140 - convention:** Layout/BlockAlignment: `}` at 140, 0 is not aligned with `it { ` at 137, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 140 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 141 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 141 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 141 - convention:** Layout/BlockEndNewline: Expression at 141, 90 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
+    ```
+
+  * **Line # 142 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 142 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+          it { req ...
+    ```
+
+  * **Line # 143 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 143 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato") }
+    ```
+
+  * **Line # 143 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 143 - convention:** Layout/BlockEndNewline: Expression at 143, 94 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato") }
+    ```
+
+  * **Line # 144 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento")
+    ```
+
+  * **Line # 144 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento")
+    ```
+
+  * **Line # 144 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento")
+    ```
+
+  * **Line # 145 - convention:** Layout/BlockAlignment: `}` at 145, 0 is not aligned with `it { ` at 142, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 147 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 148 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 148 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 149 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato")
+    ```
+
+  * **Line # 149 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato")
+    ```
+
+  * **Line # 149 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato")
+    ```
+
+  * **Line # 150 - convention:** Layout/BlockAlignment: `}` at 150, 0 is not aligned with `it { ` at 147, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 152 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 153 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 153 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 154 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento")
+    ```
+
+  * **Line # 154 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento")
+    ```
+
+  * **Line # 154 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento")
+    ```
+
+  * **Line # 155 - convention:** Layout/BlockAlignment: `}` at 155, 0 is not aligned with `it { ` at 152, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 157 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+          it { 
+    ```
+
+  * **Line # 158 - convention:** Layout/IndentationWidth: Use 2 (not 8) spaces for indentation.
+
+    ```rb
+            req
+    ```
+
+  * **Line # 158 - convention:** Layout/IndentationWidth: Use 2 (not -4) spaces for indentation.
+
+    ```rb
+      req ...
+    ```
+
+  * **Line # 159 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato")
+    ```
+
+  * **Line # 159 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+            expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato")
+    ```
+
+  * **Line # 159 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+               expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato")
+    ```
+
+  * **Line # 160 - convention:** Layout/BlockAlignment: `}` at 160, 0 is not aligned with `it { ` at 157, 6.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 177 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::OrderOutcomeRequest, :count)`.
 
     ```rb
           it { expect { req }.to(change { Nexi::OrderOutcomeRequest.count }.by(1)) }
     ```
 
-  * **Line # 169 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::OrderOutcomeRequest, :count)`.
+  * **Line # 197 - convention:** RSpec/ExpectChange: Prefer `change(Nexi::OrderOutcomeRequest, :count)`.
 
     ```rb
         it { expect { req }.to(change { Nexi::OrderOutcomeRequest.count }.by(1)) }
+    ```
+
+  * **Line # 216 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+        it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 217 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+        it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 222 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+        it { req ...
+    ```
+
+  * **Line # 223 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 223 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 223 - convention:** Layout/BlockEndNewline: Expression at 223, 91 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 224 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+        it { req ...
+    ```
+
+  * **Line # 225 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 225 - convention:** Layout/BlockEndNewline: Expression at 225, 91 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization") }
+    ```
+
+  * **Line # 232 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+        it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 233 - convention:** Style/Semicolon: Do not use semicolons to terminate expressions.
+
+    ```rb
+        it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 239 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+        it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
+    ```
+
+  * **Line # 239 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+        it { 
+    ```
+
+  * **Line # 240 - convention:** Layout/IndentationWidth: Use 2 (not 6) spaces for indentation.
+
+    ```rb
+          req
+    ```
+
+  * **Line # 240 - convention:** Layout/IndentationWidth: Use 2 (not -2) spaces for indentation.
+
+    ```rb
+      req
+    ```
+
+  * **Line # 240 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+        it { req ...
+    ```
+
+  * **Line # 241 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 241 - convention:** RSpec/EmptyLineAfterExample: Add an empty line after `it`.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 241 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 241 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+          expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 241 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+             expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 241 - convention:** Layout/BlockEndNewline: Expression at 241, 85 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 242 - convention:** Layout/BlockAlignment: `}` at 242, 0 is not aligned with `it { ` at 239, 4.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 242 - convention:** Layout/MultilineBlockLayout: Block body expression is on the same line as the block start.
+
+    ```rb
+        it { req ...
+    ```
+
+  * **Line # 243 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 243 - convention:** Layout/BlockEndNewline: Expression at 243, 85 should be on its own line.
+
+    ```rb
+     expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment") }
+    ```
+
+  * **Line # 244 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+        it { 
+    ```
+
+  * **Line # 245 - convention:** Layout/IndentationWidth: Use 2 (not 6) spaces for indentation.
+
+    ```rb
+          req
+    ```
+
+  * **Line # 245 - convention:** Layout/IndentationWidth: Use 2 (not -2) spaces for indentation.
+
+    ```rb
+      req
+    ```
+
+  * **Line # 246 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 246 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+          expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 246 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+             expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization")
+    ```
+
+  * **Line # 247 - convention:** Layout/BlockAlignment: `}` at 247, 0 is not aligned with `it { ` at 244, 4.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 263 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+        it { 
+    ```
+
+  * **Line # 264 - convention:** Layout/IndentationWidth: Use 2 (not 6) spaces for indentation.
+
+    ```rb
+          req
+    ```
+
+  * **Line # 264 - convention:** Layout/IndentationWidth: Use 2 (not -2) spaces for indentation.
+
+    ```rb
+      req
+    ```
+
+  * **Line # 265 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment")
+    ```
+
+  * **Line # 265 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+          expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment")
+    ```
+
+  * **Line # 265 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+             expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment")
+    ```
+
+  * **Line # 266 - convention:** Layout/BlockAlignment: `}` at 266, 0 is not aligned with `it { ` at 263, 4.
+
+    ```rb
+    }
+    ```
+
+  * **Line # 268 - convention:** Layout/TrailingWhitespace: Trailing whitespace detected.
+
+    ```rb
+        it { 
+    ```
+
+  * **Line # 269 - convention:** Layout/IndentationWidth: Use 2 (not 6) spaces for indentation.
+
+    ```rb
+          req
+    ```
+
+  * **Line # 269 - convention:** Layout/IndentationWidth: Use 2 (not -2) spaces for indentation.
+
+    ```rb
+      req
+    ```
+
+  * **Line # 270 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+      expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment")
+    ```
+
+  * **Line # 270 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+          expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment")
+    ```
+
+  * **Line # 270 - convention:** Layout/IndentationConsistency: Inconsistent indentation detected.
+
+    ```rb
+             expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment")
+    ```
+
+  * **Line # 271 - convention:** Layout/BlockAlignment: `}` at 271, 0 is not aligned with `it { ` at 268, 4.
+
+    ```rb
+    }
     ```
 
 ### spec/requests/v1/profile_controller/profile_controller.destroy_spec.rb - (1 offense)
