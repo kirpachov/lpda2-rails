@@ -20,6 +20,8 @@ class PublicCancelReservation < ActiveInteraction::Base
 
     refund_reservation
 
+    ReservationsChannel.notify_cancellation(reservation_id: reservation.id)
+
     notify_customer
 
     reservation.reload
