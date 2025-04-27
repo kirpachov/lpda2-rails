@@ -65,6 +65,10 @@ class Reservation < ApplicationRecord
     self.other = {} if other.nil?
   end
 
+  after_update_commit do
+    ReservationsChannel.notify_update(reservation_id: id)
+  end
+
   # ################################
   # Scopes
   # ################################

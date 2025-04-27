@@ -2,6 +2,27 @@
 
 require "rails_helper"
 
+RSpec.shared_examples "SUCCESSFUL V1::ReservationsController PATCH #cancel" do |_options = {}|
+  it do
+    allow(ReservationsChannel).to receive(:notify_cancellation).and_call_original
+    req
+    expect(ReservationsChannel).to have_received(:notify_cancellation).once
+  end
+
+  it do
+    req
+    expect(json).not_to include(:message)
+  end
+
+  it do
+    req
+    expect(response).to have_http_status(:ok)
+  end
+
+  it { expect { req }.not_to(change(Reservation, :count)) }
+  it { expect { req }.to(change { Reservation.cancelled.count }.by(1)) }
+end
+
 RSpec.describe V1::ReservationsController, type: :controller do
   let(:instance) { described_class.new }
 
@@ -61,6 +82,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         context "when reservation has a payment in status #{payment_status.inspect}" do
           let!(:payment) { create(:reservation_payment, status: payment_status, reservation:) }
 
+          it_behaves_like "SUCCESSFUL V1::ReservationsController PATCH #cancel"
+
           it  { expect { req }.not_to(change { ReservationPayment.count }) }
           it  { expect { req }.not_to(change { Reservation.count }) }
           it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
@@ -88,6 +111,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
       context "when reservation payment is paid" do
         before { payment.paid! }
 
+        it_behaves_like "SUCCESSFUL V1::ReservationsController PATCH #cancel"
+
         it  { expect { req }.not_to(change { ReservationPayment.count }) }
         it  { expect { req }.not_to(change { Reservation.count }) }
 
@@ -107,6 +132,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         context "when reservation payment is paid" do
           before { payment.update!(status: payment_status) }
 
+          it_behaves_like "SUCCESSFUL V1::ReservationsController PATCH #cancel"
+
           it  { expect { req }.not_to(change { ReservationPayment.count }) }
           it  { expect { req }.not_to(change { Reservation.count }) }
 
@@ -122,6 +149,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when reservation has no payment" do
         before { reservation.payment.destroy }
+
+        it_behaves_like "SUCCESSFUL V1::ReservationsController PATCH #cancel"
 
         it  { expect { req }.not_to(change { ReservationPayment.count }) }
         it  { expect { req }.not_to(change { Reservation.count }) }

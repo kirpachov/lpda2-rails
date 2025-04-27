@@ -9,6 +9,12 @@ require "rails_helper"
 # include_context "SUCCESSFUL V1::ReservationsController POST #create", payment: { deferred: true }
 RSpec.shared_context "SUCCESSFUL V1::ReservationsController POST #create" do |options = {}|
   it do
+    allow(ReservationsChannel).to receive(:notify_creation).and_call_original
+    req
+    expect(ReservationsChannel).to have_received(:notify_creation).once
+  end
+
+  it do
     req
     expect(json).not_to include(:message)
   end
