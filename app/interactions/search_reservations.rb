@@ -24,7 +24,9 @@ class SearchReservations < ActiveInteraction::Base
                 filter_by_created_at(
                   filter_by_table_types(
                     filter_by_payment_status(
-                      order(items)
+                      filter_by_preorder_type(
+                        order(items)
+                      )
                     )
                   )
                 )
@@ -37,6 +39,12 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def filter_by_preorder_type(items)
+    return items if params[:preorder_type].blank?
+
+    items.where(id: ReservationPayment.where(preorder_type: params[:preorder_type].to_s.split(",")).select(:reservation_id))
+  end
 
   def filter_by_payment_status(items)
     return items if params[:payment_status].blank?

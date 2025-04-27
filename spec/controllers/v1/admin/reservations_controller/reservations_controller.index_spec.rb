@@ -92,6 +92,52 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context "when filtering by preorder_type" do
+        let!(:reservation_without_payment) { create(:reservation, payment: nil) }
+
+        let!(:reservation_with_authorization) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_authorization, reservation: r, status: [:todo, :paid, :authorized, :refunded].sample)
+          end
+        end
+
+        let!(:reservation_with_payment) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_payment, reservation: r, status: [:todo, :paid, :authorized, :refunded].sample)
+          end
+        end
+
+        context "when filtering by preorder_type: 'html_nexi_authorization', will return reservations that have html_nexi_authorization payment type" do
+          before { req(preorder_type: "html_nexi_authorization") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_authorization.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(eq("html_nexi_authorization")) }
+        end
+
+        context "when filtering by preorder_type: 'html_nexi_payment', will return reservations that have html_nexi_payment payment type" do
+          before { req(preorder_type: "html_nexi_payment") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_payment.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(eq("html_nexi_payment")) }
+        end
+
+        context "when filtering by preorder_type: <nil>: will return all reservations, no filters applied" do
+          before { req(preorder_type: [nil, "", " "].sample) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_authorization.id, reservation_with_payment.id, reservation_without_payment.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(3) }
+          # it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(be_present) }
+        end
+      end
+
       context "when filtering by payment_status" do
         let!(:reservation_todo) do
           create(:reservation, payment: p).tap do |r|
@@ -130,7 +176,6 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           it { expect(json[:metadata][:total_count]).to eq(1) }
           it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("todo")) }
         end
-
 
         context "when filtering by payment_status: 'todo,paid', will return reservations that have todo payment status" do
           before { req(payment_status: "todo,paid") }
