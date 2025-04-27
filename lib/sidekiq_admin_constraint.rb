@@ -2,7 +2,7 @@
 
 class SidekiqAdminConstraint
   def self.matches?(request)
-    cookies = ActionDispatch::Cookies::CookieJar.build(request, request.cookies)
+    ActionDispatch::Cookies::CookieJar.build(request, request.cookies)
     # byebug
     true
     # return false unless cookies.encrypted[:refresh_token].present?

@@ -88,13 +88,20 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         context "response[:items][0]" do
           subject { parsed_response_body[:items][0] }
 
-          it_behaves_like "V1::Admin::ReservationsController#index item structure", phone: true, email: true, notes: true
+          it_behaves_like "V1::Admin::ReservationsController#index item structure", phone: true, email: true,
+                                                                                    notes: true
         end
       end
 
       context "when filtering by payment_external_id" do
-        let!(:payment1) { create(:reservation_payment, :with_hpp_url, status: [:todo, :paid, :authorized, :refunded].sample, preorder_type: [:html_nexi_authorization, :html_nexi_payment].sample, reservation: reservation1) }
-        let!(:payment2) { create(:reservation_payment, :with_hpp_url, status: [:todo, :paid, :authorized, :refunded].sample, preorder_type: [:html_nexi_authorization, :html_nexi_payment].sample, reservation: reservation2) }
+        let!(:payment1) do
+          create(:reservation_payment, :with_hpp_url, status: %i[todo paid authorized refunded].sample,
+                                                      preorder_type: %i[html_nexi_authorization html_nexi_payment].sample, reservation: reservation1)
+        end
+        let!(:payment2) do
+          create(:reservation_payment, :with_hpp_url, status: %i[todo paid authorized refunded].sample,
+                                                      preorder_type: %i[html_nexi_authorization html_nexi_payment].sample, reservation: reservation2)
+        end
 
         let!(:reservation1) { create(:reservation) }
         let!(:reservation2) { create(:reservation) }
@@ -105,9 +112,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(eq(payment1.external_id)) }
+          it { expect(json[:items].pluck(:payment).pluck(:external_id)).to all(eq(payment1.external_id)) }
         end
 
         context "when filtering by payment_external_id: '<first-part>', will return reservations that have exactly that id" do
@@ -120,9 +127,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id, reservation2.id) }
           it { expect(json[:metadata][:total_count]).to eq(2) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(be_present) }
+          it { expect(json[:items].pluck(:payment).pluck(:external_id)).to all(be_present) }
         end
 
         context "when filtering by payment_external_id: <nil>: will return all reservations, no filters applied" do
@@ -130,7 +137,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id, reservation_without_payment.id]) }
+          it {
+            expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id, reservation2.id,
+                                                               reservation_without_payment.id)
+          }
+
           it { expect(json[:metadata][:total_count]).to eq(3) }
           # it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(be_present) }
         end
@@ -141,13 +152,15 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         let!(:reservation_with_authorization) do
           create(:reservation, payment: p).tap do |r|
-            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_authorization, reservation: r, status: [:todo, :paid, :authorized, :refunded].sample)
+            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_authorization, reservation: r,
+                                                        status: %i[todo paid authorized refunded].sample)
           end
         end
 
         let!(:reservation_with_payment) do
           create(:reservation, payment: p).tap do |r|
-            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_payment, reservation: r, status: [:todo, :paid, :authorized, :refunded].sample)
+            create(:reservation_payment, :with_hpp_url, preorder_type: :html_nexi_payment, reservation: r,
+                                                        status: %i[todo paid authorized refunded].sample)
           end
         end
 
@@ -156,9 +169,12 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_authorization.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_authorization.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(eq("html_nexi_authorization")) }
+
+          it {
+            expect(json[:items].pluck(:payment).pluck(:preorder_type)).to all(eq("html_nexi_authorization"))
+          }
         end
 
         context "when filtering by preorder_type: 'html_nexi_payment', will return reservations that have html_nexi_payment payment type" do
@@ -166,9 +182,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_payment.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_payment.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(eq("html_nexi_payment")) }
+          it { expect(json[:items].pluck(:payment).pluck(:preorder_type)).to all(eq("html_nexi_payment")) }
         end
 
         context "when filtering by preorder_type: <nil>: will return all reservations, no filters applied" do
@@ -176,7 +192,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_authorization.id, reservation_with_payment.id, reservation_without_payment.id]) }
+          it {
+            expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_authorization.id, reservation_with_payment.id,
+                                                               reservation_without_payment.id)
+          }
+
           it { expect(json[:metadata][:total_count]).to eq(3) }
           # it { expect(json[:items].pluck(:payment).map { |j| j[:preorder_type] }).to all(be_present) }
         end
@@ -216,9 +236,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_todo.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("todo")) }
+          it { expect(json[:items].pluck(:payment).pluck(:status)).to all(eq("todo")) }
         end
 
         context "when filtering by payment_status: 'todo,paid', will return reservations that have todo payment status" do
@@ -226,7 +246,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id, reservation_paid.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_todo.id, reservation_paid.id) }
           it { expect(json[:metadata][:total_count]).to eq(2) }
         end
 
@@ -235,9 +255,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_paid.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_paid.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("paid")) }
+          it { expect(json[:items].pluck(:payment).pluck(:status)).to all(eq("paid")) }
         end
 
         context "when filtering by payment_status: 'authorized', will return reservations that have authorized payment status" do
@@ -245,9 +265,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_authorized.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_authorized.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("authorized")) }
+          it { expect(json[:items].pluck(:payment).pluck(:status)).to all(eq("authorized")) }
         end
 
         context "when filtering by payment_status: 'refunded', will return reservations that have refunded payment status" do
@@ -255,9 +275,9 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_refunded.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_refunded.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
-          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("refunded")) }
+          it { expect(json[:items].pluck(:payment).pluck(:status)).to all(eq("refunded")) }
         end
 
         context "when filtering by payment_status: <nil>: will return all reservations, no filters applied" do
@@ -265,7 +285,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id, reservation_paid.id, reservation_authorized.id, reservation_refunded.id, reservation_without_payment.id]) }
+          it {
+            expect(json[:items].pluck(:id)).to contain_exactly(reservation_todo.id, reservation_paid.id,
+                                                               reservation_authorized.id, reservation_refunded.id, reservation_without_payment.id)
+          }
+
           it { expect(json[:metadata][:total_count]).to eq(5) }
           # it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(be_present) }
         end
@@ -283,7 +307,11 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id, reservation_with_table_type_2.id]) }
+          it {
+            expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_table_type.id,
+                                                               reservation_with_table_type_2.id)
+          }
+
           it { expect(json[:metadata][:total_count]).to eq(2) }
           it { expect(json[:items].pluck(:table_type)).to all(be_present) }
         end
@@ -293,7 +321,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([res_without_table_type.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(res_without_table_type.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
           it { expect(json[:items].pluck(:table_type)).to all(be_blank) }
         end
@@ -303,17 +331,21 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_table_type.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
           it { expect(json[:items].pluck(:table_type)).to all(be_present) }
         end
 
         context "when filtering by table_type: '<id-of-table-type>,<id-of-second-table-type>', will return reservations with one of the provided table types associated" do
-          before { req(table_type: table_types.map(&:id).map(&:to_s).join(',')) }
+          before { req(table_type: table_types.map(&:id).map(&:to_s).join(",")) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id, reservation_with_table_type_2.id]) }
+          it {
+            expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_table_type.id,
+                                                               reservation_with_table_type_2.id)
+          }
+
           it { expect(json[:metadata][:total_count]).to eq(2) }
           it { expect(json[:items].pluck(:table_type)).to all(be_present) }
         end
@@ -323,7 +355,7 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
 
-          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation_with_table_type.id) }
           it { expect(json[:metadata][:total_count]).to eq(1) }
           it { expect(json[:items].pluck(:table_type)).to all(be_present) }
         end
@@ -550,7 +582,8 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         context "response[:items][0]" do
           subject { parsed_response_body[:items][0] }
 
-          it_behaves_like "V1::Admin::ReservationsController#index item structure", phone: true, email: true, notes: true
+          it_behaves_like "V1::Admin::ReservationsController#index item structure", phone: true, email: true,
+                                                                                    notes: true
         end
       end
 

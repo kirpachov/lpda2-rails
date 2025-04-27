@@ -37,7 +37,7 @@ module Nexi
         request_purpose: "record_deferred_payment",
         request_record: payment,
 
-        mac_part: "apiKey=#{params[:apiKey]}codiceTransazione=#{params[:codiceTransazione]}divisa=#{params[:divisa]}importo=#{params[:importo]}timeStamp=#{params[:timeStamp]}",
+        mac_part: "apiKey=#{params[:apiKey]}codiceTransazione=#{params[:codiceTransazione]}divisa=#{params[:divisa]}importo=#{params[:importo]}timeStamp=#{params[:timeStamp]}"
       )
 
       errors.merge!(@client.errors)
@@ -55,7 +55,7 @@ module Nexi
         codiceTransazione: payment.external_id,
         importo: (payment.value * 100).to_i.to_s,
         divisa: "978", # divisa 978 => EUR, the only supported rn
-        timeStamp: Time.zone.now.to_i * 1000,
+        timeStamp: Time.zone.now.to_i * 1000
       }
     end
 

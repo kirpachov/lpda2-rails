@@ -46,12 +46,10 @@ class SearchReservations < ActiveInteraction::Base
     return items if params[:payment_external_id].blank?
 
     exact = ReservationPayment.where(external_id: params[:payment_external_id].to_s.split(","))
-    if exact.count > 0
-      return items.where(id: exact.select(:reservation_id))
-    end
+    return items.where(id: exact.select(:reservation_id)) if exact.count > 0
 
     sub = ReservationPayment.where("external_id ILIKE ?", "%#{params[:payment_external_id]}%")
-    return items.where(id: sub.select(:reservation_id))
+    items.where(id: sub.select(:reservation_id))
   end
 
   def filter_by_preorder_type(items)
@@ -74,10 +72,10 @@ class SearchReservations < ActiveInteraction::Base
     return items if param.blank?
 
     # With any table type
-    return items.where.not(table_type: nil) if param.to_s.downcase.in?(["any", "some"])
+    return items.where.not(table_type: nil) if param.to_s.downcase.in?(%w[any some])
 
     # Without any table type
-    return items.where(table_type: nil) if param.to_s.downcase.in?(["none", "no"])
+    return items.where(table_type: nil) if param.to_s.downcase.in?(%w[none no])
 
     # With specific table type
     # Can be comma separated list or a single value

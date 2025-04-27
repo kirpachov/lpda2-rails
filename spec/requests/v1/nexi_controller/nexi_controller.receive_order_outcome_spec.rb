@@ -129,12 +129,35 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
         req
       end
 
-      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione") }
-      it { req; expect(ActionMailer::Base.deliveries.last.subject).to include("registrata") }
-      it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento") }
-      it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato") }
-      it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento") }
-      it { req; expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato") }
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.subject).to include("renotazione")
+      }
+
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.subject).to include("registrata")
+      }
+
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("Il pagamento")
+      }
+
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("stato completato")
+      }
+
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("Il pagamento")
+      }
+
+      it {
+        req
+        expect(ActionMailer::Base.deliveries.last.text_part.encoded).to include("stato completato")
+      }
     end
   end
 
@@ -213,8 +236,15 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
     it { expect { req }.to change { reservation.events.count }.by(1) }
     it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
 
-    it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization") }
-    it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization") }
+    it {
+      req
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("authorization")
+    }
+
+    it {
+      req
+      expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("authorization")
+    }
   end
 
   context "when preorder_type is html_nexi_payment" do
@@ -229,7 +259,15 @@ RSpec.context "POST /v1/nexi/receive_order_outcome", type: :request do
     it { expect { req }.to change { reservation.events.count }.by(1) }
     # it { expect { req }.to have_enqueued_mail(ReservationMailer, :confirmation).once }
     it { expect { req }.to change { ActionMailer::Base.deliveries.count }.by(1) }
-    it { req; expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment") }
-    it { req; expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment") }
+
+    it {
+      req
+      expect(ActionMailer::Base.deliveries.last.html_part.decoded).to include("payment")
+    }
+
+    it {
+      req
+      expect(ActionMailer::Base.deliveries.last.text_part.decoded).to include("payment")
+    }
   end
 end

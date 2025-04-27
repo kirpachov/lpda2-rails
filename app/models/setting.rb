@@ -57,7 +57,7 @@ class Setting < ApplicationRecord
   def value=(val)
     val = val.to_json if parser.to_s == "json" && val.is_a?(Hash)
 
-    super(val)
+    super
   end
 
   def parse_json(value)

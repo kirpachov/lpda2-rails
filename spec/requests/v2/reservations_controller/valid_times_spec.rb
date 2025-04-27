@@ -422,8 +422,8 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
       before do
         scenario[:existing_reservations].each do |res|
-          reservation = create(:reservation, table_type:, adults: res[:adults], children: 0,
-                                             datetime: DateTime.parse("#{date} #{res[:time]}"))
+          create(:reservation, table_type:, adults: res[:adults], children: 0,
+                               datetime: DateTime.parse("#{date} #{res[:time]}"))
 
           # expect(reservation.table_type).to eq(table_type)
           # expect(reservation.reservation_turn).to eq(dinner)

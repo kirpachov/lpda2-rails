@@ -388,7 +388,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context "when filtering by {fixed_price: true}" do
         before do
           # visibility = create(:menu_visibility)
-          items = 5.times.map do |i|
+          5.times.map do |i|
             create(:menu_category, price: (i + 1) * 10)
           end
 
@@ -431,7 +431,7 @@ RSpec.describe V1::Admin::Menu::CategoriesController, type: :controller do
       context "when filtering for {fixed_price: false}" do
         before do
           # visibility = create(:menu_visibility)
-          items = 5.times.map do |i|
+          5.times.map do |i|
             create(:menu_category, price: (i + 1) * 10)
           end
 

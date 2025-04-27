@@ -223,7 +223,7 @@ module V1
       def remove_tag
         @item.tags.delete(::Menu::Tag.find(params[:tag_id]))
         show
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t("record_not_found", model: ::Menu::Tag, id: params[:tag_id].inspect))
       end
 
@@ -262,7 +262,7 @@ module V1
       def remove_allergen
         @item.allergens.delete(::Menu::Allergen.find(params[:allergen_id]))
         show
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         render_error(status: 404,
                      message: I18n.t("record_not_found", model: ::Menu::Allergen,
                                                          id: params[:allergen_id].inspect))
@@ -301,7 +301,7 @@ module V1
       def remove_image
         @item.images.delete(Image.find(params[:image_id]))
         show
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         render_error(status: 404, message: I18n.t("record_not_found", model: Image, id: params[:image_id].inspect))
       end
 
