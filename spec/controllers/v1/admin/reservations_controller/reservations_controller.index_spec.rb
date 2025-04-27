@@ -92,6 +92,96 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context "when filtering by payment_status" do
+        let!(:reservation_todo) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, status: :todo, reservation: r)
+          end
+        end
+
+        let!(:reservation_paid) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, status: :paid, reservation: r)
+          end
+        end
+
+        let!(:reservation_authorized) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, status: :authorized, reservation: r)
+          end
+        end
+
+        let!(:reservation_refunded) do
+          create(:reservation, payment: p).tap do |r|
+            create(:reservation_payment, :with_hpp_url, status: :refunded, reservation: r)
+          end
+        end
+
+        let!(:reservation_without_payment) do
+          create(:reservation, payment: nil)
+        end
+
+        context "when filtering by payment_status: 'todo', will return reservations that have todo payment status" do
+          before { req(payment_status: "todo") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("todo")) }
+        end
+
+
+        context "when filtering by payment_status: 'todo,paid', will return reservations that have todo payment status" do
+          before { req(payment_status: "todo,paid") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id, reservation_paid.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(2) }
+        end
+
+        context "when filtering by payment_status: 'paid', will return reservations that have paid payment status" do
+          before { req(payment_status: "paid") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_paid.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("paid")) }
+        end
+
+        context "when filtering by payment_status: 'authorized', will return reservations that have authorized payment status" do
+          before { req(payment_status: "authorized") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_authorized.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("authorized")) }
+        end
+
+        context "when filtering by payment_status: 'refunded', will return reservations that have refunded payment status" do
+          before { req(payment_status: "refunded") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_refunded.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(eq("refunded")) }
+        end
+
+        context "when filtering by payment_status: <nil>: will return all reservations, no filters applied" do
+          before { req(payment_status: [nil, "", " "].sample) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_todo.id, reservation_paid.id, reservation_authorized.id, reservation_refunded.id, reservation_without_payment.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(5) }
+          # it { expect(json[:items].pluck(:payment).map { |j| j[:status] }).to all(be_present) }
+        end
+      end
+
       context "when filtering by table_type" do
         let(:table_types) { create_list(:table_type, 2) }
 

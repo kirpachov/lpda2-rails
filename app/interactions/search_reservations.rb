@@ -23,7 +23,9 @@ class SearchReservations < ActiveInteraction::Base
               filter_by_people(
                 filter_by_created_at(
                   filter_by_table_types(
-                    order(items)
+                    filter_by_payment_status(
+                      order(items)
+                    )
                   )
                 )
               )
@@ -35,6 +37,14 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def filter_by_payment_status(items)
+    return items if params[:payment_status].blank?
+
+    items.where(
+      id: ReservationPayment.where(status: params[:payment_status].to_s.split(",")).select(:reservation_id)
+    )
+  end
 
   def filter_by_table_types(items)
     param = params[:table_type].presence || params[:table_types].presence
