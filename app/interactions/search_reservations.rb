@@ -22,7 +22,9 @@ class SearchReservations < ActiveInteraction::Base
             filter_by_time(
               filter_by_people(
                 filter_by_created_at(
-                  order(items)
+                  filter_by_table_types(
+                    order(items)
+                  )
                 )
               )
             )
@@ -33,6 +35,28 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def filter_by_table_types(items)
+    param = params[:table_type].presence || params[:table_types].presence
+
+    return items if param.blank?
+
+    # With any table type
+    return items.where.not(table_type: nil) if param.to_s.downcase.in?(["any", "some"])
+
+    # Without any table type
+    return items.where(table_type: nil) if param.to_s.downcase.in?(["none", "no"])
+
+    # With specific table type
+    # Can be comma separated list or a single value
+    # e.g. "table1, table2" or "table1"
+    return items.where(table_type: param.to_s.split(",")) if param.is_a?(String) || param.is_a?(Numeric)
+
+    # With multiple table types
+    return items.where(table_type: param.map(&:strip).uniq) if param.is_a?(Array)
+
+    items
+  end
 
   def filter_by_people(items)
     items = items.where(adults: params[:adults]) if params[:adults].present?

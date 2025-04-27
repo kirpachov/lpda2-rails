@@ -29,6 +29,17 @@ RSpec.shared_context "V1::Admin::ReservationsController#index item structure" do
   end
 end
 
+RSpec.shared_context "V1::Admin::ReservationsController#index successful response" do
+  it { expect(json).to include(items: Array, metadata: Hash) }
+  it { expect(response).to have_http_status(:ok) }
+
+  context "response[:items][0]" do
+    subject { parsed_response_body[:items][0] }
+
+    it_behaves_like "V1::Admin::ReservationsController#index item structure"
+  end
+end
+
 RSpec.describe V1::Admin::ReservationsController, type: :controller do
   include_context CONTROLLER_UTILS_CONTEXT
   include_context CONTROLLER_AUTHENTICATION_CONTEXT
@@ -78,6 +89,64 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           subject { parsed_response_body[:items][0] }
 
           it_behaves_like "V1::Admin::ReservationsController#index item structure", phone: true, email: true, notes: true
+        end
+      end
+
+      context "when filtering by table_type" do
+        let(:table_types) { create_list(:table_type, 2) }
+
+        let!(:reservation_with_table_type) { create(:reservation, table_type: table_types.first) }
+        let!(:reservation_with_table_type_2) { create(:reservation, table_type: table_types.last) }
+        let!(:res_without_table_type) { create(:reservation, table_type: nil) }
+
+        context "when filtering by table_type: 'some', will return reservations that have some table type associated" do
+          before { req(table_type: "some") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id, reservation_with_table_type_2.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(2) }
+          it { expect(json[:items].pluck(:table_type)).to all(be_present) }
+        end
+
+        context "when filtering by table_type: 'none', will return reservations without any table type" do
+          before { req(table_type: "none") }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([res_without_table_type.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:table_type)).to all(be_blank) }
+        end
+
+        context "when filtering by table_type: '<id-of-table-type>', will return reservations with that table type" do
+          before { req(table_type: [table_types.first.id, table_types.first.id.to_s]) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:table_type)).to all(be_present) }
+        end
+
+        context "when filtering by table_type: '<id-of-table-type>,<id-of-second-table-type>', will return reservations with one of the provided table types associated" do
+          before { req(table_type: table_types.map(&:id).map(&:to_s).join(',')) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id, reservation_with_table_type_2.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(2) }
+          it { expect(json[:items].pluck(:table_type)).to all(be_present) }
+        end
+
+        context "when filtering by table_type: '<id-of-table-type>,<id-some-other-number>', will return reservations with one of the provided table types associated" do
+          before { req(table_type: [table_types.first.id, 99].join(",")) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation_with_table_type.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:table_type)).to all(be_present) }
         end
       end
 
