@@ -12,5 +12,14 @@ FactoryBot.define do
     status { "todo" }
     preorder_type { "html_nexi_payment" }
     external_id { SecureRandom.hex }
+
+    trait :with_hpp_url do
+      # hpp_url { "https://my.example.com/hpp" }
+      hpp_url { generate(:reservation_payment_hpp_url) }
+    end
+  end
+
+  sequence :reservation_payment_hpp_url do |n|
+    "https://my.example.com/hpp/#{n}"
   end
 end

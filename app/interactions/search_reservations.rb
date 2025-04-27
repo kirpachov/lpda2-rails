@@ -22,7 +22,15 @@ class SearchReservations < ActiveInteraction::Base
             filter_by_time(
               filter_by_people(
                 filter_by_created_at(
-                  order(items)
+                  filter_by_table_types(
+                    filter_by_payment_status(
+                      filter_by_preorder_type(
+                        filter_by_payment_external_id(
+                          order(items)
+                        )
+                      )
+                    )
+                  )
                 )
               )
             )
@@ -33,6 +41,54 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def filter_by_payment_external_id(items)
+    return items if params[:payment_external_id].blank?
+
+    exact = ReservationPayment.where(external_id: params[:payment_external_id].to_s.split(","))
+    if exact.count > 0
+      return items.where(id: exact.select(:reservation_id))
+    end
+
+    sub = ReservationPayment.where("external_id ILIKE ?", "%#{params[:payment_external_id]}%")
+    return items.where(id: sub.select(:reservation_id))
+  end
+
+  def filter_by_preorder_type(items)
+    return items if params[:preorder_type].blank?
+
+    items.where(id: ReservationPayment.where(preorder_type: params[:preorder_type].to_s.split(",")).select(:reservation_id))
+  end
+
+  def filter_by_payment_status(items)
+    return items if params[:payment_status].blank?
+
+    items.where(
+      id: ReservationPayment.where(status: params[:payment_status].to_s.split(",")).select(:reservation_id)
+    )
+  end
+
+  def filter_by_table_types(items)
+    param = params[:table_type].presence || params[:table_types].presence
+
+    return items if param.blank?
+
+    # With any table type
+    return items.where.not(table_type: nil) if param.to_s.downcase.in?(["any", "some"])
+
+    # Without any table type
+    return items.where(table_type: nil) if param.to_s.downcase.in?(["none", "no"])
+
+    # With specific table type
+    # Can be comma separated list or a single value
+    # e.g. "table1, table2" or "table1"
+    return items.where(table_type: param.to_s.split(",")) if param.is_a?(String) || param.is_a?(Numeric)
+
+    # With multiple table types
+    return items.where(table_type: param.map(&:strip).uniq) if param.is_a?(Array)
+
+    items
+  end
 
   def filter_by_people(items)
     items = items.where(adults: params[:adults]) if params[:adults].present?
