@@ -25,7 +25,9 @@ class SearchReservations < ActiveInteraction::Base
                   filter_by_table_types(
                     filter_by_payment_status(
                       filter_by_preorder_type(
-                        order(items)
+                        filter_by_payment_external_id(
+                          order(items)
+                        )
                       )
                     )
                   )
@@ -39,6 +41,18 @@ class SearchReservations < ActiveInteraction::Base
   end
 
   private
+
+  def filter_by_payment_external_id(items)
+    return items if params[:payment_external_id].blank?
+
+    exact = ReservationPayment.where(external_id: params[:payment_external_id].to_s.split(","))
+    if exact.count > 0
+      return items.where(id: exact.select(:reservation_id))
+    end
+
+    sub = ReservationPayment.where("external_id ILIKE ?", "%#{params[:payment_external_id]}%")
+    return items.where(id: sub.select(:reservation_id))
+  end
 
   def filter_by_preorder_type(items)
     return items if params[:preorder_type].blank?

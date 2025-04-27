@@ -92,6 +92,50 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context "when filtering by payment_external_id" do
+        let!(:payment1) { create(:reservation_payment, :with_hpp_url, status: [:todo, :paid, :authorized, :refunded].sample, preorder_type: [:html_nexi_authorization, :html_nexi_payment].sample, reservation: reservation1) }
+        let!(:payment2) { create(:reservation_payment, :with_hpp_url, status: [:todo, :paid, :authorized, :refunded].sample, preorder_type: [:html_nexi_authorization, :html_nexi_payment].sample, reservation: reservation2) }
+
+        let!(:reservation1) { create(:reservation) }
+        let!(:reservation2) { create(:reservation) }
+        let!(:reservation_without_payment) { create(:reservation, payment: nil) }
+
+        context "when filtering by payment_external_id: '<exact>', will return reservations that have exactly that id" do
+          before { req(payment_external_id: payment1.external_id) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(1) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(eq(payment1.external_id)) }
+        end
+
+        context "when filtering by payment_external_id: '<first-part>', will return reservations that have exactly that id" do
+          before do
+            payment1.update!(external_id: "someCommonPart#{payment1.external_id}")
+            payment2.update!(external_id: "someCommonPart#{payment2.external_id}")
+
+            req(payment_external_id: "someCommonPart")
+          end
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(2) }
+          it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(be_present) }
+        end
+
+        context "when filtering by payment_external_id: <nil>: will return all reservations, no filters applied" do
+          before { req(payment_external_id: [nil, "", " "].sample) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id, reservation_without_payment.id]) }
+          it { expect(json[:metadata][:total_count]).to eq(3) }
+          # it { expect(json[:items].pluck(:payment).map { |j| j[:external_id] }).to all(be_present) }
+        end
+      end
+
       context "when filtering by preorder_type" do
         let!(:reservation_without_payment) { create(:reservation, payment: nil) }
 
