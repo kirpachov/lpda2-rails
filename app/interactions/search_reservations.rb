@@ -93,6 +93,15 @@ class SearchReservations < ActiveInteraction::Base
     items = items.where(children: params[:children]) if params[:children].present?
     items = items.where("adults + children = ?", params[:people]) if params[:people].present?
 
+    items = items.where("adults + children >= ?", params[:people_more_than]) if params[:people_more_than].present?
+    items = items.where("adults + children <= ?", params[:people_less_than]) if params[:people_less_than].present?
+
+    items = items.where("adults >= ?", params[:adults_more_than]) if params[:adults_more_than].present?
+    items = items.where("children >= ?", params[:children_more_than]) if params[:children_more_than].present?
+
+    items = items.where("adults <= ?", params[:adults_less_than]) if params[:adults_less_than].present?
+    items = items.where("children <= ?", params[:children_less_than]) if params[:children_less_than].present?
+
     items
   end
 

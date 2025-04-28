@@ -93,6 +93,55 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         end
       end
 
+      context "when filtering by table size" do
+        let!(:reservation1) { create(:reservation, adults: 2, children: 0) } # 2 people
+        let!(:reservation2) { create(:reservation, adults: 0, children: 2) } # 2 people
+        let!(:reservation3) { create(:reservation, adults: 1, children: 1) } # 2 people
+        let!(:reservation4) { create(:reservation, adults: 3, children: 0) } # 3 people
+
+        context "when filtering by people_more_than" do
+          before { req(people_more_than: 3) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation4.id]) }
+        end
+
+        context "when filtering by adults_more_than" do
+          before { req(adults_more_than: 2) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation4.id]) }
+        end
+
+        context "when filtering by children_more_than" do
+          before { req(children_more_than: 2) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation2.id]) }
+        end
+
+        context "when filtering by adults_less_than" do
+          before { req(adults_less_than: 1) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation2.id, reservation3.id]) }
+        end
+
+        context "when filtering by children_less_than" do
+          before { req(children_less_than: 1) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation3.id, reservation4.id]) }
+        end
+
+        context "when filtering by people_less_than" do
+          before { req(people_less_than: 2) }
+
+          it_behaves_like "V1::Admin::ReservationsController#index successful response"
+          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id, reservation3.id]) }
+        end
+      end
+
       context "when filtering by payment_external_id" do
         let!(:payment1) do
           create(:reservation_payment, :with_hpp_url, status: %i[todo paid authorized refunded].sample,
