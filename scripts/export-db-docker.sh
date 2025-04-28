@@ -10,13 +10,23 @@ DATABASE_NAME="${DATABASE_NAME:-lpda2_development}"
 HOST_WORKSPACE="${HOST_WORKSPACE:-/home/$(whoami)/lpda2-backups}"
 OUTPUT_FILE="${1:-$HOST_WORKSPACE/backup-$(date +"%Y_%m_%d_%H:%M").sql}"
 
+if [ -z "$NETWORK_NAME" ]; then
+  NETWORK_NAME=$(docker network ls | grep rails | awk '{print $2}' | head -n 1)
+  echo "Auto-setting NETWORK_NAME to $NETWORK_NAME. Update it with NETWORK_NAME=<name> if needed."
+fi
+
+if [ -z "$NETWORK_NAME" ]; then
+  echo "No network found. Please set NETWORK_NAME=<name>."
+  exit 1
+fi
+
 output_filename=$(basename $OUTPUT_FILE)
 
 mkdir -p $HOST_WORKSPACE
 
 # If network is not found, check how is called with `docker network ls`.
 
-docker run --network rails-lpda2_default \
+docker run --network $NETWORK_NAME \
            --volume $HOST_WORKSPACE:/data/ \
            -w /data \
            postgres:14-alpine bash -c \
