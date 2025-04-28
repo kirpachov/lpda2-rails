@@ -47,3 +47,5 @@ config/credentials/production.yml.enc
 config/credentials/production.key
 migration/records
 migration/images
+
+backup.sql
