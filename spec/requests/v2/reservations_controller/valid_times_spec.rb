@@ -24,6 +24,59 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     it { expect(json[:turns]).to eq [] }
   end
 
+  context "when two groups have same turn different dates, will check the provided date (issue noticed in production)" do
+    let(:turns) do
+      [
+        create(:reservation_turn, name: "Cena 1", starts_at: "17:00", ends_at: "19:00", weekday: 6),
+        create(:reservation_turn, name: "Cena 2", starts_at: "19:01", ends_at: "21:00", weekday: 6),
+      ]
+    end
+
+    let(:deluxe) do
+      create(:preorder_reservation_group, payment_value: 100, title: "Deluxe").tap do |g|
+        create(:preorder_reservation_date, reservation_turn: turns[0], group: g, date: Date.parse("2025-05-10"))
+      end
+    end
+
+    let(:pasqua) do
+      create(:preorder_reservation_group, payment_value: 5, title: "Pasqua").tap do |g|
+        create(:preorder_reservation_date, reservation_turn: turns[0], group: g, date: Date.parse("2025-05-3"))
+      end
+    end
+
+    let(:json_cena1) do
+      json["turns"].find{|j| j["starts_at"] == "2000-01-01T17:00:00.000Z" }
+    end
+
+    let(:json_cena2) do
+      json["turns"].find{|j| j["starts_at"] == "2000-01-01T19:01:00.000Z" }
+    end
+
+    before do
+      turns
+
+      # Note: if we invert the order of creation, we will have a different result
+      pasqua
+      deluxe
+
+      travel_to Time.zone.parse("2025-04-28 16:00") do
+        req(date: "2025-5-10")
+      end
+    end
+
+    it "result should not depend on order" do
+      expect(json_cena1["preorder_reservation_group"]).to be_a(Hash).and(include("id" => deluxe.id, "payment_value" => 100))
+    end
+
+    it { expect(response).to have_http_status(:ok) }
+    it { expect(json_cena1).to be_a(Hash) }
+
+    it { expect(json_cena2).to be_a(Hash) }
+    it { expect(json_cena2["preorder_reservation_group"]).to be_nil }
+
+    it { expect(json["turns"].length).to eq(2) }
+  end
+
   context "when there are turns but there are also holidays" do
     before do
       ReservationTurn.create!(

@@ -59,8 +59,18 @@ class ReservationTurn < ApplicationRecord
     )
   end
 
-  def preorder_reservation_groups
+  def preorder_reservation_groups(date: nil)
     return @preorder_reservation_groups if defined?(@preorder_reservation_groups)
+
+    dates = PreorderReservationDate.where(
+      reservation_turn: self
+    )
+
+    if date.present?
+      dates = dates.where(date: date)
+    else
+      dates = dates.where("date >= ?", Time.zone.now.to_date)
+    end
 
     PreorderReservationGroup.active.where(
       id: PreorderReservationGroupsToTurn.where(
@@ -68,9 +78,7 @@ class ReservationTurn < ApplicationRecord
       ).select(:preorder_reservation_group_id)
     ).or(
       PreorderReservationGroup.active.where(
-        id: PreorderReservationDate.where("date >= ?", Time.zone.now.to_date).where(
-          reservation_turn: self
-        ).select(:group_id)
+        id: dates.select(:group_id)
       )
     )
   end
