@@ -6,9 +6,14 @@
 # LPDA2_DATABASE_PASSWORD="somethingNooneWillGuess" DATABASE_NAME=lpda2_development ./scripts/export-db-docker.sh
 
 LPDA2_DATABASE_PASSWORD="${LPDA2_DATABASE_PASSWORD:-somethingNooneWillGuess}"
-DATABASE_NAME="${DATABASE_NAME:-lpda2_development}"
+# DATABASE_NAME="${DATABASE_NAME:-lpda2_development}"
 HOST_WORKSPACE="${HOST_WORKSPACE:-/home/$(whoami)/lpda2-backups}"
 OUTPUT_FILE="${1:-$HOST_WORKSPACE/backup-$(date +"%Y_%m_%d_%H:%M").sql}"
+
+if [ -z "$DATABASE_NAME" ]; then
+  echo "Please set DATABASE_NAME=<name>."
+  exit 1
+fi
 
 if [ -z "$NETWORK_NAME" ]; then
   NETWORK_NAME=$(docker network ls | grep rails | awk '{print $2}' | head -n 1)
