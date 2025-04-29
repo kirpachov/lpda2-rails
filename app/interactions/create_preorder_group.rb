@@ -6,6 +6,7 @@ class CreatePreorderGroup < ActiveInteraction::Base
   #   title: "Pagamento anticipato",
   #   preorder_type: "nexi_payment",
   #   payment_value: 30,
+  #   min_people: 2,
   #   message: { it: "Le chiediamo di pagare ...", en: "We ask you to pay ..." },
   #   dates: [
   #     { turn_id: 2, date: "2024-02-14" },
@@ -44,9 +45,10 @@ class CreatePreorderGroup < ActiveInteraction::Base
         title: params.delete(:title),
         preorder_type: params.delete(:preorder_type),
         payment_value: params.delete(:payment_value),
+        min_people: params.delete(:min_people),
         active_from: params.delete(:active_from),
         active_to: params.delete(:active_to),
-        status: params.delete(:status)
+        status: params.delete(:status),
       }.compact
     )
 

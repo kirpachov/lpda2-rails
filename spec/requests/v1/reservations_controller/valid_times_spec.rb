@@ -10,6 +10,73 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
     get "/v1/reservations/valid_times", params: provided_params
   end
 
+  context "when a preorder reservation group has min_people" do
+    let(:group) do
+      create(:preorder_reservation_group, min_people: 5).tap do |g|
+        I18n.available_locales.each do |loc|
+          Mobility.with_locale(loc) do
+            g.update!(message: "[#{loc}] Please, pay in advance")
+          end
+        end
+      end
+    end
+
+    let(:turn) do
+      create(:reservation_turn, starts_at: "12:00", ends_at: "15:00", weekday: Time.now.wday)
+    end
+
+    before do
+      PreorderReservationDate.create!(
+        reservation_turn: turn,
+        group:,
+        date: Time.zone.now
+      )
+
+      travel_to Time.zone.now.beginning_of_day do
+        req(date: Time.zone.now.to_date.to_s, people:)
+      end
+    end
+
+    context "when not providing people, will match" do
+      let(:people) { nil }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+      it do
+        item = json.find { |j| j["starts_at"].include?("12:00") }
+        expect(item).to include("preorder_reservation_group" => Hash)
+        expect(item["preorder_reservation_group"]).to include("id" => group.id, "payment_value" => group.payment_value,
+                                                              "preorder_type" => group.preorder_type, "message" => String)
+        expect(item["preorder_reservation_group"]["message"]).to include("Please, pay in advance")
+      end
+    end
+
+    context "when not providing less people, won't match" do
+      let(:people) { [1,2,3,4].sample }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+      it do
+        item = json.find { |j| j["starts_at"].include?("12:00") }
+        expect(item["preorder_reservation_group"]).to be_nil
+      end
+    end
+
+    context "when not providing more people, will match" do
+      let(:people) { [5,6,10].sample }
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json).not_to include(message: String) }
+      it do
+        item = json.find { |j| j["starts_at"].include?("12:00") }
+        expect(item).to include("preorder_reservation_group" => Hash)
+        expect(item["preorder_reservation_group"]).to include("id" => group.id, "payment_value" => group.payment_value,
+                                                              "preorder_type" => group.preorder_type, "message" => String)
+        expect(item["preorder_reservation_group"]["message"]).to include("Please, pay in advance")
+      end
+    end
+  end
+
   context "when two groups have same turn different dates, will check the provided date (issue noticed in production)" do
     let(:turns) do
       [

@@ -59,7 +59,7 @@ class ValidTimesGroupByTurn < ActiveInteraction::Base
   #   ]
   # }
   def group_json(turn)
-    item = turn.preorder_reservation_groups(date: date).active.first
+    item = turn.preorder_reservation_groups(date:, people: params[:people]).active.first
     return nil if item.nil?
 
     table_type_to_preorder_reservation_groups = item.table_type_to_preorder_reservation_groups.includes(table_type: [

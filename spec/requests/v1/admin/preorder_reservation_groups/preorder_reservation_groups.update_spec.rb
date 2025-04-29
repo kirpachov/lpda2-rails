@@ -16,10 +16,12 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       dates:,
       active_from:,
       active_to:,
-      table_types:
+      table_types:,
+      min_people: nil
     }
   end
 
+  let(:min_people) { nil }
   let(:active_from) { nil }
   let(:active_to) { nil }
   let(:title) { "#{Faker::Lorem.sentence} #{SecureRandom.hex}" }
@@ -66,6 +68,29 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
     it { expect(response).to have_http_status(:forbidden) }
 
     it { expect(json).to include(message: String) }
+  end
+
+  context "when updating min_people" do
+    let(:min_people) { Random.rand(1..10) }
+    let(:params) { { min_people: } }
+
+    before do
+      group
+    end
+
+    it { expect { req }.to(change { group.reload.min_people }.from(nil).to(min_people)) }
+
+    it do
+      req
+      expect(json.dig(:item)).to include(:min_people)
+      expect(json.dig(:item, :min_people)).to eq(min_people)
+    end
+
+    it do
+      req
+      expect(json).not_to include(:message)
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   context "when updating title" do

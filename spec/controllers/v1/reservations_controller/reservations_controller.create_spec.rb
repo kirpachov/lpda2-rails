@@ -673,6 +673,42 @@ RSpec.describe V1::ReservationsController, type: :controller do
         File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
       end
 
+      context "when preorder_reservation_group has a min_people" do
+        let!(:group) do
+          create(:preorder_reservation_group, min_people: 6, preorder_type: :nexi_authorization).tap do |grp|
+            grp.turns = [turn]
+          end
+        end
+
+        context "when adults is less than min_people" do
+          let(:adults) { [2,3,4,5].sample }
+          let(:children) { 0 }
+
+          it { expect { req }.to(change { Reservation.count }) }
+          it { expect { req }.not_to(change { ReservationPayment.count }) }
+
+          it do
+            req
+            expect(json).not_to include(message: String)
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context "when adults equals or is more than min_people" do
+          let(:adults) { [6,7,8].sample }
+          let(:children) { 0 }
+
+          it { expect { req }.to(change { Reservation.count }) }
+          it { expect { req }.to(change { ReservationPayment.count }) }
+
+          it do
+            req
+            expect(json).not_to include(message: String)
+            expect(response).to have_http_status(:ok)
+          end
+        end
+      end
+
       context "when preorder_type is :nexi_authorization, http request should include TCONTAB = 'D' option" do
         let(:group) do
           create(:preorder_reservation_group, preorder_type: :nexi_authorization).tap do |grp|

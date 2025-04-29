@@ -49,6 +49,9 @@ class ReservationRequiresPayment < ActiveInteraction::Base
   end
 
   def groups
-    @groups ||= PreorderReservationGroup.active_now
+    @groups ||= PreorderReservationGroup.active_now.where(
+      "min_people IS NULL OR min_people <= ?",
+      reservation.people
+    )
   end
 end
