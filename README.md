@@ -186,6 +186,14 @@ Questo sistema permette:
 2. Impostare pagamenti per date specifiche: basterà creare un PreorderReservationDate specificando il turno e la data per cui il pagamento è necessario.
 3. Un domani in cui verranno definite le tipologie di tavolo, sarà possibile specificare per quali tipologie è richiesto il pagamento.
 
+## Local development setup
+See the webapp in your phone
+```bash
+# 1. Update app.yml and set your private ip inside origins
+
+bundle exec rails s -b 0.0.0.0
+```
+
 ## Local production setup with nginx
 
 - Setup nginx server in `sudo vim /etc/nginx/sites-enabled/lpda2-backend`
