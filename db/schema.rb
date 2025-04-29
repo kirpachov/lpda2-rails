@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_04_19_001805) do
+ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -361,6 +361,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_19_001805) do
     t.float "payment_value", comment: "How much should people be required to pay if it's a payment. Since may be card hold, this field can be nil."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "min_people", comment: "When creating a reservation and this value is set, payment will be required for reservations with more (>=) than this value people"
   end
 
   create_table "preorder_reservation_groups_to_turns", force: :cascade do |t|

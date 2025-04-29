@@ -7,6 +7,7 @@ class UpdatePreorderGroup < ActiveInteraction::Base
   #   title: "Pagamento anticipato",
   #   preorder_type: "nexi_payment",
   #   payment_value: 30,
+  #   min_people: 2,
   #   message: { it: "Le chiediamo di pagare ...", en: "We ask you to pay ..." },
   #   dates: [
   #     { turn_id: 2, date: "2024-02-14" },
@@ -41,7 +42,7 @@ class UpdatePreorderGroup < ActiveInteraction::Base
   end
 
   def update_group
-    data = (params.keys.map(&:to_sym) & %i[title preorder_type payment_value active_from active_to
+    data = (params.keys.map(&:to_sym) & %i[title preorder_type payment_value min_people active_from active_to
                                            status]).index_with do |k|
       params.delete(k)
     end

@@ -16,9 +16,11 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       dates:,
       active_from:,
       active_to:,
-      table_types:
+      table_types:,
+      min_people:
     }
   end
+  let(:min_people) { nil }
   let(:active_from) { nil }
   let(:active_to) { nil }
   let(:title) { Faker::Lorem.sentence }
@@ -85,6 +87,35 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       end
 
       it { expect(json.dig(:item, :dates).length).to eq 1 }
+    end
+  end
+
+  context "when providing min_people" do
+    let(:min_people) { Random.rand(1..10) }
+
+    it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+    it { expect { req }.to(change { PreorderReservationGroup.where(min_people:).count }.by(1)) }
+
+    context "when checking response" do
+      before { req }
+
+      it { expect(response).to be_successful }
+      it { expect(json).not_to include(message: String) }
+      it { expect(json).to be_a(Hash) }
+
+      it do
+        item = PreorderReservationGroup.last
+        expect(json[:item].symbolize_keys).to include(
+          id: item.id,
+          title: item.title,
+          payment_value: item.payment_value,
+          status: "active",
+          preorder_type: "nexi_payment",
+          active_from: nil,
+          active_to: nil,
+          min_people:
+        )
+      end
     end
   end
 

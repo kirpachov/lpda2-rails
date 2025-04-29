@@ -60,7 +60,7 @@ RSpec.describe "GET /v1/admin/preorder_reservation_groups" do
 
       it {
         expect(item).to include(id: record.id, status: record.status, active_from: nil, active_to: nil,
-                                payment_value: record.payment_value, created_at: String, updated_at: String)
+                                payment_value: record.payment_value, min_people: nil, created_at: String, updated_at: String)
       }
 
       it { expect(item).to include(turns: Array) }
