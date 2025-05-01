@@ -51,9 +51,18 @@ class Holiday < ApplicationRecord
   scope :active_at, lambda { |time|
     time = DateTime.parse(time.to_s) unless time.respond_to?(:strftime) && time.respond_to?(:wday)
 
-    base = visible.where("from_timestamp <= :time AND (to_timestamp IS NULL OR to_timestamp >= :time)", time:)
+    base = visible.active_at_date(time.to_date).where("from_timestamp <= :time AND (to_timestamp IS NULL OR to_timestamp >= :time)", time:)
     base.where(weekly_from: nil, weekly_to: nil, weekday: nil).or(
       base.where("weekly_from <= :hour AND weekly_to >= :hour AND weekday = :weekday", hour: time.strftime("%k:%M"), weekday: time.wday)
+    )
+  }
+
+  scope :active_at_date, lambda { |date|
+    date = DateTime.parse(date.to_s) unless date.respond_to?(:strftime) && date.respond_to?(:wday)
+
+    base = visible.where("from_timestamp::date <= :date AND (to_timestamp::date IS NULL OR to_timestamp::date >= :date)", date:)
+    base.where(weekly_from: nil, weekly_to: nil, weekday: nil).or(
+      base.where(weekday: date.wday)
     )
   }
 

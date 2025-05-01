@@ -199,10 +199,54 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
       it { expect(json[:turns].dig(0, "valid_times")).to match_array(%w[12:00 12:10 12:20 12:30 12:40 12:50 13:00]) }
     end
 
+    context "when got one weekly holiday for the whole day" do
+      before do
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [10.days.from_now, nil].sample, weekday: Time.zone.now.wday,
+                         weekly_from: ["00:00", "01:00"].sample, weekly_to: ["15:00", "19:00", "23:59"].sample).tap do |h|
+          h.assign_translation("message", en: "overlapping with only the turn", it: "qualche stringa a caso....")
+          h.save!
+        end
+
+        travel_to Time.zone.now.beginning_of_day do
+          req(date: Time.zone.now.to_date.to_s)
+        end
+      end
+
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(json[:turns]).not_to include(message: String) }
+      it { expect(json[:turns].dig(0, "valid_times")).to match_array([]) }
+      it { expect(json[:holidays].count).to eq(1) }
+      it { expect(json.dig(:holidays, 0, :message)).to eq("overlapping with only the turn") }
+
+      [
+        "it"
+      ].each do |v|
+        context "if making request with header accept-language: #{v.inspect}" do
+          let(:headers) { default_headers.merge("Accept-Language" => v) }
+
+          before do
+            travel_to Time.zone.now.beginning_of_day do
+              req(date: Time.zone.now.to_date.to_s)
+            end
+          end
+
+          it { expect(json[:holidays].count).to eq(1) }
+          it { expect(json.dig(:holidays, 0, :message)).to eq("qualche stringa a caso....") }
+        end
+      end
+    end
+
     context "when got one weekly holiday overlapping with the only turn" do
       before do
-        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: 10.days.from_now, weekday: Time.zone.now.wday,
-                         weekly_from: "12:30", weekly_to: "15:00").tap do |h|
+        # Ignored because to_timestamp < now
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: 10.days.ago, weekday: Time.zone.now.wday,weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+
+        # Ignored because other wday
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample, weekday: (Time.zone.now.wday + 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample, weekday: (Time.zone.now.wday - 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [10.days.from_now, nil].sample, weekday: Time.zone.now.wday,
+                         weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample).tap do |h|
           h.assign_translation("message", en: "overlapping with only the turn", it: "qualche stringa a caso....")
           h.save!
         end

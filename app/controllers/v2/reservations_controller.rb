@@ -16,10 +16,9 @@ module V2
         turns: call.result,
 
         # TODO: test holidays presence and format.
-        holidays: Holiday.visible.where(":date BETWEEN from_timestamp::date AND to_timestamp::date",
-                                        date: params[:date]).map do |h|
-                    h.as_json(methods: %w[message])
-                  end,
+        holidays: Holiday.active_at_date(params[:date]).includes(:text_translations).map do |h|
+          h.as_json(methods: %w[message])
+        end,
 
         # TODO: test settings presence and format.
         settings: {
