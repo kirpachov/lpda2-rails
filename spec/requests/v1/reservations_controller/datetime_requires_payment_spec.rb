@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_context "SUCCESSFUL GET /v1/reservations/datetime_requires_payment" do |table_types: nil|
+RSpec.shared_examples "SUCCESSFUL GET /v1/reservations/datetime_requires_payment" do |table_types: nil|
   it { expect(response).to have_http_status(:ok) }
   it { expect(json).not_to include(:message) }
   it { expect(json).to include(preorder_reservation_group: Hash) }
@@ -23,7 +23,7 @@ RSpec.shared_context "SUCCESSFUL GET /v1/reservations/datetime_requires_payment"
   end
 end
 
-RSpec.shared_context "PAYMENT NOT REQUIRED GET /v1/reservations/datetime_requires_payment" do
+RSpec.shared_examples "PAYMENT NOT REQUIRED GET /v1/reservations/datetime_requires_payment" do
   it { expect(response).to have_http_status(:ok) }
   it { expect(json).not_to include(:message) }
 end
@@ -48,6 +48,11 @@ RSpec.context "GET /v1/reservations/datetime_requires_payment", type: :request d
       end
     end
   end
+  let(:date) { "2025-1-1" }
+  let(:time) { "12:00" }
+  let(:people) { 2 }
+  let(:default_params) { { date:, time:, people: } }
+  let(:default_headers) { {} }
 
   let!(:turn) do
     create(:reservation_turn, starts_at: "12:00", ends_at: "15:00", weekday: DateTime.parse("2025-1-1").wday)
@@ -61,12 +66,6 @@ RSpec.context "GET /v1/reservations/datetime_requires_payment", type: :request d
     group.turns << turn
   end
 
-  let(:date) { "2025-1-1" }
-  let(:time) { "12:00" }
-  let(:people) { 2 }
-  let(:default_params) { { date:, time:, people: } }
-  let(:default_headers) { {} }
-
   def req(params: default_params, headers: default_headers)
     get "/v1/reservations/datetime_requires_payment", headers:, params:
   end
@@ -79,7 +78,8 @@ RSpec.context "GET /v1/reservations/datetime_requires_payment", type: :request d
 
   context "when preorder reservation group has one type" do
     before do
-      group.add_table_type(table_type: table_type, price: table_type.default_price, people_per_turn: table_type.default_people_per_turn)
+      group.add_table_type(table_type:, price: table_type.default_price,
+                           people_per_turn: table_type.default_people_per_turn)
       req
     end
 
@@ -88,7 +88,8 @@ RSpec.context "GET /v1/reservations/datetime_requires_payment", type: :request d
 
   context "when preorder reservation group has many table types" do
     before do
-      group.add_table_type(table_type: table_type, price: table_type.default_price, people_per_turn: table_type.default_people_per_turn)
+      group.add_table_type(table_type:, price: table_type.default_price,
+                           people_per_turn: table_type.default_people_per_turn)
 
       tt2 = create_table_type
 

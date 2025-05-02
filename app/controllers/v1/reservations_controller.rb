@@ -92,23 +92,21 @@ module V1
                             message: call.errors.full_messages.join(", "))
       end
 
-      if call.result.nil?
-        return render json: { preorder_reservation_group: nil }
-      end
+      return render json: { preorder_reservation_group: nil } if call.result.nil?
 
       render json: {
         preorder_reservation_group: call.result.as_json.merge(
           table_types: call.result.table_types.includes(:text_translations,
-          { images: :attached_image_blob,
-            table_type_to_preorder_reservation_groups: :preorder_reservation_group }).map do |table_type|
-            table_type.as_json.merge(
-              name: table_type.name,
-              description: table_type.description,
-              translations: table_type.translations_json,
-              images: table_type.images.map(&:full_json),
-              # table_type_to_preorder_reservation_groups: table_type.table_type_to_preorder_reservation_groups.as_json(include: [:preorder_reservation_group])
-            )
-          end
+                                                        { images: :attached_image_blob,
+                                                          table_type_to_preorder_reservation_groups: :preorder_reservation_group }).map do |table_type|
+                         table_type.as_json.merge(
+                           name: table_type.name,
+                           description: table_type.description,
+                           translations: table_type.translations_json,
+                           images: table_type.images.map(&:full_json)
+                           # table_type_to_preorder_reservation_groups: table_type.table_type_to_preorder_reservation_groups.as_json(include: [:preorder_reservation_group])
+                         )
+                       end
         )
       }
     end

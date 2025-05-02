@@ -10,7 +10,7 @@ module Lpda2
   class Application < Rails::Application
     config.load_defaults 7.0
 
-    config.action_cable.allowed_request_origins = [/http:\/\/*/, /https:\/\/*/]
+    config.action_cable.allowed_request_origins = [%r{http://*}, %r{https://*}]
 
     config.middleware.insert 0, Rack::UTF8Sanitizer
 
