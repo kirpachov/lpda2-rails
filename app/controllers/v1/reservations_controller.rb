@@ -67,6 +67,52 @@ module V1
       render json: call.result
     end
 
+    # GET /v1/reservations/datetime_requires_payment
+    # Check if for a given date/time/people count a payment is required, and if any table_types are available
+    # for the reservation group.
+    #
+    # @param date [String] Date in YYYY-MM-DD format
+    # @param time [String] Time in HH:MM format
+    # @param people [Integer] Number of people
+    #
+    # @return [Hash] Reservation group with payment and table types information
+    # Response example:
+    # {
+    #  "preorder_reservation_group": {
+    #  "id": 1,
+    #  "payment_value": 100.0,
+    #  "table_types": [ { id: 1, name: "Table type 1" } ]
+    #  }
+    # }
+    def datetime_requires_payment
+      call = DateTimeRequiresPayment.run(date: params[:date], time: params[:time], people: params[:people])
+
+      if call.errors.any? || call.invalid?
+        return render_error(status: 400,
+                            message: call.errors.full_messages.join(", "))
+      end
+
+      if call.result.nil?
+        return render json: { preorder_reservation_group: nil }
+      end
+
+      render json: {
+        preorder_reservation_group: call.result.as_json.merge(
+          table_types: call.result.table_types.includes(:text_translations,
+          { images: :attached_image_blob,
+            table_type_to_preorder_reservation_groups: :preorder_reservation_group }).map do |table_type|
+            table_type.as_json.merge(
+              name: table_type.name,
+              description: table_type.description,
+              translations: table_type.translations_json,
+              images: table_type.images.map(&:full_json),
+              # table_type_to_preorder_reservation_groups: table_type.table_type_to_preorder_reservation_groups.as_json(include: [:preorder_reservation_group])
+            )
+          end
+        )
+      }
+    end
+
     # GET
     # /v1/reservations/valid_dates?from_date=2025-03-01&to_date=2025-03-31
     def valid_dates

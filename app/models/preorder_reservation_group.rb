@@ -82,6 +82,8 @@ class PreorderReservationGroup < ApplicationRecord
     preorder_type.to_s.in?(%w[nexi_authorization])
   end
 
+  # Usage:
+  # add_table_type(table_type: <table-type>, price: 5, people_per_turn: 2)
   def add_table_type(args)
     table_type_to_preorder_reservation_groups.create(args)
   end

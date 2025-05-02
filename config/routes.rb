@@ -43,6 +43,7 @@ Rails.application.routes.draw do
 
       resources :reservations, only: %i[create] do
         collection do
+          get "datetime_requires_payment"
           get "valid_times"
           get "valid_dates"
 
