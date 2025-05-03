@@ -98,15 +98,15 @@ module V1
 
       render json: {
         preorder_reservation_group: call.result.as_json.merge(
-          table_types: call.result.table_types.includes(:text_translations,
-          { images: :attached_image_blob,
-            table_type_to_preorder_reservation_groups: :preorder_reservation_group }).map do |table_type|
-            table_type.as_json.merge(
-              name: table_type.name,
-              description: table_type.description,
-              translations: table_type.translations_json,
-              images: table_type.images.map(&:full_json),
-              # table_type_to_preorder_reservation_groups: table_type.table_type_to_preorder_reservation_groups.as_json(include: [:preorder_reservation_group])
+          message: call.result.message,
+          table_type_to_preorder_reservation_groups: call.result.table_type_to_preorder_reservation_groups.includes(table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |tt|
+            tt.as_json.merge(
+              table_type: tt.table_type.as_json.merge(
+                name: tt.table_type.name,
+                description: tt.table_type.description,
+                translations: tt.table_type.translations_json,
+                images: tt.table_type.images.map(&:full_json),
+              )
             )
           end
         )

@@ -8,18 +8,20 @@ RSpec.shared_context "SUCCESSFUL GET /v1/reservations/datetime_requires_payment"
   it { expect(json).to include(preorder_reservation_group: Hash) }
   it { expect(json[:preorder_reservation_group]).to include(:id) }
   it { expect(json[:preorder_reservation_group]).to include(payment_value: Float) }
-  it { expect(json[:preorder_reservation_group]).to include(table_types: Array) }
+  it { expect(json[:preorder_reservation_group]).to include(message: String) }
+  it { expect(json[:preorder_reservation_group]).to include(table_type_to_preorder_reservation_groups: Array) }
 
   if table_types
-    it { expect(json[:preorder_reservation_group][:table_types].length).to be_positive }
-    it { expect(json[:preorder_reservation_group][:table_types]).to all(include(id: Integer)) }
-    it { expect(json[:preorder_reservation_group][:table_types]).to all(include(name: String)) }
-    it { expect(json[:preorder_reservation_group][:table_types]).to all(include(description: String)) }
-    it { expect(json[:preorder_reservation_group][:table_types]).to all(include(translations: Hash)) }
-    it { expect(json[:preorder_reservation_group][:table_types]).to all(include(images: Array)) }
-    it { expect(json[:preorder_reservation_group][:table_types].pluck(:images)).to all(be_present) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].length).to be_positive }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type)).to all(include(id: Integer)) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type)).to all(include(name: String)) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type)).to all(include(description: String)) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type)).to all(include(translations: Hash)) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type)).to all(include(images: Array)) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type).pluck(:images)).to all(be_present) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].pluck(:table_type).pluck(:images).flatten).to all(include(filename: String, url: String)) }
   elsif table_types == false
-    it { expect(json[:preorder_reservation_group][:table_types].length).to eq(0) }
+    it { expect(json[:preorder_reservation_group][:table_type_to_preorder_reservation_groups].length).to eq(0) }
   end
 end
 
