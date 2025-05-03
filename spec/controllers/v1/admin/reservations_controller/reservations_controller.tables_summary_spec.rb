@@ -100,6 +100,14 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               create(:reservation, status: :arrived, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
                                    adults: 2),
 
+              # IGNORED: CANCELLED, DELETED, NOSHOW
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
+              create(:reservation, status: :noshow, datetime: Time.zone.yesterday.beginning_of_day + 13.hours,
+                                   adults: 2),
+
               # DINNER
               create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
                                    adults: 3),
@@ -112,6 +120,14 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
               create(:reservation, status: :arrived, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
                                    adults: 15),
               create(:reservation, status: :active, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4),
+
+              # IGNORED: CANCELLED, DELETED, NOSHOW
+              create(:reservation, status: :cancelled, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4),
+              create(:reservation, status: :deleted, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
+                                   adults: 4),
+              create(:reservation, status: :noshow, datetime: Time.zone.yesterday.beginning_of_day + 20.hours,
                                    adults: 4)
             ]
           end

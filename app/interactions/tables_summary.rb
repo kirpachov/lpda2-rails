@@ -28,7 +28,7 @@ class TablesSummary < ActiveInteraction::Base
     call = ::SearchReservations.run(params:)
     errors.merge!(call.errors) if call.errors.any? || call.invalid?
 
-    @reservations = call.result.where.not(status: %i[arrived cancelled deleted])
+    @reservations = call.result.where.not(status: %i[arrived cancelled noshow deleted])
   end
 
   def turns

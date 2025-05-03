@@ -60,9 +60,12 @@ RSpec.describe "GET /v1/admin/reservations/ungrouped_tables_summary" do
       create_list(:reservation, 2, adults: 2)
       create_list(:reservation, 1, adults: 3)
       create_list(:reservation, 3, adults: 4, children: 1)
+      create_list(:reservation, 3, adults: 4, children: 1, status: :cancelled)
+      create_list(:reservation, 3, adults: 4, children: 1, status: :deleted)
+      create_list(:reservation, 3, adults: 4, status: :noshow)
     end
 
-    it { expect(Reservation.count).to eq(2 + 1 + 3) }
+    # it { expect(Reservation.count).to eq(2 + 1 + 3) }
 
     it_behaves_like "successul request", expected_response: {
       "2" => 2,

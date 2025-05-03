@@ -47,7 +47,7 @@ module V1::Admin
                             message: search.errors.full_messages.join(", "))
       end
 
-      render json: Reservation.where(id: search.result.select(:id)).group("children + adults").count
+      render json: Reservation.where.not(status: %i[deleted cancelled noshow]).where(id: search.result.select(:id)).group("children + adults").count
     end
 
     def show
