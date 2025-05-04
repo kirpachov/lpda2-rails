@@ -190,6 +190,9 @@ Questo sistema permette:
 See the webapp in your phone
 ```bash
 # 1. Update app.yml and set your private ip inside origins
+# 2. Update app.yml to configure cookies behaviour
+#   cookie_secure: false
+#   cookie_same_site: Lax
 
 bundle exec rails s -b 0.0.0.0
 ```
