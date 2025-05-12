@@ -19,7 +19,7 @@ class ReservationTurnValidTimes < ActiveInteraction::Base
       starts_at += turn.step.minutes
     end
 
-    min_time = Time.zone.now
+    min_time = Time.zone.now + 1.hour
     if Setting[:reservation_min_hours_in_advance].present?
       min_time += Setting[:reservation_min_hours_in_advance].to_f.hours
     end
