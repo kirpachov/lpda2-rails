@@ -754,10 +754,11 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
   context "when setting reservation_min_hours_in_advance is set, should reflect that." do
     before do
+      now = DateTime.parse("2025-03-12 12:00")
       Setting[:reservation_min_hours_in_advance] = 2
-      ReservationTurn.create!(name: "Day", weekday: Time.zone.now.wday, starts_at: "12:00", ends_at: "16:00", step: 30)
-      travel_to(Time.zone.now.beginning_of_day + 12.hours) do
-        req(date: Time.zone.now.to_date.to_s)
+      ReservationTurn.create!(name: "Day", weekday: now.wday, starts_at: "12:00", ends_at: "16:00", step: 30)
+      travel_to(now.beginning_of_day + 12.hours) do
+        req(date: now.to_date.to_s)
       end
     end
 
