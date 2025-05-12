@@ -164,10 +164,44 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
+    context "when reservation has no payment or it's not paid, will allow cancellation" do
+      let(:datetime) { DateTime.parse("2024-11-24 18:00") }
+      let(:now_datetime) { DateTime.parse("2024-11-24 17:00") }
+
+      let(:reservation) do
+        create(:reservation, datetime:).tap do |r|
+          create(:reservation_payment, status: %w[todo refunded].sample, reservation: r)
+        end
+      end
+
+      before do
+        reservation.payment.destroy if Random.rand > 0.5
+        Setting[:reservation_min_hours_advance_cancel] = 10
+      end
+
+      def doit
+        travel_to(now_datetime) do
+          req
+        end
+      end
+
+      it { expect { doit }.to change { reservation.reload.status }.to("cancelled") }
+
+      it do
+        doit
+        expect(json).not_to include(:message)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     %w[it en].each do |lang|
-      context "when lang is #{lang} if reservation_min_hours_advance_cancel is set and reservation is too close" do
+      context "when lang is #{lang} if reservation_min_hours_advance_cancel is set and reservation is too close, and reservation has payment" do
         let(:lang) { lang }
-        let(:reservation) { create(:reservation, datetime:) }
+        let(:reservation) do
+          create(:reservation, datetime:).tap do |r|
+            create(:reservation_payment, status: %w[authorized paid].sample, reservation: r)
+          end
+        end
 
         # #################################
         # Case when not allowed
@@ -213,8 +247,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
         ].each do |scenario|
           context "when scenario #{scenario.inspect} should be allowed" do
             let(:datetime) { DateTime.parse(scenario[0]) }
-            let(:now_datetime) { DateTime.parse(scenario[0]) }
-            let(:config_value) { scenario[1] }
+            let(:now_datetime) { DateTime.parse(scenario[1]) }
+            let(:config_value) { scenario[2] }
 
             before do
               Setting[:reservation_min_hours_advance_cancel] = config_value
@@ -226,10 +260,37 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
             it do
               req
-              expect(response).to have_http_status(:unprocessable_entity)
+              expect(json).not_to include(:message)
+              expect(response).to have_http_status(:ok)
             end
 
-            it { expect { req }.not_to(change { reservation.reload.status }) }
+            it { expect { req }.to(change { reservation.reload.status }.to("cancelled")) }
+
+            context "when reservation has no payment, should update status to cancelled" do
+              before { reservation.payment.destroy }
+
+              it do
+                req
+                expect(json).not_to include(:message)
+                expect(response).to have_http_status(:ok)
+              end
+
+              it { expect { req }.to(change { reservation.reload.status }.to("cancelled")) }
+            end
+
+            %w[paid todo refunded authorized].each do |pstatus|
+              context "when reservation has payment with status '#{pstatus}', should update status to cancelled" do
+                before { reservation.payment.update!(status: pstatus) }
+
+                it do
+                  req
+                  expect(json).not_to include(:message)
+                  expect(response).to have_http_status(:ok)
+                end
+
+                it { expect { req }.to(change { reservation.reload.status }.to("cancelled")) }
+              end
+            end
           end
         end
       end

@@ -54,6 +54,8 @@ class PublicCancelReservation < ActiveInteraction::Base
   end
 
   def reservation_datetime_is_not_too_close
+    return unless %w[paid authorized].include?(reservation.payment&.status)
+
     return if Setting[:reservation_min_hours_advance_cancel].blank?
     return if reservation.datetime > Setting[:reservation_min_hours_advance_cancel].to_f.hours.from_now
 
