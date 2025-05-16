@@ -681,7 +681,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
 
         context "when adults is less than min_people" do
-          let(:adults) { [2,3,4,5].sample }
+          let(:adults) { [2, 3, 4, 5].sample }
           let(:children) { 0 }
 
           it { expect { req }.to(change { Reservation.count }) }
@@ -695,7 +695,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
 
         context "when adults equals or is more than min_people" do
-          let(:adults) { [6,7,8].sample }
+          let(:adults) { [6, 7, 8].sample }
           let(:children) { 0 }
 
           it { expect { req }.to(change { Reservation.count }) }
