@@ -27,6 +27,11 @@ module V1
         return render plain: @item.payment.clean_html, content_type: "text/html"
       end
 
+      if @item.payment.hpp_url.present?
+        Log::ReservationEvent.create!(reservation: @item, event_type: "do_payment")
+        return redirect_to @item.payment.hpp_url, allow_other_host: true
+      end
+
       raise "Don't know how to render payment for reservation"
     end
 

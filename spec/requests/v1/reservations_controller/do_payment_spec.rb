@@ -17,6 +17,24 @@ RSpec.context "GET /v1/reservations/:secret/do_payment", type: :request do
     expect(payment.hpp_url).to include("/v1/reservations/#{reservation.secret}/do_payment")
   end
 
+  context "when stripe payment, will redirect to stripe payment page" do
+    let!(:payment) do
+      create(:reservation_payment, preorder_type: "stripe_authorization", reservation:, html: nil, hpp_url: "https://checkout.stripe.com/pay/cs_test_1234567890")
+
+      reservation.reload.payment
+    end
+
+    it { expect(payment.hpp_url).to include("https://checkout.stripe.com") }
+
+    context "after request" do
+      before { req }
+
+      it { expect(response).to have_http_status(:found) }
+      it { expect(response.headers["Location"]).to include("https://checkout.stripe.com") }
+      it { expect(response.headers["Location"]).to eq(payment.hpp_url) }
+    end
+  end
+
   context "when upening the payment page, an event should be created" do
     it { expect { req }.to change { reservation.events.count }.from(0).to(1) }
     it { expect { req }.to change { Log::ReservationEvent.count }.from(0).to(1) }
