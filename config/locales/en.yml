@@ -1,4 +1,10 @@
 en:
+  stripe:
+    create_reservation_payment:
+      product_name: "Payment for reservation at La Porta D'acqua for %{fullname} x %{people}"
+      custom_text_submit_deferred: "%{fullname}, we ask you to enter your credit card details to confirm the reservation. No charge will be made."
+      custom_text_submit: "%{fullname}, please enter your credit card details to proceed with the payment."
+
   preferences:
     key_not_found: "Key was not found"
 
@@ -338,5 +344,3 @@ en:
     confirm_reservation: "Confirm reservation"
     errors:
       no_seats_available_for_table_type_for_turn: "There are not enough seats available for the selected table type for the selected turn."
-
-      

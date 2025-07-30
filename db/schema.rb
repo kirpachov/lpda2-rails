@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
+ActiveRecord::Schema[7.0].define(version: 2025_07_29_195838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -152,6 +152,23 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["reservation_id"], name: "index_log_reservation_events_on_reservation_id"
+  end
+
+  create_table "log_stripe_events", force: :cascade do |t|
+    t.float "duration"
+    t.integer "http_status"
+    t.text "method"
+    t.integer "num_retries"
+    t.text "path"
+    t.text "request_id"
+    t.jsonb "user_data"
+    t.jsonb "response_header"
+    t.jsonb "response_body"
+    t.jsonb "request_header"
+    t.jsonb "request_body"
+    t.jsonb "raw"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "menu_allergens", force: :cascade do |t|

@@ -1,4 +1,10 @@
 it:
+  stripe:
+    create_reservation_payment:
+      product_name: "Pagamento per la prenotazione presso la Porta D'acqua a nome %{fullname} x %{people}"
+      custom_text_submit_deferred: "%{fullname} ti chiediamo di inserire i dati della carta di credito per poter confermare la prenotazione. Non verrà effettuato alcun addebito."
+      custom_text_submit: "%{fullname} inserisci i dati della carta di credito per proseguire con il pagamento."
+
   preferences:
     key_not_found: "Chiave non trovata"
 

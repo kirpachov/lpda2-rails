@@ -17,6 +17,18 @@ FactoryBot.define do
       # hpp_url { "https://my.example.com/hpp" }
       hpp_url { generate(:reservation_payment_hpp_url) }
     end
+
+    trait :stripe_authorization do
+      preorder_type { "stripe_authorization" }
+      status { "authorized" }
+      hpp_url { "https://checkout.stripe.com/pay/cs_test_1234567890" }
+    end
+
+    trait :stripe_payment do
+      preorder_type { "stripe_payment" }
+      status { "paid" }
+      hpp_url { "https://checkout.stripe.com/pay/cs_test_1234567890" }
+    end
   end
 
   sequence :reservation_payment_hpp_url do |n|
