@@ -14,24 +14,21 @@ class FetchReservationPaymentStatus < ActiveInteraction::Base
 
   def execute
     case reservation_payment.preorder_type
-    when "html_nexi_payment" then fetch_nexi_status
-    when "html_nexi_authorization" then fetch_nexi_status
-    when "stripe_authentication", "stripe_payment" then fetch_stripe_checkout_status
+    when "html_nexi_payment", "html_nexi_authorization" then fetch_nexi_status
+    when "stripe_authorization", "stripe_payment" then fetch_stripe_checkout_status
     else
       errors.add(:reservation, "payment type #{reservation_payment.preorder_type.inspect} not supported")
     end
   end
 
   def fetch_stripe_checkout_status
-    @call = Stripe::Checkout::Session.retrieve(reservation_payment.external_id)
-    return errors.merge!(call.errors) unless call.valid?
+    call = Stripe::UpdateCheckoutSessionStatus.run(
+      reservation_payment:
+    )
 
-    case call.status
-    when "complete"
-      reservation_payment.paid!
-    when "incomplete"
-      reservation_payment.todo!
-    end
+    errors.merge!(call.errors) if call.errors.any? || call.invalid?
+
+    call.result
   end
 
   def fetch_nexi_status

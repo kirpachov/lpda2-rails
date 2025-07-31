@@ -1,0 +1,124 @@
+{
+  "id": "cs_test_a1cnlIiQKwrVwD1CTXfJIdLHfQYUhTnxkJcm0SgWY4cyhipVv6WMD7cKqb",
+  "object": "checkout.session",
+  "adaptive_pricing": {
+    "enabled": true
+  },
+  "after_expiration": null,
+  "allow_promotion_codes": null,
+  "amount_subtotal": 1000,
+  "amount_total": 1000,
+  "automatic_tax": {
+    "enabled": false,
+    "liability": null,
+    "provider": null,
+    "status": null
+  },
+  "billing_address_collection": null,
+  "cancel_url": "http://localhost:4250/it/#/r/7bf7dc99-9385-455c-b4d8-b37d0289a60b/cancelled",
+  "client_reference_id": "30900",
+  "client_secret": null,
+  "collected_information": {
+    "shipping_details": null
+  },
+  "consent": null,
+  "consent_collection": null,
+  "created": 1754000701,
+  "currency": "eur",
+  "currency_conversion": null,
+  "custom_fields": [],
+  "custom_text": {
+    "after_submit": null,
+    "shipping_address": null,
+    "submit": {
+      "message": "Oleksandr Kirpachov, please enter your credit card details to proceed with the payment."
+    },
+    "terms_of_service_acceptance": null
+  },
+  "customer": "cus_SmeDlK0pWWOW4C",
+  "customer_creation": "always",
+  "customer_details": {
+    "address": {
+      "city": null,
+      "country": "IT",
+      "line1": null,
+      "line2": null,
+      "postal_code": null,
+      "state": null
+    },
+    "email": "oleksandr.kirpachov@gmail.com",
+    "name": "Oleksandr Kirpachov",
+    "phone": null,
+    "tax_exempt": "none",
+    "tax_ids": []
+  },
+  "customer_email": "oleksandr.kirpachov@gmail.com",
+  "discounts": [],
+  "expires_at": 1754087101,
+  "invoice": null,
+  "invoice_creation": {
+    "enabled": false,
+    "invoice_data": {
+      "account_tax_ids": null,
+      "custom_fields": null,
+      "description": null,
+      "footer": null,
+      "issuer": null,
+      "metadata": {},
+      "rendering_options": null
+    }
+  },
+  "livemode": false,
+  "locale": "auto",
+  "metadata": {},
+  "mode": "payment",
+  "origin_context": null,
+  "payment_intent": "pi_3Rr4ukP3aO71SSMB1BcXBp85",
+  "payment_link": null,
+  "payment_method_collection": "if_required",
+  "payment_method_configuration_details": {
+    "id": "pmc_1Rd68AP3aO71SSMB00MfwbHF",
+    "parent": null
+  },
+  "payment_method_options": {
+    "card": {
+      "request_three_d_secure": "automatic"
+    }
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "eps",
+    "klarna",
+    "link"
+  ],
+  "payment_status": "paid",
+  "permissions": null,
+  "phone_number_collection": {
+    "enabled": false
+  },
+  "recovered_from": null,
+  "saved_payment_method_options": {
+    "allow_redisplay_filters": [
+      "always"
+    ],
+    "payment_method_remove": "disabled",
+    "payment_method_save": null
+  },
+  "setup_intent": null,
+  "shipping_address_collection": null,
+  "shipping_cost": null,
+  "shipping_options": [],
+  "status": "complete",
+  "submit_type": null,
+  "subscription": null,
+  "success_url": "http://localhost:4250/it/#/r/7bf7dc99-9385-455c-b4d8-b37d0289a60b/processed",
+  "total_details": {
+    "amount_discount": 0,
+    "amount_shipping": 0,
+    "amount_tax": 0
+  },
+  "ui_mode": "hosted",
+  "url": null,
+  "wallet_options": null
+}
