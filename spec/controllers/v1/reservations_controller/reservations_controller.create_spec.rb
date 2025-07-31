@@ -549,7 +549,22 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when checking after response" do
         before { req }
+
+        it { expect(json).not_to include(:message) }
+        it { expect(response).to be_successful }
+
         it { expect(ReservationPayment.last.hpp_url).to be_present.and(include("https://checkout.stripe.com")) }
+        it "local ReservationPayment.external_id should be stripe's id" do
+          expect(
+            Oj.load(Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.response_body)["id"]
+          ).to be_present.and(eq(ReservationPayment.last.external_id))
+        end
+
+        it "Stripe's #client_reference_id (external id) should be local Reservation id" do
+          expect(
+            Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.request_body.split("&")
+          ).to include("client_reference_id=#{ReservationPayment.last.id}")
+        end
       end
     end
 

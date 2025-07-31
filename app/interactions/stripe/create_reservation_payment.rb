@@ -35,7 +35,8 @@ module Stripe
         request_purpose: "stripe_reservation_#{deferred ? "authorization" : "payment"}",
         request_record: reservation,
         product_name:,
-        custom_text_submit:
+        custom_text_submit:,
+        client_reference_id: reservation.id.to_s,
       )
 
       errors.merge!(call.errors) if call.errors.any? || call.invalid?
@@ -92,7 +93,7 @@ module Stripe
         },
         reservation:,
         status: :todo,
-        external_id: call.cod_trans,
+        external_id: call.session.id,
         preorder_type: deferred ? :stripe_authorization : :stripe_payment,
         success_url:,
         failure_url: cancel_url,

@@ -54,6 +54,8 @@ module Stripe
     # Optional inputs
     # ##############################
 
+    string :client_reference_id, default: -> { SecureRandom.hex(8) }
+
     # Why this order is being made?
     # Will be used for tracking purposes.
     string :request_purpose, default: nil
@@ -101,7 +103,7 @@ module Stripe
     # ##############################
 
     def cod_trans
-      @cod_trans ||= "PS#{Time.zone.now.strftime("%Y%m%d%H%M%S")}"
+      client_reference_id
     end
 
     def deferred?
@@ -119,7 +121,7 @@ module Stripe
         currency: "EUR",
         cancel_url:,
         locale: language,
-        client_reference_id: cod_trans
+        client_reference_id:
       )
     end
 
