@@ -2,7 +2,7 @@
 
 module Stripe
   # Download from Stripe the status of a Checkout Session.
-  class UpdateCheckoutSessionStatus < ActiveInteraction::Base
+  class FetchReservationPaymentStatus < ActiveInteraction::Base
     # ##############################
     # Inputs
     # ##############################
@@ -29,6 +29,8 @@ module Stripe
       return unless session
 
       update_reservation_payment_status
+
+      reservation_payment.update(external_object: session.as_json) if errors.empty?
 
       reservation_payment.reload
 
