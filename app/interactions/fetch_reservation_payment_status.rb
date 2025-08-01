@@ -22,7 +22,7 @@ class FetchReservationPaymentStatus < ActiveInteraction::Base
   end
 
   def fetch_stripe_checkout_status
-    call = Stripe::FetchReservationPaymentStatus.run(
+    @call = Stripe::FetchReservationPaymentStatus.run(
       reservation_payment:
     )
 

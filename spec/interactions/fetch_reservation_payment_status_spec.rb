@@ -89,6 +89,10 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
       it { expect(call.errors).to be_empty }
       it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("authorized")) }
       it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+      it do
+        call
+        expect(reservation_payment.external_object.symbolize_keys).to be_present.and(eq(Oj.load(StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]).symbolize_keys))
+      end
     end
 
     context "when reservation_payment has status 'paid' and stripe session has status 'complete' for stripe_payment" do

@@ -86,6 +86,7 @@ module Stripe
         value: amount,
         # html: call.client.html,
         # other: { order_hpp_call: call.result },
+        external_object: call.session.as_json,
         other: {
           custom_text_submit:,
           product_name:,
