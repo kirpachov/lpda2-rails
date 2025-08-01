@@ -128,18 +128,85 @@ RSpec.describe "POST /v1/admin/reservations/<id>/record_deferred_payment" do
     end
   end
 
+  context "when payment gateway is stripe" do
+    let(:stub) do
+      stub_stripe_backend(
+        responses: {
+          get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+        }
+      )
+    end
+
+    context "when reservation payment is stripe authorization" do
+      let(:reservation_payment) { create(:reservation_payment, :stripe_authorization, reservation:) }
+
+      include_context "successful request POST /v1/admin/reservations/<id>/record_deferred_payment"
+      it { expect { req }.to(change { reservation_payment.reload.status }.to("paid")) }
+
+      it {
+        expect { req }.to(change do
+                            Log::StripeEvent.where(path: "/v1/payment_intents", method: "post").count
+                          end.by(1))
+      }
+
+      it "when if fetching order status now? should stay 'paid'." do
+        req
+
+        expect { reservation_payment.fetch_status! }.not_to(change { reservation_payment.reload.status }.from("paid"))
+      end
+    end
+
+    %w[
+      todo
+      paid
+      refunded
+    ].each do |payment_status|
+      context "when reservation payment is stripe authorization with status #{payment_status.inspect}" do
+        let(:reservation_payment) do
+          create(:reservation_payment, :stripe_authorization, reservation:, status: payment_status)
+        end
+
+        include_context "failed request POST /v1/admin/reservations/<id>/record_deferred_payment"
+        it { expect { req }.not_to(change { reservation_payment.reload.status }) }
+      end
+    end
+
+    %w[
+      todo
+      paid
+      authorized
+      refunded
+    ].each do |payment_status|
+      context "when reservation payment is stripe payment in status #{payment_status}" do
+        let(:reservation_payment) do
+          create(:reservation_payment, :stripe_payment, reservation:, status: payment_status)
+        end
+
+        include_context "failed request POST /v1/admin/reservations/<id>/record_deferred_payment"
+
+        it { expect { req }.not_to(change { reservation_payment.reload.status }.from(payment_status)) }
+      end
+    end
+
+    context "when reservation payment is stripe payment in status 'paid'" do
+      let(:reservation_payment) do
+        create(:reservation_payment, :stripe_payment, reservation:, status: "paid")
+      end
+
+      include_context "failed request POST /v1/admin/reservations/<id>/record_deferred_payment"
+
+      it { expect { req }.not_to(change { reservation_payment.reload.status }.from("paid")) }
+
+      it "when if fetching order status now? should stay 'paid'." do
+        req
+
+        expect { reservation_payment.fetch_status! }.not_to(change { reservation_payment.reload.status }.from("paid"))
+      end
+    end
+  end
+
   context "when creating a basic payment" do
     include_context "successful request POST /v1/admin/reservations/<id>/record_deferred_payment"
-
-    # it do
-    #   Sidekiq::Testing.inline! do
-    #     allow(ReservationMailer).to receive(:with).and_call_original
-
-    #     req
-
-    #     expect(ReservationMailer).to have_received(:with).once
-    #   end
-    # end
   end
 
   pending "when reservation does not have email it's fine but won't send email"

@@ -88,4 +88,44 @@ class ReservationPayment < ApplicationRecord
   def clean_html
     html.gsub(/<!--.*?-->/m, "")
   end
+
+  def fetch_status!
+    FetchReservationPaymentStatus.run!(
+      reservation_payment: self
+    )
+  end
+
+  def stripe_checkout_session
+    @stripe_checkout_session ||= Stripe::Checkout::Session.retrieve(external_id)
+  end
+
+  def stripe_customer_id
+    stripe_checkout_session&.customer
+  end
+
+  def stripe_customer
+    @stripe_customer ||= Stripe::Customer.retrieve(stripe_customer_id)
+  end
+
+  def stripe_payment_methods
+    @stripe_payment_methods ||= Stripe::PaymentMethod.list(
+      customer: stripe_customer_id
+    )
+  end
+
+  def stripe_payment_method_ids
+    stripe_payment_methods.data.map(&:id)
+  end
+
+  def stripe_payment_method_id
+    stripe_payment_method_ids.first
+  end
+
+  def stripe_setup_intent_id
+    stripe_checkout_session&.setup_intent
+  end
+
+  def stripe_setup_intent
+    @stripe_setup_intent ||= Stripe::SetupIntent.retrieve(stripe_setup_intent_id)
+  end
 end

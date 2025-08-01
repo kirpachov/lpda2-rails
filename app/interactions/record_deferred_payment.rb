@@ -15,10 +15,7 @@ class RecordDeferredPayment < ActiveInteraction::Base
   # Logic
   # ################################
   def execute
-    compose(
-      Nexi::RecordDeferredPayment,
-      payment:
-    )
+    call_payment_gateway
 
     return false if errors.any? || invalid?
 
@@ -37,5 +34,31 @@ class RecordDeferredPayment < ActiveInteraction::Base
     ReservationMailer.with(reservation_id: reservation.id).payment_success.deliver_later if errors.empty?
 
     errors.empty?
+  end
+
+  private
+
+  def call_payment_gateway
+    case payment.preorder_type
+    when "html_nexi_authorization", "html_nexi_payment" then call_payment_gateway_nexi
+    when "stripe_authorization", "stripe_payment" then call_payment_gateway_stripe
+    else
+      errors.add(:payment, "preorder_type #{payment.preorder_type.inspect} not supported")
+      false
+    end
+  end
+
+  def call_payment_gateway_nexi
+    compose(
+      Nexi::RecordDeferredPayment,
+      payment:
+    )
+  end
+
+  def call_payment_gateway_stripe
+    compose(
+      Stripe::RecordDeferredPayment,
+      payment:
+    )
   end
 end

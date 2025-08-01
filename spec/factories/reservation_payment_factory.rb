@@ -21,13 +21,15 @@ FactoryBot.define do
     trait :stripe_authorization do
       preorder_type { "stripe_authorization" }
       status { "authorized" }
-      hpp_url { "https://checkout.stripe.com/pay/cs_test_1234567890" }
+      external_id { StubStripeBackendHelper::CS_ID }
+      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
     end
 
     trait :stripe_payment do
       preorder_type { "stripe_payment" }
+      external_id { StubStripeBackendHelper::CS_ID }
       status { "paid" }
-      hpp_url { "https://checkout.stripe.com/pay/cs_test_1234567890" }
+      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
     end
   end
 
