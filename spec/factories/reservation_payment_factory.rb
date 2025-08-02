@@ -22,7 +22,7 @@ FactoryBot.define do
       preorder_type { "stripe_authorization" }
       status { "authorized" }
       external_id { StubStripeBackendHelper::CS_ID }
-      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
+      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}/#{SecureRandom.hex}" }
 
       stripe_payment_details do
         build(:stripe_payment_details, checkout_session_id: StubStripeBackendHelper::CS_ID)
@@ -33,7 +33,7 @@ FactoryBot.define do
       preorder_type { "stripe_payment" }
       external_id { StubStripeBackendHelper::CS_ID }
       status { "paid" }
-      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
+      hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}/#{SecureRandom.hex}" }
 
       stripe_payment_details do
         build(:stripe_payment_details, checkout_session_id: StubStripeBackendHelper::CS_ID)
