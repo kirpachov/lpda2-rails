@@ -563,7 +563,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it "Stripe's #client_reference_id (external id) should be local Reservation id" do
           expect(
             Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.request_body.split("&")
-          ).to include("client_reference_id=#{ReservationPayment.last.id}")
+          ).to include("client_reference_id=#{Reservation.last.id}")
         end
       end
     end
