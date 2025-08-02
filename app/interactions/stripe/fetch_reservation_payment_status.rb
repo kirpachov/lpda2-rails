@@ -37,16 +37,14 @@ module Stripe
     attr_reader :session
 
     delegate :stripe_payment_details, to: :reservation_payment
-    delegate :checkout_session, :payment_intent, to: :stripe_payment_details, allow_nil: true
+    delegate :checkout_session, :payment_intent, :refund, to: :stripe_payment_details, allow_nil: true
 
     def execute
       reservation_payment.status = calc_reservation_payment_status
-      if errors.empty?
-        reservation_payment.save
-      end
+      reservation_payment.save if errors.empty?
 
       reservation_payment.reload
-    rescue Stripe::ApiError => e
+    rescue Stripe::APIError => e
       ExceptionNotifier.notify_exception(e)
       errors.add(:base, "Stripe API error: #{e.message}")
     end
@@ -57,6 +55,9 @@ module Stripe
 
       # A payment was made but then canceled/refunded.
       return "refunded" if payment_intent&.status == "canceled"
+
+      # Successful refund.
+      return "refunded" if refund&.status == "succeeded"
 
       # User did nothing.
       return "todo" if checkout_session.status == "open"

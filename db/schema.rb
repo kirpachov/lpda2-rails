@@ -502,6 +502,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
   create_table "stripe_payment_details", force: :cascade do |t|
     t.text "checkout_session_id", null: false
     t.text "payment_intent_id", comment: "Does depend from checkout_session if is a payment, but does not if it's a authorization. When authorization can create a PaymentIntent by using payment methods provided by customer. In this case, PaymentIntent id is not linked to checkout session."
+    t.text "refund_id", comment: "When payment intent is refunded, will contain the id of the refund."
     t.bigint "reservation_payment_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

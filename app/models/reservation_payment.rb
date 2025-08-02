@@ -52,7 +52,8 @@ class ReservationPayment < ApplicationRecord
   # ################################
   belongs_to :reservation, optional: false
   has_many :nexi_http_requests, through: :reservation
-  has_one :stripe_payment_details, class_name: "Stripe::PaymentDetails", inverse_of: :reservation_payment, dependent: :destroy, autosave: true
+  has_one :stripe_payment_details, class_name: "Stripe::PaymentDetails", inverse_of: :reservation_payment,
+                                   dependent: :destroy, autosave: true
   # TODO
   # has_many :stripe_http_requests, through: :reservation
 
@@ -97,40 +98,7 @@ class ReservationPayment < ApplicationRecord
   end
 
   delegate :checkout_session, :customer_id, :customer, :payment_methods, :payment_method_ids,
-            :payment_method_id, :setup_intent_id, :setup_intent, :payment_intent_id, :payment_intent,
+           :payment_method_id, :setup_intent_id, :setup_intent, :payment_intent_id, :payment_intent,
+           :refund_payment_intent!, :expire_checkout_session!, :refund_id, :refund,
            to: :stripe_payment_details, allow_nil: true, prefix: :stripe
-
-  # def stripe_checkout_session
-  #   @stripe_checkout_session ||= Stripe::Checkout::Session.retrieve(external_id)
-  # end
-
-  # def stripe_customer_id
-  #   stripe_checkout_session&.customer
-  # end
-
-  # def stripe_customer
-  #   @stripe_customer ||= Stripe::Customer.retrieve(stripe_customer_id)
-  # end
-
-  # def stripe_payment_methods
-  #   @stripe_payment_methods ||= Stripe::PaymentMethod.list(
-  #     customer: stripe_customer_id
-  #   )
-  # end
-
-  # def stripe_payment_method_ids
-  #   stripe_payment_methods.data.map(&:id)
-  # end
-
-  # def stripe_payment_method_id
-  #   stripe_payment_method_ids.first
-  # end
-
-  # def stripe_setup_intent_id
-  #   stripe_checkout_session&.setup_intent
-  # end
-
-  # def stripe_setup_intent
-  #   @stripe_setup_intent ||= Stripe::SetupIntent.retrieve(stripe_setup_intent_id)
-  # end
 end

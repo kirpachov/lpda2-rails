@@ -12,6 +12,8 @@ module StubStripeBackendHelper
 
   EVENT_ID = "evt_3RrTk5P3aO71SSMB1bRozwIW"
 
+  REFUND_ID = "re_3RrgMcP3aO71SSMB1YPXm66j"
+
   STRIPE_RESPONSES = {
     checkout_session_create_setup_success: File.read(
       Rails.root.join("spec/fixtures/stripe/checkout_session/create_setup_success.json")
@@ -64,6 +66,15 @@ module StubStripeBackendHelper
     create_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_create_setup_success],
     get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open],
     retreive_event: STRIPE_RESPONSES[:retreive_event_success],
+    create_refund: File.read(
+      Rails.root.join("spec/fixtures/stripe/refunds/success_create_refund.json")
+    ),
+    expire_checkout_session: File.read(
+      Rails.root.join("spec/fixtures/stripe/checkout_session/expire.json")
+    ),
+    get_refund: File.read(
+      Rails.root.join("spec/fixtures/stripe/refunds/success_retrieve_refund.json")
+    )
   }.freeze
 
   def stub_stripe_backend(configs = {})
@@ -127,12 +138,36 @@ module StubStripeBackendHelper
       }
     end
 
+    stub_request(:post, "https://api.stripe.com/v1/checkout/sessions/#{CS_ID}/expire").to_return do |_request|
+      {
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: response_body[:expire_checkout_session]
+      }
+    end
+
     # Retrieve session
     stub_request(:get, "https://api.stripe.com/v1/checkout/sessions/#{CS_ID}").to_return do |_request|
       {
         status: 200,
         headers: { "Content-Type" => "application/json" },
         body: response_body[:get_checkout_session]
+      }
+    end
+
+    stub_request(:post, "https://api.stripe.com/v1/refunds").to_return do |_request|
+      {
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: response_body[:create_refund]
+      }
+    end
+
+    stub_request(:get, "https://api.stripe.com/v1/refunds/#{StubStripeBackendHelper::REFUND_ID}").to_return do |_request|
+      {
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: response_body[:get_refund]
       }
     end
   end

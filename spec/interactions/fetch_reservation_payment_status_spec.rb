@@ -58,7 +58,7 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
     end
 
     let!(:reservation_payment) do
-      create(:reservation_payment, [:stripe_payment, :stripe_authorization].sample, reservation:, status: :todo)
+      create(:reservation_payment, %i[stripe_payment stripe_authorization].sample, reservation:, status: :todo)
     end
 
     context "when reservation_payment does not have stripe_payment_details" do
@@ -69,11 +69,45 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
       it_behaves_like "when failed run FetchReservationPaymentStatus interaction"
     end
 
+    [
+      "todo",
+      "authorized",
+      "paid",
+      "refunded"
+    ].each do |initial_payment_status|
+      context "when refund_id is set. initial_payment_status=#{initial_payment_status.inspect}" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            refund_id: StubStripeBackendHelper::REFUND_ID
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+          stub_stripe_backend
+        end
+
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+        if initial_payment_status != "refunded"
+          it {
+            expect { call }.to(change do
+                                 reservation_payment.reload.status
+                               end.from(initial_payment_status).to("refunded"))
+          }
+        end
+
+        it do
+          call
+          expect(reservation_payment.reload.status).to eq("refunded")
+        end
+      end
+    end
+
     context "when reservation_payment has status 'todo' and stripe session has status 'open': won't change anything" do
       before do
         reservation_payment.stripe_payment_details.update!(
           payment_intent_id: nil
         )
+
         reservation_payment.update!(status: "todo")
         stub_stripe_backend(
           responses: {
@@ -355,7 +389,7 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
             responses: {
               get_checkout_session: File.read(
                 Rails.root.join("spec/fixtures/stripe/checkout_session/success_payment_todo.json")
-              ),
+              )
               # retrieve_payment_intent: File.read(
               #   Rails.root.join("spec/fixtures/stripe/payment_intent/success_payment_todo.json")
               # )

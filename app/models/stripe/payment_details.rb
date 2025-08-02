@@ -53,6 +53,12 @@ module Stripe
       )
     end
 
+    def refund
+      return nil if refund_id.blank?
+
+      @refund ||= Stripe::Refund.retrieve(refund_id)
+    end
+
     def payment_method_ids
       payment_methods.data.map(&:id)
     end
@@ -71,6 +77,19 @@ module Stripe
       return nil if payment_intent_id.blank?
 
       @payment_intent ||= Stripe::PaymentIntent.retrieve(payment_intent_id)
+    end
+
+    def expire_checkout_session!
+      Stripe::ExpireCheckoutSession.run!(
+        checkout_session_id:
+      )
+    end
+
+    def refund_payment_intent!
+      Stripe::RefundPaymentIntent.run!(
+        payment: reservation_payment,
+        payment_intent_id:
+      )
     end
   end
 end

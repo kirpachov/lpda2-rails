@@ -183,7 +183,7 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refresh_payment_status" do
       paid
       todo
     ].each do |payment_initial_status|
-      context "when payment has status '#{payment_initial_status}' but nexi api says refound was made: returns #{nexi_success_code.inspect}" do
+      context "when payment has status '#{payment_initial_status}' but nexi api says refund was made: returns #{nexi_success_code.inspect}" do
         let(:nexi_response) do
           {
             mac: "1ed21acd6bbbf641e6a599eeb15d027861715265",
