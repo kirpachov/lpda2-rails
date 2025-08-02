@@ -4,6 +4,8 @@
 class FetchReservationPaymentStatus < ActiveInteraction::Base
   record :reservation_payment, class: ReservationPayment
 
+  set_callback :execute, :before, -> { reservation_payment.reload }
+
   validate do
     errors.add(:reservation_payment, "does not have an 'external_id'") unless reservation_payment.external_id.present?
   end

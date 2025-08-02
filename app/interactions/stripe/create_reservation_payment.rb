@@ -86,7 +86,7 @@ module Stripe
         value: amount,
         # html: call.client.html,
         # other: { order_hpp_call: call.result },
-        external_object: call.session.as_json,
+        # external_object: call.session.as_json,
         other: {
           custom_text_submit:,
           product_name:,
@@ -98,7 +98,11 @@ module Stripe
         preorder_type: deferred ? :stripe_authorization : :stripe_payment,
         success_url:,
         failure_url: cancel_url,
-        hpp_url: call.url
+        hpp_url: call.url,
+
+        stripe_payment_details: Stripe::PaymentDetails.new(
+          checkout_session_id: call.session.id,
+        )
       )
 
       # errors.merge!(@payment.errors) if @payment.invalid?

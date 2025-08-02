@@ -36,10 +36,10 @@ RSpec.describe CreateReservationPayment, type: :interaction do
       ).and(eq(ReservationPayment.last.external_id))
     end
 
-    it do
-      expect(run.result.external_object.symbolize_keys).to be_present.and(
-        eq(Oj.load(StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_create_setup_success]).symbolize_keys)
-      ).and(eq(ReservationPayment.last.external_object.symbolize_keys))
-    end
+    # it do
+    #   expect(run.result.external_object.symbolize_keys).to be_present.and(
+    #     eq(Oj.load(StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_create_setup_success]).symbolize_keys)
+    #   ).and(eq(ReservationPayment.last.external_object.symbolize_keys))
+    # end
   end
 end

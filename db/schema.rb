@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_08_01_133446) do
+ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -421,7 +421,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_01_133446) do
     t.text "external_id"
     t.text "success_url"
     t.text "failure_url"
-    t.jsonb "external_object", comment: "JSON of external object, latest version."
     t.index ["hpp_url"], name: "index_reservation_payments_on_hpp_url", unique: true
     t.index ["reservation_id"], name: "index_reservation_payments_on_reservation_id", unique: true
   end
@@ -498,6 +497,15 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_01_133446) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["key"], name: "index_settings_on_key", unique: true
+  end
+
+  create_table "stripe_payment_details", force: :cascade do |t|
+    t.text "checkout_session_id", null: false
+    t.text "payment_intent_id", comment: "Does depend from checkout_session if is a payment, but does not if it's a authorization. When authorization can create a PaymentIntent by using payment methods provided by customer. In this case, PaymentIntent id is not linked to checkout session."
+    t.bigint "reservation_payment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_payment_id"], name: "index_stripe_payment_details_on_reservation_payment_id"
   end
 
   create_table "table_type_to_preorder_reservation_groups", force: :cascade do |t|
@@ -583,6 +591,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_01_133446) do
   add_foreign_key "reservation_turn_to_messages", "reservation_turns"
   add_foreign_key "reservations", "table_types"
   add_foreign_key "reset_password_secrets", "users"
+  add_foreign_key "stripe_payment_details", "reservation_payments"
   add_foreign_key "table_type_to_preorder_reservation_groups", "preorder_reservation_groups"
   add_foreign_key "table_type_to_preorder_reservation_groups", "table_types"
   add_foreign_key "tag_in_reservations", "reservation_tags"

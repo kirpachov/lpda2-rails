@@ -1,0 +1,74 @@
+{
+  "id": "pi_3RrKLlP3aO71SSMB0hJHU60n",
+  "object": "payment_intent",
+  "amount": 1050,
+  "amount_capturable": 0,
+  "amount_details": {
+    "tip": {}
+  },
+  "amount_received": 1050,
+  "application": null,
+  "application_fee_amount": null,
+  "automatic_payment_methods": {
+    "allow_redirects": "always",
+    "enabled": true
+  },
+  "canceled_at": null,
+  "cancellation_reason": null,
+  "capture_method": "automatic_async",
+  "client_secret": "pi_3RrKLlP3aO71SSMB0hJHU60n_secret_zaEAXrVDOb6qsDSNhIyyxSx6a",
+  "confirmation_method": "automatic",
+  "created": 1754060065,
+  "currency": "eur",
+  "customer": "cus_Smu9jNdVygCBod",
+  "description": null,
+  "last_payment_error": null,
+  "latest_charge": "ch_3RrKLlP3aO71SSMB0cMhC0hO",
+  "livemode": false,
+  "metadata": {},
+  "next_action": null,
+  "on_behalf_of": null,
+  "payment_method": "pm_1RrKKtP3aO71SSMBUbfGN7vG",
+  "payment_method_configuration_details": {
+    "id": "pmc_1Rd68AP3aO71SSMB00MfwbHF",
+    "parent": null
+  },
+  "payment_method_options": {
+    "bancontact": {
+      "preferred_language": "en"
+    },
+    "card": {
+      "installments": null,
+      "mandate_options": null,
+      "network": null,
+      "request_three_d_secure": "automatic"
+    },
+    "eps": {},
+    "giropay": {},
+    "klarna": {
+      "preferred_locale": null
+    },
+    "link": {
+      "persistent_token": null
+    }
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "eps",
+    "giropay",
+    "klarna",
+    "link"
+  ],
+  "processing": null,
+  "receipt_email": null,
+  "review": null,
+  "setup_future_usage": null,
+  "shipping": null,
+  "source": null,
+  "statement_descriptor": null,
+  "statement_descriptor_suffix": null,
+  "status": "canceled",
+  "transfer_data": null,
+  "transfer_group": null
+}

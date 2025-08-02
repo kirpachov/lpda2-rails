@@ -2,6 +2,21 @@
 
 require "rails_helper"
 
+RSpec.shared_examples "when successful run FetchReservationPaymentStatus interaction" do
+  it { expect(call).to be_valid }
+  it { expect { call }.to(change(Log::StripeEvent, :count)) }
+  it { expect { call }.not_to(change(ReservationPayment, :count)) }
+  it { expect { call }.not_to(change(Reservation, :count)) }
+end
+
+RSpec.shared_examples "when failed run FetchReservationPaymentStatus interaction" do
+  it { expect(call).not_to be_valid }
+  it { expect(call.errors).not_to be_empty }
+  # it { expect { call }.to(change(Log::StripeEvent, :count)) }
+  it { expect { call }.not_to(change { ReservationPayment.all.as_json }) }
+  it { expect { call }.not_to(change { Reservation.all.as_json }) }
+end
+
 RSpec.describe FetchReservationPaymentStatus, type: :interaction do
   subject(:call) do
     stub
@@ -37,232 +52,565 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
   it { expect(reservation_payment).to be_valid }
   it { expect(call.errors).to be_empty }
 
-  context "when payment_gateway is stripe" do
-    let(:stub) do
+  context "when payment gateway is 'stripe'" do
+    before do
       stub_stripe_backend
     end
 
-    let(:preorder_type) { :stripe_payment }
-    let(:reservation_payment_external_id) { StubStripeBackendHelper::CS_ID }
+    let!(:reservation_payment) do
+      create(:reservation_payment, :stripe_authorization, reservation:, status: :todo)
+    end
 
-    context "when reservation_payment has status 'todo' and stripe session has status 'complete' for stripe_payment" do
-      let(:preorder_type) { :stripe_payment }
-      let(:stub) do
-        stub_request(:get,
-                     "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-          {
-            status: 200,
-            headers: { "Content-Type" => "application/json" },
-            body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-          }
-        end
+    context "when reservation_payment does not have stripe_payment_details" do
+      before do
+        reservation_payment.stripe_payment_details.destroy
       end
 
+      it_behaves_like "when failed run FetchReservationPaymentStatus interaction"
+    end
+
+    context "when reservation_payment has status 'todo' and stripe session has status 'open': won't change anything" do
       before do
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: nil
+        )
         reservation_payment.update!(status: "todo")
+        stub_stripe_backend(
+          responses: {
+            get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open]
+            # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+          }
+        )
       end
 
-      it { expect(call).to be_valid }
-      it { expect(call.errors).to be_empty }
-      it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("paid")) }
-      it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+      it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+      it { expect { call }.not_to(change { reservation_payment.reload.as_json }) }
+      it { expect { call }.not_to(change { reservation_payment.reload.status }.from("todo")) }
     end
 
-    context "when reservation_payment has status 'todo' and stripe session has status 'complete' for stripe_authorization" do
-      let(:preorder_type) { :stripe_authorization }
-      let(:stub) do
-        stub_request(:get,
-                     "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-          {
-            status: 200,
-            headers: { "Content-Type" => "application/json" },
-            body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-          }
+    %w[
+      paid
+      authorized
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status '#{initial_payment_status}' and stripe session has status 'open': will be updated to 'todo'" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: nil
+          )
+          reservation_payment.update!(status: initial_payment_status)
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open]
+              # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+            }
+          )
         end
-      end
 
-      before do
-        reservation_payment.update!(status: "todo")
-      end
-
-      it { expect(call).to be_valid }
-      it { expect(call.errors).to be_empty }
-      it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("authorized")) }
-      it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
-      it do
-        call
-        expect(reservation_payment.external_object.symbolize_keys).to be_present.and(eq(Oj.load(StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]).symbolize_keys))
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+        it { expect { call }.to(change { reservation_payment.reload.status }.from(initial_payment_status).to("todo")) }
       end
     end
 
-    context "when reservation_payment has status 'paid' and stripe session has status 'complete' for stripe_payment" do
-      let(:preorder_type) { :stripe_payment }
-      let(:stub) do
-        stub_request(:get,
-                     "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-          {
-            status: 200,
-            headers: { "Content-Type" => "application/json" },
-            body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-          }
+    %w[
+      todo
+      paid
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status '#{initial_payment_status}' but stripe session has status 'complete' (without payment intent)" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: nil
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_authorized]
+              # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+            }
+          )
         end
-      end
 
-      before do
-        reservation_payment.update!(status: "paid")
-      end
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
 
-      it { expect(call).to be_valid }
-      it { expect(call.errors).to be_empty }
-      it { expect { call }.not_to(change { reservation_payment.reload.status }.from("paid")) }
-      it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+        it {
+          expect { call }.to(change do
+                               reservation_payment.reload.status
+                             end.from(initial_payment_status).to("authorized"))
+        }
+      end
     end
 
-    context "when reservation_payment has status 'authorized' and stripe session has status 'complete' for stripe_authorization" do
-      let(:preorder_type) { :stripe_authorization }
-      let(:stub) do
-        stub_request(:get,
-                     "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-          {
-            status: 200,
-            headers: { "Content-Type" => "application/json" },
-            body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-          }
-        end
-      end
-
+    context "when reservation_payment has status 'authorized' but stripe session has status 'complete' (without payment intent)" do
       before do
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: nil
+        )
+
         reservation_payment.update!(status: "authorized")
+
+        stub_stripe_backend(
+          responses: {
+            get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_authorized]
+            # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+          }
+        )
       end
 
-      it { expect(call).to be_valid }
-      it { expect(call.errors).to be_empty }
-      it { expect { call }.not_to(change { reservation_payment.reload.status }.from("authorized")) }
-      it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+      it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+      it {
+        expect { call }.not_to(change do
+                                 reservation_payment.reload.status
+                               end.from("authorized"))
+      }
     end
 
-    context "when reservation_payment has status 'paid' and stripe session has status 'complete' for stripe_authorization" do
-      let(:preorder_type) { :stripe_authorization }
-      let(:stub) do
-        stub_request(:get,
-                     "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-          {
-            status: 200,
-            headers: { "Content-Type" => "application/json" },
-            body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+    %w[
+      todo
+      authorized
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status 'authorized' but stripe session has status 'complete' (with payment intent)" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: nil
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: File.read(
+                Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_with_payment_intent.json")
+              )
+              # StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_paid]
+              # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+            }
+          )
+        end
+
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+        it {
+          expect { call }.to(change do
+                               reservation_payment.reload.status
+                             end.from(initial_payment_status).to("paid"))
+        }
+      end
+    end
+
+    context "when reservation_payment has status 'paid' but stripe session has status 'complete' (with payment intent)" do
+      before do
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: nil
+        )
+
+        reservation_payment.update!(status: "paid")
+
+        stub_stripe_backend(
+          responses: {
+            get_checkout_session: File.read(
+              Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_with_payment_intent.json")
+            )
+            # StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_paid]
+            # retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success]
+          }
+        )
+      end
+
+      it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+      it {
+        expect { call }.not_to(change do
+                                 reservation_payment.reload.status
+                               end.from("paid"))
+      }
+    end
+
+    context "when reservation_payment has status 'paid' and stripe session is complete with external payment intent" do
+      before do
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: StubStripeBackendHelper::PAYMENT_INTENT_ID
+        )
+
+        reservation_payment.update!(status: "paid")
+
+        stub_stripe_backend(
+          responses: {
+            get_checkout_session: File.read(
+              Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_authorized.json")
+            ),
+            retrieve_payment_intent: File.read(
+              Rails.root.join("spec/fixtures/stripe/payment_intent/retrieve_success.json")
+            )
+          }
+        )
+      end
+
+      it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+      it {
+        expect { call }.not_to(change do
+                                 reservation_payment.reload.status
+                               end.from("paid"))
+      }
+    end
+
+    %w[
+      todo
+      authorized
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status '#{initial_payment_status}' and stripe session is complete with external payment intent" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: StubStripeBackendHelper::PAYMENT_INTENT_ID
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: File.read(
+                Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_authorized.json")
+              ),
+              retrieve_payment_intent: File.read(
+                Rails.root.join("spec/fixtures/stripe/payment_intent/retrieve_success.json")
+              )
+            }
+          )
+        end
+
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+        it {
+          expect { call }.to(change do
+                               reservation_payment.reload.status
+                             end.from(initial_payment_status).to("paid"))
+        }
+      end
+    end
+
+    %w[
+      todo
+      authorized
+      paid
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status '#{initial_payment_status}' and stripe session is complete with external payment intent, but payment intent is canceled" do
+        before do
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: StubStripeBackendHelper::PAYMENT_INTENT_ID
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: File.read(
+                Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_authorized.json")
+              ),
+              retrieve_payment_intent: File.read(
+                Rails.root.join("spec/fixtures/stripe/payment_intent/retrieve_success_canceled.json")
+              )
+            }
+          )
+        end
+
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+        if initial_payment_status != "refunded"
+          it {
+            expect { call }.to(change do
+                                 reservation_payment.reload.status
+                               end.from(initial_payment_status).to("refunded"))
           }
         end
-      end
 
-      before do
-        reservation_payment.update!(status: "paid")
-      end
-
-      it { expect(call).to be_valid }
-      it { expect(call.errors).to be_empty }
-      it { expect { call }.not_to(change { reservation_payment.reload.status }.from("paid")) }
-      it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
-    end
-
-    [
-      "todo"
-    ].each do |reservation_payment_status|
-      context "when reservation_payment has status #{reservation_payment_status.inspect} and stripe session has status 'complete' for stripe_authorization" do
-        let(:preorder_type) { :stripe_authorization }
-        let(:stub) do
-          stub_request(:get,
-                       "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-            {
-              status: 200,
-              headers: { "Content-Type" => "application/json" },
-              body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-            }
-          end
+        it do
+          call
+          expect(reservation_payment.reload.status).to eq("refunded")
         end
-
-        before do
-          reservation_payment.update!(status: reservation_payment_status)
-        end
-
-        it { expect(call).to be_valid }
-        it { expect(call.errors).to be_empty }
-
-        it {
-          expect { call }.to(change do
-                               reservation_payment.reload.status
-                             end.from(reservation_payment_status).to("authorized"))
-        }
-
-        it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
       end
     end
 
     %w[
-      todo authorized
-    ].each do |reservation_payment_status|
-      context "when reservation_payment has status #{reservation_payment_status.inspect} and stripe session has status 'complete' for stripe_payment" do
-        let(:preorder_type) { :stripe_payment }
-        let(:stub) do
-          stub_request(:get,
-                       "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-            {
-              status: 200,
-              headers: { "Content-Type" => "application/json" },
-              body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
-            }
-          end
-        end
-
+      todo
+      authorized
+      paid
+      refunded
+    ].each do |initial_payment_status|
+      context "when reservation_payment has status '#{initial_payment_status}' and stripe session is open with 'unpaid' payment." do
         before do
-          reservation_payment.update!(status: reservation_payment_status)
+          reservation_payment.stripe_payment_details.update!(
+            payment_intent_id: nil
+          )
+
+          reservation_payment.update!(status: initial_payment_status)
+
+          stub_stripe_backend(
+            responses: {
+              get_checkout_session: File.read(
+                Rails.root.join("spec/fixtures/stripe/checkout_session/success_payment_todo.json")
+              ),
+              # retrieve_payment_intent: File.read(
+              #   Rails.root.join("spec/fixtures/stripe/payment_intent/success_payment_todo.json")
+              # )
+            }
+          )
         end
 
-        it { expect(call).to be_valid }
-        it { expect(call.errors).to be_empty }
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
 
-        it {
-          expect { call }.to(change do
-                               reservation_payment.reload.status
-                             end.from(reservation_payment_status).to("paid"))
-        }
+        if initial_payment_status != "todo"
+          it {
+            expect { call }.to(change do
+                                 reservation_payment.reload.status
+                               end.from(initial_payment_status).to("todo"))
+          }
+        end
 
-        it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
-      end
-    end
-
-    # matrix between reservation_payment status and stripe session status
-    # reservation_payment status is between todo, paid, refunded, authorized
-    # stripe session status is between open, complete, expired
-    %w[
-      todo paid authorized
-    ].each do |reservation_payment_status|
-      %w[
-        open complete expired
-      ].each do |stripe_session_status|
-        context "when reservation_payment status is '#{reservation_payment_status}' and stripe session status is '#{stripe_session_status}'" do
-          before do
-            reservation_payment.update!(status: reservation_payment_status)
-            stub
-          end
-
-          let(:stub) do
-            stub_request(:get,
-                         "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
-              {
-                status: 200,
-                headers: { "Content-Type" => "application/json" },
-                body: StubStripeBackendHelper::STRIPE_RESPONSES[:"checkout_session_retrieve_success_#{stripe_session_status}"]
-              }
-            end
-          end
-
-          it { expect(call).to be_valid }
-          it { expect(call.errors).to be_empty }
-          it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+        it do
+          call
+          expect(reservation_payment.reload.status).to eq("todo")
         end
       end
     end
   end
+
+  # context "when payment_gateway is stripe" do
+  #   let(:stub) do
+  #     stub_stripe_backend
+  #   end
+
+  #   let!(:reservation_payment) do
+  #     create(:reservation_payment, :stripe_payment, preorder_type:, reservation:, external_id: reservation_payment_external_id)
+  #   end
+
+  #   # let(:preorder_type) { :stripe_payment }
+  #   # let(:reservation_payment_external_id) { StubStripeBackendHelper::CS_ID }
+
+  #   context "when reservation_payment has status 'todo' and stripe session has status 'complete' for stripe_payment" do
+  #     let(:preorder_type) { :stripe_payment }
+  #     let(:stub) do
+  #       # stub_request(:get,
+  #       #              "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #       #   {
+  #       #     status: 200,
+  #       #     headers: { "Content-Type" => "application/json" },
+  #       #     body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #       #   }
+  #       # end
+  #     end
+
+  #     before do
+  #       reservation_payment.update!(status: "todo")
+  #     end
+
+  #     it { expect(call).to be_valid }
+  #     it { expect(call.errors).to be_empty }
+  #     it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("paid")) }
+  #     it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #   end
+
+  #   context "when reservation_payment has status 'todo' and stripe session has status 'complete' for stripe_authorization" do
+  #     let(:preorder_type) { :stripe_authorization }
+  #     let(:stub) do
+  #       stub_request(:get,
+  #                    "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #         {
+  #           status: 200,
+  #           headers: { "Content-Type" => "application/json" },
+  #           body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #         }
+  #       end
+  #     end
+
+  #     before do
+  #       reservation_payment.update!(status: "todo")
+  #     end
+
+  #     it { expect(call).to be_valid }
+  #     it { expect(call.errors).to be_empty }
+  #     it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("authorized")) }
+  #     it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #     # it do
+  #     #   call
+  #     #   expect(reservation_payment.external_object.symbolize_keys).to be_present.and(eq(Oj.load(StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]).symbolize_keys))
+  #     # end
+  #   end
+
+  #   context "when reservation_payment has status 'paid' and stripe session has status 'complete' for stripe_payment" do
+  #     let(:preorder_type) { :stripe_payment }
+  #     let(:stub) do
+  #       stub_request(:get,
+  #                    "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #         {
+  #           status: 200,
+  #           headers: { "Content-Type" => "application/json" },
+  #           body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #         }
+  #       end
+  #     end
+
+  #     before do
+  #       reservation_payment.update!(status: "paid")
+  #     end
+
+  #     it { expect(call).to be_valid }
+  #     it { expect(call.errors).to be_empty }
+  #     it { expect { call }.not_to(change { reservation_payment.reload.status }.from("paid")) }
+  #     it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #   end
+
+  #   context "when reservation_payment has status 'authorized' and stripe session has status 'complete' for stripe_authorization" do
+  #     let(:preorder_type) { :stripe_authorization }
+  #     let(:stub) do
+  #       stub_request(:get,
+  #                    "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #         {
+  #           status: 200,
+  #           headers: { "Content-Type" => "application/json" },
+  #           body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #         }
+  #       end
+  #     end
+
+  #     before do
+  #       reservation_payment.update!(status: "authorized")
+  #     end
+
+  #     it { expect(call).to be_valid }
+  #     it { expect(call.errors).to be_empty }
+  #     it { expect { call }.not_to(change { reservation_payment.reload.status }.from("authorized")) }
+  #     it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #   end
+
+  #   context "when reservation_payment has status 'paid' and stripe session has status 'complete' for stripe_authorization" do
+  #     let(:preorder_type) { :stripe_authorization }
+  #     let(:stub) do
+  #       stub_request(:get,
+  #                    "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #         {
+  #           status: 200,
+  #           headers: { "Content-Type" => "application/json" },
+  #           body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #         }
+  #       end
+  #     end
+
+  #     before do
+  #       reservation_payment.update!(status: "paid")
+  #     end
+
+  #     it { expect(call).to be_valid }
+  #     it { expect(call.errors).to be_empty }
+  #     it { expect { call }.not_to(change { reservation_payment.reload.status }.from("paid")) }
+  #     it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #   end
+
+  #   [
+  #     "todo"
+  #   ].each do |reservation_payment_status|
+  #     context "when reservation_payment has status #{reservation_payment_status.inspect} and stripe session has status 'complete' for stripe_authorization" do
+  #       let(:preorder_type) { :stripe_authorization }
+  #       let(:stub) do
+  #         stub_request(:get,
+  #                      "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #           {
+  #             status: 200,
+  #             headers: { "Content-Type" => "application/json" },
+  #             body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #           }
+  #         end
+  #       end
+
+  #       before do
+  #         reservation_payment.update!(status: reservation_payment_status)
+  #       end
+
+  #       it { expect(call).to be_valid }
+  #       it { expect(call.errors).to be_empty }
+
+  #       it {
+  #         expect { call }.to(change do
+  #                              reservation_payment.reload.status
+  #                            end.from(reservation_payment_status).to("authorized"))
+  #       }
+
+  #       it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #     end
+  #   end
+
+  #   %w[
+  #     todo authorized
+  #   ].each do |reservation_payment_status|
+  #     context "when reservation_payment has status #{reservation_payment_status.inspect} and stripe session has status 'complete' for stripe_payment" do
+  #       let(:preorder_type) { :stripe_payment }
+  #       let(:stub) do
+  #         stub_request(:get,
+  #                      "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #           {
+  #             status: 200,
+  #             headers: { "Content-Type" => "application/json" },
+  #             body: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+  #           }
+  #         end
+  #       end
+
+  #       before do
+  #         reservation_payment.update!(status: reservation_payment_status)
+  #       end
+
+  #       it { expect(call).to be_valid }
+  #       it { expect(call.errors).to be_empty }
+
+  #       it {
+  #         expect { call }.to(change do
+  #                              reservation_payment.reload.status
+  #                            end.from(reservation_payment_status).to("paid"))
+  #       }
+
+  #       it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #     end
+  #   end
+
+  #   # matrix between reservation_payment status and stripe session status
+  #   # reservation_payment status is between todo, paid, refunded, authorized
+  #   # stripe session status is between open, complete, expired
+  #   %w[
+  #     todo paid authorized
+  #   ].each do |reservation_payment_status|
+  #     %w[
+  #       open complete expired
+  #     ].each do |stripe_session_status|
+  #       context "when reservation_payment status is '#{reservation_payment_status}' and stripe session status is '#{stripe_session_status}'" do
+  #         before do
+  #           reservation_payment.update!(status: reservation_payment_status)
+  #           stub
+  #         end
+
+  #         let(:stub) do
+  #           stub_request(:get,
+  #                        "https://api.stripe.com/v1/checkout/sessions/#{StubStripeBackendHelper::CS_ID}").to_return do |_request|
+  #             {
+  #               status: 200,
+  #               headers: { "Content-Type" => "application/json" },
+  #               body: StubStripeBackendHelper::STRIPE_RESPONSES[:"checkout_session_retrieve_success_#{stripe_session_status}"]
+  #             }
+  #           end
+  #         end
+
+  #         it { expect(call).to be_valid }
+  #         it { expect(call.errors).to be_empty }
+  #         it { expect { call }.to(change { Log::StripeEvent.count }.by(1)) }
+  #       end
+  #     end
+  #   end
+  # end
 
   context "when authorization, and its already in status 'paid' (user already charged)" do
     let(:preorder_type) { :html_nexi_authorization }

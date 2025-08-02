@@ -1,0 +1,119 @@
+{
+  "testNotes": "Checkout session with payment but user did nothing: did not even open the payment page.",
+
+  "id": "cs_test_a1cnlIiQKwrVwD1CTXfJIdLHfQYUhTnxkJcm0SgWY4cyhipVv6WMD7cKqb",
+  "object": "checkout.session",
+  "adaptive_pricing": {
+    "enabled": true
+  },
+  "after_expiration": null,
+  "allow_promotion_codes": null,
+  "amount_subtotal": 1000,
+  "amount_total": 1000,
+  "automatic_tax": {
+    "enabled": false,
+    "liability": null,
+    "provider": null,
+    "status": null
+  },
+  "billing_address_collection": null,
+  "cancel_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/cancelled",
+  "client_reference_id": "106",
+  "client_secret": null,
+  "collected_information": {
+    "shipping_details": null
+  },
+  "consent": null,
+  "consent_collection": null,
+  "created": 1754138275,
+  "currency": "eur",
+  "currency_conversion": null,
+  "custom_fields": [],
+  "custom_text": {
+    "after_submit": null,
+    "shipping_address": null,
+    "submit": {
+      "message": "Almeta, please enter your credit card details to proceed with the payment."
+    },
+    "terms_of_service_acceptance": null
+  },
+  "customer": null,
+  "customer_creation": "always",
+  "customer_details": {
+    "address": null,
+    "email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+    "name": null,
+    "phone": null,
+    "tax_exempt": "none",
+    "tax_ids": null
+  },
+  "customer_email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+  "discounts": [],
+  "expires_at": 1754224674,
+  "invoice": null,
+  "invoice_creation": {
+    "enabled": false,
+    "invoice_data": {
+      "account_tax_ids": null,
+      "custom_fields": null,
+      "description": null,
+      "footer": null,
+      "issuer": null,
+      "metadata": {},
+      "rendering_options": null
+    }
+  },
+  "livemode": false,
+  "locale": "auto",
+  "metadata": {},
+  "mode": "payment",
+  "origin_context": null,
+  "payment_intent": null,
+  "payment_link": null,
+  "payment_method_collection": "if_required",
+  "payment_method_configuration_details": {
+    "id": "pmc_1Rd68AP3aO71SSMB00MfwbHF",
+    "parent": null
+  },
+  "payment_method_options": {
+    "card": {
+      "request_three_d_secure": "automatic"
+    }
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "eps",
+    "klarna",
+    "link"
+  ],
+  "payment_status": "unpaid",
+  "permissions": null,
+  "phone_number_collection": {
+    "enabled": false
+  },
+  "recovered_from": null,
+  "saved_payment_method_options": {
+    "allow_redisplay_filters": [
+      "always"
+    ],
+    "payment_method_remove": "disabled",
+    "payment_method_save": null
+  },
+  "setup_intent": null,
+  "shipping_address_collection": null,
+  "shipping_cost": null,
+  "shipping_options": [],
+  "status": "open",
+  "submit_type": null,
+  "subscription": null,
+  "success_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/processed",
+  "total_details": {
+    "amount_discount": 0,
+    "amount_shipping": 0,
+    "amount_tax": 0
+  },
+  "ui_mode": "hosted",
+  "url": "https://checkout.stripe.com/c/pay/cs_test_a1cnlIiQKwrVwD1CTXfJIdLHfQYUhTnxkJcm0SgWY4cyhipVv6WMD7cKqb#fidpamZkaWAnPydkcHFqJyknZHVsTmB8Jz8ndW5acWB2cVowNFdhMzJhVTZkSjI0VlZIR29NQmNGN081UTREVkp%2FZGE0Q2h0PWdqcGBJSHZUcF1PdmNnRDdJNjNBXW1xPGF9S2NsPX9GbTZzMEB2QkBqajx9R3xhbjFAbTU1NzY0ZEA1fGonKSdjd2poVmB3c2B3Jz9xd3BgKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSdga2RnaWBVaWRmYG1qaWFgd3YnP3F3cGB4JSUl",
+  "wallet_options": null
+}

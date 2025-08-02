@@ -11,9 +11,10 @@
 - Rimborso automatico nel caso in cui vi sia stato fatto un pagamento e l'utente cancelli la prenotazione in tempo
 - testa Stripe::CreateCheckoutSession nel caso in cui si verifichino Stripe::StripeErrore StandardError dentro do_call
 - testa FetchReservationPaymentStatusJob, UpdateAllReservationPaymentStatusJob
-- ricezione in tempo reale degli eventi con webhook
+- nel FE, quando si vede la prenotazione, si includa "reload_payment=true" nei parametri in modo da scaricare sempre l'esito del pagamento prima di vederlo.
 
 ## Fatto (forse)
+- ricezione in tempo reale degli eventi con webhook
 - Pagamento diretto (e.g. per pagamento per tavolo speciale)
 - Pagamento con metodo precedentemente autorizzato (e.g. cliente non si presenta ma aveva autorizzato il pagamento)
 - Download dello stato del pagamento
@@ -26,6 +27,7 @@
 - Cosa succede se due customer hanno la stessa email / fullname ?
 - hpp_url passato al client dovrebbe essere in ogni caso il backend, in modo da tracciare gli eventi di apertura.
 - aggiornamento immediato dello stato degli ordini stripe: webhook?
+- facendo rimborso da dashboard stripe, il PaymentIntent risulta ancora "succeeded"
 
 ## Local event testing
 ```bash

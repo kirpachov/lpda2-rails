@@ -27,6 +27,10 @@ module StubStripeBackendHelper
       Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_complete.json")
     ),
 
+    checkout_session_retrieve_success_authorized: File.read(
+      Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_authorized.json")
+    ),
+
     # Checkout session, calling #retrieve method for its id, and it has status "expired"
     checkout_session_retrieve_success_expired: File.read(
       Rails.root.join("spec/fixtures/stripe/checkout_session/retrieve_success_expired.json")
@@ -35,6 +39,14 @@ module StubStripeBackendHelper
     payment_intent_create_success: File.read(
       Rails.root.join("spec/fixtures/stripe/payment_intent/create_success.json")
     ),
+
+    payment_intent_retrieve_success: File.read(
+      Rails.root.join("spec/fixtures/stripe/payment_intent/retrieve_success.json")
+    ),
+
+    # payment_intent_retrieve_success_canceled: File.read(
+    #   Rails.root.join("spec/fixtures/stripe/payment_intent/retrieve_success_canceled.json")
+    # ),
 
     payment_methods_list_success: File.read(
       Rails.root.join("spec/fixtures/stripe/payment_methods/list_success.json")
@@ -47,10 +59,11 @@ module StubStripeBackendHelper
 
   ENDPOINT_RESPONSES_BODY = {
     create_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_create_success],
+    retrieve_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success],
     list_customers_payment_methods: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_methods_list_success],
     create_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_create_setup_success],
     get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open],
-    retreive_event: STRIPE_RESPONSES[:retreive_event_success]
+    retreive_event: STRIPE_RESPONSES[:retreive_event_success],
   }.freeze
 
   def stub_stripe_backend(configs = {})
@@ -85,6 +98,14 @@ module StubStripeBackendHelper
         status: 200,
         headers: { "Content-Type" => "application/json" },
         body: response_body[:create_payment_intent]
+      }
+    end
+
+    stub_request(:get, "https://api.stripe.com/v1/payment_intents/#{StubStripeBackendHelper::PAYMENT_INTENT_ID}").to_return do |_request|
+      {
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: response_body[:retrieve_payment_intent]
       }
     end
 

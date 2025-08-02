@@ -23,6 +23,10 @@ FactoryBot.define do
       status { "authorized" }
       external_id { StubStripeBackendHelper::CS_ID }
       hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
+
+      stripe_payment_details do
+        build(:stripe_payment_details, checkout_session_id: StubStripeBackendHelper::CS_ID)
+      end
     end
 
     trait :stripe_payment do
@@ -30,6 +34,11 @@ FactoryBot.define do
       external_id { StubStripeBackendHelper::CS_ID }
       status { "paid" }
       hpp_url { "https://checkout.stripe.com/pay/#{StubStripeBackendHelper::CS_ID}" }
+
+      stripe_payment_details do
+        build(:stripe_payment_details, checkout_session_id: StubStripeBackendHelper::CS_ID)
+        # association :stripe_payment_details
+      end
     end
   end
 

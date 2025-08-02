@@ -27,12 +27,16 @@ module Stripe
     end
 
     def execute
-      compose(
+      payment_intent = compose(
         CreatePaymentIntent,
         amount: value,
         customer_id: stripe_customer_id,
         payment_method_id: stripe_payment_method_id
       )
+
+      payment.stripe_payment_details.update!(payment_intent_id: payment_intent.id)
+
+      payment_intent
     end
   end
 end
