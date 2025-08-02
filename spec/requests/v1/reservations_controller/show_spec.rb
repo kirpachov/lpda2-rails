@@ -15,7 +15,7 @@ RSpec.describe "GET /v1/reservations/:secret" do
   before do
     stub_stripe_backend(
       responses: {
-        get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+        get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_authorized]
       }
     )
   end
@@ -40,6 +40,14 @@ RSpec.describe "GET /v1/reservations/:secret" do
   context "when providing ?reload_payment=true" do
     let(:default_params) { { reload_payment: true } }
     let(:payment) { create(:reservation_payment, :stripe_payment, status: "todo", reservation:) }
+
+    before do
+      stub_stripe_backend(
+        responses: {
+          get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_complete]
+        }
+      )
+    end
 
     it { expect(req).to eq(200) }
     # it { expect { req }.to(change(Log::StripeEvent, :count)) }
