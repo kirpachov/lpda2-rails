@@ -8,7 +8,7 @@ class UpdateAllReservationPaymentStatusJob
   def perform
     ReservationPayment.where(
       reservation: Reservation.next.public_visible
-    ).pluck(:id).each do |payment_id|
+    ).order(:updated_at).ids.each do |payment_id|
       FetchReservationPaymentStatusJob.perform_async("reservation_payment_id" => payment_id)
     end
   end
