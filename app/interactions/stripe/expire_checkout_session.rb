@@ -11,7 +11,7 @@ module Stripe
     # ################################
     # Validations
     # ################################
-    validate :checkout_session_id, presence: true
+    validates :checkout_session_id, presence: true
 
     def execute
       Stripe::Checkout::Session.expire(
