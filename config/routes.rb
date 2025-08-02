@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     scope module: :v1, path: "v1" do
       get "public_data", to: "public_data#index", as: :public_data
       post "nexi/receive_order_outcome", as: :nexi_receive_order_outcome
+      match "stripe/receive_event", to: "stripe#receive_event", via: %i[post get], as: :stripe_receive_event
 
       resources :images, only: %w[index show update create] do
         member do

@@ -8,6 +8,10 @@ module StubStripeBackendHelper
 
   PAYMENT_METHOD_ID = "pm_1RrKKtP3aO71SSMBUbfGN7vG"
 
+  PAYMENT_INTENT_ID = "pi_3RrKLlP3aO71SSMB0hJHU60n"
+
+  EVENT_ID = "evt_3RrTk5P3aO71SSMB1bRozwIW"
+
   STRIPE_RESPONSES = {
     checkout_session_create_setup_success: File.read(
       Rails.root.join("spec/fixtures/stripe/checkout_session/create_setup_success.json")
@@ -34,6 +38,10 @@ module StubStripeBackendHelper
 
     payment_methods_list_success: File.read(
       Rails.root.join("spec/fixtures/stripe/payment_methods/list_success.json")
+    ),
+
+    retreive_event_success: File.read(
+      Rails.root.join("spec/fixtures/stripe/events/receive_event_payment_intent.json")
     )
   }.freeze
 
@@ -41,7 +49,8 @@ module StubStripeBackendHelper
     create_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_create_success],
     list_customers_payment_methods: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_methods_list_success],
     create_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_create_setup_success],
-    get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open]
+    get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_open],
+    retreive_event: STRIPE_RESPONSES[:retreive_event_success]
   }.freeze
 
   def stub_stripe_backend(configs = {})
@@ -62,6 +71,14 @@ module StubStripeBackendHelper
     # end
 
     response_body = ENDPOINT_RESPONSES_BODY.merge(configs[:responses] || {})
+
+    stub_request(:get, "https://api.stripe.com/v1/events/#{StubStripeBackendHelper::EVENT_ID}").to_return do |_request|
+      {
+        status: 200,
+        headers: { "Content-Type" => "application/json" },
+        body: response_body[:retreive_event]
+      }
+    end
 
     stub_request(:post, "https://api.stripe.com/v1/payment_intents").to_return do |_request|
       {

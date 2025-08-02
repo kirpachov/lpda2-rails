@@ -26,3 +26,10 @@
 - Cosa succede se due customer hanno la stessa email / fullname ?
 - hpp_url passato al client dovrebbe essere in ogni caso il backend, in modo da tracciare gli eventi di apertura.
 - aggiornamento immediato dello stato degli ordini stripe: webhook?
+
+## Local event testing
+```bash
+stripe login
+stripe listen --forward-to localhost:3050/v1/stripe/receive_event
+stripe trigger payment_intent.succeeded
+```
