@@ -106,6 +106,16 @@ default: &default
 development:
   <<: *default
 
+  default_payment_gateway: "stripe"
+
+  show_reservation_url: "/r/{{secret}}"
+
+  # When user cancels reservation payment, will be sent here:
+  cancelled_payment_reservation_url: "{{frontend_base_url}}//r/{{secret}}/cancelled"
+
+  # After user completed payment, will be sent here:
+  processed_payment_reservation_url: "{{frontend_base_url}}//r/{{secret}}/processed"
+
 # NOTE: changing test configurations may cause errors when running tests.
 test:
   <<: *default
