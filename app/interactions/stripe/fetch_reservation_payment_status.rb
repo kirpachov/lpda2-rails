@@ -50,14 +50,14 @@ module Stripe
     end
 
     def calc_reservation_payment_status
+      # Successful refund.
+      return "refunded" if refund&.status == "succeeded"
+
       # Got an async charge after authorization
       return "paid" if payment_intent&.status == "succeeded"
 
       # A payment was made but then canceled/refunded.
       return "refunded" if payment_intent&.status == "canceled"
-
-      # Successful refund.
-      return "refunded" if refund&.status == "succeeded"
 
       # User did nothing.
       return "todo" if checkout_session.status == "open"

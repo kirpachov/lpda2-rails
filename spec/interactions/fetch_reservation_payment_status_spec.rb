@@ -69,6 +69,26 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
       it_behaves_like "when failed run FetchReservationPaymentStatus interaction"
     end
 
+    context "when payment_intent has status 'succeeded' but refund has also status 'succeeded', should mark as refunded" do
+      before do
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: StubStripeBackendHelper::PAYMENT_INTENT_ID,
+          refund_id: StubStripeBackendHelper::REFUND_ID
+        )
+        reservation_payment.update!(status: "paid")
+        stub_stripe_backend(
+          responses: {
+            get_payment_intent: StubStripeBackendHelper::STRIPE_RESPONSES[:payment_intent_retrieve_success_succeeded],
+            get_refund: StubStripeBackendHelper::ENDPOINT_RESPONSES_BODY[:get_refund]
+          }
+        )
+      end
+
+      it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+      it { expect { call }.to(change { reservation_payment.reload.status }.from("paid").to("refunded")) }
+    end
+
     [
       "todo",
       "authorized",
