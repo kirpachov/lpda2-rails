@@ -1,0 +1,126 @@
+{
+  "testNotes": "Checkout session that has been a payment since creation, and payment has been completed.",
+
+  "id": "cs_test_a1IUdnDHlnO1XgttFdchshhsHCNQbukHfzbm76rm27xxPxaggkqykB3qGA",
+  "object": "checkout.session",
+  "adaptive_pricing": {
+    "enabled": true
+  },
+  "after_expiration": null,
+  "allow_promotion_codes": null,
+  "amount_subtotal": 1000,
+  "amount_total": 1000,
+  "automatic_tax": {
+    "enabled": false,
+    "liability": null,
+    "provider": null,
+    "status": null
+  },
+  "billing_address_collection": null,
+  "cancel_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/cancelled",
+  "client_reference_id": "106",
+  "client_secret": null,
+  "collected_information": {
+    "shipping_details": null
+  },
+  "consent": null,
+  "consent_collection": null,
+  "created": 1754136879,
+  "currency": "eur",
+  "currency_conversion": null,
+  "custom_fields": [],
+  "custom_text": {
+    "after_submit": null,
+    "shipping_address": null,
+    "submit": {
+      "message": "Almeta, please enter your credit card details to proceed with the payment."
+    },
+    "terms_of_service_acceptance": null
+  },
+  "customer": "cus_SnEoRTPRIQQrhn",
+  "customer_creation": "always",
+  "customer_details": {
+    "address": {
+      "city": null,
+      "country": "IT",
+      "line1": null,
+      "line2": null,
+      "postal_code": null,
+      "state": null
+    },
+    "email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+    "name": "sasda asd",
+    "phone": null,
+    "tax_exempt": "none",
+    "tax_ids": []
+  },
+  "customer_email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+  "discounts": [],
+  "expires_at": 1754223279,
+  "invoice": null,
+  "invoice_creation": {
+    "enabled": false,
+    "invoice_data": {
+      "account_tax_ids": null,
+      "custom_fields": null,
+      "description": null,
+      "footer": null,
+      "issuer": null,
+      "metadata": {},
+      "rendering_options": null
+    }
+  },
+  "livemode": false,
+  "locale": "auto",
+  "metadata": {},
+  "mode": "payment",
+  "origin_context": null,
+  "payment_intent": "pi_3RreKxP3aO71SSMB1rdQG0oE",
+  "payment_link": null,
+  "payment_method_collection": "if_required",
+  "payment_method_configuration_details": {
+    "id": "pmc_1Rd68AP3aO71SSMB00MfwbHF",
+    "parent": null
+  },
+  "payment_method_options": {
+    "card": {
+      "request_three_d_secure": "automatic"
+    }
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "eps",
+    "klarna",
+    "link"
+  ],
+  "payment_status": "paid",
+  "permissions": null,
+  "phone_number_collection": {
+    "enabled": false
+  },
+  "recovered_from": null,
+  "saved_payment_method_options": {
+    "allow_redisplay_filters": [
+      "always"
+    ],
+    "payment_method_remove": "disabled",
+    "payment_method_save": null
+  },
+  "setup_intent": null,
+  "shipping_address_collection": null,
+  "shipping_cost": null,
+  "shipping_options": [],
+  "status": "complete",
+  "submit_type": null,
+  "subscription": null,
+  "success_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/processed",
+  "total_details": {
+    "amount_discount": 0,
+    "amount_shipping": 0,
+    "amount_tax": 0
+  },
+  "ui_mode": "hosted",
+  "url": null,
+  "wallet_options": null
+}

@@ -50,7 +50,7 @@ To define it, either copy `docker-compose.dev.yml` or `docker-compose.prod.yml`,
 
 > Docker version 27.2.0, build 3ab4256
 
-Prima installazione: inizializzazione database. 
+Prima installazione: inizializzazione database.
 ```bash
 docker compose run rails bundle exec rake db:create db:migrate db:seed
 ```
@@ -201,7 +201,7 @@ bundle exec rails s -b 0.0.0.0
 
 - Setup nginx server in `sudo vim /etc/nginx/sites-enabled/lpda2-backend`
 - Serve nginx server with `sudo nginx -t && sudo service nginx reload`
-- Start server `rails s`
+- Start server `bundle exec rails s`
 - Check the setup with `curl http://lpda2api.localhost/`
 ```nginx
 upstream lpda2_upstream {

@@ -1,0 +1,95 @@
+{
+  "testNotes": "Checkout session just authorized, no payment intent.",
+
+  "id": "cs_test_a1cnlIiQKwrVwD1CTXfJIdLHfQYUhTnxkJcm0SgWY4cyhipVv6WMD7cKqb",
+  "object": "checkout.session",
+  "adaptive_pricing": null,
+  "after_expiration": null,
+  "allow_promotion_codes": null,
+  "amount_subtotal": null,
+  "amount_total": null,
+  "automatic_tax": {
+    "enabled": false,
+    "liability": null,
+    "provider": null,
+    "status": null
+  },
+  "billing_address_collection": null,
+  "cancel_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/cancelled",
+  "client_reference_id": "106",
+  "client_secret": null,
+  "collected_information": {
+    "shipping_details": null
+  },
+  "consent": null,
+  "consent_collection": null,
+  "created": 1754136592,
+  "currency": "eur",
+  "currency_conversion": null,
+  "custom_fields": [],
+  "custom_text": {
+    "after_submit": null,
+    "shipping_address": null,
+    "submit": {
+      "message": "Almeta, we ask you to enter your credit card details to confirm the reservation. No charge will be made."
+    },
+    "terms_of_service_acceptance": null
+  },
+  "customer": "cus_SnEjF3j0DDYQBd",
+  "customer_creation": "always",
+  "customer_details": {
+    "address": null,
+    "email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+    "name": "saa as",
+    "phone": null,
+    "tax_exempt": null,
+    "tax_ids": []
+  },
+  "customer_email": "sasha+d0ba7a4eea41d16722de994df6d5513e@opinioni.net",
+  "discounts": null,
+  "expires_at": 1754222992,
+  "invoice": null,
+  "invoice_creation": null,
+  "livemode": false,
+  "locale": "auto",
+  "metadata": {},
+  "mode": "setup",
+  "origin_context": null,
+  "payment_intent": null,
+  "payment_link": null,
+  "payment_method_collection": "always",
+  "payment_method_configuration_details": {
+    "id": "pmc_1Rd68AP3aO71SSMB00MfwbHF",
+    "parent": null
+  },
+  "payment_method_options": {
+    "card": {
+      "request_three_d_secure": "automatic"
+    }
+  },
+  "payment_method_types": [
+    "card",
+    "bancontact",
+    "klarna",
+    "link"
+  ],
+  "payment_status": "no_payment_required",
+  "permissions": null,
+  "phone_number_collection": {
+    "enabled": false
+  },
+  "recovered_from": null,
+  "saved_payment_method_options": null,
+  "setup_intent": "seti_1RreG4P3aO71SSMB0w331pZi",
+  "shipping_address_collection": null,
+  "shipping_cost": null,
+  "shipping_options": [],
+  "status": "complete",
+  "submit_type": null,
+  "subscription": null,
+  "success_url": "http://localhost:4250/en/#/r/b05a96b3-2c7e-4c70-a34b-33e80c640113/processed",
+  "total_details": null,
+  "ui_mode": "hosted",
+  "url": null,
+  "wallet_options": null
+}

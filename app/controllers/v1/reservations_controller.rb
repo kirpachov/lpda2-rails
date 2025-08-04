@@ -6,8 +6,11 @@ module V1
     before_action :find_next_and_active_reservation, only: %i[do_payment resend_confirmation_email]
     skip_before_action :authenticate_user
 
+    # GET /v1/reservations/:secret
+    # provide reload_payment=true if you want the payment to be reloaded
     def show
-      # TODO: if reservation has a payment, should check for payment status from the payment provider
+      @item.payment.fetch_status! if @item.payment&.todo? && params[:reload_payment].to_s.downcase.strip == "true"
+
       render json: {
         item: full_json(@item)
       }
@@ -25,6 +28,11 @@ module V1
       if @item.payment.html.present?
         Log::ReservationEvent.create!(reservation: @item, event_type: "do_payment")
         return render plain: @item.payment.clean_html, content_type: "text/html"
+      end
+
+      if @item.payment.hpp_url.present?
+        Log::ReservationEvent.create!(reservation: @item, event_type: "do_payment")
+        return redirect_to @item.payment.hpp_url, allow_other_host: true
       end
 
       raise "Don't know how to render payment for reservation"

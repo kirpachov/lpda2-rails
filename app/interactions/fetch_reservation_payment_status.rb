@@ -4,6 +4,8 @@
 class FetchReservationPaymentStatus < ActiveInteraction::Base
   record :reservation_payment, class: ReservationPayment
 
+  set_callback :execute, :before, -> { reservation_payment.reload }
+
   validate do
     errors.add(:reservation_payment, "does not have an 'external_id'") unless reservation_payment.external_id.present?
   end
@@ -14,11 +16,21 @@ class FetchReservationPaymentStatus < ActiveInteraction::Base
 
   def execute
     case reservation_payment.preorder_type
-    when "html_nexi_payment" then fetch_nexi_status
-    when "html_nexi_authorization" then fetch_nexi_status
+    when "html_nexi_payment", "html_nexi_authorization" then fetch_nexi_status
+    when "stripe_authorization", "stripe_payment" then fetch_stripe_checkout_status
     else
       errors.add(:reservation, "payment type #{reservation_payment.preorder_type.inspect} not supported")
     end
+  end
+
+  def fetch_stripe_checkout_status
+    @call = Stripe::FetchReservationPaymentStatus.run(
+      reservation_payment:
+    )
+
+    errors.merge!(call.errors) if call.errors.any? || call.invalid?
+
+    call.result
   end
 
   def fetch_nexi_status

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
+ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -152,6 +152,23 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["reservation_id"], name: "index_log_reservation_events_on_reservation_id"
+  end
+
+  create_table "log_stripe_events", force: :cascade do |t|
+    t.float "duration"
+    t.integer "http_status"
+    t.text "method"
+    t.integer "num_retries"
+    t.text "path"
+    t.text "request_id"
+    t.jsonb "user_data"
+    t.jsonb "response_header"
+    t.jsonb "response_body"
+    t.jsonb "request_header"
+    t.jsonb "request_body"
+    t.jsonb "raw"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "menu_allergens", force: :cascade do |t|
@@ -482,6 +499,16 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
     t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
+  create_table "stripe_payment_details", force: :cascade do |t|
+    t.text "checkout_session_id", null: false
+    t.text "payment_intent_id", comment: "Does depend from checkout_session if is a payment, but does not if it's a authorization. When authorization can create a PaymentIntent by using payment methods provided by customer. In this case, PaymentIntent id is not linked to checkout session."
+    t.text "refund_id", comment: "When payment intent is refunded, will contain the id of the refund."
+    t.bigint "reservation_payment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_payment_id"], name: "index_stripe_payment_details_on_reservation_payment_id"
+  end
+
   create_table "table_type_to_preorder_reservation_groups", force: :cascade do |t|
     t.bigint "table_type_id", null: false
     t.bigint "preorder_reservation_group_id", null: false
@@ -565,6 +592,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_28_212025) do
   add_foreign_key "reservation_turn_to_messages", "reservation_turns"
   add_foreign_key "reservations", "table_types"
   add_foreign_key "reset_password_secrets", "users"
+  add_foreign_key "stripe_payment_details", "reservation_payments"
   add_foreign_key "table_type_to_preorder_reservation_groups", "preorder_reservation_groups"
   add_foreign_key "table_type_to_preorder_reservation_groups", "table_types"
   add_foreign_key "tag_in_reservations", "reservation_tags"

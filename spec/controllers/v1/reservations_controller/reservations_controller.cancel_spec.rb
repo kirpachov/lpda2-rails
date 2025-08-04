@@ -34,6 +34,10 @@ RSpec.describe V1::ReservationsController, type: :controller do
     let(:params) { { secret: reservation.secret, lang: } }
     let!(:reservation) { create(:reservation) }
 
+    before do
+      stub_stripe_backend
+    end
+
     let(:nexi_response) do
       {
         esito: "OK",
@@ -106,6 +110,26 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       before do
         Setting[:nexi_auto_refund_cancelled_reservations] = "true"
+      end
+
+      context "when reservation payment was created with stripe" do
+        let!(:payment) do
+          create(:reservation_payment, status: [:todo, :authorized, :refunded].sample, reservation:, preorder_type: ["stripe_authorization", "stripe_payment"].sample)
+        end
+
+        it { expect { req }.not_to(change { reservation.reload.payment.as_json }) }
+        it { expect { req }.to(change { reservation.reload.status }.to("cancelled")) }
+      end
+
+      context "when reservation payment has status 'paid' and is a 'stripe_payment'" do
+        let!(:payment) do
+          create(:reservation_payment, status: :paid, reservation:, preorder_type: "stripe_payment")
+        end
+
+        pending "TODO: implement stripe refund"
+
+        # it { expect { req }.not_to(change { reservation.reload.payment.as_json }) }
+        it { expect { req }.to(change { reservation.reload.status }.to("cancelled")) }
       end
 
       context "when reservation payment is paid" do

@@ -19,7 +19,7 @@ if Rails.application.credentials.secret_key_base.nil?
 end
 
 %w[base_url frontend_base_url show_reservation_url processed_payment_reservation_url cancelled_payment_reservation_url
-   temporary_block_duration].filter do |required_config|
+   temporary_block_duration default_payment_gateway stripe_api_key].filter do |required_config|
   Config.public_send(required_config).blank?
 end.join(", ").tap do |required_configs|
   next unless required_configs.present?

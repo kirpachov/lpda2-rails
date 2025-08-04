@@ -80,6 +80,32 @@ RSpec.describe V1::ReservationsController, type: :controller do
           it { expect(json[:item]["payment"]).to include("status" => reservation.reload.payment.status) }
           it { expect(json[:item]["payment"]).to include("value" => reservation.reload.payment.value) }
         end
+
+        context "when has stripe authorization associated" do
+          before do
+            create(:reservation_payment, :stripe_authorization, reservation:)
+            req
+          end
+
+          it { expect(json[:item]).to include("payment" => Hash) }
+          it { expect(json[:item]["payment"]).to include("status" => "authorized") }
+          it { expect(json[:item]["payment"]).to include("preorder_type" => "stripe_authorization") }
+          it { expect(json[:item]["payment"]).to include("hpp_url" => reservation.reload.payment.hpp_url) }
+          it { expect(json[:item]["payment"]["hpp_url"]).to be_present.and(include("https://checkout.stripe.com")) }
+        end
+
+        context "when has stripe payment associated" do
+          before do
+            create(:reservation_payment, :stripe_payment, reservation:)
+            req
+          end
+
+          it { expect(json[:item]).to include("payment" => Hash) }
+          it { expect(json[:item]["payment"]).to include("status" => "paid") }
+          it { expect(json[:item]["payment"]).to include("preorder_type" => "stripe_payment") }
+          it { expect(json[:item]["payment"]).to include("hpp_url" => reservation.reload.payment.hpp_url) }
+          it { expect(json[:item]["payment"]["hpp_url"]).to be_present.and(include("https://checkout.stripe.com")) }
+        end
       end
 
       context "when secret is invalid" do

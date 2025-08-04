@@ -28,16 +28,28 @@ class RefundReservationPayment < ActiveInteraction::Base
 
   def do_refund
     case reservation.payment.preorder_type
-    when "html_nexi_payment", "html_nexi_authorization"
-      call = Nexi::RefundPayment.run(
-        value: reservation.payment.value * 100,
-        order_id: reservation.payment.external_id,
-        request_purpose: "refund_reservation_payment",
-        request_record: reservation
-      )
-      errors.merge!(call.errors) unless call.valid?
+    when "html_nexi_payment", "html_nexi_authorization" then do_refund_nexi
+    when "stripe_authorization", "stripe_payment" then do_refund_stripe
     else
       errors.add(:reservation, "payment type #{reservation.payment.preorder_type.inspect} not supported")
     end
+  end
+
+  def do_refund_nexi
+    call = Nexi::RefundPayment.run(
+      value: reservation.payment.value * 100,
+      order_id: reservation.payment.external_id,
+      request_purpose: "refund_reservation_payment",
+      request_record: reservation
+    )
+    errors.merge!(call.errors) unless call.valid?
+  end
+
+  def do_refund_stripe
+    call = Stripe::RefundReservationPayment.run(
+      payment: reservation.payment
+    )
+
+    errors.merge!(call.errors) if call.errors.any? || call.invalid?
   end
 end

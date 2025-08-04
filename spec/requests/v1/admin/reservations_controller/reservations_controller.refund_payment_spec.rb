@@ -36,11 +36,15 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
     {}
   end
 
+  let!(:reservation_payment) do
+    create(:reservation_payment,
+           reservation:,
+           status: %i[paid authorized].sample,
+           preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
+  end
+
   let(:reservation) do
-    create(:reservation).tap do |reservation|
-      create(:reservation_payment, reservation:, status: %i[paid authorized].sample,
-                                   preorder_type: %w[html_nexi_payment html_nexi_authorization].sample)
-    end
+    create(:reservation)
   end
 
   before do
@@ -148,5 +152,25 @@ RSpec.describe "POST /v1/admin/reservations/<id>/refund_payment" do
     it_behaves_like "failed /v1/admin/reservations/<id>/refund_payment"
     it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
     it { expect { req }.to(change { Nexi::HttpRequest.where(record: reservation).count }.by(1)) }
+  end
+
+  context "when payment gateway is 'stripe'" do
+    before do
+      stub_stripe_backend
+    end
+
+    let!(:reservation_payment) do
+      create(:reservation_payment, :stripe_payment, reservation:)
+    end
+
+    it { expect { req }.to(change { reservation.reload.payment.status }.to("refunded")) }
+
+    it do
+      req
+      expect(json).not_to include(:message)
+      expect(response).to be_successful
+    end
+
+    it { expect { req }.to(change { reservation.payment.stripe_payment_details.reload.refund_id }.from(nil)) }
   end
 end

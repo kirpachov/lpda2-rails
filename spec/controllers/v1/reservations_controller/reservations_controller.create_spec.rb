@@ -530,6 +530,44 @@ RSpec.describe V1::ReservationsController, type: :controller do
       end
     end
 
+    context "when default_payment_gateway is stripe" do
+      let!(:group) do
+        create(:preorder_reservation_group, preorder_type: %i[nexi_payment nexi_authorization].sample).tap do |grp|
+          grp.turns = [turn]
+        end
+      end
+
+      before do
+        stub_stripe_backend
+      end
+
+      it { expect { req }.to(change { Reservation.count }.by(1)) }
+      it { expect { req }.to(change { ReservationPayment.count }.by(1)) }
+      it { expect { req }.not_to(change { Nexi::HttpRequest.count }) }
+      it { expect { req }.to(change { Log::StripeEvent.count }.by(1)) }
+      it { expect { req }.to(change { Log::StripeEvent.where(http_status: 200).count }.by(1)) }
+
+      context "when checking after response" do
+        before { req }
+
+        it { expect(json).not_to include(:message) }
+        it { expect(response).to be_successful }
+
+        it { expect(ReservationPayment.last.hpp_url).to be_present.and(include("https://checkout.stripe.com")) }
+        it "local ReservationPayment.external_id should be stripe's id" do
+          expect(
+            Oj.load(Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.response_body)["id"]
+          ).to be_present.and(eq(ReservationPayment.last.external_id))
+        end
+
+        it "Stripe's #client_reference_id (external id) should be local Reservation id" do
+          expect(
+            Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.request_body.split("&")
+          ).to include("client_reference_id=#{Reservation.last.id}")
+        end
+      end
+    end
+
     context "when nexi APIs return some kind of error" do
       before do
         stub_request(:post,
@@ -681,7 +719,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
 
         context "when adults is less than min_people" do
-          let(:adults) { [2,3,4,5].sample }
+          let(:adults) { [2, 3, 4, 5].sample }
           let(:children) { 0 }
 
           it { expect { req }.to(change { Reservation.count }) }
@@ -695,7 +733,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
 
         context "when adults equals or is more than min_people" do
-          let(:adults) { [6,7,8].sample }
+          let(:adults) { [6, 7, 8].sample }
           let(:children) { 0 }
 
           it { expect { req }.to(change { Reservation.count }) }

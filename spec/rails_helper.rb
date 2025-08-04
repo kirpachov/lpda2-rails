@@ -48,6 +48,7 @@ Dir[Rails.root.join("spec/matchers/**/*.rb")].sort.each { |f| require f }
 # end
 RSpec.configure do |config|
   config.include ActiveSupport::Testing::TimeHelpers
+  config.include StubStripeBackendHelper
   config.include RequestSpecHelper, type: :request
   config.include ControllersHelper, type: :controller
   config.include ActiveJob::TestHelper

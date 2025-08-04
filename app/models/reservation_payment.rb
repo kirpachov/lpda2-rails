@@ -8,7 +8,7 @@ class ReservationPayment < ApplicationRecord
   # Constants, settings, modules, et...
   # ################################
 
-  DEFERRED_METHOD_TYPES = %w[html_nexi_authorization].freeze
+  DEFERRED_METHOD_TYPES = %w[html_nexi_authorization stripe_authorization].freeze
 
   # Initially "paid" was used for "authorized" too. Then we needed to distinguish when a payment was authorized but not yet paid,
   # or when a payment was paid after an authorization.
@@ -37,7 +37,14 @@ class ReservationPayment < ApplicationRecord
 
     # Will require a preauthorization with nexi before reservation can be created.
     # Restaurant will have to confirm the payment manually, in case customer doesn't show up.
-    html_nexi_authorization: "html_nexi_authorization"
+    html_nexi_authorization: "html_nexi_authorization",
+
+    # Using Stripe as payment gateway manager.
+    # Authorizing a transaction but without any actual charge
+    stripe_authorization: "stripe_authorization",
+
+    # Using stripe to manage a credit card payment.
+    stripe_payment: "stripe_payment"
   }
 
   # ################################
@@ -45,18 +52,23 @@ class ReservationPayment < ApplicationRecord
   # ################################
   belongs_to :reservation, optional: false
   has_many :nexi_http_requests, through: :reservation
+  has_one :stripe_payment_details, class_name: "Stripe::PaymentDetails", inverse_of: :reservation_payment,
+                                   dependent: :destroy, autosave: true
+  # TODO
+  # has_many :stripe_http_requests, through: :reservation
 
   # ################################
   # Validators
   # ################################
   validates :status, presence: true
   validates :hpp_url, presence: true
-  validates :html, presence: true
+  validates :html, presence: true, if: -> { preorder_type.in?(%w[html_nexi_payment html_nexi_authorization]) }
   validates :preorder_type, presence: true
   validates :external_id, presence: true
   validates :value, presence: true, numericality: { only_integer: false, greater_than: 0 }
 
   before_validation :gen_hpp_url, if: -> { html.present? }
+  # before_validation :gen_hpp_url # , if: -> { html.present? }
 
   scope :deferred, -> { where(preorder_type: DEFERRED_METHOD_TYPES) }
   scope :not_deferred, -> { where.not(preorder_type: DEFERRED_METHOD_TYPES) }
@@ -78,4 +90,15 @@ class ReservationPayment < ApplicationRecord
   def clean_html
     html.gsub(/<!--.*?-->/m, "")
   end
+
+  def fetch_status!
+    FetchReservationPaymentStatus.run!(
+      reservation_payment: self
+    )
+  end
+
+  delegate :checkout_session, :customer_id, :customer, :payment_methods, :payment_method_ids,
+           :payment_method_id, :setup_intent_id, :setup_intent, :payment_intent_id, :payment_intent,
+           :refund_payment_intent!, :expire_checkout_session!, :refund_id, :refund,
+           to: :stripe_payment_details, allow_nil: true, prefix: :stripe
 end
