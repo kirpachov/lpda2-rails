@@ -9,7 +9,13 @@ module V1
     # GET /v1/reservations/:secret
     # provide reload_payment=true if you want the payment to be reloaded
     def show
-      @item.payment.fetch_status! if @item.payment&.todo? && params[:reload_payment].to_s.downcase.strip == "true"
+      if action_name == "show"
+        if @item.payment&.todo? && params[:reload_payment].to_s.downcase.strip == "true"
+          @item.payment.fetch_status!
+        end
+
+        @item.deliver_confirmation_email_if_never_delivered_and_confirmed
+      end
 
       render json: {
         item: full_json(@item)

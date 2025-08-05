@@ -147,6 +147,18 @@ class Reservation < ApplicationRecord
     }
   end
 
+  def confirmation_email_delivered?
+    delivered_emails.pluck(:action_name).include?("confirmation")
+  end
+
+  def confirmed?
+    status == "active" && (payment.nil? || payment.authorized? || payment.paid?)
+  end
+
+  def deliver_confirmation_email_if_never_delivered_and_confirmed
+    deliver_confirmation_email_later if !confirmation_email_delivered? && confirmed?
+  end
+
   def deliver_confirmation_email
     ReservationMailer.with(confirmation_email_params).confirmation.deliver_now
   end
