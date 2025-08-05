@@ -93,6 +93,8 @@ module Stripe
     def execute
       do_call
 
+      return if errors.any?
+
       @url = session.url
 
       session
