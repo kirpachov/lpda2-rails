@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :log_stripe_event, class: 'Log::StripeEvent' do
+  factory :log_stripe_event, class: "Log::StripeEvent" do
     duration { 1.5 }
     http_status { 200 }
     # method { "post" }

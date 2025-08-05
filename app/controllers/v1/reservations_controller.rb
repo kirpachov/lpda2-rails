@@ -10,9 +10,7 @@ module V1
     # provide reload_payment=true if you want the payment to be reloaded
     def show
       if action_name == "show"
-        if @item.payment&.todo? && params[:reload_payment].to_s.downcase.strip == "true"
-          @item.payment.fetch_status!
-        end
+        @item.payment.fetch_status! if @item.payment&.todo? && params[:reload_payment].to_s.downcase.strip == "true"
 
         @item.deliver_confirmation_email_if_never_delivered_and_confirmed
       end
@@ -106,23 +104,23 @@ module V1
                             message: call.errors.full_messages.join(", "))
       end
 
-      if call.result.nil?
-        return render json: { preorder_reservation_group: nil }
-      end
+      return render json: { preorder_reservation_group: nil } if call.result.nil?
 
       render json: {
         preorder_reservation_group: call.result.as_json.merge(
           message: call.result.message,
-          table_type_to_preorder_reservation_groups: call.result.table_type_to_preorder_reservation_groups.includes(table_type: [:text_translations, { images: [:attached_image_blob] }]).map do |tt|
-            tt.as_json.merge(
-              table_type: tt.table_type.as_json.merge(
-                name: tt.table_type.name,
-                description: tt.table_type.description,
-                translations: tt.table_type.translations_json,
-                images: tt.table_type.images.map(&:full_json),
-              )
-            )
-          end
+          table_type_to_preorder_reservation_groups: call.result.table_type_to_preorder_reservation_groups.includes(table_type: [
+                                                                                                                      :text_translations, { images: [:attached_image_blob] }
+                                                                                                                    ]).map do |tt|
+                                                       tt.as_json.merge(
+                                                         table_type: tt.table_type.as_json.merge(
+                                                           name: tt.table_type.name,
+                                                           description: tt.table_type.description,
+                                                           translations: tt.table_type.translations_json,
+                                                           images: tt.table_type.images.map(&:full_json)
+                                                         )
+                                                       )
+                                                     end
         )
       }
     end

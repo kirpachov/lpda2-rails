@@ -67,7 +67,7 @@ class CreateReservationPayment < ActiveInteraction::Base
         {
           reservation:,
           amount:,
-          deferred:,
+          deferred:
         }
       )
     )

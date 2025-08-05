@@ -13,7 +13,7 @@ module V1
 
       call = Stripe::ReceiveEvent.run(request:)
 
-      return render_error(message: call.errors.full_messages.join(',')) if call.errors.any? || call.invalid?
+      return render_error(message: call.errors.full_messages.join(",")) if call.errors.any? || call.invalid?
 
       render json: {
         status: "ok",

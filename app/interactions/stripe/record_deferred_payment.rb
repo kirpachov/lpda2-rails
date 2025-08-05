@@ -10,7 +10,8 @@ module Stripe
     # ################################
     record :payment, class: ReservationPayment
 
-    delegate :reservation, :value, :stripe_checkout_session, :stripe_customer_id, :stripe_payment_method_id, to: :payment
+    delegate :reservation, :value, :stripe_checkout_session, :stripe_customer_id, :stripe_payment_method_id,
+             to: :payment
 
     # ################################
     # Validators
@@ -21,7 +22,10 @@ module Stripe
       errors.add(:payment, "must be authorized. got #{payment.status.inspect}") unless payment.authorized?
       errors.add(:payment, "must have a reservation") if reservation.blank?
       errors.add(:payment, "must have an external_id") if payment.external_id.blank?
-      errors.add(:payment, "must have a 'complete' stripe_checkout_session. got #{stripe_checkout_session&.status.inspect}") unless stripe_checkout_session&.status == "complete"
+      unless stripe_checkout_session&.status == "complete"
+        errors.add(:payment,
+                   "must have a 'complete' stripe_checkout_session. got #{stripe_checkout_session&.status.inspect}")
+      end
       errors.add(:payment, "must have a stripe_customer_id") if stripe_customer_id.blank?
       errors.add(:payment, "must have a stripe_payment_method_id") if stripe_payment_method_id.blank?
     end

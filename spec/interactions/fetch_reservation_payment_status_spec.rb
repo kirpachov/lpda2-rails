@@ -89,11 +89,11 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
       it { expect { call }.to(change { reservation_payment.reload.status }.from("paid").to("refunded")) }
     end
 
-    [
-      "todo",
-      "authorized",
-      "paid",
-      "refunded"
+    %w[
+      todo
+      authorized
+      paid
+      refunded
     ].each do |initial_payment_status|
       context "when refund_id is set. initial_payment_status=#{initial_payment_status.inspect}" do
         before do

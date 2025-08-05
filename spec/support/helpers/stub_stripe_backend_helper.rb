@@ -112,7 +112,8 @@ module StubStripeBackendHelper
       }
     end
 
-    stub_request(:get, "https://api.stripe.com/v1/payment_intents/#{StubStripeBackendHelper::PAYMENT_INTENT_ID}").to_return do |_request|
+    stub_request(:get,
+                 "https://api.stripe.com/v1/payment_intents/#{StubStripeBackendHelper::PAYMENT_INTENT_ID}").to_return do |_request|
       {
         status: 200,
         headers: { "Content-Type" => "application/json" },
@@ -163,7 +164,8 @@ module StubStripeBackendHelper
       }
     end
 
-    stub_request(:get, "https://api.stripe.com/v1/refunds/#{StubStripeBackendHelper::REFUND_ID}").to_return do |_request|
+    stub_request(:get,
+                 "https://api.stripe.com/v1/refunds/#{StubStripeBackendHelper::REFUND_ID}").to_return do |_request|
       {
         status: 200,
         headers: { "Content-Type" => "application/json" },

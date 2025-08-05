@@ -45,6 +45,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
       it { expect(response).to have_http_status(:ok) }
       it { expect(json).not_to include(message: String) }
+
       it do
         item = json[:turns].find { |j| j["starts_at"].include?("12:00") }
         expect(item).to include("preorder_reservation_group" => Hash)
@@ -55,10 +56,11 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     end
 
     context "when not providing less people, won't match" do
-      let(:people) { [1,2,3,4].sample }
+      let(:people) { [1, 2, 3, 4].sample }
 
       it { expect(response).to have_http_status(:ok) }
       it { expect(json).not_to include(message: String) }
+
       it do
         item = json[:turns].find { |j| j["starts_at"].include?("12:00") }
         expect(item["preorder_reservation_group"]).to be_nil
@@ -66,10 +68,11 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     end
 
     context "when not providing more people, will match" do
-      let(:people) { [5,6,10].sample }
+      let(:people) { [5, 6, 10].sample }
 
       it { expect(response).to have_http_status(:ok) }
       it { expect(json).not_to include(message: String) }
+
       it do
         item = json[:turns].find { |j| j["starts_at"].include?("12:00") }
         expect(item).to include("preorder_reservation_group" => Hash)
@@ -95,7 +98,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     let(:turns) do
       [
         create(:reservation_turn, name: "Cena 1", starts_at: "17:00", ends_at: "19:00", weekday: 6),
-        create(:reservation_turn, name: "Cena 2", starts_at: "19:01", ends_at: "21:00", weekday: 6),
+        create(:reservation_turn, name: "Cena 2", starts_at: "19:01", ends_at: "21:00", weekday: 6)
       ]
     end
 
@@ -112,17 +115,17 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     end
 
     let(:json_cena1) do
-      json["turns"].find{|j| j["starts_at"] == "2000-01-01T17:00:00.000Z" }
+      json["turns"].find { |j| j["starts_at"] == "2000-01-01T17:00:00.000Z" }
     end
 
     let(:json_cena2) do
-      json["turns"].find{|j| j["starts_at"] == "2000-01-01T19:01:00.000Z" }
+      json["turns"].find { |j| j["starts_at"] == "2000-01-01T19:01:00.000Z" }
     end
 
     before do
       turns
 
-      # Note: if we invert the order of creation, we will have a different result
+      # NOTE: if we invert the order of creation, we will have a different result
       pasqua
       deluxe
 
@@ -132,7 +135,8 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     end
 
     it "result should not depend on order" do
-      expect(json_cena1["preorder_reservation_group"]).to be_a(Hash).and(include("id" => deluxe.id, "payment_value" => 100))
+      expect(json_cena1["preorder_reservation_group"]).to be_a(Hash).and(include("id" => deluxe.id,
+                                                                                 "payment_value" => 100))
     end
 
     it { expect(response).to have_http_status(:ok) }
@@ -214,7 +218,7 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
 
       it { expect(response).to have_http_status(:ok) }
       it { expect(json[:turns]).not_to include(message: String) }
-      it { expect(json[:turns].dig(0, "valid_times")).to match_array([]) }
+      it { expect(json[:turns].dig(0, "valid_times")).to be_empty }
       it { expect(json[:holidays].count).to eq(1) }
       it { expect(json.dig(:holidays, 0, :message)).to eq("overlapping with only the turn") }
 
@@ -239,11 +243,14 @@ RSpec.context "GET /v2/reservations/valid_times", type: :request do
     context "when got one weekly holiday overlapping with the only turn" do
       before do
         # Ignored because to_timestamp < now
-        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: 10.days.ago, weekday: Time.zone.now.wday,weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: 10.days.ago, weekday: Time.zone.now.wday,
+                         weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
 
         # Ignored because other wday
-        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample, weekday: (Time.zone.now.wday + 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
-        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample, weekday: (Time.zone.now.wday - 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample,
+                         weekday: (Time.zone.now.wday + 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
+        create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [1.day.from_now, 10.days.from_now, nil].sample,
+                         weekday: (Time.zone.now.wday - 1) % 6, weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample)
 
         create(:holiday, from_timestamp: 10.days.ago, to_timestamp: [10.days.from_now, nil].sample, weekday: Time.zone.now.wday,
                          weekly_from: "12:30", weekly_to: ["15:00", "16:00", "23:59"].sample).tap do |h|

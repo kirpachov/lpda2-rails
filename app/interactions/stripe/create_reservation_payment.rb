@@ -36,7 +36,7 @@ module Stripe
         request_record: reservation,
         product_name:,
         custom_text_submit:,
-        client_reference_id: reservation.id.to_s,
+        client_reference_id: reservation.id.to_s
       )
 
       errors.merge!(call.errors) if call.errors.any? || call.invalid?
@@ -101,7 +101,7 @@ module Stripe
         hpp_url: call.url,
 
         stripe_payment_details: Stripe::PaymentDetails.new(
-          checkout_session_id: call.session.id,
+          checkout_session_id: call.session.id
         )
       )
 

@@ -66,11 +66,11 @@ class ReservationTurn < ApplicationRecord
       reservation_turn: self
     )
 
-    if date.present?
-      dates = dates.where(date: date)
-    else
-      dates = dates.where("date >= ?", Time.zone.now.to_date)
-    end
+    dates = if date.present?
+              dates.where(date:)
+            else
+              dates.where("date >= ?", Time.zone.now.to_date)
+            end
 
     all = PreorderReservationGroup.active.where(
       id: PreorderReservationGroupsToTurn.where(

@@ -20,7 +20,10 @@ module Stripe
     # Validations
     # ################################
     validate do
-      errors.add(:payment, "cannot have a :refund_id. it looks like it has already been refunded") if payment.stripe_payment_details.refund_id.present?
+      if payment.stripe_payment_details.refund_id.present?
+        errors.add(:payment,
+                   "cannot have a :refund_id. it looks like it has already been refunded")
+      end
     end
 
     # ################################

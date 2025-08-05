@@ -48,7 +48,7 @@ class CreatePreorderGroup < ActiveInteraction::Base
         min_people: params.delete(:min_people),
         active_from: params.delete(:active_from),
         active_to: params.delete(:active_to),
-        status: params.delete(:status),
+        status: params.delete(:status)
       }.compact
     )
 

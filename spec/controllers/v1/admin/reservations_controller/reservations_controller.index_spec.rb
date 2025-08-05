@@ -103,42 +103,42 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
           before { req(people_more_than: 3) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation4.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation4.id) }
         end
 
         context "when filtering by adults_more_than" do
           before { req(adults_more_than: 2) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation4.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id, reservation4.id) }
         end
 
         context "when filtering by children_more_than" do
           before { req(children_more_than: 2) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation2.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation2.id) }
         end
 
         context "when filtering by adults_less_than" do
           before { req(adults_less_than: 1) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation2.id, reservation3.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation2.id, reservation3.id) }
         end
 
         context "when filtering by children_less_than" do
           before { req(children_less_than: 1) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation3.id, reservation4.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id, reservation3.id, reservation4.id) }
         end
 
         context "when filtering by people_less_than" do
           before { req(people_less_than: 2) }
 
           it_behaves_like "V1::Admin::ReservationsController#index successful response"
-          it { expect(json[:items].pluck(:id)).to match_array([reservation1.id, reservation2.id, reservation3.id]) }
+          it { expect(json[:items].pluck(:id)).to contain_exactly(reservation1.id, reservation2.id, reservation3.id) }
         end
       end
 

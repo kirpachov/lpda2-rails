@@ -554,6 +554,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it { expect(response).to be_successful }
 
         it { expect(ReservationPayment.last.hpp_url).to be_present.and(include("https://checkout.stripe.com")) }
+
         it "local ReservationPayment.external_id should be stripe's id" do
           expect(
             Oj.load(Log::StripeEvent.where(path: "/v1/checkout/sessions", method: "post").last.response_body)["id"]

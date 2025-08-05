@@ -31,13 +31,6 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
   context "PATCH #cancel" do
     let(:lang) { I18n.default_locale }
-    let(:params) { { secret: reservation.secret, lang: } }
-    let!(:reservation) { create(:reservation) }
-
-    before do
-      stub_stripe_backend
-    end
-
     let(:nexi_response) do
       {
         esito: "OK",
@@ -45,6 +38,12 @@ RSpec.describe V1::ReservationsController, type: :controller do
         timeStamp: Time.zone.now.to_i * 1000,
         mac: SecureRandom.hex
       }
+    end
+    let(:params) { { secret: reservation.secret, lang: } }
+    let!(:reservation) { create(:reservation) }
+
+    before do
+      stub_stripe_backend
     end
 
     it { expect(instance).to respond_to(:cancel) }
@@ -114,7 +113,8 @@ RSpec.describe V1::ReservationsController, type: :controller do
 
       context "when reservation payment was created with stripe" do
         let!(:payment) do
-          create(:reservation_payment, status: [:todo, :authorized, :refunded].sample, reservation:, preorder_type: ["stripe_authorization", "stripe_payment"].sample)
+          create(:reservation_payment, status: %i[todo authorized refunded].sample, reservation:,
+                                       preorder_type: %w[stripe_authorization stripe_payment].sample)
         end
 
         it { expect { req }.not_to(change { reservation.reload.payment.as_json }) }
