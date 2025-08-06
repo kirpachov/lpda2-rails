@@ -111,6 +111,7 @@ RSpec.describe V1::ReservationsController, type: :controller do
     end
 
     before do
+      CreateMissingImages.run!
       Setting[:reservation_max_days_in_advance] = 0
     end
 
@@ -806,9 +807,13 @@ RSpec.describe V1::ReservationsController, type: :controller do
         it { expect { req }.to(change { Nexi::HttpRequest.count }.by(1)) }
 
         it do
+          allow(DeliverFirstConfirmationEmailJob).to receive(:perform_in).and_call_original
           req
-          expect(ActionMailer::MailDeliveryJob).to have_been_enqueued.with("ReservationMailer", "payment_required_to_confirm",
-                                                                           "deliver_now", params: anything, args: anything).once
+          expect(DeliverFirstConfirmationEmailJob).to have_received(:perform_in).once
+          expect(DeliverFirstConfirmationEmailJob).to have_received(:perform_in).once.with(
+            5.minutes,
+            Reservation.last.id
+          )
         end
 
         it do

@@ -53,7 +53,9 @@ class PublicCreateReservation < ActiveInteraction::Base
       ReservationsChannel.notify_creation(reservation_id: reservation.id)
 
       if reservation.payment.present?
-        ReservationMailer.with(reservation_id: reservation.id).payment_required_to_confirm.deliver_later
+        # ReservationMailer.with(reservation_id: reservation.id).payment_required_to_confirm.deliver_later
+        # Execute after 5 minutes
+        DeliverFirstConfirmationEmailJob.perform_in(5.minutes, reservation.id)
       else
         reservation.deliver_confirmation_email_later
       end

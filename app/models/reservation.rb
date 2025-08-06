@@ -167,6 +167,14 @@ class Reservation < ApplicationRecord
     ReservationMailer.with(confirmation_email_params).confirmation.deliver_later
   end
 
+  def deliver_payment_required_email
+    ReservationMailer.with(reservation_id: id).payment_required_to_confirm.deliver_now
+  end
+
+  def deliver_payment_required_email_later
+    ReservationMailer.with(reservation_id: id).payment_required_to_confirm.deliver_later
+  end
+
   def validate_people_count_is_valid
     return if people.positive?
 
