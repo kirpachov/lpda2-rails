@@ -69,6 +69,38 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
       it_behaves_like "when failed run FetchReservationPaymentStatus interaction"
     end
 
+    # checkout_session.status: expired; payment_intent.status: , checkout_session.mode: payment
+    context "when expired checkout session for payment" do
+      before do
+        reservation_payment.update!(
+          preorder_type: "stripe_payment"
+        )
+
+        reservation_payment.stripe_payment_details.update!(
+          payment_intent_id: nil
+        )
+
+        stub_stripe_backend(
+          responses: {
+            get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_expired],
+          }
+        )
+      end
+
+      it { expect(reservation_payment.stripe_payment_details.payment_intent).to be_nil }
+      it { expect(reservation_payment.stripe_payment_details.payment_intent_id).to be_nil }
+
+      context "when initially payment status was 'todo'" do
+        before do
+          reservation_payment.update!(status: "todo")
+        end
+
+        it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+        it { expect { call }.not_to(change { reservation_payment.reload.status }.from("todo")) }
+      end
+    end
+
     context "when payment_intent has status 'succeeded' but refund has also status 'succeeded', should mark as refunded" do
       before do
         reservation_payment.stripe_payment_details.update!(

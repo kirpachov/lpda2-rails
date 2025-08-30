@@ -73,7 +73,7 @@
   "metadata": {},
   "mode": "payment",
   "origin_context": null,
-  "payment_intent": "pi_3Rr4ukP3aO71SSMB1BcXBp85",
+  "payment_intent": null,
   "payment_link": null,
   "payment_method_collection": "if_required",
   "payment_method_configuration_details": {
@@ -92,7 +92,7 @@
     "klarna",
     "link"
   ],
-  "payment_status": "paid",
+  "payment_status": "unpaid",
   "permissions": null,
   "phone_number_collection": {
     "enabled": false
@@ -109,7 +109,7 @@
   "shipping_address_collection": null,
   "shipping_cost": null,
   "shipping_options": [],
-  "status": "open",
+  "status": "expired",
   "submit_type": null,
   "subscription": null,
   "success_url": "http://localhost:4250/it/#/r/7bf7dc99-9385-455c-b4d8-b37d0289a60b/processed",

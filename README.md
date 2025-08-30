@@ -140,7 +140,6 @@ Since frontend and backend will be hosted on different domains, we need to confi
 cookies.encrypted[:refresh_token] = {
   value: refresh_token.secret,
   httponly: true,
-  expires: 1.week.from_now.utc
   expires: 1.week.from_now.utc,
   same_site: Config.all[:cookie_same_site], # !!
   secure: Config.all[:cookie_secure] # !!
