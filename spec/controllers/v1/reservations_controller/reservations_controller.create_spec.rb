@@ -1620,17 +1620,37 @@ RSpec.describe V1::ReservationsController, type: :controller do
         end
       end
 
-      context "when already exists a reservation for same datetime and email" do
-        let!(:reservation) { create(:reservation, datetime:, email:) }
+      %w[
+        active arrived noshow
+      ].each do |reservation_status|
+        context "when already exists a reservation for same datetime and email and its in status #{reservation_status.inspect}" do
+          let!(:reservation) { create(:reservation, datetime:, email:, status: reservation_status) }
 
-        it { expect { req }.not_to(change { Reservation.count }) }
+          it { expect { req }.not_to(change(Reservation, :count)) }
 
-        it "returns 422" do
-          req
-          expect(parsed_response_body).to include(message: String, details: Hash)
-          expect(response).to have_http_status(:unprocessable_entity)
-          expect(parsed_response_body[:message].to_s.downcase).to include("another reservation for this datetime")
-          expect(parsed_response_body[:details][:email]).not_to be_empty
+          it "returns 422" do
+            req
+            expect(parsed_response_body).to include(message: String, details: Hash)
+            expect(response).to have_http_status(:unprocessable_entity)
+            expect(parsed_response_body[:message].to_s.downcase).to include("another reservation for this datetime")
+            expect(parsed_response_body[:details][:email]).not_to be_empty
+          end
+        end
+      end
+
+      %w[
+        cancelled deleted
+      ].each do |reservation_status|
+        context "when already exists a reservation for same datetime and email and its in status #{reservation_status.inspect}" do
+          let!(:reservation) { create(:reservation, datetime:, email:, status: reservation_status) }
+
+          it_behaves_like "SUCCESSFUL V1::ReservationsController POST #create"
+
+          it do
+            req
+            expect(Reservation.where(datetime:, email:).count).to eq 2
+            expect(Reservation.where(datetime:, email:).pluck(:status)).to match_array(["active", reservation_status])
+          end
         end
       end
 

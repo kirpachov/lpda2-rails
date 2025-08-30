@@ -304,7 +304,7 @@ class PublicCreateReservation < ActiveInteraction::Base
   end
 
   def no_other_reservations_for_this_email_and_datetime
-    return if Reservation.visible.where(email:, datetime:).empty?
+    return if Reservation.public_visible.where(email:, datetime:).count.zero?
 
     errors.add(:email, "has another reservation for this datetime")
   end
