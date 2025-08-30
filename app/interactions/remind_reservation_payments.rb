@@ -12,7 +12,7 @@ class RemindReservationPayments < ActiveInteraction::Base
   private
 
   def reservations
-    Reservation.visible.next.active.where(id: ids)
+    Reservation.visible.next.active.where(id: ids).where.not(email: nil)
   end
 
   def ids

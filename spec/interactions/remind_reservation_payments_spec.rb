@@ -155,6 +155,17 @@ RSpec.describe RemindReservationPayments, type: :interaction do
     it { expect { run! }.not_to(have_enqueued_job(ActionMailer::MailDeliveryJob)) }
   end
 
+  context "when created a payment 2 days ago but email is blank, should NOT send reminder." do
+    before do
+      travel_to 2.days.ago do
+        create(:reservation_payment, reservation: create(:reservation, :with_fullname, status: :active, email: nil))
+      end
+    end
+
+    it { expect { run! }.not_to raise_error }
+    it { expect { run! }.not_to(have_enqueued_job(ActionMailer::MailDeliveryJob)) }
+  end
+
   context "when created a payment 2 days ago, should send reminder." do
     let(:reservations) do
       travel_to 2.days.ago do
