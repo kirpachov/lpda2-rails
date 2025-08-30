@@ -130,6 +130,16 @@
                     style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;"><%= @call_to_action_text %></span></a>
                 </div>
 
+                <% if @call_to_action_url != @show_reservation_url %>
+                  <div style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#B09A7D;border-radius:4px;-webkit-border-radius:4px;-moz-border-radius:4px;width:auto; width:auto;;border-top:1px solid #B09A7D;border-right:1px solid #B09A7D;border-bottom:1px solid #B09A7D;border-left:1px solid #B09A7D;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;text-align:center;mso-border-alt:none;word-break:keep-all;">
+                    <a style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:undefined;text-decoration: none;color:#ffffff" href="<%= @show_reservation_url %>">
+                      <span style="font-size: 16px; line-height: 2; word-break: break-word; mso-line-height-alt: 32px;">
+                        <%= t('reservation_mailer.reservation_details') %>
+                      </span>
+                    </a>
+                  </div>
+                <% end %>
+
               <!--[if mso]></center></v:textbox></v:roundrect></td></tr></table><![endif]-->
             </div>
 

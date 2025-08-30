@@ -24,7 +24,7 @@ class ReservationMailer < ApplicationMailer
   #
   # Testing:
   # Rails console:
-  # reload!; ReservationMailer.payment_required_to_confirm(reservation: Reservation.last).deliver_now
+  # reload!; reservation = Reservation.where(email: "oleksandr.kirpachov@gmail.com").next.last; ReservationMailer.with(reservation:).payment_required_to_confirm.deliver_now
   #
   # In browser:
   # http://localhost:3050/rails/mailers/reservation_mailer/payment_required_to_confirm.txt?locale=it
