@@ -42,6 +42,11 @@ Il backend ragiona sempre in UTC. Sarà il frontend a convertire le date.
 
 ## Docker
 
+### Backup database
+```bash
+DATABASE_NAME=lpda2 ./scripts/export-db-docker.sh /tmp/db.sql
+```
+
 ### First setup
 Before anything else, you need to define `docker-compose.override.yml`. If you don't define it, `docker compose` will fail.
 To define it, either copy `docker-compose.dev.yml` or `docker-compose.prod.yml`, depending on your need.
