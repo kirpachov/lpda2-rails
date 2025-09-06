@@ -77,9 +77,10 @@ module V1
       end
 
       def update_status
-        return show if @item.update(status: params[:status].to_s)
+        call = ::Menu::UpdateDishStatus.run(dish: @item, new_status: params[:status])
+        return show if call.errors.empty? && call.valid?
 
-        render_error(status: 400, details: @item.errors.as_json, message: @item.errors.full_messages.join(", "))
+        render_error(status: 400, details: call.errors.as_json, message: call.errors.full_messages.join(", "))
       end
 
       # PATCH /v1/admin/menu/dishes/bulk_status/:status
@@ -92,7 +93,10 @@ module V1
       end
 
       def destroy
-        return if @item.deleted!
+        if @item.deleted!
+          ::Menu::DishesInCategory.where(menu_dish: @item).destroy_all
+          return
+        end
 
         render_unprocessable_entity(@item)
       rescue ActiveRecord::RecordInvalid

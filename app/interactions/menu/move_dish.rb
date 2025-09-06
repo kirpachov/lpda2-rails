@@ -23,6 +23,24 @@ module Menu
 
     def execute
       Menu::DishesInCategory.transaction do
+        # smaller_index = [from_index, to_index].min
+        # larger_index = [from_index, to_index].max
+        # interested_indexes = (smaller_index..larger_index).to_a
+        # going_up = to_index < from_index
+
+        # items = siblings.where(index: interested_indexes).map do |join|
+        #   join.index += going_up ? 1 : -1
+        #   join
+        # end
+
+        # items << association.tap { |a| a.index = to_index }
+
+        # Menu::DishesInCategory.where(id: items.map(&:id)).update_all("index = index + 100000")
+
+        # Menu::DishesInCategory.import! items, on_duplicate_key_update: { conflict_target: %i[id], columns: %i[index] }
+
+        ensure_sequential_indexes
+
         Menu::DishesInCategory.where(menu_category_id: category_id).update_all("index = index + 100000")
 
         items = Menu::DishesInCategory.where(menu_category_id: category_id).where.not(id: association.id)
@@ -36,6 +54,8 @@ module Menu
 
         association.update!(index: to_index)
 
+        ensure_sequential_indexes
+
         raise ActiveRecord::Rollback if errors.any? || invalid?
       end
 
@@ -44,8 +64,19 @@ module Menu
 
     private
 
+    def ensure_sequential_indexes
+      compose(
+        AdjustDishesInCategoryOrder,
+        category: association.category
+      )
+    end
+
     def to_index
       @to_index ||= params[:to_index].present? ? params[:to_index].to_i : nil
+    end
+
+    def from_index
+      association.index
     end
 
     def category_id
@@ -53,11 +84,11 @@ module Menu
     end
 
     def association
-      @association ||= Menu::DishesInCategory.where(menu_dish: dish, menu_category_id: category_id).first
+      Menu::DishesInCategory.where(menu_dish: dish, menu_category_id: category_id).first
     end
 
     def siblings
-      @siblings ||= Menu::DishesInCategory.where(menu_category_id: category_id).where.not(id: association&.id).order(:index)
+      Menu::DishesInCategory.where(menu_category_id: category_id).where.not(id: association&.id)
     end
   end
 end

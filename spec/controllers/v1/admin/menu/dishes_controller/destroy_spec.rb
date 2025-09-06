@@ -97,6 +97,23 @@ RSpec.describe V1::Admin::Menu::DishesController do
         it { expect(response).to be_successful }
         it { is_expected.to eq({}) }
       end
+
+      context "when deleted, will be removed from categories" do
+        before do
+          create(:menu_category).tap do |cat|
+            cat.dishes << menu_dish
+            cat.dishes << create(:menu_dish)
+          end
+
+          create(:menu_category).tap do |cat|
+            cat.dishes << create(:menu_dish)
+            cat.dishes << menu_dish
+          end
+        end
+
+        it { expect { req(menu_dish.id) }.to(change { Menu::DishesInCategory.count }.by(-2)) }
+        it { expect { req(menu_dish.id) }.to(change { Menu::DishesInCategory.where(dish: menu_dish).count }.by(-2)) }
+      end
     end
   end
 end
