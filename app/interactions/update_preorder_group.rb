@@ -64,6 +64,8 @@ class UpdatePreorderGroup < ActiveInteraction::Base
     return [] unless params.has_key?(:dates)
     return @dates if defined?(@dates)
 
+    group.turns.destroy_all
+
     dates = [params.delete(:dates)].flatten.filter(&:present?)
 
     call = CreatePreorderDates.run(group:, params: { dates: })

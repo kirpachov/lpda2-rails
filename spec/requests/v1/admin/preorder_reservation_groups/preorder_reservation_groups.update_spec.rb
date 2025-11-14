@@ -395,4 +395,25 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
       end
     end
   end
+
+  context "when group existed with 'always' turns and trying to set dates for the same turns (taken from prod. bug)" do
+    let(:group) do
+      create(:preorder_reservation_group).tap do |g|
+        g.turns = [turn]
+      end
+    end
+
+    it do
+      req
+      expect(response).to have_http_status(:ok)
+    end
+
+    it do
+      req
+      expect(json).not_to include(:message)
+    end
+
+    it { expect { req }.to(change { group.reload.turns.count }.from(1).to(0)) }
+    it { expect { req }.to(change { group.reload.dates.count }.from(0).to(1)) }
+  end
 end
