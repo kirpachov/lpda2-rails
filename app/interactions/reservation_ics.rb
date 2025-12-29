@@ -10,10 +10,9 @@ class ReservationIcs < ActiveInteraction::Base
     event_start = ignore_dst(reservation.datetime)
     event_end = ignore_dst(reservation.datetime) + 90.minutes
 
-    tzid = Config.app[:restaurant_location_time_zone]
     cal.event do |e|
-      e.dtstart = Icalendar::Values::DateTime.new event_start, "tzid" => tzid
-      e.dtend   = Icalendar::Values::DateTime.new event_end, "tzid" => tzid
+      e.dtstart = Icalendar::Values::DateTime.new event_start, "tzid" => "UTC"
+      e.dtend   = Icalendar::Values::DateTime.new event_end, "tzid" => "UTC"
 
       e.attendee = ["mailto:#{organization_email}", "mailto:#{reservation.email}"] # one or more email recipients (required)
       e.summary = I18n.t("reservation_mailer.confirmation.subject", fullname: reservation.fullname)
