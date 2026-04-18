@@ -11,6 +11,8 @@ module Menu
     OUTPUT_FILE = Rails.root.join("tmp/menu-#{Time.now.to_i}.xlsx").to_s
 
     def execute
+      load_cached_image_urls
+
       @default_sheet_name = workbook.worksheets.map(&:sheet_name).first
       write_all(foc_sheet("All"))
       write_allergens(foc_sheet("Allergens"))
@@ -31,23 +33,28 @@ module Menu
       write_row(sheet, 0, %w[element_type element_id name.it name.en description.it description.en status images])
       Menu::Category.all.includes(categories_includes).each_with_index do |cat, cat_index|
         write_row(sheet, cat_index + 1,
-                  ["Category", cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.images.map(&:url)].flatten)
+                  ["Category", cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, record_images_url(cat)].flatten)
         cat.dishes.each_with_index do |dish, index_dish|
           write_row(sheet, cat_index + index_dish + 2,
-                    ["Dish", dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.images.map(&:url)].flatten)
+                    ["Dish", dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, record_images_url(dish)].flatten)
+
+          dish_tags_count = 0
           dish.tags.each_with_index do |tag, index_tag|
+            dish_tags_count += 1
             write_row(sheet, cat_index + index_dish + index_tag + 3,
-                      ["Tag", tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.image&.url])
+                      ["Tag", tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, record_image_url(tag)])
           end
 
+          dish_allergens_count = 0
           dish.allergens.each_with_index do |allergen, index_allergen|
-            write_row(sheet, cat_index + index_dish + index_allergen + dish.tags.count + 3,
-                      ["Allergen", allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url])
+            dish_allergens_count += 1
+            write_row(sheet, cat_index + index_dish + index_allergen + dish_tags_count + 3,
+                      ["Allergen", allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, record_image_url(allergen)])
           end
 
           dish.ingredients.each_with_index do |ingredient, index_ingredient|
-            write_row(sheet, cat_index + index_dish + index_ingredient + dish.tags.count + dish.allergens.count + 3,
-                      ["Ingredient", ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url])
+            write_row(sheet, cat_index + index_dish + index_ingredient + dish_tags_count + dish_allergens_count + 3,
+                      ["Ingredient", ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, record_image_url(ingredient)])
           end
         end
       end
@@ -58,7 +65,7 @@ module Menu
                 %w[id name.it name.en description.it description.en status price updated_at created_at images])
       Menu::Category.visible.includes(categories_includes).where(parent_id: nil).each_with_index do |cat, index|
         write_row(sheet, index + 1,
-                  [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.updated_at, cat.created_at, cat.images.map(&:url)].flatten)
+                  [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.updated_at, cat.created_at, record_images_url(cat)].flatten)
       end
     end
 
@@ -67,7 +74,7 @@ module Menu
                 %w[id name.it name.en description.it description.en status price updated_at created_at images])
       Menu::Dish.visible.includes(dishes_includes).each_with_index do |dish, index|
         write_row(sheet, index + 1,
-                  [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.updated_at, dish.created_at, dish.images.map(&:url)].flatten)
+                  [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.updated_at, dish.created_at, record_images_url(dish)].flatten)
       end
     end
 
@@ -75,7 +82,7 @@ module Menu
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
       Menu::Allergen.visible.includes(allergen_includes).each_with_index do |allergen, index|
         write_row(sheet, index + 1,
-                  [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, allergen.image&.url, allergen.updated_at, allergen.created_at])
+                  [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, record_image_url(allergen), allergen.updated_at, allergen.created_at])
       end
     end
 
@@ -84,7 +91,7 @@ module Menu
                 %w[id name.it name.en description.it description.en status color imageUrl updated_at created_at])
       Menu::Tag.visible.includes(tags_includes).each_with_index do |tag, index|
         write_row(sheet, index + 1,
-                  [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, tag.image&.url, tag.updated_at, tag.created_at])
+                  [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, record_image_url(tag), tag.updated_at, tag.created_at])
       end
     end
 
@@ -92,11 +99,42 @@ module Menu
       write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
       Menu::Ingredient.visible.includes(ingredient_includes).each_with_index do |ingredient, index|
         write_row(sheet, index + 1,
-                  [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, ingredient.image&.url, ingredient.updated_at, ingredient.created_at])
+                  [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, record_image_url(ingredient), ingredient.updated_at, ingredient.created_at])
       end
     end
 
     private
+
+    def record_image_url(record)
+      image_url(record.image)
+    end
+
+    def record_images_url(record)
+      images_url(record.images)
+    end
+
+    # @Input Image record
+    def image_url(image)
+      return nil if image.blank?
+
+      @cached_image_urls[image.id] ||= image.url
+    end
+
+    def images_url(images)
+      images.map { |j| image_url(j) }
+    end
+
+    def load_cached_image_urls
+      @cached_image_urls = {}
+
+      Image.all.where(
+        id: ImageToRecord.all.where(
+          record_type: ["Menu::Allergen", "Menu::Ingredient", "Menu::Dish", "Menu::Tag", "Menu::Category"]
+        ).select(:image_id)
+      ).includes(:attached_image_blob).each do |image|
+        @cached_image_urls[image.id] = image.url
+      end
+    end
 
     def workbook
       @workbook ||= RubyXL::Workbook.new
