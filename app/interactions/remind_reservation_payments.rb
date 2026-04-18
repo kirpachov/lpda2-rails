@@ -5,7 +5,8 @@
 class RemindReservationPayments < ActiveInteraction::Base
   def execute
     reservations.find_each do |reservation|
-      ReservationMailer.with(reservation_id: reservation.id).remind_payment.deliver_later
+      ReservationMailer.with(reservation_id: reservation.id).remind_payment.deliver_now
+      sleep(1) # Sleep for 1 second to avoid sending too many emails at once.
     end
   end
 

@@ -9,7 +9,8 @@ class RemindReservationsMail < ActiveInteraction::Base
   end
 
   def process_reservation(reservation)
-    ReservationMailer.with(reservation_id: reservation.id).reminder.deliver_later
+    ReservationMailer.with(reservation_id: reservation.id).reminder.deliver_now
+    sleep(1) # Avoid sending too many emails at the same time
   end
 
   def elegible
