@@ -8,7 +8,7 @@ class ReservationMailer < ApplicationMailer
 
   # Mail send after a reservation is created.
   # In case a payment is required, we won't send confirmation immediately; it will be sent after the payment is confirmed.
-  # reload!; ReservationMailer.confirmation(reservation: Reservation.last).deliver_now
+  # reload!; reservation = Reservation.find_by(secret: "313e2ff3-1f68-4aba-bef2-5d03c5abe1f8"); ReservationMailer.with(reservation: reservation).confirmation.deliver_now
   def confirmation
     attachments["invite.ics"] = ReservationIcs.run!(reservation:)
 
