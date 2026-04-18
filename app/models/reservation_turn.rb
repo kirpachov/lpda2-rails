@@ -48,6 +48,11 @@ class ReservationTurn < ApplicationRecord
   # ################################
   # Instance methods
   # ################################
+
+  def weekday_name
+    WEEKDAYS[weekday]
+  end
+
   def valid_times(options = {})
     ReservationTurnValidTimes.run!(options.merge(turn: self))
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
+ActiveRecord::Schema[7.0].define(version: 2026_04_18_193830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -364,7 +364,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
     t.bigint "group_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["date", "reservation_turn_id"], name: "index_date_reservation_turn_uniqueness", unique: true
+    t.text "group_status", null: false, comment: "The status of its PreorderReservationGroup.\nIt's needed here to ensure uniqueness only among the active PreorderReservationGroups.\n"
+    t.index ["date", "reservation_turn_id"], name: "index_date_reservation_turn_uniqueness_active", unique: true, where: "(group_status = 'active'::text)"
     t.index ["group_id"], name: "index_preorder_reservation_dates_on_group_id"
     t.index ["reservation_turn_id"], name: "index_preorder_reservation_dates_on_reservation_turn_id"
   end
@@ -386,8 +387,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_08_02_082105) do
     t.bigint "preorder_reservation_group_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "preorder_reservation_group_status", null: false, comment: "The status of its PreorderReservationGroup.\nIt's needed here to ensure uniqueness only among the active PreorderReservationGroups.\n"
     t.index ["preorder_reservation_group_id"], name: "preorder_reservation_groups_to_turns_group_id"
-    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id", unique: true
+    t.index ["reservation_turn_id"], name: "preorder_reservation_groups_to_turns_turn_id_active", unique: true, where: "(preorder_reservation_group_status = 'active'::text)"
   end
 
   create_table "public_messages", force: :cascade do |t|

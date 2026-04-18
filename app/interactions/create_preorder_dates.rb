@@ -25,8 +25,11 @@ class CreatePreorderDates < ActiveInteraction::Base
       group.dates.destroy_all
       params.delete(:dates).map do |datum|
         date = PreorderReservationDate.new(
-          datum.symbolize_keys.slice(:date).merge(group_id: group.id,
-                                                  reservation_turn_id: datum[:turn_id] || datum[:reservation_turn_id])
+          datum.symbolize_keys.slice(:date).merge(
+            group_id: group.id,
+            reservation_turn_id: datum[:turn_id] || datum[:reservation_turn_id],
+            group_status: group.status
+          )
         )
 
         unless date.valid? && date.save

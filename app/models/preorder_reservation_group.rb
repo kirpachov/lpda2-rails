@@ -53,6 +53,7 @@ class PreorderReservationGroup < ApplicationRecord
   # Callbacks / Hooks
   # ################################
   after_initialize :assign_defaults
+  around_save :save_associated_records_first
 
   # ################################
   # Associations
@@ -64,8 +65,9 @@ class PreorderReservationGroup < ApplicationRecord
   has_many :table_type_to_preorder_reservation_groups, dependent: :destroy
   has_many :table_types, through: :table_type_to_preorder_reservation_groups
 
+  # PreorderReservationGroupsToTurn
   # Dates for which selected turns will require payment.
-  has_many :dates, class_name: "PreorderReservationDate", foreign_key: :group_id, dependent: :destroy
+  has_many :dates, class_name: "PreorderReservationDate", inverse_of: :group, foreign_key: :group_id, dependent: :destroy
 
   # ################################
   # Scope
@@ -93,6 +95,20 @@ class PreorderReservationGroup < ApplicationRecord
   end
 
   private
+
+  def save_associated_records_first
+    if dates.update!(group_status: status) && preorder_reservation_groups_to_turn.update!(preorder_reservation_group_status: status)
+      yield
+    else
+      errors.add(:base, "Error updating associated turns or dates")
+      false
+    end
+
+    self
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, "Error updating associated turns or dates: #{e.message}")
+    false
+  end
 
   def assign_defaults
     self.status ||= :active

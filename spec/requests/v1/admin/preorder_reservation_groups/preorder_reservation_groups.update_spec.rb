@@ -416,4 +416,65 @@ RSpec.describe "PATCH /v1/admin/preorder_reservation_groups/:id" do
     it { expect { req }.to(change { group.reload.turns.count }.from(1).to(0)) }
     it { expect { req }.to(change { group.reload.dates.count }.from(0).to(1)) }
   end
+
+  context "when a two groups overlapping exist, should not be able to activate one of them" do
+    let!(:turn1) { create(:reservation_turn, weekday: 1) }
+    let!(:turn2) { create(:reservation_turn, weekday: 2) }
+    let!(:turn3) { create(:reservation_turn, weekday: 3) }
+
+    let!(:group1) do
+      create(:preorder_reservation_group, status: :inactive).tap do |g|
+        g.preorder_reservation_groups_to_turn.create(reservation_turn: turn1)
+        g.dates.create(date: Date.current.next_occurring(turn2.weekday_name.to_sym), reservation_turn: turn2)
+      end
+    end
+
+    let!(:group2) do
+      create(:preorder_reservation_group, status: :active).tap do |g|
+        g.preorder_reservation_groups_to_turn.create(reservation_turn: turn1)
+        g.dates.create(date: Date.current.next_occurring(turn2.weekday_name.to_sym), reservation_turn: turn2)
+      end
+    end
+
+    context "when trying to activate group1, should FAIL" do
+      let(:group) { group1 }
+
+      let(:params) { { status: :active } }
+
+      it do
+        expect { req }.not_to(change { [group1.reload.as_json, group2.reload.as_json, PreorderReservationDate.all.as_json, PreorderReservationGroupsToTurn.all.as_json] })
+        expect(json).to include(message: /failed/)
+        expect(response).not_to be_successful
+      end
+    end
+
+    context "when trying to deactivate group1, should be successful" do
+      let(:group) { group1 }
+
+      let(:params) { { status: :inactive } }
+
+      it do
+        expect { req }.not_to(change { [group1.reload.status] })
+        expect(json).not_to include(message: String)
+        expect(response).to be_successful
+      end
+    end
+
+    context "when trying to activate group1 after deactivating group2, should be successful" do
+      let(:group) { group1 }
+
+      let(:params) { { status: :active } }
+
+      before do
+        group2.update!(status: :inactive)
+        group1.update!(status: :inactive)
+      end
+
+      it do
+        expect { req }.to(change { group1.reload.status }.to("active"))
+        expect(json).not_to include(message: String)
+        expect(response).to be_successful
+      end
+    end
+  end
 end

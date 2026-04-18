@@ -140,9 +140,214 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
   context "when another group exists with a turn" do
     let(:turns) { [turn.id] }
 
-    before do
+    let(:existing_group) do
       create(:preorder_reservation_group).tap do |group|
         group.turns = [turn]
+      end
+    end
+
+    before do
+      existing_group
+    end
+
+    context "when the existing group is inactive and has dates and NOT adding dates, should be able to create new group with same turn" do
+      before do
+        PreorderReservationGroup.last.update(status: :inactive)
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(turn.weekday_name.to_sym).to_s, reservation_turn_id: turn.id }
+        )
+      end
+
+      let(:params) { super().merge(turns:, dates: nil) }
+
+      it { expect { req }.to(change { PreorderReservationGroup.count }.by(1)) }
+      it { expect { req }.to(change { PreorderReservationGroupsToTurn.count }.by(1)) }
+      it { expect { req }.not_to(change { PreorderReservationDate.count }) }
+
+      it do
+        req
+        expect(response).to have_http_status(:ok)
+        expect(json).not_to include(message: String)
+      end
+    end
+
+    context "when the existing group is inactive and has dates, should be able to create new group with same turn" do
+      before do
+        PreorderReservationGroup.last.update(status: :inactive)
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(turn.weekday_name.to_sym).to_s, reservation_turn_id: turn.id }
+        )
+      end
+
+      let(:params) { super().merge(turns: nil, dates: [{ date: Date.current.next_occurring(turn.weekday_name.to_sym).to_s, turn_id: turn.id }]) }
+
+      it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+      it { expect { req }.not_to(change(PreorderReservationGroupsToTurn, :count)) }
+      it { expect { req }.to(change(PreorderReservationDate, :count).by(1)) }
+
+      it do
+        req
+        expect(json).not_to include(message: String)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when the existing group is active and has dates, should be able to create new group with same turn" do
+      before do
+        PreorderReservationGroup.last.update(status: :active)
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(turn.weekday_name.to_sym).to_s, reservation_turn_id: turn.id }
+        )
+      end
+
+      let(:params) { super().merge(status: :active, turns: nil, dates: [{ date: Date.current.next_occurring(turn.weekday_name.to_sym).to_s, turn_id: turn.id }]) }
+
+      it do
+        expect { req }.not_to(change { [PreorderReservationGroup.count, PreorderReservationGroupsToTurn.count, PreorderReservationDate.count] })
+        expect(json).to include(message: String)
+        expect(response).not_to be_successful
+      end
+    end
+
+    context "when the existing group is inactive and has dates and turns, should be able to create new group with same turn" do
+      let(:other_turn1) { create(:reservation_turn, weekday: 2) }
+      let(:other_turn2) { create(:reservation_turn, weekday: 3) }
+
+      before do
+        PreorderReservationGroup.last.update(status: :inactive)
+        PreorderReservationGroup.last.preorder_reservation_groups_to_turn.create(
+          reservation_turn_id: other_turn1.id
+        )
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, reservation_turn_id: other_turn2.id }
+        )
+      end
+
+      let(:params) { super().merge(turns: [other_turn1.id], dates: [{ date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, turn_id: other_turn2.id }]) }
+
+      it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationGroupsToTurn, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationDate, :count).by(1)) }
+
+      it do
+        req
+        expect(json).not_to include(message: String)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when the existing group is active and creating is inactive and has dates and turns, should be able to create new group with same turn" do
+      let(:other_turn1) { create(:reservation_turn, weekday: 2) }
+      let(:other_turn2) { create(:reservation_turn, weekday: 3) }
+
+      before do
+        PreorderReservationGroup.last.update(status: :active)
+        PreorderReservationGroup.last.preorder_reservation_groups_to_turn.create(
+          reservation_turn_id: other_turn1.id
+        )
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, reservation_turn_id: other_turn2.id }
+        )
+      end
+
+      let(:params) { super().merge(status: :inactive, turns: [other_turn1.id], dates: [{ date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, turn_id: other_turn2.id }]) }
+
+      it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationGroupsToTurn, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationDate, :count).by(1)) }
+
+      it do
+        req
+        expect(json).not_to include(message: String)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when existing group is inactive and has turns and dates and creating a mirrored groups: where group1 has dates using turns and vice versa." do
+      let(:other_turn1) { create(:reservation_turn, weekday: 2) }
+      let(:other_turn2) { create(:reservation_turn, weekday: 3) }
+
+      before do
+        PreorderReservationGroup.last.update(status: :inactive)
+        PreorderReservationGroup.last.preorder_reservation_groups_to_turn.create(
+          reservation_turn_id: other_turn1.id
+        )
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, reservation_turn_id: other_turn2.id }
+        )
+      end
+
+      let(:params) { super().merge(turns: [other_turn2.id], dates: [{ date: Date.current.next_occurring(other_turn1.weekday_name.to_sym).to_s, turn_id: other_turn1.id }]) }
+
+      it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationGroupsToTurn, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationDate, :count).by(1)) }
+
+      it do
+        req
+        expect(json).not_to include(message: String)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when creating group is inactive and has turns and dates and creating a mirrored groups: where group1 has dates using turns and vice versa." do
+      let(:other_turn1) { create(:reservation_turn, weekday: 2) }
+      let(:other_turn2) { create(:reservation_turn, weekday: 3) }
+
+      before do
+        PreorderReservationGroup.last.update(status: :active)
+        PreorderReservationGroup.last.preorder_reservation_groups_to_turn.create(
+          reservation_turn_id: other_turn1.id
+        )
+        PreorderReservationGroup.last.dates.create(
+          { date: Date.current.next_occurring(other_turn2.weekday_name.to_sym).to_s, reservation_turn_id: other_turn2.id }
+        )
+      end
+
+      let(:params) { super().merge(status: :inactive, turns: [other_turn2.id], dates: [{ date: Date.current.next_occurring(other_turn1.weekday_name.to_sym).to_s, turn_id: other_turn1.id }]) }
+
+      it { expect { req }.to(change(PreorderReservationGroup, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationGroupsToTurn, :count).by(1)) }
+      it { expect { req }.to(change(PreorderReservationDate, :count).by(1)) }
+
+      it do
+        req
+        expect(json).not_to include(message: String)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when the existing group is inactive, should be able to create new group with same turn" do
+      before do
+        PreorderReservationGroup.last.update(status: :inactive)
+      end
+
+      let(:params) { super().merge(turns:, dates: nil) }
+
+      it { expect { req }.to(change { PreorderReservationGroup.count }.by(1)) }
+      it { expect { req }.to(change { PreorderReservationGroupsToTurn.count }.by(1)) }
+
+      it do
+        req
+        expect(response).to have_http_status(:ok)
+        expect(json).not_to include(message: String)
+      end
+    end
+
+    context "when the creating group is inactive, should be able to create new group with same turn" do
+      before do
+        PreorderReservationGroup.last.update(status: :active)
+      end
+
+      let(:params) { super().merge(turns:, dates: nil, status: :inactive) }
+
+      it { expect { req }.to(change { PreorderReservationGroup.count }.by(1)) }
+      it { expect { req }.to(change { PreorderReservationGroupsToTurn.count }.by(1)) }
+
+      it do
+        req
+        expect(response).to have_http_status(:ok)
+        expect(json).not_to include(message: String)
       end
     end
 
@@ -163,7 +368,7 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
       it { expect { req }.not_to(change { PreorderReservationGroupsToTurn.count }) }
     end
 
-    context "when trying to add same turn to a new group" do
+    context "when adding only dates to turn" do
       let(:params) { super().merge(turns: nil, dates:) }
 
       it do
@@ -197,7 +402,7 @@ RSpec.describe "POST /v1/admin/preorder_reservation_groups" do
     it { expect(PreorderReservationGroup.all.last.dates.count).to eq 1 }
     it { expect(PreorderReservationGroup.all.last.dates.first.reservation_turn).to eq(turn) }
 
-    context "when trying to add same turn to a new group" do
+    context "when trying to add same turn to a new group but no dates" do
       let(:params) { super().merge(turns:, dates: nil) }
 
       it do
