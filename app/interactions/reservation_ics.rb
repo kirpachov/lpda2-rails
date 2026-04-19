@@ -7,8 +7,9 @@ class ReservationIcs < ActiveInteraction::Base
   def execute
     cal = Icalendar::Calendar.new
 
-    event_start = ignore_dst(reservation.datetime)
-    event_end = ignore_dst(reservation.datetime) + 90.minutes
+    # .in_time_zone(Config.app[:restaurant_location_time_zone])
+    event_start = reservation.datetime.utc
+    event_end = event_start + 90.minutes
 
     cal.event do |e|
       e.dtstart = Icalendar::Values::DateTime.new event_start, "tzid" => "UTC"

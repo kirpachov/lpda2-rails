@@ -508,7 +508,31 @@ RSpec.context "GET /v1/reservations/valid_times", type: :request do
     it do
       expect(json.map do |j|
                j["valid_times"]
-             end.flatten).to match_array(%w[14:30 15:00 15:30 16:00])
+             end.flatten).to match_array(%w[13:30 14:00 14:30 15:00 15:30 16:00])
+    end
+  end
+
+  context "when setting reservation_min_hours_in_advance is set and we don't have DST (it's still winter)" do
+    before do
+      now = DateTime.parse("2025-02-12 12:11")
+      Setting[:reservation_min_hours_in_advance] = 1
+      ReservationTurn.create!(name: "Day", weekday: now.wday, starts_at: "12:00", ends_at: "16:00", step: 30)
+      travel_to(now) do
+        req(date: now.to_date.to_s)
+      end
+    end
+
+    it { expect(response).to have_http_status(:ok) }
+    it { expect(json).not_to include(message: String) }
+
+    it do
+      expect(json.length).to eq(1)
+    end
+
+    it do
+      expect(json.map do |j|
+               j["valid_times"]
+             end.flatten).to match_array(%w[13:30 14:00 14:30 15:00 15:30 16:00])
     end
   end
 

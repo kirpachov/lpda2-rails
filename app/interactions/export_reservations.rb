@@ -30,15 +30,20 @@ class ExportReservations < ActiveInteraction::Base
     index = 0
     reservations.find_each do |reservation|
       write_row(sheet, index + 1,
-                [reservation.id, reservation.fullname, ignore_dst(reservation.datetime).strftime("%e/%m/%Y %k:%M").strip, reservation.children, reservation.adults,
+                [reservation.id, reservation.fullname, ft(reservation.datetime), reservation.children, reservation.adults,
                  reservation.email, reservation.phone, reservation.table, reservation.notes, reservation.status, reservation.secret,
-                 reservation.created_at.strftime("%e/%m/%Y %k:%M").strip, reservation.updated_at.strftime("%e/%m/%Y %k:%M").strip,
+                 ft(reservation.created_at), ft(reservation.updated_at),
                  reservation.payment&.hpp_url, reservation.payment&.value, reservation.payment&.status].flatten)
       index += 1
     end
   end
 
   private
+
+  def format_time(time)
+    I18n.l(time.in_time_zone(Config.app[:restaurant_location_time_zone]), format: "%e/%m/%Y %k:%M").strip
+  end
+  alias :ft :format_time
 
   def workbook
     @workbook ||= RubyXL::Workbook.new

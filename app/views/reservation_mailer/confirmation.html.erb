@@ -31,7 +31,7 @@
                   <span style="font-size: 14px;"><%= t('reservation_mailer.greetings', fullname: @reservation.fullname) %></span>
                 </p>
                 <p style="line-height: 1.8; word-break: break-word; font-size: 14px; mso-line-height-alt: 25px; margin: 0;">
-                  <span style="font-size: 14px;"><%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: ignore_dst(@reservation.datetime).strftime('%k:%M'), people: @reservation.people) %></span>
+                  <span style="font-size: 14px;"><%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: l(@reservation.datetime, format: '%k:%M'), people: @reservation.people) %></span>
                 </p>
                 <% if @reservation.payment %>
                   <p style="line-height: 1.8; word-break: break-word; font-size: 14px; mso-line-height-alt: 25px; margin: 0;">

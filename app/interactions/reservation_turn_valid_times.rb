@@ -19,24 +19,40 @@ class ReservationTurnValidTimes < ActiveInteraction::Base
       starts_at += turn.step.minutes
     end
 
-    min_time = Time.zone.now
-
-    min_time += 1.hour if DateTime.now.in_time_zone("Rome").dst?
-
-    if Setting[:reservation_min_hours_in_advance].present?
-      min_time += Setting[:reservation_min_hours_in_advance].to_f.hours
-    end
-
-    max_time = 10.years.from_now
-    if Setting[:reservation_max_days_in_advance].to_i.positive?
-      max_time = Time.zone.now.end_of_day + Setting[:reservation_max_days_in_advance].to_i.days
-    end
-
     times = times.select { |time| time > min_time && time < max_time }
 
     times = delete_times_overlapping_with_weekly_holidays(times)
 
-    times.map { |time| time.strftime(format) }
+    res = times.map { |time| time.strftime(format) }
+
+    # debugger
+
+    res
+  end
+
+  private
+
+  def min_time
+    return @min_time if defined?(@min_time)
+
+    @min_time = Time.zone.now
+
+    if Setting[:reservation_min_hours_in_advance].present?
+      @min_time += Setting[:reservation_min_hours_in_advance].to_f.hours
+    end
+
+    @min_time
+  end
+
+  def max_time
+    return @max_time if defined?(@max_time)
+
+    @max_time = 10.years.from_now
+    if Setting[:reservation_max_days_in_advance].to_i.positive?
+      @max_time = Time.zone.now.end_of_day + Setting[:reservation_max_days_in_advance].to_i.days
+    end
+
+    @max_time
   end
 
   def delete_times_overlapping_with_weekly_holidays(times)

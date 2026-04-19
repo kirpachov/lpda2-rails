@@ -12,7 +12,7 @@
 <%    end %>
 <%  end %>
 
-<%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: ignore_dst(@reservation.datetime).strftime('%k:%M'), people: @reservation.people) %>
+<%= t('reservation_mailer.reservation_registered', date: l(@reservation.datetime, format: '%e %B %Y'), hour: l(@reservation.datetime, format: '%k:%M'), people: @reservation.people) %>
 
 <%= t('reservation_mailer.reservation_details') %>:
 <%

@@ -101,19 +101,19 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
 
         it {
           expect(col_values("datetime")).to match_array(Reservation.all.map do |r|
-                                                          r.datetime.strftime("%e/%m/%Y %k:%M").strip
+                                                          r.datetime.in_time_zone("Rome").strftime("%e/%m/%Y %k:%M").strip
                                                         end)
         }
 
         it {
           expect(col_values("created_at")).to match_array(Reservation.all.map do |r|
-                                                            r.created_at.strftime("%e/%m/%Y %k:%M").strip
+                                                            r.created_at.in_time_zone("Rome").strftime("%e/%m/%Y %k:%M").strip
                                                           end)
         }
 
         it {
           expect(col_values("updated_at")).to match_array(Reservation.all.map do |r|
-                                                            r.updated_at.strftime("%e/%m/%Y %k:%M").strip
+                                                            r.updated_at.in_time_zone("Rome").strftime("%e/%m/%Y %k:%M").strip
                                                           end)
         }
       end
