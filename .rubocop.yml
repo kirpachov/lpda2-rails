@@ -11,6 +11,7 @@ require:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*_spec.rb"
+    - "config/routes.rb"
 
 RSpec/NestedGroups:
   Enabled: false

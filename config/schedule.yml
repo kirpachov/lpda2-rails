@@ -13,6 +13,11 @@ update_all_reservation_payment_status_job:
   class: UpdateAllReservationPaymentStatusJob
   queue: default
 
+replace_expired_reservation_payments_job:
+  cron: "3 * * * *"
+  class: ReplaceExpiredReservationPaymentsJob
+  queue: default
+
 clear_cache_job:
   cron: "0 0 * * *"
   class: ClearCacheJob

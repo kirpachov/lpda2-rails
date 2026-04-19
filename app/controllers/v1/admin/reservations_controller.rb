@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 module V1::Admin
-  class ReservationsController < ApplicationController
+  # Managing routes for
+  # /v1/admin/reservations/*
+  class ReservationsController < ApplicationController # rubocop:disable Metrics/ClassLength
     before_action :find_item,
                   only: %i[show refund_payment record_deferred_payment refresh_payment_status deliver_confirmation_email update destroy update_status add_tag
-                           remove_tag create_payment]
+                           remove_tag create_payment replace_payment]
     before_action :find_tag, only: %i[add_tag remove_tag]
-    before_action :require_root, only: %i[refund_payment record_deferred_payment create_payment refresh_payment_status]
+    before_action :require_root,
+                  only: %i[refund_payment record_deferred_payment create_payment replace_payment refresh_payment_status]
 
     def index
       call = ::SearchReservations.run(params:)
@@ -129,6 +132,20 @@ module V1::Admin
       call = AdminCreateReservationPayment.run(reservation: @item, params: params.permit!.to_h)
 
       return render_unprocessable_entity(call) if call.errors.any? || call.invalid?
+
+      render json: {
+        item: full_json(@item),
+        call: call.result
+      }
+    end
+
+    # POST /v1/admin/reservations/:id/replace_payment
+    def replace_payment
+      call = ReplaceReservationPayment.run(reservation: @item)
+
+      return render_failed_interaction(call) if call.errors.any? || call.invalid?
+
+      @item.reload
 
       render json: {
         item: full_json(@item),

@@ -88,6 +88,18 @@ class ApplicationController < ActionController::API
     render json: { message:, details: }, status:
   end
 
+  def render_failed_interaction(call, status: nil)
+    status ||= call.instance_variable_get(:@status) if call.instance_variable_defined?(:@status)
+    status ||= call.status if call.respond_to?(:status)
+    # status ||= 400
+
+    render_error(
+      status:,
+      message: call.errors.full_messages.join(" "),
+      details: call.errors.full_json
+    )
+  end
+
   # Will try to assign the provided image to the record. Returns true if success.
   def assign_image_from_param(record, param)
     if param.blank? || param == "null"

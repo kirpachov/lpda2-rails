@@ -121,6 +121,8 @@ Rails.application.routes.draw do
 
           member do
             post "payment", action: :create_payment
+            post "replace_payment", action: :replace_payment
+
             patch "status/:status", action: :update_status
             post "add_tag/:tag_id", action: :add_tag
             delete "remove_tag/:tag_id", action: :remove_tag

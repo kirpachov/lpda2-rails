@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Wrapping logic of creating a reservation payment.
-# Indipendent from payment gateways, currently only Nexi is supported, but it could be easily extended.
+# Indipendent from payment gateways, currently only Nexi and Stripe are supported, but it could be easily extended.
 # Usage:
 # CreateReservationPayment.run(
 #   reservation: @reservation,

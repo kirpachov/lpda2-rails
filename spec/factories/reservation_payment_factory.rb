@@ -40,6 +40,22 @@ FactoryBot.define do
         # association :stripe_payment_details
       end
     end
+
+    trait :nexi_authorization do
+      preorder_type { "html_nexi_authorization" }
+      status { "todo" }
+      html do
+        File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
+      end
+    end
+
+    trait :nexi_payment do
+      preorder_type { "html_nexi_payment" }
+      status { "paid" }
+      html do
+        File.read(Rails.root.join("spec", "fixtures", "nexi-simple-payment-success-page.html"))
+      end
+    end
   end
 
   sequence :reservation_payment_hpp_url do |n|
