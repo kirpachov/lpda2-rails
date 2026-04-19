@@ -5,6 +5,8 @@ require "rails_helper"
 RSpec.describe RemindReservationsMail do
   let(:elegible) { described_class.new.elegible }
 
+  before { CreateMissingImages.run! }
+
   context "basic scenario" do
     let!(:reservations) do
       [
@@ -25,7 +27,7 @@ RSpec.describe RemindReservationsMail do
     end
 
     it do
-      expect { described_class.run! }.to have_enqueued_job(ActionMailer::MailDeliveryJob).exactly(2).times
+      expect { described_class.run! }.to change { ActionMailer::Base.deliveries.count }.by(2)
     end
 
     it do
@@ -108,7 +110,7 @@ RSpec.describe RemindReservationsMail do
     end
 
     it do
-      expect { described_class.run! }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      expect { described_class.run! }.not_to(change { ActionMailer::Base.deliveries.count })
     end
 
     it do
@@ -125,7 +127,7 @@ RSpec.describe RemindReservationsMail do
     end
 
     it do
-      expect { described_class.run! }.to have_enqueued_job(ActionMailer::MailDeliveryJob).exactly(1).times
+      expect { described_class.run! }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it do

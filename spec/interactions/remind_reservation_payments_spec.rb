@@ -102,6 +102,7 @@ RSpec.describe RemindReservationPayments, type: :interaction do
     it { expect { run! }.not_to raise_error }
     it { expect { run! }.not_to(change { ActionMailer::Base.deliveries.count }) }
     it { expect { run! }.not_to(have_enqueued_job(ActionMailer::MailDeliveryJob)) }
+    it { expect { run! }.not_to(change { ActionMailer::Base.deliveries.count }) }
     it { expect { run! }.not_to(change { ReservationPayment.all.order(:id).as_json }) }
     it { expect { run! }.not_to(change { Reservation.all.order(:id).as_json }) }
   end
@@ -120,7 +121,8 @@ RSpec.describe RemindReservationPayments, type: :interaction do
     it { expect(ReservationPayment.todo.count).to be_positive }
 
     it { expect { run! }.not_to raise_error }
-    it { expect { run! }.to have_enqueued_job(ActionMailer::MailDeliveryJob).at_least(1).times }
+    # it { expect { run! }.to have_enqueued_job(ActionMailer::MailDeliveryJob).at_least(1).times }
+    it { expect { run! }.to change { ActionMailer::Base.deliveries.count }.by_at_least(1) }
   end
 
   context "when created a payment a week ago, should not send reminder." do
@@ -189,7 +191,7 @@ RSpec.describe RemindReservationPayments, type: :interaction do
     end
 
     it { expect { run! }.not_to raise_error }
-    it { expect { run! }.to(have_enqueued_job(ActionMailer::MailDeliveryJob).exactly(1).times) }
+    it { expect { run! }.to(change { ActionMailer::Base.deliveries.count }.by(1)) }
   end
 
   context "when some reservatio is for 12 november 2024 H13:00 and now it's 14 november 2024 H11:00" do
