@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "GET /v1/admin/stats" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
-  ALL_KEYS = %w[reservations-by-hour reservations-count].freeze
+  ALL_KEYS = %w[reservations-by-hour reservations-count reservations-creation].freeze
 
   let(:headers) { auth_headers }
   let(:params) { { keys: } }
@@ -65,6 +65,67 @@ RSpec.describe "GET /v1/admin/stats" do
     it { expect(json).not_to be_empty }
 
     it { expect(json.keys.map(&:to_s)).to match_array(ALL_KEYS) }
+  end
+
+  context "when checking reservations-creation key" do
+    let(:keys) { %w[reservations-creation] }
+
+    before do
+      [0, 1, 2, 3, 4, 5, 6].each do |i|
+        create(:reservation_turn, starts_at: "1:00", ends_at: "23:00", weekday: i)
+      end
+
+      create_list(:reservation, 10)
+
+      req
+    end
+
+    it do
+      expect(json["reservations-creation"]).to be_a(Hash).and(
+        include(
+          count_by_month: Hash,
+          count_by_year: Hash,
+          count_by_day_current_month: Hash,
+          count_by_day_current_week: Hash,
+          current: {
+            day: Integer,
+            week: Integer,
+            month: Integer,
+            year: Integer
+          }
+        )
+      )
+
+      expect(json.dig("reservations-creation", "count_by_month", "#{Date.today.strftime("%Y-%m")}")).to eq(10)
+      expect(json.dig("reservations-creation", "count_by_month").keys).to eq(["#{Date.today.strftime("%Y-%m")}"])
+
+      expect(json.dig("reservations-creation", "count_by_year", "#{Date.today.strftime("%Y")}")).to eq(10)
+      expect(json.dig("reservations-creation", "count_by_year").keys).to eq(["#{Date.today.strftime("%Y")}"])
+
+      expect(json.dig("reservations-creation", "current", "day")).to eq(10)
+      expect(json.dig("reservations-creation", "current", "week")).to eq(10)
+      expect(json.dig("reservations-creation", "current", "month")).to eq(10)
+      expect(json.dig("reservations-creation", "current", "year")).to eq(10)
+
+      Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_month + 1.day)
+      Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_month - 1.day)
+      Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_week)
+      req
+
+      # What is changed now: today -3, current_week -2, current_month -1, current_year same.
+      expect(json.dig("reservations-creation", "count_by_month", "#{Date.today.strftime("%Y-%m")}")).to eq(9)
+      expect(json.dig("reservations-creation",
+                      "count_by_month").keys).to contain_exactly("#{Date.today.strftime("%Y-%m")}",
+                                                                 (Date.current - 1.month).strftime("%Y-%m"))
+
+      expect(json.dig("reservations-creation", "count_by_year", "#{Date.today.strftime("%Y")}")).to eq(10)
+      expect(json.dig("reservations-creation", "count_by_year").keys).to eq(["#{Date.today.strftime("%Y")}"])
+
+      expect(json.dig("reservations-creation", "current", "day")).to eq(7)
+      expect(json.dig("reservations-creation", "current", "week")).to eq(8)
+      expect(json.dig("reservations-creation", "current", "month")).to eq(9)
+      expect(json.dig("reservations-creation", "current", "year")).to eq(10)
+    end
   end
 
   context "when requiring reservations-by-hour as key" do

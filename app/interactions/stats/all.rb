@@ -8,7 +8,7 @@ module Stats
     interface :params, methods: %i[keys []], default: {}
     validate :keys_all_valid?
 
-    VALID_KEYS = %w[reservations-by-hour reservations-count].freeze
+    VALID_KEYS = %w[reservations-by-hour reservations-count reservations-creation].freeze
 
     def execute
       keys.index_with { |key| process_key(key) }
@@ -29,6 +29,8 @@ module Stats
         Stats::ReservationsByHour.run!(params:)
       when "reservations-count"
         Stats::ReservationsCount.run!(params:)
+      when "reservations-creation"
+        Stats::ReservationsCreation.run!(params:)
       else
         errors.add(:key, "Unknown key #{key}")
       end
