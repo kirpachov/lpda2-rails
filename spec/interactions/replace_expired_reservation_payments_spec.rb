@@ -31,7 +31,7 @@ RSpec.describe ReplaceExpiredReservationPayments, type: :interaction do
 
   context "when checking that reservation payment is replaced" do
     let!(:reservation) { create(:reservation, datetime: 1.day.from_now, status: :active) }
-    let!(:payment) { create(:reservation_payment, reservation:, status: :expired) }
+    let!(:payment) { create(:reservation_payment, :stripe_authorization, reservation:, status: :expired) }
 
     it { expect { run! }.not_to(change { ReservationPayment.count }.from(1)) }
     it { expect { run! }.to(change { ReservationPayment.all.pluck(:status) }.from(["expired"]).to(["todo"])) }
