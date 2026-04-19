@@ -53,6 +53,29 @@ RSpec.describe ReservationMailer do
       it {
         expect(mail.html_part.body.encoded).to include(CGI.escapeHTML(I18n.t("reservation_mailer.confirmation.remember_payment")))
       }
+
+      it do
+        expect(mail.html_part.body.encoded).to(include(reservation.reload.payment.hpp_url))
+        expect(mail.html_part.body.encoded).to(include(reservation.reload&.payment&.do_payment_url))
+      end
+    end
+
+    context "when reservation has a payment in status 'todo' of kind stripe_payment" do
+      before do
+        create(:reservation_payment, :stripe_payment, reservation:, status: :todo)
+      end
+
+      it { expect(reservation.reload.payment).to be_todo }
+      it { expect(mail.text_part.body.encoded).to include(I18n.t("reservation_mailer.confirmation.remember_payment")) }
+
+      it {
+        expect(mail.html_part.body.encoded).to include(CGI.escapeHTML(I18n.t("reservation_mailer.confirmation.remember_payment")))
+      }
+
+      it do
+        expect(mail.html_part.body.encoded).not_to(include(reservation.reload.payment.hpp_url))
+        expect(mail.html_part.body.encoded).to(include(reservation.reload&.payment&.do_payment_url))
+      end
     end
 
     context "when reservation don't have a payment" do

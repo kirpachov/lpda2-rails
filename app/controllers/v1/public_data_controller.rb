@@ -17,14 +17,7 @@ module V1
       render json: common_data.merge(
         reservation: reservation.as_json(
           only: %w[id fullname datetime status secret children adults notes email phone created_at updated_at],
-          include: [
-            {
-              payment: {
-                only: %i[hpp_url preorder_type status value]
-              }
-            }
-          ]
-        )
+        )&.merge(payment: reservation&.payment&.public_json)
       )
     end
 

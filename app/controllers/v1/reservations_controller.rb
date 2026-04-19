@@ -169,12 +169,9 @@ module V1
 
     def full_json(item)
       item.as_json(
-        only: %i[id fullname datetime children adults email phone notes secret created_at updated_at],
-        include: {
-          payment: {
-            only: %w[hpp_url preorder_type status value]
-          }
-        }
+        only: %i[id fullname datetime children adults email phone notes secret created_at updated_at]
+      ).merge(
+        payment: item.payment&.public_json
       )
     end
   end

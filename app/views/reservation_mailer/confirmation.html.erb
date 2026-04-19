@@ -120,7 +120,7 @@
                 @call_to_action_text = t('reservation_mailer.reservation_details')
 
                 if @reservation.payment && @reservation.payment.todo? && @reservation.payment&.hpp_url.present?
-                  @call_to_action_url = @reservation.payment.hpp_url
+                  @call_to_action_url = @reservation&.payment&.do_payment_url
                   @call_to_action_text = t('reservations.confirm_reservation')
                 end
               %>

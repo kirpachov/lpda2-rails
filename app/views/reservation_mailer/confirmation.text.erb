@@ -19,7 +19,7 @@
   @call_to_action_url = @show_reservation_url
 
   if @reservation.payment && @reservation.payment.todo? && @reservation.payment&.hpp_url.present?
-    @call_to_action_url = @reservation.payment.hpp_url
+    @call_to_action_url = @reservation&.payment&.do_payment_url
   end
 %>
 

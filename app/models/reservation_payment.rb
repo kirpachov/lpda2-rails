@@ -78,6 +78,10 @@ class ReservationPayment < ApplicationRecord
   scope :deferred, -> { where(preorder_type: DEFERRED_METHOD_TYPES) }
   scope :not_deferred, -> { where.not(preorder_type: DEFERRED_METHOD_TYPES) }
 
+  def public_json
+    as_json(only: %w[preorder_type status value]).merge(hpp_url: do_payment_url)
+  end
+
   def payment_gateway
     case preorder_type
     when "html_nexi_payment", "html_nexi_authorization" then :nexi
@@ -90,13 +94,17 @@ class ReservationPayment < ApplicationRecord
   end
   alias deferred deferred?
 
+  # URL to public page, used before redirecting to actual hpp_url
+  def do_payment_url
+    Rails.application.routes.url_helpers.do_payment_reservations_url(
+      secret: reservation&.secret
+    )
+  end
+
   def gen_hpp_url
     return if reservation&.secret.blank?
 
-    self.hpp_url ||= Rails.application.routes.url_helpers.do_payment_reservations_url(
-      secret: reservation&.secret
-      # host: "gigi"
-    )
+    self.hpp_url ||= do_payment_url
   end
 
   def clean_html
