@@ -49,7 +49,7 @@ module Stripe
       errors.add(:base, "Stripe API error: #{e.message}")
     end
 
-    def calc_reservation_payment_status # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+    def calc_reservation_payment_status # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/MethodLength
       # Successful refund.
       return "refunded" if refund&.status == "succeeded"
 
@@ -69,10 +69,10 @@ module Stripe
       return "authorized" if checkout_session.status == "complete" && checkout_session.mode == "setup"
 
       # Authorization page has expired.
-      return "todo" if checkout_session.status == "expired" && checkout_session.mode == "setup"
+      return "expired" if checkout_session.status == "expired" && checkout_session.mode == "setup"
 
-      # Uncompleted payment.
-      return "todo" if checkout_session.status == "expired" && checkout_session.mode == "payment" && checkout_session.payment_status == "unpaid"
+      # Checkout session is expired, uncompleted payment.
+      return "expired" if checkout_session.status == "expired" && checkout_session.mode == "payment" && checkout_session.payment_status == "unpaid"
 
       errors.add(:base,
                  "don't know how to handle request. checkout_session.status: #{checkout_session.status}; payment_intent.status: #{payment_intent&.status}, checkout_session.mode: #{checkout_session.mode}")

@@ -82,7 +82,7 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
 
         stub_stripe_backend(
           responses: {
-            get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_expired],
+            get_checkout_session: StubStripeBackendHelper::STRIPE_RESPONSES[:checkout_session_retrieve_success_expired]
           }
         )
       end
@@ -97,7 +97,24 @@ RSpec.describe FetchReservationPaymentStatus, type: :interaction do
 
         it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
 
-        it { expect { call }.not_to(change { reservation_payment.reload.status }.from("todo")) }
+        it { expect { call }.to(change { reservation_payment.reload.status }.from("todo").to("expired")) }
+      end
+
+      %i[
+        todo
+        authorized
+        paid
+        refunded
+      ].each do |initial_payment_status|
+        context "when initially payment status was #{initial_payment_status.inspect}" do
+          before do
+            reservation_payment.update!(status: initial_payment_status)
+          end
+
+          it_behaves_like "when successful run FetchReservationPaymentStatus interaction"
+
+          it { expect { call }.to(change { reservation_payment.reload.status.to_s }.from(initial_payment_status.to_s).to("expired")) }
+        end
       end
     end
 

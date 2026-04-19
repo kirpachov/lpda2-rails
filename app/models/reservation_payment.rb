@@ -7,6 +7,7 @@ class ReservationPayment < ApplicationRecord
   # ################################
   # Constants, settings, modules, et...
   # ################################
+  include TrackModelChanges
 
   DEFERRED_METHOD_TYPES = %w[html_nexi_authorization stripe_authorization].freeze
 
@@ -15,6 +16,10 @@ class ReservationPayment < ApplicationRecord
   enum status: {
     # Initial status, when payment is not yet done.
     todo: "todo",
+
+    # Since payment links are valid for a limited time,
+    # if the user does not proceed with the payment, the payment will be expired after some time.
+    expired: "expired",
 
     # When payment is deferred ("Autorizzazione") and it's not yet paid.
     authorized: "authorized",
