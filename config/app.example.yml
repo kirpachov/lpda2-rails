@@ -82,6 +82,9 @@ default: &default
   exceptions_recipients:
     - "sasha@opinioni.net"
 
+  developers_emails:
+    - "sasha@opinioni.net"
+
   # stripe / nexi
   default_payment_gateway: "nexi"
 
