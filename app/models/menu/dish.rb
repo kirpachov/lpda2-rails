@@ -32,6 +32,16 @@ module Menu
     has_many :menu_tags_in_dishes, class_name: "Menu::TagsInDish", foreign_key: :menu_dish_id, dependent: :destroy
     has_many :menu_tags, class_name: "Menu::Tag", through: :menu_tags_in_dishes, after_remove: :after_remove_tag
 
+    has_many :visible_menu_tags, lambda {
+                                   visible
+                                 }, through: :menu_tags_in_dishes, class_name: "Menu::Tag", source: :menu_tag
+    has_many :visible_menu_allergens, -> {
+                                        visible
+                                      }, through: :menu_allergens_in_dishes, class_name: "Menu::Allergen", source: :menu_allergen
+    has_many :visible_menu_ingredients, -> {
+                                          visible
+                                        }, through: :menu_ingredients_in_dishes, class_name: "Menu::Ingredient", source: :menu_ingredient
+
     has_many :dish_suggestions, class_name: "Menu::DishSuggestion", dependent: :destroy
     has_many :suggestions, class_name: "Menu::Dish", through: :dish_suggestions, source: :suggestion
 
