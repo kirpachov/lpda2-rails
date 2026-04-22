@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Image < ApplicationRecord
+class Image < ApplicationRecord  # rubocop:disable Metrics/ClassLength
   # ################################
   # Constants, settings, modules, et...
   # ################################
@@ -24,6 +24,7 @@ class Image < ApplicationRecord
   has_one_attached :attached_image, dependent: :destroy
   belongs_to :original, class_name: "Image", optional: true
   has_many :children, class_name: "Image", foreign_key: :original_id, dependent: :destroy
+  has_one :image_pixel, class_name: "Log::ImagePixel", dependent: :destroy
 
   # ################################
   # Validations

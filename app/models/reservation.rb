@@ -35,7 +35,7 @@ class Reservation < ApplicationRecord
   has_many :delivered_emails, class_name: "Log::DeliveredEmail", as: :record
   has_many :image_pixels, class_name: "Log::ImagePixel", as: :record, dependent: :destroy
   has_many :pixel_events, class_name: "Log::ImagePixelEvent", through: :image_pixels, source: :events
-  has_one :payment, class_name: "ReservationPayment"
+  has_one :payment, class_name: "ReservationPayment", dependent: :destroy
   has_many :events, class_name: "Log::ReservationEvent", dependent: :destroy
   belongs_to :table_type, optional: true
 

@@ -14,6 +14,26 @@ RSpec.describe Image, type: :model do
     %w[blur]
   end
 
+  context "when has :image_pixel association and pixel_events and it's deleted, the events are deleted as well" do
+    let(:image) { create(:image, :with_attached_image) }
+    let!(:image_pixel) { create(:log_image_pixel, image:, record: some_record, delivered_email:) }
+    let!(:pixel_event) { create(:log_image_pixel_event, image_pixel:) }
+
+    let(:some_record) { create(:menu_category) }
+    let(:delivered_email) { create(:log_delivered_email) }
+
+    def doit
+      [
+        -> { image.destroy },
+        -> { Image.where(id: image.id).destroy_all }
+      ].sample.call
+    end
+
+    it { expect { doit }.to change { Log::ImagePixelEvent.count }.by(-1) }
+    it { expect { doit }.to change { Log::ImagePixel.count }.by(-1) }
+    it { expect { doit }.to change { Image.count }.by(-1) }
+  end
+
   context "can be translated" do
     subject { create(:image) }
 

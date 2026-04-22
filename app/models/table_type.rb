@@ -23,6 +23,7 @@ class TableType < ApplicationRecord
   # ################################
   has_many :table_type_to_preorder_reservation_groups, dependent: :restrict_with_error
   has_many :preorder_reservation_groups, through: :table_type_to_preorder_reservation_groups
+  has_one :reservation, dependent: :nullify
 
   # ################################
   # Validators
