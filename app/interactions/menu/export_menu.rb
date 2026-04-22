@@ -15,11 +15,11 @@ module Menu
 
       @default_sheet_name = workbook.worksheets.map(&:sheet_name).first
       write_all(foc_sheet("All"))
-      # write_allergens(foc_sheet("Allergens"))
-      # write_ingredients(foc_sheet("Ingredients"))
-      # write_tags(foc_sheet("Tags"))
-      # write_dishes(foc_sheet("Dishes"))
-      # write_menu(foc_sheet("Menu"))
+      write_allergens(foc_sheet("Allergens"))
+      write_ingredients(foc_sheet("Ingredients"))
+      write_tags(foc_sheet("Tags"))
+      write_dishes(foc_sheet("Dishes"))
+      write_menu(foc_sheet("Menu"))
 
       workbook.worksheets.filter! { |s| s.sheet_name != @default_sheet_name }
       workbook.worksheets.sort_by!(&:sheet_name)
@@ -60,48 +60,48 @@ module Menu
       end
     end
 
-    # def write_menu(sheet)
-    #   write_row(sheet, 0,
-    #             %w[id name.it name.en description.it description.en status price updated_at created_at images])
-    #   Menu::Category.visible.includes(categories_includes).where(parent_id: nil).each_with_index do |cat, index|
-    #     write_row(sheet, index + 1,
-    #               [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.updated_at, cat.created_at, record_images_url(cat)].flatten)
-    #   end
-    # end
+    def write_menu(sheet)
+      write_row(sheet, 0,
+                %w[id name.it name.en description.it description.en status price updated_at created_at images])
+      Menu::Category.visible.includes(categories_includes).where(parent_id: nil).limit(1000).each_with_index do |cat, index|
+        write_row(sheet, index + 1,
+                  [cat.id, cat.name_it, cat.name_en, cat.description_it, cat.description_en, cat.status, cat.price, cat.updated_at, cat.created_at, record_images_url(cat)].flatten)
+      end
+    end
 
-    # def write_dishes(sheet)
-    #   write_row(sheet, 0,
-    #             %w[id name.it name.en description.it description.en status price updated_at created_at images])
-    #   Menu::Dish.visible.includes(dishes_includes).each_with_index do |dish, index|
-    #     write_row(sheet, index + 1,
-    #               [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.updated_at, dish.created_at, record_images_url(dish)].flatten)
-    #   end
-    # end
+    def write_dishes(sheet)
+      write_row(sheet, 0,
+                %w[id name.it name.en description.it description.en status price updated_at created_at images])
+      Menu::Dish.visible.includes(dishes_includes).limit(1000).each_with_index do |dish, index|
+        write_row(sheet, index + 1,
+                  [dish.id, dish.name_it, dish.name_en, dish.description_it, dish.description_en, dish.status, dish.price, dish.updated_at, dish.created_at, record_images_url(dish)].flatten)
+      end
+    end
 
-    # def write_allergens(sheet)
-    #   write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
-    #   Menu::Allergen.visible.includes(allergen_includes).each_with_index do |allergen, index|
-    #     write_row(sheet, index + 1,
-    #               [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, record_image_url(allergen), allergen.updated_at, allergen.created_at])
-    #   end
-    # end
+    def write_allergens(sheet)
+      write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
+      Menu::Allergen.visible.includes(allergen_includes).limit(1000).each_with_index do |allergen, index|
+        write_row(sheet, index + 1,
+                  [allergen.id, allergen.name_it, allergen.name_en, allergen.description_it, allergen.description_en, allergen.status, record_image_url(allergen), allergen.updated_at, allergen.created_at])
+      end
+    end
 
-    # def write_tags(sheet)
-    #   write_row(sheet, 0,
-    #             %w[id name.it name.en description.it description.en status color imageUrl updated_at created_at])
-    #   Menu::Tag.visible.includes(tags_includes).each_with_index do |tag, index|
-    #     write_row(sheet, index + 1,
-    #               [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, record_image_url(tag), tag.updated_at, tag.created_at])
-    #   end
-    # end
+    def write_tags(sheet)
+      write_row(sheet, 0,
+                %w[id name.it name.en description.it description.en status color imageUrl updated_at created_at])
+      Menu::Tag.visible.includes(tags_includes).limit(1000).each_with_index do |tag, index|
+        write_row(sheet, index + 1,
+                  [tag.id, tag.name_it, tag.name_en, tag.description_it, tag.description_en, tag.status, tag.color, record_image_url(tag), tag.updated_at, tag.created_at])
+      end
+    end
 
-    # def write_ingredients(sheet)
-    #   write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
-    #   Menu::Ingredient.visible.includes(ingredient_includes).each_with_index do |ingredient, index|
-    #     write_row(sheet, index + 1,
-    #               [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, record_image_url(ingredient), ingredient.updated_at, ingredient.created_at])
-    #   end
-    # end
+    def write_ingredients(sheet)
+      write_row(sheet, 0, %w[id name.it name.en description.it description.en status imageUrl updated_at created_at])
+      Menu::Ingredient.visible.includes(ingredient_includes).limit(1000).each_with_index do |ingredient, index|
+        write_row(sheet, index + 1,
+                  [ingredient.id, ingredient.name_it, ingredient.name_en, ingredient.description_it, ingredient.description_en, ingredient.status, record_image_url(ingredient), ingredient.updated_at, ingredient.created_at])
+      end
+    end
 
     # private
 
