@@ -206,7 +206,52 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
       let!(:dish) { create(:menu_dish) }
       let(:params) { { old:, current_user:, copy_dishes: "full" } }
 
-      before { category.dishes = [dish] }
+      let!(:ingredient) { create(:menu_ingredient) }
+      let!(:tag) { create(:menu_tag) }
+      let!(:allergen) { create(:menu_allergen) }
+      let!(:image) { create(:image, :with_attached_image) }
+
+      before do
+        dish.ingredients = [ingredient]
+        dish.tags = [tag]
+        dish.allergens = [allergen]
+        category.dishes = [dish]
+        dish.images = [image]
+      end
+
+      context "when category has sub-category (children)" do
+        let(:sub_category) { create(:menu_category, visibility: nil, parent: category) }
+        let(:sub_dish) { create(:menu_dish) }
+
+        let!(:sub_ingredient) { create(:menu_ingredient) }
+        let!(:sub_tag) { create(:menu_tag) }
+        let!(:sub_allergen) { create(:menu_allergen) }
+        let!(:sub_image) { create(:image, :with_attached_image) }
+
+        before do
+          sub_dish.ingredients = [sub_ingredient]
+          sub_dish.tags = [sub_tag]
+          sub_dish.allergens = [sub_allergen]
+          sub_category.dishes = [sub_dish]
+          sub_dish.images = [sub_image]
+        end
+
+        it do
+          expect { subject }.to change { Menu::DishesInCategory.count }.by(2)
+        end
+
+        it do
+          expect { subject }.to change { Menu::Dish.count }.by(2)
+        end
+
+        it do
+          expect { subject }.to change { Menu::TagsInDish.count }.by(2)
+        end
+
+        it do
+          expect { subject }.not_to(change { [Menu::Ingredient.count, Menu::Tag.count, Menu::Allergen.count, Image.count] })
+        end
+      end
 
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
 
@@ -215,13 +260,72 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
         expect(subject.result.dishes.count).to eq 1
         expect(subject.result.dishes.first.name).to eq old.dishes.first.name
       end
+
+      it do
+        expect { subject }.not_to(change { [Menu::Ingredient.count, Menu::Tag.count, Menu::Allergen.count, Image.count] })
+      end
+
+      it do
+        expect { subject }.to(change { Menu::IngredientsInDish.count }.by(1))
+      end
+
+
+      it do
+        expect { subject }.to(change { Menu::TagsInDish.count }.by(1))
+      end
+
+      it do
+        expect { subject }.to(change { Menu::AllergensInDish.count }.by(1))
+      end
+
+
+      it do
+        expect { subject }.to(change { ImageToRecord.count }.by(1))
+      end
     end
 
     context 'copying dishes with {copy_dishes: "link"}' do
       let!(:dish) { create(:menu_dish) }
       let(:params) { { old:, current_user:, copy_dishes: "link" } }
 
-      before { category.dishes = [dish] }
+      let!(:ingredient) { create(:menu_ingredient) }
+      let!(:tag) { create(:menu_tag) }
+      let!(:allergen) { create(:menu_allergen) }
+      let!(:image) { create(:image, :with_attached_image) }
+
+      before do
+        dish.ingredients = [ingredient]
+        dish.tags = [tag]
+        dish.allergens = [allergen]
+        category.dishes = [dish]
+        dish.images = [image]
+      end
+
+      context "when category has sub-category (children)" do
+        let(:sub_category) { create(:menu_category, visibility: nil, parent: category) }
+        let(:sub_dish) { create(:menu_dish) }
+
+        let!(:sub_ingredient) { create(:menu_ingredient) }
+        let!(:sub_tag) { create(:menu_tag) }
+        let!(:sub_allergen) { create(:menu_allergen) }
+        let!(:sub_image) { create(:image, :with_attached_image) }
+
+        before do
+          sub_dish.ingredients = [sub_ingredient]
+          sub_dish.tags = [sub_tag]
+          sub_dish.allergens = [sub_allergen]
+          sub_category.dishes = [sub_dish]
+          sub_dish.images = [sub_image]
+        end
+
+        it do
+          expect { subject }.not_to(change { [Menu::Ingredient.count, Menu::Tag.count, Menu::Allergen.count, Image.count, Menu::TagsInDish.count, Menu::Dish.count] })
+        end
+
+        it do
+          expect { subject }.to(change { Menu::DishesInCategory.count }.by(2))
+        end
+      end
 
       it { expect { subject }.to change { Menu::DishesInCategory.count }.by(1) }
 
@@ -229,6 +333,15 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
         expect { subject }.not_to(change { Menu::Dish.count })
         expect(subject.result.dishes.count).to eq 1
         expect(subject.result.dishes.first.name).to eq old.dishes.first.name
+      end
+
+
+        it do
+          expect { subject }.to(change { Menu::DishesInCategory.count }.by(1))
+        end
+
+      it do
+        expect { subject }.not_to(change { [Menu::Ingredient.count, Menu::Tag.count, Menu::Allergen.count, Image.count, Menu::IngredientsInDish.count, Menu::TagsInDish.count, Menu::AllergensInDish.count, ImageToRecord.count] })
       end
     end
 
@@ -290,23 +403,23 @@ RSpec.describe Menu::CopyCategory, type: :interaction do
         it_behaves_like "fail to copy category"
       end
 
-      context "allergen" do
-        before { prevent_save(Menu::Allergen) }
+      # context "allergen" do
+      #   before { prevent_save(Menu::Allergen) }
 
-        it_behaves_like "fail to copy category"
-      end
+      #   it_behaves_like "fail to copy category"
+      # end
 
-      context "tag" do
-        before { prevent_save(Menu::Tag) }
+      # context "tag" do
+      #   before { prevent_save(Menu::Tag) }
 
-        it_behaves_like "fail to copy category"
-      end
+      #   it_behaves_like "fail to copy category"
+      # end
 
-      context "ingredient" do
-        before { prevent_save(Menu::Ingredient) }
+      # context "ingredient" do
+      #   before { prevent_save(Menu::Ingredient) }
 
-        it_behaves_like "fail to copy category"
-      end
+      #   it_behaves_like "fail to copy category"
+      # end
 
       context "image" do
         before { prevent_save(Image) }

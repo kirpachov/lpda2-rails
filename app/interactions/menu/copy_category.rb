@@ -113,6 +113,8 @@ module Menu
       return true if old.images.empty? || copy_images.to_s == "none"
 
       old.images.filter { |img| img.attached_image.attached? }.each do |old_image|
+        GC.start
+
         if copy_images == "full"
           @new.images << old_image.copy!(current_user:)
         elsif copy_images == "link"
@@ -130,8 +132,16 @@ module Menu
       return true if old.dishes.empty? || copy_dishes.to_s == "none"
 
       old.dishes.each do |old_dish|
+        GC.start
+
         if copy_dishes == "full"
-          @new.dishes << old_dish.copy!(current_user:)
+          @new.dishes << old_dish.copy!(
+            current_user:,
+            copy_images: "link",
+            copy_ingredients: "link",
+            copy_tags: "link",
+            copy_allergens: "link"
+          )
         elsif copy_dishes == "link"
           @new.dishes << old_dish
         end
@@ -147,12 +157,20 @@ module Menu
       return true if old.children.empty? || copy_children.to_s == "none"
 
       old.children.each do |old_child|
-        @new.children << old_child.copy!(current_user:)
+        GC.start
+
+        @new.children << old_child.copy!(
+          current_user:,
+          copy_images: params[:copy_images],
+          copy_dishes: params[:copy_dishes],
+          copy_children: params[:copy_children]
+        )
       end
 
       true
     rescue ActiveRecord::RecordInvalid, ActiveInteraction::InvalidInteractionError => e
       errors.add(:base, "Cannot copy child category: #{e.message}", details: e)
+      false
     end
 
     ##################
