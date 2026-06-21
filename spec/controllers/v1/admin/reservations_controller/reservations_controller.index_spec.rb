@@ -906,6 +906,51 @@ RSpec.describe V1::Admin::ReservationsController, type: :controller do
         it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601("2024-10-12 14:00") }
       end
 
+      [true, false].each do |create_first_before|
+        context 'when ordering with {order_by: "datetime DESC, created_at ASC"}' do
+          before do
+            create(:reservation, datetime: "2024-10-12 19:00")
+            @first = create(:reservation, datetime: "2024-10-12 20:00") if create_first_before
+            @pivot = create(:reservation, datetime: "2024-10-12 20:00")
+            @first = create(:reservation, datetime: "2024-10-12 20:00") unless create_first_before
+            create(:reservation, datetime: "2024-10-12 14:00")
+            req(order_by: "datetime DESC, created_at ASC")
+          end
+
+          it do
+            expect(parsed_response_body).to include(items: Array, metadata: Hash)
+            expect(parsed_response_body.dig(:items).pluck(:datetime)).to eq([
+              to_iso8601("2024-10-12 20:00"),
+              to_iso8601("2024-10-12 20:00"),
+              to_iso8601("2024-10-12 19:00"),
+              to_iso8601("2024-10-12 14:00")
+            ])
+
+            if create_first_before
+              expect(parsed_response_body.dig(:items).pluck(:id)).to eq([
+                @first.id,
+                @pivot.id,
+                parsed_response_body.dig(:items).find { |i| i[:datetime] == to_iso8601("2024-10-12 19:00") }[:id],
+                parsed_response_body.dig(:items).find { |i| i[:datetime] == to_iso8601("2024-10-12 14:00") }[:id]
+              ])
+            else
+              expect(parsed_response_body.dig(:items).pluck(:id)).to eq([
+                @pivot.id,
+                @first.id,
+                parsed_response_body.dig(:items).find { |i| i[:datetime] == to_iso8601("2024-10-12 19:00") }[:id],
+                parsed_response_body.dig(:items).find { |i| i[:datetime] == to_iso8601("2024-10-12 14:00") }[:id]
+              ])
+            end
+          end
+
+          # it { expect(parsed_response_body).to include(items: Array, metadata: Hash) }
+          # it { expect(parsed_response_body[:items].length).to eq 3 }
+          # it { expect(parsed_response_body.dig(:items, 0, :datetime)).to eq to_iso8601("2024-10-12 20:00") }
+          # it { expect(parsed_response_body.dig(:items, 1, :datetime)).to eq to_iso8601("2024-10-12 19:00") }
+          # it { expect(parsed_response_body.dig(:items, 2, :datetime)).to eq to_iso8601("2024-10-12 14:00") }
+        end
+      end
+
       context 'when ordering with {order_by: "datetime ASC"}' do
         before do
           create(:reservation, datetime: "2024-10-12 19:00")
