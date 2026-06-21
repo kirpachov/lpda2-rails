@@ -22,10 +22,12 @@ class DateTimeRequiresPayment < ActiveInteraction::Base
 
     @group = find_group
     @tables = filter_tables
-    {
-      group:,
-      tables:
-    }
+    # {
+    #   group:,
+    #   tables:
+    # }
+
+    group
   end
 
   private
