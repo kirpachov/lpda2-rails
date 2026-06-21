@@ -337,6 +337,20 @@ RSpec.describe V1::Admin::ReservationTurnsController, type: :controller do
         expect { req(reservation_turn.id) }.to change(ReservationTurn, :count).by(-1)
       end
 
+      context "when reservation turn belongs to payment" do
+        let(:grp) { create(:preorder_reservation_group) }
+
+        before do
+          grp.turns << reservation_turn
+        end
+
+        it do
+          expect { req }.not_to(change { ReservationTurn.visible.count })
+          expect(json).to include(message: /preorder reservation groups/)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+
       context "when trying to delete a non-existing reservation turn" do
         subject { response }
 

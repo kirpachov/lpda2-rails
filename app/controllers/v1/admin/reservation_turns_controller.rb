@@ -39,11 +39,9 @@ module V1::Admin
     end
 
     def destroy
-      nil if @item.destroy!
-
-      #   render_unprocessable_entity(@item)
-      # rescue ActiveRecord::RecordInvalid
-      #   render_unprocessable_entity(@item)
+      @item.destroy!
+    rescue ActiveRecord::RecordNotDestroyed
+      render_unprocessable_entity(@item)
     end
 
     private

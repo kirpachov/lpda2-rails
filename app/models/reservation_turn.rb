@@ -13,6 +13,7 @@ class ReservationTurn < ApplicationRecord
   # ################################
   has_many :reservation_turn_to_messages, dependent: :destroy
   has_many :reservation_turn_messages, through: :reservation_turn_to_messages
+  has_many :preorder_reservation_groups_to_turn, dependent: :restrict_with_error
 
   # ################################
   # Validations
