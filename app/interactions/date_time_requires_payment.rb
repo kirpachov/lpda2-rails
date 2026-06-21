@@ -15,25 +15,62 @@ class DateTimeRequiresPayment < ActiveInteraction::Base
 
   validate :datetime
 
+  attr_reader :group, :tables
+
   def execute
     return nil if turn.nil?
 
-    # Always required turns
-    if matching_turns.any?
+    @group = find_group
+    @tables = filter_tables
+    {
+      group:,
+      tables:
+    }
+  end
 
-      # It's important to raise issues here.
-      if matching_turns.size > 1
-        raise "matching more than one turn. datetime #{datetime} is matching turns: #{matching_turns.as_json}"
-      end
+  private
 
-      if matching_turns.first.preorder_reservation_groups.count != 1
-        raise "Expected one group for turn #{matching_turns.first.id}, got #{matching_turns.first.preorder_reservation_groups.as_json}"
-      end
+  def find_group
+    find_group_by_turn || find_group_by_dates
+  end
 
-      return matching_turns.first.preorder_reservation_groups.first
+  def filter_tables
+    return TableTypeToPreorderReservationGroup.none if group.nil? || group.table_types.empty?
+
+    TableTypeToPreorderReservationGroup.where(id: group.table_type_to_preorder_reservation_groups.includes(:table_type).filter do |table_join|
+                                                    table = table_join.table_type
+
+                                                    available_seats_call = AvailableSeatsForReservationTurnAndPgroup.run(
+                                                      pgroup: group,
+                                                      table_type: table,
+                                                      reservation_turn: turn,
+                                                      datetime:
+                                                    )
+
+                                                    available_seats = available_seats_call.valid? ? available_seats_call.result : 0
+
+                                                    available_seats >= people
+                                                  end.map(&:id))
+  end
+
+  # Finding PreorderReservationGroup by matching turn.
+  def find_group_by_turn
+    return nil if matching_turns.empty?
+
+    # It's important to raise issues here.
+    if matching_turns.size > 1
+      raise "matching more than one turn. datetime #{datetime} is matching turns: #{matching_turns.as_json}"
     end
 
-    # Turns required only for specific date
+    if matching_turns.first.preorder_reservation_groups.count != 1
+      raise "Expected one group for turn #{matching_turns.first.id}, got #{matching_turns.first.preorder_reservation_groups.as_json}"
+    end
+
+    matching_turns.first.preorder_reservation_groups.first
+  end
+
+  # Finding PreorderReservationGroup by matching PreorderReservationDate.
+  def find_group_by_dates
     if matching_dates.any?
       raise "more than one group with the same date and turn" if matching_dates.size > 1
 

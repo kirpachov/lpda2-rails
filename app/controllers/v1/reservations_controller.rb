@@ -104,12 +104,12 @@ module V1
                             message: call.errors.full_messages.join(", "))
       end
 
-      return render json: { preorder_reservation_group: nil } if call.result.nil?
+      return render json: { preorder_reservation_group: nil } if call.group.nil?
 
       render json: {
-        preorder_reservation_group: call.result.as_json.merge(
-          message: call.result.message,
-          table_type_to_preorder_reservation_groups: call.result.table_type_to_preorder_reservation_groups.includes(table_type: [
+        preorder_reservation_group: call.result[:group].as_json.merge(
+          message: call.result[:group].message,
+          table_type_to_preorder_reservation_groups: call.result[:tables].includes(table_type: [
                                                                                                                       :text_translations, { images: [:attached_image_blob] }
                                                                                                                     ]).map do |tt|
                                                        tt.as_json.merge(
