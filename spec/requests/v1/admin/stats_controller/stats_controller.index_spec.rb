@@ -109,6 +109,8 @@ RSpec.describe "GET /v1/admin/stats" do
 
       Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_month + 1.day)
       Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_month - 1.day)
+
+      # NOTE: this is not working when it's monday
       Reservation.order(created_at: :asc).last.update!(created_at: Date.current.beginning_of_week)
       req
 
@@ -121,10 +123,10 @@ RSpec.describe "GET /v1/admin/stats" do
       expect(json.dig("reservations-creation", "count_by_year", "#{Date.today.strftime("%Y")}")).to eq(10)
       expect(json.dig("reservations-creation", "count_by_year").keys).to eq(["#{Date.today.strftime("%Y")}"])
 
-      expect(json.dig("reservations-creation", "current", "day")).to eq(7)
       expect(json.dig("reservations-creation", "current", "week")).to eq(8)
       expect(json.dig("reservations-creation", "current", "month")).to eq(9)
       expect(json.dig("reservations-creation", "current", "year")).to eq(10)
+      expect(json.dig("reservations-creation", "current", "day")).to eq(7)
     end
   end
 
