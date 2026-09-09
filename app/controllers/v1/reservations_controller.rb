@@ -2,7 +2,7 @@
 
 module V1
   class ReservationsController < ApplicationController
-    before_action :find_item, only: %i[show cancel]
+    before_action :find_item, only: %i[show cancel feedback]
     before_action :find_next_and_active_reservation, only: %i[do_payment resend_confirmation_email]
     skip_before_action :authenticate_user
 
@@ -143,6 +143,15 @@ module V1
       @item.reload
 
       show
+    end
+
+    # GET /v1/reservations/:secret/feedback
+    # Called from the call-to-action link in the feedback email.
+    # Tracks that the user opened it, then redirects to the URL admins configured for feedback.
+    def feedback
+      Log::ReservationEvent.create!(reservation: @item, event_type: "open_feedback_url")
+
+      redirect_to Setting[:feedback_url], allow_other_host: true
     end
 
     private

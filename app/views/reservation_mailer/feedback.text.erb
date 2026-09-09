@@ -1,0 +1,7 @@
+<%= t('reservation_mailer.greetings', fullname: @reservation.fullname) %>
+
+<%= t('reservation_mailer.feedback.body', date: l(@reservation.datetime, format: '%e %B %Y')) %>
+
+<%= t('reservation_mailer.feedback.cta') %>:
+
+<%= @feedback_url %>

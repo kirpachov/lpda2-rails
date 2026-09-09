@@ -20,4 +20,9 @@ class ReservationMailerPreview < ActionMailer::Preview
   def payment_required_to_confirm(reservation: ReservationPayment.last.reservation)
     ReservationMailer.with(reservation_id: reservation.id).payment_required_to_confirm
   end
+
+  # http://localhost:3050/rails/mailers/reservation_mailer/feedback.txt?locale=it
+  def feedback(reservation: Reservation.last)
+    ReservationMailer.with(reservation_id: reservation.id).feedback
+  end
 end

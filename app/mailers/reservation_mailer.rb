@@ -3,6 +3,7 @@
 class ReservationMailer < ApplicationMailer
   before_action :validate_reservation
   before_action :show_reservation_url
+  before_action :feedback_url
   before_action :set_locale_by_reservation
   layout "public"
 
@@ -61,6 +62,14 @@ class ReservationMailer < ApplicationMailer
     )
   end
 
+  # Sent the day after the reservation, asking the customer to leave feedback about their experience.
+  def feedback
+    mail(
+      to: reservation_to,
+      subject: (@title = I18n.t("reservation_mailer.feedback.subject", fullname: reservation.fullname))
+    )
+  end
+
   # After an authorization becomes a payment.
   def payment_success
     raise ArgumentError, "Reservation does not have an email" if reservation.email.blank?
@@ -95,6 +104,12 @@ class ReservationMailer < ApplicationMailer
       Mustache.render(Config.hash[:show_reservation_url],
                       { locale: reservation.lang || I18n.default_locale, secret: reservation.secret })
     ).to_s
+  end
+
+  # Internal URL user clicks on in the feedback email. Tracks a Log::ReservationEvent,
+  # then redirects to whatever admins configured in Setting[:feedback_url].
+  def feedback_url
+    @feedback_url ||= Rails.application.routes.url_helpers.feedback_reservations_url(secret: reservation.secret)
   end
 
   def reservation_to

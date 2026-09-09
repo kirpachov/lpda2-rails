@@ -330,6 +330,10 @@ en:
     remind_payment:
       subject: "Remember the payment of your reservation at La Porta D'acqua %{fullname}"
       body: "We remind you that your reservation for the day %{date} at %{hour} for %{people} people is waiting for payment."
+    feedback:
+      subject: "How was your experience at La Porta D'acqua %{fullname}?"
+      body: "Thank you for being our guest on %{date}. We would really appreciate hearing your feedback, it will help us improve."
+      cta: "Leave your feedback"
     btn_not_working_copy_url: "If the button doesn't work, copy and paste the following URL in your browser:"
     greetings: "Hello %{fullname}"
     reservation_registered: "We inform you that your reservation on the day %{date} at %{hour}, for %{people} people has been registered correctly."

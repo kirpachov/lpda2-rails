@@ -22,7 +22,11 @@ module Log
       payment_outcome: "payment_outcome",
 
       # Had a card hold, and proceeded to charge the user.
-      record_deferred_payment: "record_deferred_payment"
+      record_deferred_payment: "record_deferred_payment",
+
+      # User opened the call-to-action link in the feedback email, and got redirected
+      # to the feedback URL configured in Setting[:feedback_url].
+      open_feedback_url: "open_feedback_url"
     }
 
     validates :event_type, presence: true
