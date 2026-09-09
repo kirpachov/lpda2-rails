@@ -332,6 +332,10 @@ it:
     remind_payment:
       subject: "Ricorda il pagamento della tua prenotazione presso La Porta D'acqua %{fullname}"
       body: "Ti ricordiamo che la tua prenotazione per il giorno %{date} alle ore %{hour} per %{people} persone è in attesa di pagamento."
+    feedback:
+      subject: "Com'è andata la tua esperienza da La Porta D'acqua %{fullname}?"
+      body: "Grazie per essere stato nostro ospite il giorno %{date}. Ci farebbe molto piacere conoscere la tua opinione, ci aiuterà a migliorare."
+      cta: "Lascia il tuo feedback"
     btn_not_working_copy_url: "Se il bottone non dovesse funzionare, copia e incolla questo link in una nuova finestra:"
     greetings: "Salve %{fullname}"
     reservation_registered: "Ti informiamo che la tua prenotazione, per il giorno %{date} alle ore %{hour} e per %{people} persone, è stata registrata correttamente."

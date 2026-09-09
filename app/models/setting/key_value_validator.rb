@@ -19,6 +19,7 @@ class Setting
       when :instagram_landing_page_url then validate_instagram_landing_page_url
       when :reservation_min_hours_advance_cancel then validate_reservation_min_hours_advance_cancel
       when :nexi_auto_refund_cancelled_reservations then boolean_validator
+      when :feedback_url then validate_feedback_url
       else
         record.errors.add(:key, "Don't know how to validate key: #{record.key.to_s.inspect}")
       end
@@ -126,6 +127,15 @@ class Setting
 
       record.errors.add(:value,
                         "should be an instagram url, like 'https://www.instagram.com/....', got #{record.value.inspect}")
+    end
+
+    def validate_feedback_url
+      return if record.value.blank?
+      return if record.value.is_a?(String) &&
+                record.value.match?(URI::DEFAULT_PARSER.make_regexp) &&
+                record.value.starts_with?("http")
+
+      record.errors.add(:value, "should be a url, got #{record.value.inspect}")
     end
   end
 end

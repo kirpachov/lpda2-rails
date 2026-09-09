@@ -141,5 +141,33 @@ RSpec.describe "PATCH /v1/admin/settings/:key" do
         expect(json).to include(message: String)
       end
     end
+
+    context "when setting feedback_url to a valid url" do
+      let(:value) { "https://forms.gle/some-feedback-form" }
+      let(:key) { "feedback_url" }
+
+      it { expect { req }.to(change { Setting.find_by(key: :feedback_url).value }.to(value)) }
+
+      it do
+        req
+        expect(response).to be_successful
+        expect(json["value"]).to eq(value)
+      end
+    end
+
+    context "when setting feedback_url to an invalid url" do
+      let(:value) { "not-a-url" }
+      let(:key) { "feedback_url" }
+
+      it do
+        req
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it do
+        req
+        expect(json).to include(message: String)
+      end
+    end
   end
 end

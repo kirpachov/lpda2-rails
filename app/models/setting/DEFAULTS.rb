@@ -45,6 +45,12 @@ class Setting
     # On the landing page, we'll have an instagram integration, showing a post from the restaurant.
     instagram_landing_page_url: {
       default: "https://www.instagram.com/reel/CrbaJ6ksLUr/?igshid=YmMyMTA2M2Y="
+    },
+
+    # Where users are redirected to after clicking the call-to-action in the feedback email
+    # (e.g. a Google Form, TripAdvisor or Google Reviews page). Editable by admins.
+    feedback_url: {
+      default: Config.hash[:frontend_base_url]
     }
   }.with_indifferent_access.freeze
 end
