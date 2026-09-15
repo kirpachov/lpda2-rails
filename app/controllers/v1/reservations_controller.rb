@@ -151,6 +151,11 @@ module V1
     def feedback
       Log::ReservationEvent.create!(reservation: @item, event_type: "open_feedback_url")
 
+      if Setting[:feedback_url].blank?
+        redirect_to Config.hash[:frontend_base_url], allow_other_host: true
+        return
+      end
+
       redirect_to Setting[:feedback_url], allow_other_host: true
     end
 
