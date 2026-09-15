@@ -50,7 +50,7 @@ class Setting
     # Where users are redirected to after clicking the call-to-action in the feedback email
     # (e.g. a Google Form, TripAdvisor or Google Reviews page). Editable by admins.
     feedback_url: {
-      default: Config.hash[:frontend_base_url]
+      default: nil
     }
   }.with_indifferent_access.freeze
 end

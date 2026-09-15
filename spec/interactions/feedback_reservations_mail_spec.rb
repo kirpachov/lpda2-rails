@@ -31,6 +31,10 @@ RSpec.describe FeedbackReservationsMail do
     end
 
     it do
+      expect { described_class.run! }.to(change { Log::ReservationEvent.where(event_type: "delivered_feedback_request").count }.by(2))
+    end
+
+    it do
       expect(eligible.length).to eq(2)
       expect(eligible.map(&:id)).to match_array(reservations[0..1].map(&:id))
     end

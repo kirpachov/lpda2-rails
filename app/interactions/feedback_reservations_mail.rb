@@ -10,6 +10,7 @@ class FeedbackReservationsMail < ActiveInteraction::Base
   end
 
   def process_reservation(reservation)
+    Log::ReservationEvent.create!(reservation:, event_type: "delivered_feedback_request")
     ReservationMailer.with(reservation_id: reservation.id).feedback.deliver_now
     sleep(1) # Avoid sending too many emails at the same time
   rescue StandardError => e

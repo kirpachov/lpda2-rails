@@ -26,7 +26,10 @@ module Log
 
       # User opened the call-to-action link in the feedback email, and got redirected
       # to the feedback URL configured in Setting[:feedback_url].
-      open_feedback_url: "open_feedback_url"
+      open_feedback_url: "open_feedback_url",
+
+      # Feedback request email was delivered to the user.
+      delivered_feedback_request: "delivered_feedback_request"
     }
 
     validates :event_type, presence: true
