@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module V1
-  class ReservationsController < ApplicationController
+  # Managing public endpoints under /v1/reservations*
+  class ReservationsController < ApplicationController # rubocop:disable Metrics/ClassLength
     before_action :find_item, only: %i[show cancel feedback]
     before_action :find_next_and_active_reservation, only: %i[do_payment resend_confirmation_email]
     skip_before_action :authenticate_user
@@ -150,6 +151,7 @@ module V1
     # Tracks that the user opened it, then redirects to the URL admins configured for feedback.
     def feedback
       Log::ReservationEvent.create!(reservation: @item, event_type: "open_feedback_url")
+      @item.update!(fb_open_at: Time.zone.now)
 
       if Setting[:feedback_url].blank?
         redirect_to Config.hash[:frontend_base_url], allow_other_host: true

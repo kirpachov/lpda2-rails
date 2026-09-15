@@ -79,7 +79,7 @@ require "faker"
   }
 ].each do |reservation_data|
   Rails.logger.debug { "Creating reservation: #{reservation_data}" }
-  Reservation.create! reservation_data
+  Reservation.find_or_create_by reservation_data
 end
 
 debug "Creating default preorder group..."
@@ -105,7 +105,13 @@ preorder_group.turns = free_turns.sample(2)
 
 (-10..10).to_a.each do |day_ago|
   5.times do
-    Reservation.create!(adults: [2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10].sample, fullname: Faker::Name.first_name,
-                        email: "sasha+#{SecureRandom.hex}@opinioni.net", datetime: day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours)
+    fb_asked_at = Random.rand(2).zero? ? nil : day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours
+    Reservation.create!(
+      adults: [2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10].sample, fullname: Faker::Name.first_name,
+      email: "sasha+#{SecureRandom.hex}@opinioni.net",
+      datetime: day_ago.days.ago.beginning_of_day + [10, 11, 12, 18, 19, 20].sample.hours,
+      fb_asked_at: fb_asked_at,
+      fb_open_at: fb_asked_at.present? && Random.rand(2).zero? ? (fb_asked_at + [1, 2, 3].sample.hours) : nil
+    )
   end
 end

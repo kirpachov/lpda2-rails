@@ -11,6 +11,7 @@ class FeedbackReservationsMail < ActiveInteraction::Base
 
   def process_reservation(reservation)
     Log::ReservationEvent.create!(reservation:, event_type: "delivered_feedback_request")
+    reservation.update!(fb_asked_at: Time.zone.now)
     ReservationMailer.with(reservation_id: reservation.id).feedback.deliver_now
     sleep(1) # Avoid sending too many emails at the same time
   rescue StandardError => e
@@ -24,7 +25,7 @@ class FeedbackReservationsMail < ActiveInteraction::Base
       id: already_delivered_ids
     ).where.not(
       email: [nil, "", " "]
-    )
+    ).where(fb_asked_at: nil).where(fb_open_at: nil)
   end
 
   private

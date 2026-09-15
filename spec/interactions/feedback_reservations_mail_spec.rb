@@ -18,12 +18,19 @@ RSpec.describe FeedbackReservationsMail do
         create(:reservation, datetime: 1.week.ago),
 
         create(:reservation, datetime: 1.day.from_now),
-        create(:reservation, datetime: 2.days.from_now)
+        create(:reservation, datetime: 2.days.from_now),
+
+        create(:reservation, datetime: 1.day.ago, fb_asked_at: 1.hour.ago),
+        create(:reservation, datetime: 20.hours.ago, fb_open_at: 1.hour.from_now),
       ]
     end
 
     it do
       expect { described_class.run! }.not_to raise_error
+    end
+
+    it do
+      expect { described_class.run! }.to(change { Reservation.where.not(fb_asked_at: nil).count }.by(2))
     end
 
     it do

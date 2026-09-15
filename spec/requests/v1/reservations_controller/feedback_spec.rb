@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.context "GET /v1/reservations/:secret/feedback", type: :request do
-  let!(:reservation) { create(:reservation, datetime: 1.day.ago) }
+  let!(:reservation) { create(:reservation, datetime: 1.day.ago, fb_asked_at: 1.hour.ago) }
   let(:default_secret) { reservation.secret }
   let(:default_params) { {} }
   let(:default_headers) { {} }
@@ -11,6 +11,9 @@ RSpec.context "GET /v1/reservations/:secret/feedback", type: :request do
   def req(params: default_params, headers: default_headers, secret: default_secret)
     get "/v1/reservations/#{secret}/feedback", headers:, params:
   end
+
+  it { expect { req }.to(change { reservation.reload.fb_open_at }.from(nil)) }
+  it { expect { req }.not_to(change { reservation.reload.fb_asked_at }) }
 
   context "basic request" do
     before { req }

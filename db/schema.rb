@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_09_15_141715) do
+ActiveRecord::Schema[7.0].define(version: 2026_09_15_163918) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -480,6 +480,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_09_15_141715) do
     t.text "lang", default: "en", null: false
     t.text "member_id"
     t.bigint "table_type_id"
+    t.datetime "fb_asked_at", precision: nil, comment: "The moment the feedback was requested"
+    t.datetime "fb_open_at", precision: nil, comment: "The timestamp when the feedback URL was opened"
   end
 
   create_table "reset_password_secrets", force: :cascade do |t|
