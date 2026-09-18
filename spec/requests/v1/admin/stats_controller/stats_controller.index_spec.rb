@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "GET /v1/admin/stats" do
   include_context REQUEST_AUTHENTICATION_CONTEXT
 
-  ALL_KEYS = %w[reservations-by-hour reservations-count reservations-creation].freeze
+  ALL_KEYS = %w[reservations-by-hour reservations-count reservations-creation feedback-count].freeze
 
   let(:headers) { auth_headers }
   let(:params) { { keys: } }
