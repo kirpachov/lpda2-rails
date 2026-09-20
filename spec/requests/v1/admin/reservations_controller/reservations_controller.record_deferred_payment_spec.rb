@@ -154,6 +154,24 @@ RSpec.describe "POST /v1/admin/reservations/<id>/record_deferred_payment" do
 
         expect { reservation_payment.fetch_status! }.not_to(change { reservation_payment.reload.status }.from("paid"))
       end
+
+      context "when stripe returns some error, throws Stripe::Error, it's managed" do
+        before do
+          allow(Stripe::PaymentIntent).to receive(:create).and_raise(Stripe::StripeError)
+        end
+
+        it_behaves_like "failed request POST /v1/admin/reservations/<id>/record_deferred_payment"
+        it { expect { req }.not_to(change { reservation_payment.reload.status }) }
+      end
+
+      context "when stripe returns some error, throws StandardError, it's managed" do
+        before do
+          allow(Stripe::PaymentIntent).to receive(:create).and_raise(StandardError)
+        end
+
+        it_behaves_like "failed request POST /v1/admin/reservations/<id>/record_deferred_payment"
+        it { expect { req }.not_to(change { reservation_payment.reload.status }) }
+      end
     end
 
     %w[

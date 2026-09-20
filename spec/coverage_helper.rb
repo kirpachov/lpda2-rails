@@ -17,6 +17,9 @@ SimpleCov.start "rails" do
   add_group "Interactions", "app/interactions"
 
   add_filter "/app/interactions/dev"
+  add_filter "app/interactions/cleanup_database"
+  add_filter "app/jobs/clear_cache_job.rb"
+
 
   # Exclude files with less than 5 lines:
   # Avoid empty files like:
