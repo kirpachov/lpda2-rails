@@ -10,9 +10,12 @@ class FeedbackReservationsMail < ActiveInteraction::Base
   end
 
   def process_reservation(reservation)
+    # Only record the request as "asked" once the email has actually been sent.
+    # Otherwise a transient failure (e.g. SMTP hiccup) would permanently mark the
+    # reservation as asked, and it would never be retried on a following run.
+    ReservationMailer.with(reservation_id: reservation.id).feedback.deliver_now
     Log::ReservationEvent.create!(reservation:, event_type: "delivered_feedback_request")
     reservation.update!(fb_asked_at: Time.zone.now)
-    ReservationMailer.with(reservation_id: reservation.id).feedback.deliver_now
     sleep(1) # Avoid sending too many emails at the same time
   rescue StandardError => e
     manage_error(reservation, e)

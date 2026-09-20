@@ -129,5 +129,22 @@ RSpec.describe FeedbackReservationsMail do
       expect(Rails.logger).to receive(:error).with(/#{expected_error}/)
       described_class.run
     end
+
+    it "does not mark the failed reservation as asked, so it can be retried later" do
+      described_class.run
+      expect(reservations[0].reload.fb_asked_at).to be_nil
+      expect(reservations[1].reload.fb_asked_at).to be_present
+    end
+
+    it "does not log a 'delivered_feedback_request' event for the failed reservation" do
+      described_class.run
+      expect(reservations[0].events.where(event_type: "delivered_feedback_request")).to be_empty
+      expect(reservations[1].events.where(event_type: "delivered_feedback_request")).to be_present
+    end
+
+    it "keeps the failed reservation eligible so it is retried on the next run" do
+      described_class.run
+      expect(described_class.new.eligible.map(&:id)).to contain_exactly(reservations[0].id)
+    end
   end
 end
